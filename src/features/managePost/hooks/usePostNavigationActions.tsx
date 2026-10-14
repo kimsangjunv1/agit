@@ -1,10 +1,11 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
 
 import { useGetPostDetailQuery } from "@/entities/post/api/post.query";
+import { savePostDraftFetch } from "@/entities/post/api/post.api";
 import type { SectionContent } from "@/entities/post/model/post.type";
 import {
     useDeletePostWithFeedback,
@@ -45,7 +46,8 @@ export const usePostNavigationActions = ({
     const { data: session } = useSession();
     const { setToast } = useToastStore();
     const { setModal } = useModalStore();
-    const { title, summary, thumbnail, category_idx, post_idx } = useCreatePostStore();
+    const { title, summary, thumbnail, category_idx, post_idx, draft_id, setDraftId } = useCreatePostStore();
+    const [isDraftPending, setIsDraftPending] = useState(false);
 
     const { data: postDetailData } = useGetPostDetailQuery(postIdx, undefined, {
         enabled: !!postIdx && isView,
@@ -110,7 +112,7 @@ export const usePostNavigationActions = ({
             });
 
             if (isCreate) {
-                await setPostFetchAsync(payload);
+                await setPostFetchAsync({ ...payload, draftId: draft_id });
             } else if (isEdit) {
                 await patchPostFetchAsync({ data: payload, idx: post_idx });
             }
@@ -118,6 +120,31 @@ export const usePostNavigationActions = ({
             const message =
                 error instanceof Error ? error.message : "저장 중 오류가 발생했습니다.";
             setToast({ msg: message, time: 2 });
+        }
+    };
+
+    const saveDraft = async (contents: SectionContent[][]) => {
+        if (isDraftPending) return;
+
+        setIsDraftPending(true);
+        try {
+            const payload = await preparePostPayloadForSave({
+                title,
+                summary,
+                thumbnail,
+                category_idx,
+                contents,
+            });
+            const response = await savePostDraftFetch({ ...payload, id: draft_id ?? undefined });
+            setDraftId(response.result.id);
+            setToast({ msg: "임시저장했어요", type: "success" });
+        } catch (error) {
+            setToast({
+                msg: error instanceof Error ? error.message : "임시저장에 실패했어요",
+                type: "fail",
+            });
+        } finally {
+            setIsDraftPending(false);
         }
     };
 
@@ -228,6 +255,8 @@ export const usePostNavigationActions = ({
         isDeletePending,
         isSavePending: isPatchPending || isSetPending,
         savePost,
+        saveDraft,
+        isDraftPending,
         handleNavAction,
     };
 };

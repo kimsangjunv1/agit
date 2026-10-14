@@ -48,6 +48,5 @@ export const getNextBlockModePatch = (block: SectionContent): Partial<SectionCon
         type: 0,
         title: "",
         subtitle: "",
-        content: "",
     };
 };

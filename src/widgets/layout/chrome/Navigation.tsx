@@ -13,8 +13,13 @@ import { getPostRouteFlags, PostSaveNavButton, usePostNavigationActions } from "
 import { useBlockStore } from "@/features/managePost/model/useEditorBlockStore";
 import { MaterialIcon } from "@/shared/ui/common/MaterialIcon";
 import { parsePostMarkdown } from "@/features/managePost/lib/parsePostMarkdown";
+import { normalizeBlocksForEditor } from "@/features/managePost/lib/normalizePostBlocks";
+import { collectImagesFromPost } from "@/features/managePost/lib/preparePostSave";
+import type { PostDraftDetail } from "@/entities/post/model/post.type";
 import { useCreatePostStore } from "@/shared/stores/useCreatePostStore";
+import { usePostDraftImageStore } from "@/shared/stores/usePostDraftImageStore";
 import { useToastStore } from "@/shared/stores/useToastStore";
+import PostDraftLoadModal from "./PostDraftLoadModal";
 
 const springTransition = {
     type: "spring" as const,
@@ -26,26 +31,46 @@ const springTransition = {
 const Navigation = () => {
     const params = useParams();
     const [showMenu, setShowMenu] = useState(false);
+    const [showDraftModal, setShowDraftModal] = useState(false);
     const progressBarRef = useRef<HTMLDivElement>(null);
     const markdownInputRef = useRef<HTMLInputElement>(null);
 
     useScrollProgressBar(progressBarRef);
     const { currentPathName, pushToUrl } = useNavigate();
     const { rows, setRows } = useBlockStore();
-    const { title, summary, setTitle, setSummary } = useCreatePostStore();
+    const { title, summary, setTitle, setSummary, setPost, setDraftId } = useCreatePostStore();
     const { setToast } = useToastStore();
 
     const { IS_ROUTE_POST, IS_ROUTE_POST_VIEW, IS_ROUTE_POST_EDIT, IS_ROUTE_POST_CREATE } = getPostRouteFlags(currentPathName);
 
     const postIdx = parseInt(params?.id as string);
 
-    const { postTitle, isSavePending, savePost } = usePostNavigationActions({
+    const { postTitle, isSavePending, savePost, saveDraft, isDraftPending } = usePostNavigationActions({
         postIdx,
         isView: IS_ROUTE_POST_VIEW,
         isCreate: IS_ROUTE_POST_CREATE,
         isEdit: IS_ROUTE_POST_EDIT,
         pushToUrl,
     });
+
+    const hasEditorContent = () =>
+        Boolean(title.trim() || summary.trim()) ||
+        rows.some((row) => row.some((block) => Boolean(block.title?.trim() || block.subtitle?.trim() || (typeof block.content === "string" && block.content.trim()) || block.imageUrl?.trim())));
+
+    const handleLoadDraft = (draft: PostDraftDetail) => {
+        if (hasEditorContent() && !window.confirm("현재 작성 중인 내용을 임시저장된 글로 교체할까요?")) {
+            return;
+        }
+
+        const payload = draft.payload;
+        setPost({ ...payload, draft_id: draft.id });
+        setRows(normalizeBlocksForEditor(payload.contents));
+        const images = usePostDraftImageStore.getState();
+        images.reset();
+        collectImagesFromPost(payload.thumbnail, payload.contents).forEach((url) => images.addFromUrl(url));
+        setShowDraftModal(false);
+        setToast({ msg: "임시저장 글을 불러왔어요", type: "success" });
+    };
 
     const handleMarkdownFile = async (event: ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -57,11 +82,7 @@ const Navigation = () => {
             return;
         }
 
-        const hasContent =
-            Boolean(title.trim() || summary.trim()) ||
-            rows.some((row) => row.some((block) => Boolean(block.title?.trim() || block.subtitle?.trim() || (typeof block.content === "string" && block.content.trim()) || block.imageUrl?.trim())));
-
-        if (hasContent && !window.confirm("현재 작성 중인 제목, 요약, 블록을 불러온 Markdown 내용으로 교체할까요?")) {
+        if (hasEditorContent() && !window.confirm("현재 작성 중인 제목, 요약, 블록을 불러온 Markdown 내용으로 교체할까요?")) {
             return;
         }
 
@@ -75,6 +96,8 @@ const Navigation = () => {
             setTitle(parsed.title);
             setSummary(parsed.summary);
             setRows(parsed.rows);
+            setDraftId(null);
+            setShowDraftModal(false);
             setToast({ msg: `${parsed.rows.length}개 그룹을 불러왔어요`, type: "success" });
         } catch {
             setToast({ msg: "Markdown 파일을 불러오지 못했어요", type: "fail" });
@@ -84,6 +107,9 @@ const Navigation = () => {
     useEffect(() => {
         if (showMenu) {
             setShowMenu(false);
+        }
+        if (showDraftModal) {
+            setShowDraftModal(false);
         }
     }, [currentPathName]);
 
@@ -111,7 +137,7 @@ const Navigation = () => {
                         <>
                             <UI.Button
                                 type="button"
-                                onClick={() => markdownInputRef.current?.click()}
+                                onClick={() => IS_ROUTE_POST_CREATE ? setShowDraftModal(true) : markdownInputRef.current?.click()}
                                 className="transition-colors flex flex-col items-start"
                             >
                                 <p className="bg-black text-white p-[2.0rem] text-[2.4rem] font-semibold tablet:block mobile:hidden">불러오기</p>
@@ -192,14 +218,34 @@ const Navigation = () => {
 
                 {IS_ROUTE_POST_EDIT || IS_ROUTE_POST_CREATE ? (
                     <section className="menu flex gap-[0.4rem] tablet:relative tablet:flex-row tablet:right-auto mobile:absolute mobile:flex-col mobile:right-0">
+                        {IS_ROUTE_POST_CREATE ? (
+                            <UI.Button
+                                type="button"
+                                disabled={isDraftPending || isSavePending}
+                                onClick={() => saveDraft(rows)}
+                                className="transition-colors flex flex-col items-end disabled:opacity-60"
+                            >
+                                <p className="bg-black text-white p-[2.0rem] text-[2.4rem] font-semibold tablet:block mobile:hidden">
+                                    {isDraftPending ? "저장 중..." : "임시저장"}
+                                </p>
+                                <MaterialIcon name="save" size={24} className="bg-black text-white p-[2.0rem]" />
+                            </UI.Button>
+                        ) : null}
                         <PostSaveNavButton
                             isCreate={IS_ROUTE_POST_CREATE}
-                            isPending={isSavePending}
+                            isPending={isSavePending || isDraftPending}
                             onSave={() => savePost(rows)}
                         />
                     </section>
                 ) : null}
             </div>
+            {showDraftModal && IS_ROUTE_POST_CREATE ? (
+                <PostDraftLoadModal
+                    onClose={() => setShowDraftModal(false)}
+                    onLoad={handleLoadDraft}
+                    onMarkdownClick={() => markdownInputRef.current?.click()}
+                />
+            ) : null}
         </nav>
     );
 };

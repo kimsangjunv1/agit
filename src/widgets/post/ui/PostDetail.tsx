@@ -314,21 +314,22 @@ const Contents = ({ contents, prev, next, postId, imageUrl, title, summary, crea
                 }}
             >
                 <section className="flex flex-col flex-1 min-w-0">
-                    {contents?.map((row, rowIdx) => (
-                        <section
-                            key={rowIdx}
-                            className={`${BLOCK_ROW_CLASS} max-w-[var(--size-tablet)] mx-auto`}
-                        >
-                            {row.map((col) => (
-                                <ContentColumn
-                                    key={col.id}
-                                    col={col}
-                                    rowLength={row.length}
-                                    onCopySentence={handleCopySentence}
-                                />
+                    <section className="w-full max-w-[var(--size-tablet)] mx-auto">
+                        <div className="mx-[1.6rem_6.2rem] flex flex-col mobile:gap-[5.2rem] pc:gap-[2.4rem]">
+                            {contents?.map((row, rowIdx) => (
+                                <section key={rowIdx} className={BLOCK_ROW_CLASS}>
+                                    {row.map((col) => (
+                                        <ContentColumn
+                                            key={col.id}
+                                            col={col}
+                                            rowLength={row.length}
+                                            onCopySentence={handleCopySentence}
+                                        />
+                                    ))}
+                                </section>
                             ))}
-                        </section>
-                    ))}
+                        </div>
+                    </section>
 
                     <GiscusComments
                         term={`post-${postId}`}

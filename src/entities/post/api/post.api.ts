@@ -9,7 +9,11 @@ import {
     SetIncrementPostLikeResponse,
     SetIncrementPostViewResponse,
     SetPostResponse,
+    PostDraftPayload,
+    PostDraftListItem,
+    PostDraftDetail,
 } from "@/entities/post/model/post.type";
+import type { ApiResponse } from "@/shared/model/common.type";
 
 /**
  * 포스트 - 목록 조회
@@ -42,6 +46,15 @@ export const getPostLatestListFetch = () => {
  */
 export const setPostFetch = (data: unknown) =>
     clientApi.post<SetPostResponse>("/api/v1/set/post/create", data);
+
+export const getPostDraftListFetch = () =>
+    clientApi.get<ApiResponse<PostDraftListItem[]>>("/api/v1/post/drafts");
+
+export const getPostDraftDetailFetch = (id: string) =>
+    clientApi.get<ApiResponse<PostDraftDetail>>(`/api/v1/post/drafts/${encodeURIComponent(id)}`);
+
+export const savePostDraftFetch = (payload: PostDraftPayload & { id?: string }) =>
+    clientApi.post<ApiResponse<{ id: string }>>("/api/v1/post/drafts", payload);
 
 /**
  * 포스트 - 수정

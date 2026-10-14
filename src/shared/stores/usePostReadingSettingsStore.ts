@@ -16,7 +16,7 @@ type PostReadingSettingsStore = PostReadingSettings & {
 
 const DEFAULT_SETTINGS: PostReadingSettings = {
     fontScale: 1,
-    lineHeight: 1.6,
+    lineHeight: 1.5,
 };
 
 const persistSettings = (settings: PostReadingSettings) => {
@@ -37,7 +37,9 @@ const readStoredSettings = (): PostReadingSettings => {
 
         return {
             fontScale: typeof parsed.fontScale === "number" ? parsed.fontScale : DEFAULT_SETTINGS.fontScale,
-            lineHeight: typeof parsed.lineHeight === "number" ? parsed.lineHeight : DEFAULT_SETTINGS.lineHeight,
+            lineHeight: parsed.lineHeight === 1.6
+                ? DEFAULT_SETTINGS.lineHeight
+                : typeof parsed.lineHeight === "number" ? parsed.lineHeight : DEFAULT_SETTINGS.lineHeight,
         };
     } catch {
         return DEFAULT_SETTINGS;

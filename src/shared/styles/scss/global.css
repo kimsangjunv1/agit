@@ -51,7 +51,7 @@
     .post-reading-root .post-tiptap-content,
     .post-reading-root .post-tiptap-content p {
       font-size: calc(1.8rem * var(--post-read-scale, 1)) !important;
-      line-height: var(--post-read-line-height, 1.6) !important;
+      line-height: var(--post-read-line-height, 1.5) !important;
     }
 }
 

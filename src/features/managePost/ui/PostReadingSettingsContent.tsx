@@ -12,7 +12,7 @@ const FONT_SCALE_OPTIONS = [
 
 const LINE_HEIGHT_OPTIONS = [
     { label: "좁게", value: 1.4 },
-    { label: "보통", value: 1.6 },
+    { label: "보통", value: 1.5 },
     { label: "넓게", value: 1.8 },
     { label: "아주 넓게", value: 2 },
 ] as const;

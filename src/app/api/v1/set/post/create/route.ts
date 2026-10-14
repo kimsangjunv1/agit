@@ -14,8 +14,9 @@ export async function POST(req: Request) {
 
     try {
         const supabase = supabaseAdmin();
+        const { draftId, ...postPayload } = payload;
         const sanitizedPayload = {
-            ...payload,
+            ...postPayload,
             user_id: auth.session.user.id,
             contents: sanitizePostContents(payload.contents),
         };
@@ -25,6 +26,13 @@ export async function POST(req: Request) {
         const { data, error } = await query;
 
         if (error) throw error;
+
+        if (typeof draftId === "string") {
+            await supabase.from("post_drafts")
+                .delete()
+                .eq("id", draftId)
+                .eq("user_id", auth.session.user.id);
+        }
 
         revalidatePostPages(data.idx);
 

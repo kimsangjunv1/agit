@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Codi Agit
 
-## Getting Started
+프론트엔드 개발 기록과 프로젝트를 모아둔 개인 블로그입니다.
+경력과 작업한 프로젝트를 소개하는 이력서 페이지도 함께 만들었습니다.
 
-First, run the development server:
+[서비스 바로가기](https://www.codi-agit.com/)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 소개
+
+Codi Agit는 개발하면서 배운 내용을 글로 남기고, 만든 프로젝트를 소개하는 공간이에요.
+
+개발 중에 해결한 문제와 그때의 고민을 기록해 두고 싶어 시작했으며,
+직접 운영하는 블로그에서 새로운 화면 구성과 인터랙션도 시도해 보고 있습니다.
+
+## 사용 기술
+
+| 구분             | 기술                     | 사용한 곳                               |
+| ---------------- | ------------------------ | --------------------------------------- |
+| 프레임워크       | Next.js 15 · React 19    | 페이지 구성, 서버 렌더링, API           |
+| 언어             | TypeScript               | 컴포넌트와 API 데이터의 타입 정의       |
+| 스타일           | Tailwind CSS 4 · SCSS    | 반응형 화면과 공통 스타일               |
+| 상태 관리        | TanStack Query · Zustand | 서버 데이터 조회와 캐싱, 화면 상태 관리 |
+| 데이터·파일 저장 | Supabase                 | 게시글·사용자 데이터와 이미지 저장      |
+| 인증             | NextAuth.js · bcrypt     | 로그인, 세션 관리, 비밀번호 해싱        |
+| 에디터           | Tiptap · lowlight        | 리치 텍스트 편집과 코드 구문 강조       |
+| 인터랙션         | Motion · Lenis           | 화면 애니메이션과 부드러운 스크롤       |
+| 댓글             | Giscus                   | GitHub Discussions와 댓글 연동          |
+| 코드 검사·테스트 | ESLint · Vitest          | 코드 규칙 검사와 주요 로직 테스트       |
+
+## 프로젝트 구조
+
+페이지, 기능, 데이터, 공통 코드를 아래 폴더로 나누었습니다.
+
+```text
+src/
+├── app/        # 페이지 라우팅, API, 전역 레이아웃과 Provider
+├── views/      # 페이지 단위 화면 조합
+├── widgets/    # 아카이브, 이력서, 게시글, 관리 화면 구성
+├── features/   # 글 작성·편집 및 피드백 수집 기능
+├── entities/   # 게시글, 사용자, 카테고리 등의 API와 데이터 타입
+└── shared/     # 공통 UI, 훅, 상태 저장소, 유틸리티와 스타일
+supabase/
+└── migrations/ # 데이터베이스 스키마와 정책 변경 이력
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 참고 사항
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- 관리 화면 접근·글 작성·수정·삭제는 관리자만 가능합니다.
+- 댓글은 Giscus 연동 설정이 완료된 경우에만 표시됩니다.

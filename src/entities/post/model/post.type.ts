@@ -125,6 +125,24 @@ export type SetPostResponse = ApiResponse<{
     postIdx?: number;
 }>;
 
+export interface PostDraftPayload {
+    title: string;
+    summary: string;
+    thumbnail: string;
+    category_idx: number;
+    contents: SectionContent[][];
+}
+
+export interface PostDraftListItem {
+    id: string;
+    title: string;
+    updated_at: string;
+}
+
+export interface PostDraftDetail extends PostDraftListItem {
+    payload: PostDraftPayload;
+}
+
 export interface PostManagerItem {
     idx: number;
     title: string;

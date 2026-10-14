@@ -34,13 +34,14 @@ export const parsePostRichTextHtml = (html: string): RichTextPart[] => {
             return;
         }
 
-        if (node instanceof HTMLElement) {
-            parts.push({ type: "html", content: node.outerHTML });
-            return;
-        }
-
-        if (node.textContent?.trim()) {
-            parts.push({ type: "html", content: node.textContent });
+        const content = node instanceof HTMLElement ? node.outerHTML : node.textContent ?? "";
+        if (content.trim()) {
+            const previous = parts[parts.length - 1];
+            if (previous?.type === "html") {
+                previous.content += content;
+            } else {
+                parts.push({ type: "html", content });
+            }
         }
     });
 
