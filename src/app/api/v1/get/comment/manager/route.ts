@@ -13,10 +13,7 @@ export async function GET(req: Request) {
         const supabase = await supabaseServer();
         const { searchParams } = new URL(req.url);
 
-        let query = supabase
-            .from(TABLE_NAME)
-            .select("idx, post_id, author, msg, is_admin, created_at, posts!inner(title)", { count: "estimated" })
-            .order("created_at", { ascending: false });
+        let query = supabase.from(TABLE_NAME).select("idx, post_id, author, msg, is_admin, created_at, posts!inner(title)", { count: "estimated" }).order("created_at", { ascending: false });
 
         const { page, pageSize } = getPageParams(searchParams, DEFAULT_PAGE_SIZE);
 

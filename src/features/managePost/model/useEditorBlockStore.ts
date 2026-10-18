@@ -35,16 +35,18 @@ interface BlockStore {
 }
 
 const initialRow: Row[] = [
-    [{
-        id: Date.now().toString(), 
-        type: 0, 
-        title: "",
-        subtitle: "",
-        summary: "",
-        content: "",
-        imageUrl: "",
-        blockMode: "sub",
-    }],
+    [
+        {
+            id: Date.now().toString(),
+            type: 0,
+            title: "",
+            subtitle: "",
+            summary: "",
+            content: "",
+            imageUrl: "",
+            blockMode: "sub",
+        },
+    ],
 ];
 
 export const useBlockStore = create<BlockStore>((set, get) => ({
@@ -69,11 +71,7 @@ export const useBlockStore = create<BlockStore>((set, get) => ({
             blockMode: "sub",
         };
         set((state) => {
-            const newRows = state.rows.map((row, i) =>
-                i === rowIndex && direction === "right" && row.length < 2
-                    ? [...row, newBlock]
-                    : row
-            );
+            const newRows = state.rows.map((row, i) => (i === rowIndex && direction === "right" && row.length < 2 ? [...row, newBlock] : row));
             if (direction === "down") {
                 newRows.splice(rowIndex + 1, 0, [newBlock]);
             }
@@ -87,27 +85,18 @@ export const useBlockStore = create<BlockStore>((set, get) => ({
 
     updateBlock: (rowIndex, blockIndex, newData) =>
         set((state) => ({
-            rows: state.rows.map((row, i) =>
-                i === rowIndex
-                    ? row.map((b, j) => (j === blockIndex ? { ...b, ...newData } : b))
-                    : row
-            ),
+            rows: state.rows.map((row, i) => (i === rowIndex ? row.map((b, j) => (j === blockIndex ? { ...b, ...newData } : b)) : row)),
         })),
 
     deleteBlock: (rowIndex, blockIndex) =>
         set((state) => ({
-            rows: state.rows
-                .map((row, i) =>
-                    i === rowIndex ? row.filter((_, j) => j !== blockIndex) : row
-                )
-                .filter((row) => row.length > 0),
+            rows: state.rows.map((row, i) => (i === rowIndex ? row.filter((_, j) => j !== blockIndex) : row)).filter((row) => row.length > 0),
         })),
 
     deleteRow: (rowIndex) =>
         set((state) => ({
             rows: state.rows.filter((_, i) => i !== rowIndex),
-            selectedPosition:
-                get().selectedPosition?.rowIndex === rowIndex ? null : get().selectedPosition,
+            selectedPosition: get().selectedPosition?.rowIndex === rowIndex ? null : get().selectedPosition,
         })),
 
     copyBlock: (rowIndex, blockIndex) => {
@@ -122,11 +111,7 @@ export const useBlockStore = create<BlockStore>((set, get) => ({
         const newBlock = { ...copiedBlock, id: Date.now().toString() };
         const { rowIndex, blockIndex } = selectedPosition;
 
-        const newRows = rows.map((row, i) =>
-            i === rowIndex
-                ? [...row.slice(0, blockIndex + 1), newBlock, ...row.slice(blockIndex + 1)]
-                : row
-        );
+        const newRows = rows.map((row, i) => (i === rowIndex ? [...row.slice(0, blockIndex + 1), newBlock, ...row.slice(blockIndex + 1)] : row));
         set({ rows: newRows });
         set({ copiedBlock: null });
     },
@@ -136,12 +121,13 @@ export const useBlockStore = create<BlockStore>((set, get) => ({
     unSelectRow: () => set({ currentRowPosition: null }),
 
     // 초기 상태로 리셋
-    reset: () => set({
-        rows: initialRow,
-        copiedBlock: null,
-        selectedPosition: null,
-        currentRowStyle: {},
-        currentRowPosition: {},
-        currentLockKey: 999,
-    }),
+    reset: () =>
+        set({
+            rows: initialRow,
+            copiedBlock: null,
+            selectedPosition: null,
+            currentRowStyle: {},
+            currentRowPosition: {},
+            currentLockKey: 999,
+        }),
 }));

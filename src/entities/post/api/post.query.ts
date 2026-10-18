@@ -14,13 +14,7 @@ import {
     setPostLikeIncrementFetch,
     setPostViewIncrementFetch,
 } from "@/entities/post/api/post.api";
-import {
-    DeletePostManagerPayload,
-    GetPostDetailResponse,
-    GetPostLatestListResponse,
-    GetPostListResponse,
-    GetPostManagerListResponse,
-} from "@/entities/post/model/post.type";
+import { DeletePostManagerPayload, GetPostDetailResponse, GetPostLatestListResponse, GetPostListResponse, GetPostManagerListResponse } from "@/entities/post/model/post.type";
 
 const removePostFromListCaches = (queryClient: QueryClient, deletedIdx: number) => {
     queryClient.setQueryData<GetPostListResponse>([AgitRoutes.KEY_POST, "list"], (old) => {
@@ -85,11 +79,7 @@ type UseGetPostDetailQueryOptions = {
     enabled?: boolean;
 };
 
-export const useGetPostDetailQuery = (
-    postIdx?: number,
-    initialData?: GetPostDetailResponse,
-    options?: UseGetPostDetailQueryOptions,
-) => {
+export const useGetPostDetailQuery = (postIdx?: number, initialData?: GetPostDetailResponse, options?: UseGetPostDetailQueryOptions) => {
     const hasValidInitialData = initialData?.resultCode === "SUCCESS";
 
     const { data, isLoading, isError, error, isFetching, refetch } = useQuery<GetPostDetailResponse>({
@@ -149,7 +139,18 @@ export const useSetPostQuery = () => {
         },
     });
 
-    return { mutate, mutateAsync, isError, isIdle, isSuccess, isPending, isPaused, data, error, reset };
+    return {
+        mutate,
+        mutateAsync,
+        isError,
+        isIdle,
+        isSuccess,
+        isPending,
+        isPaused,
+        data,
+        error,
+        reset,
+    };
 };
 
 export const usePatchPostQuery = () => {
@@ -163,7 +164,18 @@ export const usePatchPostQuery = () => {
         },
     });
 
-    return { mutate, mutateAsync, isError, isIdle, isSuccess, isPending, isPaused, data, error, reset };
+    return {
+        mutate,
+        mutateAsync,
+        isError,
+        isIdle,
+        isSuccess,
+        isPending,
+        isPaused,
+        data,
+        error,
+        reset,
+    };
 };
 
 export const useSetLikeIncrementQuery = () => {
@@ -177,7 +189,18 @@ export const useSetLikeIncrementQuery = () => {
         },
     });
 
-    return { mutate, mutateAsync, isError, isIdle, isSuccess, isPending, isPaused, data, error, reset };
+    return {
+        mutate,
+        mutateAsync,
+        isError,
+        isIdle,
+        isSuccess,
+        isPending,
+        isPaused,
+        data,
+        error,
+        reset,
+    };
 };
 
 export const useGetPostManagerListQuery = () => {
@@ -202,5 +225,16 @@ export const useDeletePostManagerQuery = () => {
         },
     });
 
-    return { mutate, mutateAsync, isError, isIdle, isSuccess, isPending, isPaused, data, error, reset };
+    return {
+        mutate,
+        mutateAsync,
+        isError,
+        isIdle,
+        isSuccess,
+        isPending,
+        isPaused,
+        data,
+        error,
+        reset,
+    };
 };

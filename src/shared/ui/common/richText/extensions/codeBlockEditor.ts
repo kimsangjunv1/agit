@@ -1,16 +1,25 @@
+import { styleSyntaxTree } from "@/shared/lib/richText/syntax";
+import { CODE_PRE_CLASS, CODE_TEXT_CLASS } from "@/shared/lib/richText/styles";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import Document from "@tiptap/extension-document";
 import History from "@tiptap/extension-history";
 import Text from "@tiptap/extension-text";
-import { Extension } from "@tiptap/core";
+import { Extension, mergeAttributes } from "@tiptap/core";
 import { all, createLowlight } from "lowlight";
 
 import { CODE_TAB_STRING, DEFAULT_CODE_LANGUAGE, detectCodeLanguage } from "@/shared/lib/codeHighlight";
 
-export const codeBlockLowlight = createLowlight(all);
+const lowlight = createLowlight(all);
+export const codeBlockLowlight = {
+    ...lowlight,
+    highlight: (...args: Parameters<typeof lowlight.highlight>) => styleSyntaxTree(lowlight.highlight(...args)),
+    highlightAuto: (...args: Parameters<typeof lowlight.highlightAuto>) => styleSyntaxTree(lowlight.highlightAuto(...args)),
+};
 
 const getCurrentLineRange = (state: {
-    doc: { textBetween: (from: number, to: number, blockSeparator?: string, leafText?: string) => string };
+    doc: {
+        textBetween: (from: number, to: number, blockSeparator?: string, leafText?: string) => string;
+    };
     selection: { $from: { start: () => number; end: () => number; pos: number } };
 }) => {
     const blockStart = state.selection.$from.start();
@@ -63,12 +72,20 @@ export const CodeBlockShortcuts = Extension.create({
                 const beforeCursor = state.doc.textBetween(Math.max(0, from - CODE_TAB_STRING.length), from);
 
                 if (beforeCursor === CODE_TAB_STRING) {
-                    editor.chain().focus().deleteRange({ from: from - CODE_TAB_STRING.length, to: from }).run();
+                    editor
+                        .chain()
+                        .focus()
+                        .deleteRange({ from: from - CODE_TAB_STRING.length, to: from })
+                        .run();
                     return true;
                 }
 
                 if (beforeCursor.endsWith("\t")) {
-                    editor.chain().focus().deleteRange({ from: from - 1, to: from }).run();
+                    editor
+                        .chain()
+                        .focus()
+                        .deleteRange({ from: from - 1, to: from })
+                        .run();
                 }
 
                 return true;
@@ -133,13 +150,18 @@ export const CodeBlockLanguageAutoDetect = Extension.create({
     },
 });
 
+const StyledCodeBlock = CodeBlockLowlight.extend({
+    renderHTML({ HTMLAttributes }) {
+        return ["pre", mergeAttributes(HTMLAttributes, { class: CODE_PRE_CLASS }), ["code", { class: CODE_TEXT_CLASS }, 0]];
+    },
+});
 export const createCodeBlockEditorExtensions = () => [
     Document.extend({
         content: "codeBlock",
     }),
     Text,
     History.configure({ depth: 200 }),
-    CodeBlockLowlight.configure({
+    StyledCodeBlock.configure({
         lowlight: codeBlockLowlight,
         defaultLanguage: DEFAULT_CODE_LANGUAGE,
         HTMLAttributes: {

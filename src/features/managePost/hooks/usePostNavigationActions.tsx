@@ -5,23 +5,14 @@ import { useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
 
 import { useGetPostDetailQuery } from "@/entities/post/api/post.query";
-import { savePostDraftFetch } from "@/entities/post/api/post.api";
+import { setPostDraftFetch } from "@/entities/post/api/post.api";
 import type { SectionContent } from "@/entities/post/model/post.type";
-import {
-    useDeletePostWithFeedback,
-    useLikeIncrementWithFeedback,
-    usePatchPostWithFeedback,
-    useSetPostWithFeedback,
-} from "@/features/managePost/hooks/usePostMutations";
+import { useDeletePostWithFeedback, useLikeIncrementWithFeedback, usePatchPostWithFeedback, useSetPostWithFeedback } from "@/features/managePost/hooks/usePostMutations";
 import { preparePostPayloadForSave } from "@/features/managePost/lib/preparePostSave";
 import type { PostNavAction } from "@/features/managePost/lib/postNavigationActions";
-import {
-    canManagePost,
-    getPostNavVisibility,
-    hasVisiblePostNavActions,
-} from "@/features/managePost/lib/postPermissions";
+import { canManagePost, getPostNavVisibility, hasVisiblePostNavActions } from "@/features/managePost/lib/postPermissions";
 import PostTocModalContent from "@/features/managePost/ui/PostTocModalContent";
-import { buildPostToc } from "@/widgets/post/lib/postToc";
+import { buildPostToc } from "@/entities/post/lib/postToc";
 import { util } from "@/shared/lib/util";
 import { useCreatePostStore } from "@/shared/stores/useCreatePostStore";
 import { useModalStore } from "@/shared/stores/useModalStore";
@@ -35,13 +26,7 @@ type UsePostNavigationActionsParams = {
     pushToUrl: (url: string) => void;
 };
 
-export const usePostNavigationActions = ({
-    postIdx,
-    isView,
-    isCreate,
-    isEdit,
-    pushToUrl,
-}: UsePostNavigationActionsParams) => {
+export const usePostNavigationActions = ({ postIdx, isView, isCreate, isEdit, pushToUrl }: UsePostNavigationActionsParams) => {
     const router = useRouter();
     const { data: session } = useSession();
     const { setToast } = useToastStore();
@@ -68,16 +53,10 @@ export const usePostNavigationActions = ({
         [postDetailData?.result?.user_id, session?.user?.id, session?.user?.role],
     );
 
-    const tocItems = useMemo(
-        () => buildPostToc(postDetailData?.result?.contents ?? []),
-        [postDetailData?.result?.contents],
-    );
+    const tocItems = useMemo(() => buildPostToc(postDetailData?.result?.contents ?? []), [postDetailData?.result?.contents]);
     const hasToc = tocItems.length > 0;
 
-    const navVisibility = useMemo(
-        () => getPostNavVisibility({ canManage, isView, hasToc }),
-        [canManage, hasToc, isView],
-    );
+    const navVisibility = useMemo(() => getPostNavVisibility({ canManage, isView, hasToc }), [canManage, hasToc, isView]);
 
     const hasNavActions = hasVisiblePostNavActions(navVisibility);
 
@@ -117,8 +96,7 @@ export const usePostNavigationActions = ({
                 await patchPostFetchAsync({ data: payload, idx: post_idx });
             }
         } catch (error) {
-            const message =
-                error instanceof Error ? error.message : "저장 중 오류가 발생했습니다.";
+            const message = error instanceof Error ? error.message : "저장 중 오류가 발생했습니다.";
             setToast({ msg: message, time: 2 });
         }
     };
@@ -135,7 +113,10 @@ export const usePostNavigationActions = ({
                 category_idx,
                 contents,
             });
-            const response = await savePostDraftFetch({ ...payload, id: draft_id ?? undefined });
+            const response = await setPostDraftFetch({
+                ...payload,
+                id: draft_id ?? undefined,
+            });
             setDraftId(response.result.id);
             setToast({ msg: "임시저장했어요", type: "success" });
         } catch (error) {
@@ -157,9 +138,7 @@ export const usePostNavigationActions = ({
             content: (
                 <article className="flex flex-col gap-[1.2rem]">
                     <p className="text-[var(--color-gray-600)]">삭제 대상: {postTitle}</p>
-                    <p className="text-[1.2rem] text-[var(--color-gray-500)]">
-                        연결된 댓글과 조회 기록도 함께 삭제됩니다.
-                    </p>
+                    <p className="text-[1.2rem] text-[var(--color-gray-500)]">연결된 댓글과 조회 기록도 함께 삭제됩니다.</p>
                 </article>
             ),
             cancel: { text: "취소" },

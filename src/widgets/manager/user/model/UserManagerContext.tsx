@@ -1,25 +1,14 @@
 "use client";
-
 import { createContext, useContext, type ReactNode } from "react";
-
-import useSearch from "./useSearch";
-
-type UserManagerPageContextValue = ReturnType<typeof useSearch>;
-
-const UserManagerPageContext = createContext<UserManagerPageContextValue | null>(null);
-
+import useUserManager from "./useUserManager";
+type UserManagerValue = ReturnType<typeof useUserManager>;
+const Context = createContext<UserManagerValue | null>(null);
 export function UserManagerPageProvider({ children }: { children: ReactNode }) {
-    const search = useSearch();
-
-    return <UserManagerPageContext.Provider value={search}>{children}</UserManagerPageContext.Provider>;
+    const value = useUserManager();
+    return <Context.Provider value={value}>{children}</Context.Provider>;
 }
-
 export function useUserManagerProvider() {
-    const context = useContext(UserManagerPageContext);
-
-    if (!context) {
-        throw new Error("useUserManagerProvider must be used within UserManagerPageProvider");
-    }
-
-    return context;
+    const value = useContext(Context);
+    if (!value) throw new Error("useUserManagerProvider must be used within UserManagerPageProvider");
+    return value;
 }

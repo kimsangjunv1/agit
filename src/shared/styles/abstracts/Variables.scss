@@ -1,0 +1,168 @@
+:root {
+    /* 폰트 */
+    --custom-font: "Helvetica Neue";
+    --root-font-size: 62.5%;
+    --default-font-size: 1.6rem;
+    // --default-font-size: 1.6rem;
+
+    --preview-font: "NanumMyeongjo";
+    // --preview-font: "NanumMyeongjo";
+
+    /* 배경 색상 */
+    --color-background-light: #ffffff;
+    --color-background-outside: #ffffff;
+    --color-background-normal: white;
+    --color-background-funnel: #ffffff;
+
+    /* 텍스트 색상 */
+    --color-main-text-light: var(--color-gray-800);
+
+    /* 브랜드 색상 */
+    --color-brand-900: #095eb9;
+    --color-brand-800: #1870c5;
+    --color-brand-700: #2982d1;
+    --color-brand-600: #3b92dd;
+    --color-brand-500: #3c9aff; /* 기본 강조색 */
+    --color-brand-400: #5aaaff;
+    --color-brand-300: #83c1ff;
+    --color-brand-200: #b0d8ff;
+    --color-brand-100: #eaf1ff; /* 부드러운 배경용 */
+    --color-brand-50: #f4f7ff; /* 거의 흰색에 가까운 파랑기 배경 */
+
+    /* 그레이 색상 */
+    --color-gray-50: #f9fafb;
+    --color-gray-100: #f2f4f6;
+    --color-gray-200: #e5e8eb;
+    --color-gray-300: #d1d6db;
+    --color-gray-400: #b0b8c1;
+    --color-gray-500: #8b95a1;
+    --color-gray-600: #6b7684;
+    --color-gray-700: #4e5968;
+    --color-gray-800: #333d4b;
+    --color-gray-900: #191f28;
+    --color-gray-1000: #000000;
+
+    /* 동의 색상 (그린) */
+    --color-green-50: #f0faf6;
+    --color-green-100: #aeefd5;
+    --color-green-200: #76e4b8;
+    --color-green-300: #3fd599;
+    --color-green-400: #15c47e;
+    --color-green-500: #03b26c;
+    --color-green-600: #02a262;
+    --color-green-700: #029359;
+    --color-green-800: #028450;
+    --color-green-900: #027648;
+
+    /* 부정 색상 (레드) */
+    --color-red-50: #ffeeee;
+    --color-red-100: #ffd4d6;
+    --color-red-200: #feafb4;
+    --color-red-300: #fb8890;
+    --color-red-400: #f66570;
+    --color-red-500: #f04452;
+    --color-red-600: #e42939;
+    --color-red-700: #d22030;
+    --color-red-800: #bc1b2a;
+    --color-red-900: #a51926;
+    // --color-red-500: #a51926;
+
+    /* 블루 계열 색상 */
+    --color-blue-900: #1957c2;
+    --color-blue-800: #1b64da;
+    --color-blue-700: #2272eb;
+    --color-blue-600: #3182f6; /* 메인 블루: 중간 */
+    --color-blue-500: #4593fc;
+    --color-blue-400: #64a8ff;
+    --color-blue-300: #90c2ff;
+    --color-blue-200: #c9e2ff;
+    --color-blue-100: #e8f3ff;
+    --color-blue-50: #f4f7ff; /* 가장 밝은 블루 */
+
+    /* 경고 색상 (오렌지) */
+    --color-orange-900: #a33100;
+    --color-orange-500: #ff7337;
+    --color-orange-50: #fff4ef;
+
+    /* 헤더, 푸터, 배너 크기 */
+    --button-height: 4rem;
+    --button-min-height: 3.2rem;
+    --nav-height: 5.2rem;
+    --header-height: 4.8rem;
+    --notice-height: 4rem;
+    --footer-height: calc(1.6rem * 8);
+    --letter-line-height: 1.29;
+
+    --tool-height: 4.8rem;
+    --tool-width: 24.4rem;
+
+    --preview-width: 37.6rem;
+    --preview-height: 66.8rem;
+
+    --modal-width: 46.4rem;
+
+    /* 레이아웃 간격 */
+    --section-space: 12.8rem;
+    --between-space: 1.2rem;
+
+    /* 입력 폼 */
+    --input-height: 4.4rem;
+    --input-padding: 0.4rem 0;
+    --input-date-width: 12.4rem;
+
+    --shadow-normal: 0 20px 52px 0 var(--color-gray-400);
+    // --shadow-normal: inset 0 0 0 4px var(--color-gray-200), 0 20px 36px 0px #0000000d;
+    --shadow-popup:
+        0 4px 4px 4px #2929290a, 0 4px 4px -4px #29292905, 0 8px 8px -4px #2929290a, 0 12px 12px -8px #2929290a, 0 24px 24px -12px #2929290a, 0 48px 48px -24px #5e5e6a94, 0 0 0 4px #2929290a,
+        inset 0 -4px 4px -4px #3333330f;
+    // --shadow-normal: 0 4px 4px 4px #2929290a,0 4px 4px -4px #29292905,0 8px 8px -4px #2929290a,0 12px 12px -8px #2929290a,0 24px 24px -12px #2929290a,0 48px 48px -24px #2929290a,0 0 0 4px #2929290a,inset 0 -4px 4px -4px #3333330f;
+    --shadow-hard:
+        inset 0 0 0 4px var(--color-gray-500), 0 20px 8px #731f0803, 0 12px 8px #731f080a, 0 4px 4px #731f0812, 0 4px 4px #731f0814, 0 0 0 4px var(--color-gray-200), inset 0 4px 4px #ffffff1f;
+
+    --shadow-border-normal: inset 0 0 0 4px var(--color-gray-200);
+    --shadow-border-hover: inset 0 0 0 4px var(--color-blue-300);
+    --shadow-border-fail-normal: inset 0 0 0 4px var(--color-red-500);
+    --shadow-border-fail-hover: inset 0 0 0 4px var(--color-red-500);
+    --shadow-border-brand: inset 0 0 0 4px var(--color-brand-500);
+
+    --shadow-brand-hard:
+        inset 0 0 0 4px var(--color-brand-500), 0 20px 8px #731f0803, 0 12px 8px #731f080a, 0 4px 4px #731f0812, 0 4px 4px #731f0814, 0 0 0 4px var(--color-brand-500), inset 0 4px 4px #ffffff1f;
+
+    --empty-element-height: calc(1.6rem * 15);
+    --empty-action-height: calc(1.6rem * 3);
+    --empty-filter-height: calc(1.6rem * 2);
+    --empty-pagination-height: calc(1.6rem * 2);
+
+    /* 버튼 크기 */
+    --button-sm-height: 3.2rem;
+    --button-sm-padding: 0.4rem 0.4rem;
+
+    --button-md-height: 3.6rem;
+    --button-md-padding: 0.4rem 1.2rem;
+
+    --button-lg-height: 5.2rem;
+    --button-lg-padding: 1.2rem 2rem;
+
+    /* 버튼 크기 */
+    --button-height-xxs: 2rem;
+    --button-height-xs: 2.8rem;
+    --button-height-sm: 3.6rem;
+    --button-height-md: 4.4rem;
+    --button-height-lg: 4.8rem;
+
+    /* 반응형 사이즈 */
+    --size-pc-full-hd: 1920px;
+    --size-pc-wide: 1440px;
+    --size-pc: 1024px;
+    --size-tablet: 768px;
+    --size-phablet: 512px;
+    --size-mobile: 376px;
+    --sidebar-sub-width: calc(1.6rem * 18);
+    // --sidebar-sub-width: 28.8rem;
+
+    /* 라이브러리 관련 */
+    --toastify-toast-min-height: auto !important;
+
+    /* 스크롤 탑 위치 */
+    --scroll-top: 0;
+}

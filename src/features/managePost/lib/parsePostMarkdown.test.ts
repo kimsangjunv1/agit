@@ -27,11 +27,17 @@ describe("parsePostMarkdown", () => {
         expect(result.title).toBe("게시글 제목");
         expect(result.summary).toBe("게시글 요약");
         expect(result.rows).toHaveLength(3);
-        expect(result.rows[0][0]).toMatchObject({ title: "첫 번째 단락", blockMode: "main" });
+        expect(result.rows[0][0]).toMatchObject({
+            title: "첫 번째 단락",
+            blockMode: "main",
+        });
         expect(result.rows[0][0].content).toContain("<strong>강조</strong>");
         expect(result.rows[1]).toHaveLength(2);
         expect(result.rows[1][0].content).toContain("<strong>왼쪽: 코드</strong>");
-        expect(result.rows[2][0]).toMatchObject({ title: "두 번째 단락", blockMode: "main" });
+        expect(result.rows[2][0]).toMatchObject({
+            title: "두 번째 단락",
+            blockMode: "main",
+        });
         expect(result.rows[2][0].content).toContain("<ul>");
     });
 

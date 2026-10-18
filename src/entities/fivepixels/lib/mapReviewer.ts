@@ -1,9 +1,4 @@
-import type {
-    FivepixelsReviewerItem,
-    FivepixelsReviewerRequestRow,
-    FivepixelsReviewerRow,
-    ReportReviewerRequest,
-} from "@/entities/fivepixels/model/fivepixels.type";
+import type { FivepixelsReviewerItem, FivepixelsReviewerRequestRow, FivepixelsReviewerRow, ReportReviewerRequest } from "@/entities/fivepixels/model/fivepixels.type";
 
 /** DB row → 라이브러리 `ReportAuthor`(team.reviewers 항목). publicKey/role/isActive 노출. */
 export function mapReviewerRowToItem(row: FivepixelsReviewerRow): FivepixelsReviewerItem {

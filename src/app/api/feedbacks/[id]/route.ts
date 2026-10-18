@@ -1,20 +1,12 @@
 import { NextResponse } from "next/server";
 
 import { FIVEPIXELS_TABLE_NAME } from "@/entities/fivepixels/constants/fivepixels.constants";
-import {
-    FEEDBACK_NOT_FOUND_MESSAGE,
-    FEEDBACK_SCOPE_REQUIRED_MESSAGE,
-    feedbackError,
-    feedbackErrorFrom,
-} from "@/entities/fivepixels/lib/feedbackResponse";
+import { FEEDBACK_NOT_FOUND_MESSAGE, FEEDBACK_SCOPE_REQUIRED_MESSAGE, feedbackError, feedbackErrorFrom } from "@/entities/fivepixels/lib/feedbackResponse";
 import { mapPayloadToUpdate, mapRowToFeedback } from "@/entities/fivepixels/lib/mapFeedback";
 import { parseFivepixelsScope } from "@/entities/fivepixels/lib/scope";
 import { verifyFeedbackAuth } from "@/entities/fivepixels/lib/verifyFeedbackAuth";
 import { readTeamAuthHeader, verifyTeamActor } from "@/entities/fivepixels/lib/verifyTeamActor";
-import type {
-    FivepixelsFeedbackRow,
-    UpdateReportFeedbackPayload,
-} from "@/entities/fivepixels/model/fivepixels.type";
+import type { FivepixelsFeedbackRow, UpdateReportFeedbackPayload } from "@/entities/fivepixels/model/fivepixels.type";
 import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
 
 type FeedbackRouteContext = { params: Promise<{ id: string }> };
@@ -42,19 +34,9 @@ export async function PATCH(req: Request, { params }: FeedbackRouteContext) {
         const supabase = supabaseAdmin();
         // 전달된 키만 shallow merge, 배열·객체 필드는 통째 교체된다.
         // auth 는 이번 요청 행위자 서명이며, author_* 는 create(POST) 시점 값을 유지한다.
-        const update = mapPayloadToUpdate(
-            { ...payload, auth: verified.author.auth },
-            new Date().toISOString()
-        );
+        const update = mapPayloadToUpdate({ ...payload, auth: verified.author.auth }, new Date().toISOString());
 
-        const { data, error } = await supabase
-            .from(FIVEPIXELS_TABLE_NAME)
-            .update(update)
-            .eq("id", id)
-            .eq("project_id", scope.projectId)
-            .eq("environment", scope.environment)
-            .select("*")
-            .maybeSingle();
+        const { data, error } = await supabase.from(FIVEPIXELS_TABLE_NAME).update(update).eq("id", id).eq("project_id", scope.projectId).eq("environment", scope.environment).select("*").maybeSingle();
 
         if (error) throw error;
         if (!data) return feedbackError(FEEDBACK_NOT_FOUND_MESSAGE, 404);
@@ -88,14 +70,7 @@ export async function DELETE(req: Request, { params }: FeedbackRouteContext) {
         if (!verified.ok) return verified.response;
 
         const supabase = supabaseAdmin();
-        const { data, error } = await supabase
-            .from(FIVEPIXELS_TABLE_NAME)
-            .delete()
-            .eq("id", id)
-            .eq("project_id", scope.projectId)
-            .eq("environment", scope.environment)
-            .select("id")
-            .maybeSingle();
+        const { data, error } = await supabase.from(FIVEPIXELS_TABLE_NAME).delete().eq("id", id).eq("project_id", scope.projectId).eq("environment", scope.environment).select("id").maybeSingle();
 
         if (error) throw error;
         if (!data) return feedbackError(FEEDBACK_NOT_FOUND_MESSAGE, 404);

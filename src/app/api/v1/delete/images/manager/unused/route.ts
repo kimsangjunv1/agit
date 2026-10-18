@@ -1,5 +1,5 @@
 import { requireAdmin } from "@/shared/lib/auth/requireSession";
-import { deleteUnusedPostImages } from "@/shared/lib/image/postImageInventory";
+import { deleteUnusedPostImages } from "@/entities/post-image/lib/postImageInventory";
 import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
 import { apiError, apiSuccess, resolveRouteError, singleItemPagination } from "@/shared/lib/apiResponse";
 

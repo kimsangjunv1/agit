@@ -29,7 +29,9 @@ const PostDraftLoadModal = ({ onClose, onLoad, onMarkdownClick }: Props) => {
             .finally(() => {
                 if (active) setLoading(false);
             });
-        return () => { active = false; };
+        return () => {
+            active = false;
+        };
     }, []);
 
     const handleLoad = async (id: string) => {
@@ -57,15 +59,36 @@ const PostDraftLoadModal = ({ onClose, onLoad, onMarkdownClick }: Props) => {
                 aria-labelledby="post-draft-title"
                 className="w-full max-w-[48rem] max-h-[80vh] overflow-y-auto rounded-[1.6rem] bg-white p-[2.4rem] shadow-xl"
                 onClick={(event) => event.stopPropagation()}
-                onKeyDown={(event) => { if (event.key === "Escape") onClose(); }}
+                onKeyDown={(event) => {
+                    if (event.key === "Escape") onClose();
+                }}
             >
                 <div className="flex items-center justify-between gap-[1.6rem]">
-                    <h2 id="post-draft-title" className="text-[2rem] font-bold">불러오기</h2>
-                    <button type="button" onClick={onClose} aria-label="닫기" className="text-[2rem]">×</button>
+                    <h2
+                        id="post-draft-title"
+                        className="text-[2rem] font-bold"
+                    >
+                        불러오기
+                    </h2>
+                    <button
+                        type="button"
+                        onClick={onClose}
+                        aria-label="닫기"
+                        className="text-[2rem]"
+                    >
+                        ×
+                    </button>
                 </div>
-                <p className="mt-[1.6rem] text-[1.4rem] text-[var(--color-gray-600)]">임시저장된 글을 선택하세요.</p>
+                <p className="mt-[1.6rem] text-[1.6rem] text-[var(--color-gray-600)]">임시저장된 글을 선택하세요.</p>
                 {loading ? <p className="mt-[2rem]">목록을 불러오는 중...</p> : null}
-                {error ? <p role="alert" className="mt-[1.6rem] text-red-600">{error}</p> : null}
+                {error ? (
+                    <p
+                        role="alert"
+                        className="mt-[1.6rem] text-red-600"
+                    >
+                        {error}
+                    </p>
+                ) : null}
                 {!loading && drafts.length === 0 && !error ? <p className="mt-[2rem]">임시저장된 글이 없어요.</p> : null}
                 {drafts.length > 0 ? (
                     <ul className="mt-[1.6rem] flex flex-col gap-[0.8rem]">
@@ -78,7 +101,10 @@ const PostDraftLoadModal = ({ onClose, onLoad, onMarkdownClick }: Props) => {
                                     className="flex w-full items-center justify-between gap-[1.6rem] rounded-[0.8rem] border border-[var(--color-gray-200)] p-[1.2rem] text-left hover:bg-[var(--color-gray-100)] disabled:opacity-60"
                                 >
                                     <span className="min-w-0 truncate font-semibold">{draft.title || "제목 없음"}</span>
-                                    <time dateTime={draft.updated_at} className="shrink-0 text-[1.2rem] text-[var(--color-gray-600)]">
+                                    <time
+                                        dateTime={draft.updated_at}
+                                        className="shrink-0 text-[1.2rem] text-[var(--color-gray-600)]"
+                                    >
                                         {new Date(draft.updated_at).toLocaleString("ko-KR")}
                                     </time>
                                 </button>
@@ -89,7 +115,7 @@ const PostDraftLoadModal = ({ onClose, onLoad, onMarkdownClick }: Props) => {
                 <button
                     type="button"
                     onClick={onMarkdownClick}
-                    className="mt-[2.4rem] rounded-[0.8rem] border border-[var(--color-gray-300)] px-[1.6rem] py-[1rem] text-[1.4rem]"
+                    className="mt-[2.4rem] rounded-[0.8rem] border border-[var(--color-gray-300)] px-[1.6rem] py-[1.2rem] text-[1.6rem]"
                 >
                     Markdown 파일 불러오기
                 </button>

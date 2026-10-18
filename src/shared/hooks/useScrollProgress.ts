@@ -1,11 +1,8 @@
 import { RefObject, useEffect, useState } from "react";
 
 const getScrollPercent = () => {
-    const winScroll =
-        document.body.scrollTop || document.documentElement.scrollTop;
-    const height =
-        document.documentElement.scrollHeight -
-        document.documentElement.clientHeight;
+    const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
 
     if (height <= 0) return 0;
 

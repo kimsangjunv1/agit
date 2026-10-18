@@ -10,7 +10,7 @@ interface BottomSheetType {
     confirm?: {
         text?: string | null;
         onClick?: () => void;
-        loading?: boolean | null
+        loading?: boolean | null;
     };
     cancel?: {
         text?: string | null;
@@ -30,11 +30,11 @@ interface BottomSheetType {
 }
 
 interface BottomSheetStoreType {
-    initBottomSheet: BottomSheetType
-    bottomSheet: BottomSheetType
+    initBottomSheet: BottomSheetType;
+    bottomSheet: BottomSheetType;
 
-    setBottomSheet: ( props: Partial<BottomSheetType> ) => void;
-    trackingBSConfirmLoading: ( props: boolean ) => void;
+    setBottomSheet: (props: Partial<BottomSheetType>) => void;
+    trackingBSConfirmLoading: (props: boolean) => void;
 }
 
 export const useBottomSheetStore = create<BottomSheetStoreType>((set, get) => ({
@@ -46,19 +46,19 @@ export const useBottomSheetStore = create<BottomSheetStoreType>((set, get) => ({
         confirm: {
             text: "",
             onClick: undefined,
-            loading: null
+            loading: null,
         },
         cancel: {
             text: "",
-            onClick: undefined
+            onClick: undefined,
         },
         guide: {
             text: "",
-            onClick: undefined
+            onClick: undefined,
         },
         refresh: {
             text: null,
-            onClick: undefined
+            onClick: undefined,
         },
         onExit: undefined,
         isOpen: false,
@@ -73,39 +73,41 @@ export const useBottomSheetStore = create<BottomSheetStoreType>((set, get) => ({
         confirm: {
             text: null,
             onClick: undefined,
-            loading: null
+            loading: null,
         },
         cancel: {
             text: null,
-            onClick: undefined
+            onClick: undefined,
         },
         guide: {
             text: null,
-            onClick: undefined
+            onClick: undefined,
         },
         refresh: {
             text: null,
-            onClick: undefined
+            onClick: undefined,
         },
         onExit: undefined,
         isOpen: false,
         isNeedNext: false,
     },
 
-    setBottomSheet: ( bottomSheet ) => set(( state ) => ({
-        bottomSheet: {
-            ...state.bottomSheet,    // 기존 modal 값들을 그대로 유지
-            ...bottomSheet,          // 전달된 modal 값만 덮어씀
-        },
-    })),
-
-    trackingBSConfirmLoading: ( isLoading ) => set((state) => ({
-        bottomSheet: {
-            ...state.bottomSheet,
-            confirm: {
-                ...state.bottomSheet.confirm,
-                loading: isLoading,
+    setBottomSheet: (bottomSheet) =>
+        set((state) => ({
+            bottomSheet: {
+                ...state.bottomSheet, // 기존 modal 값들을 그대로 유지
+                ...bottomSheet, // 전달된 modal 값만 덮어씀
             },
-        },
-    }))
-}))
+        })),
+
+    trackingBSConfirmLoading: (isLoading) =>
+        set((state) => ({
+            bottomSheet: {
+                ...state.bottomSheet,
+                confirm: {
+                    ...state.bottomSheet.confirm,
+                    loading: isLoading,
+                },
+            },
+        })),
+}));

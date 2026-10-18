@@ -1,6 +1,6 @@
 "use client";
 
-import { renewalSkillHighlights } from "@/shared/constants/resume/resumeRenewalData";
+import { renewalSkillHighlights } from "@/entities/resume/constants/resumeRenewalData";
 import RenewalRightBlocks from "./RenewalRightBlocks";
 import RenewalSplitSection from "./RenewalSplitSection";
 import { R } from "./renewalStyles";
@@ -21,7 +21,7 @@ const ResumeRenewalSkillSection = () => {
                         key={skill.id}
                         className={R.body}
                     >
-                        <span className="font-bold text-[1.8rem]">{skill.title}</span> {skill.description}
+                        <span className="font-bold text-[2rem]">{skill.title}</span> {skill.description}
                     </p>
                 ))}
             />

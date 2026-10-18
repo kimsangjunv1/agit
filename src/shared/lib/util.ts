@@ -55,23 +55,22 @@ export const util = {
             return `${days}일 전`;
         },
 
-        getCurrentFullTime: (target: string ) => {
+        getCurrentFullTime: (target: string) => {
             const date = new Date(target);
             const yyyy = date.getFullYear();
-            const MM = String(date.getMonth() + 1).padStart(2, '0');
-            const dd = String(date.getDate()).padStart(2, '0');
+            const MM = String(date.getMonth() + 1).padStart(2, "0");
+            const dd = String(date.getDate()).padStart(2, "0");
             let hour: number | string = date.getHours();
-            const minute = String(date.getMinutes()).padStart(2, '0');
-            const second = String(date.getSeconds()).padStart(2, '0');
-            let period = '오전';
+            const minute = String(date.getMinutes()).padStart(2, "0");
+            const second = String(date.getSeconds()).padStart(2, "0");
+            let period = "오전";
             if (hour >= 12) {
-                period = '오후';
+                period = "오후";
                 if (hour > 12) hour -= 12;
             }
-            hour = String(hour).padStart(2, '0');
+            hour = String(hour).padStart(2, "0");
             return `${yyyy}-${MM}-${dd}_${period}${hour}:${minute}:${second}`;
-       
-        }
+        },
     },
 
     dom: {
@@ -109,7 +108,7 @@ export const util = {
                 const textarea = document.createElement("textarea");
                 textarea.value = text;
                 textarea.style.position = "fixed";
-                textarea.style.left = "-9999px";
+                textarea.style.left = "-10000px";
                 document.body.appendChild(textarea);
                 textarea.focus();
                 textarea.select();

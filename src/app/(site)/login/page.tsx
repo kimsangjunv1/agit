@@ -8,7 +8,10 @@ export const metadata: Metadata = NOINDEX_METADATA;
 
 const Page = async () => {
     return (
-        <Main id="login" className={{ inner: "flex flex-col gap-[2.4rem]", container: "" }}>
+        <Main
+            id="login"
+            className={{ inner: "flex flex-col gap-[2.4rem]", container: "" }}
+        >
             <LoginView />
         </Main>
     );

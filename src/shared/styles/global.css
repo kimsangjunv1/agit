@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+@theme static {
+    --breakpoint-*: initial;
+    --breakpoint-mobile: 21.5rem;
+    --breakpoint-tablet: 48rem;
+    --breakpoint-pc: 90rem;
+
+    --spacing: 0.4rem;
+    --text-xs: 1.2rem;
+    --text-sm: 1.2rem;
+    --text-base: 1.6rem;
+    --text-lg: 2rem;
+    --text-xl: 2rem;
+    --text-2xl: 2.4rem;
+    --text-3xl: 3.2rem;
+    --text-4xl: 3.6rem;
+    --text-5xl: 4.8rem;
+    --text-6xl: 6rem;
+    --text-7xl: 7.2rem;
+    --text-8xl: 9.6rem;
+    --text-9xl: 12.8rem;
+    --radius-xs: 0.4rem;
+    --radius-sm: 0.4rem;
+    --radius-md: 0.8rem;
+    --radius-lg: 0.8rem;
+    --radius-xl: 1.2rem;
+    --radius-2xl: 1.6rem;
+    --radius-3xl: 2.4rem;
+    --radius-4xl: 3.2rem;
+
+    --animate-blinking: blinking 1.2s infinite alternate;
+
+    @keyframes blinking {
+        0%,
+        100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.3;
+        }
+    }
+}

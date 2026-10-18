@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
 
 import Main from "@/widgets/layout/Main";
-import HomeView from "@/views/home/HomeView";
+import FivepixelsView from "@/views/experiment/fivepixels/FivepixelsView";
 import { getPostLatestListServerFetch } from "@/entities/post/api/post.server.api";
 import { GetPostLatestListResponse } from "@/entities/post/model/post.type";
 import { buildPageMetadata, buildWebsiteJsonLd } from "@/shared/lib/seo/metadata";
 import JsonLd from "@/shared/ui/seo/JsonLd";
 import { buildPagination } from "@/shared/lib/utils/apiResponse";
-import { FivePixelsLayer } from "@/features/collectFeedback";
 
 export const metadata: Metadata = buildPageMetadata({
     title: "ARCHIVE",
@@ -34,13 +33,12 @@ const Page = async () => {
 
     return (
         <>
-            <FivePixelsLayer />
             <JsonLd data={buildWebsiteJsonLd()} />
             <Main
                 id="home"
                 className={{ inner: "min-h-[100svh]", container: "" }}
             >
-                <HomeView initialData={initialData} />
+                <FivepixelsView initialData={initialData} />
             </Main>
         </>
     );

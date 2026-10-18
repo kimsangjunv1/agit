@@ -1,6 +1,6 @@
 "use client";
 
-import { renewalContact } from "@/shared/constants/resume/resumeRenewalData";
+import { renewalContact } from "@/entities/resume/constants/resumeRenewalData";
 
 import { StudioSlider } from "./StudioSlider";
 

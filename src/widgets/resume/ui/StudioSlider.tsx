@@ -133,9 +133,7 @@ export function StudioSlider({ items, touch = false, embedded = false, fullWidth
 
     return (
         <motion.section
-            className={`${R.root} overflow-hidden ${
-                fullWidth ? "w-full" : embedded ? "h-full w-full min-h-[calc(100svh-6.4rem)]" : "pb-16"
-            }`}
+            className={`${R.root} overflow-hidden ${fullWidth ? "w-full" : embedded ? "h-full w-full min-h-[calc(100svh-6.4rem)]" : "pb-16"}`}
             initial={isStatic ? false : { opacity: 0, transform: "translateY(100px)" }}
             animate={isStatic ? undefined : { opacity: 1, transform: "translateY(0px)" }}
             exit={isStatic ? undefined : { opacity: 0, transform: "translateY(100px)" }}

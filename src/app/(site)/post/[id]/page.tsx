@@ -7,7 +7,7 @@ import { buildBlogPostingJsonLd, buildPostMetadata } from "@/shared/lib/seo/meta
 import { singleItemPagination } from "@/shared/lib/utils/apiResponse";
 import JsonLd from "@/shared/ui/seo/JsonLd";
 import Main from "@/widgets/layout/Main";
-import PostDetailView from "@/views/post/PostDetailView";
+import PostDetailView from "@/views/post/[id]/PostDetailView";
 
 export const revalidate = 300;
 
@@ -72,8 +72,14 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
     return (
         <>
             {post?.title ? <JsonLd data={buildBlogPostingJsonLd(post)} /> : null}
-            <Main id="post-detail" className={{ inner: "flex flex-col gap-[2.4rem]", container: "" }}>
-                <PostDetailView id={id} initialData={initialData} />
+            <Main
+                id="post-detail"
+                className={{ inner: "flex flex-col gap-[2.4rem]", container: "" }}
+            >
+                <PostDetailView
+                    id={id}
+                    initialData={initialData}
+                />
             </Main>
         </>
     );

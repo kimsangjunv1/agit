@@ -2,7 +2,7 @@ import { requirePostOwnerOrAdmin, requireSession } from "@/shared/lib/auth/requi
 import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
 import { apiError, apiSuccess } from "@/shared/lib/apiResponse";
 import { revalidatePostPages } from "@/shared/lib/revalidatePost";
-import { sanitizePostContents } from "@/shared/lib/sanitizeHtml";
+import { sanitizePostContents } from "@/entities/post/lib/sanitizePostContents";
 
 const TABLE_NAME = "posts";
 
@@ -37,7 +37,7 @@ export async function PATCH(req: Request) {
                 statusCode: 1,
                 postIdx: data.idx,
             },
-            { resultMessage: "수정성공", pagination: null }
+            { resultMessage: "수정성공", pagination: null },
         );
     } catch (error: unknown) {
         const message = error instanceof Error ? error.message : "문제가 생겼습니다";

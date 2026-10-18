@@ -9,8 +9,7 @@ export type OptimizedPostImage = {
     extension: string;
 };
 
-const isSvgFile = (file: File) =>
-    file.type === "image/svg+xml" || file.name.toLowerCase().endsWith(".svg");
+const isSvgFile = (file: File) => file.type === "image/svg+xml" || file.name.toLowerCase().endsWith(".svg");
 
 export const optimizePostImage = async (file: File): Promise<OptimizedPostImage> => {
     if (isSvgFile(file)) {

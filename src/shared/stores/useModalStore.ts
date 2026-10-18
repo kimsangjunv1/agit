@@ -10,7 +10,7 @@ interface Modal {
     focusDescription?: string;
     className?: {
         container?: string;
-    }
+    };
     confirm?: {
         text?: string | null;
         onClick?: () => void;
@@ -27,11 +27,11 @@ interface Modal {
     delay?: number;
 }
 interface ModalStoreType {
-    initModal: Modal
-    modal: Modal
+    initModal: Modal;
+    modal: Modal;
 
-    setModal: ( props: Partial<Modal> ) => void;
-    trackingModalConfirmLoading: ( props: boolean ) => void;
+    setModal: (props: Partial<Modal>) => void;
+    trackingModalConfirmLoading: (props: boolean) => void;
 }
 
 export const useModalStore = create<ModalStoreType>((set, get) => ({
@@ -43,7 +43,7 @@ export const useModalStore = create<ModalStoreType>((set, get) => ({
         description: "",
         focusDescription: "",
         className: {
-            container: ""
+            container: "",
         },
         confirm: {
             text: "",
@@ -68,7 +68,7 @@ export const useModalStore = create<ModalStoreType>((set, get) => ({
         description: "",
         focusDescription: "",
         className: {
-            container: ""
+            container: "",
         },
         confirm: {
             text: null,
@@ -86,20 +86,22 @@ export const useModalStore = create<ModalStoreType>((set, get) => ({
         delay: 0,
     },
 
-    setModal: ( modal ) => set((state) => ({
-        modal: {
-          ...state.modal,    // 기존 modal 값들을 그대로 유지
-          ...modal,          // 전달된 modal 값만 덮어씀
-        },
-    })),
-
-    trackingModalConfirmLoading: ( isLoading ) => set((state) => ({
-        modal: {
-            ...state.modal,
-            confirm: {
-                ...state.modal.confirm,
-                loading: isLoading,
+    setModal: (modal) =>
+        set((state) => ({
+            modal: {
+                ...state.modal, // 기존 modal 값들을 그대로 유지
+                ...modal, // 전달된 modal 값만 덮어씀
             },
-        },
-    }))
-}))
+        })),
+
+    trackingModalConfirmLoading: (isLoading) =>
+        set((state) => ({
+            modal: {
+                ...state.modal,
+                confirm: {
+                    ...state.modal.confirm,
+                    loading: isLoading,
+                },
+            },
+        })),
+}));

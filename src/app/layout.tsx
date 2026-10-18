@@ -19,8 +19,8 @@ import RootChromeView from "@/views/layout/RootChromeView";
 
 import "lenis/dist/lenis.css";
 
-import "@/shared/styles/scss/global.css";
-import "@/shared/styles/scss/index.scss";
+import "@/shared/styles/index.scss";
+import "@/shared/styles/global.css";
 import { Toast } from "@/shared/ui/layout/Toast";
 
 export const metadata: Metadata = {

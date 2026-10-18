@@ -134,7 +134,7 @@ export function ResizableImageNodeView({ node, updateAttributes, getPos, editor 
     return (
         <NodeViewWrapper
             as="div"
-            className="rich-text-image-node"
+            className="rich-text-image-node w-full"
             data-align={align}
             style={getImageWrapperStyle()}
         >
@@ -157,7 +157,7 @@ export function ResizableImageNodeView({ node, updateAttributes, getPos, editor 
                 {isSelected ? (
                     <button
                         aria-label="이미지 크기 조절"
-                        className="absolute bottom-[-0.6rem] right-[-0.6rem] h-[1.4rem] w-[1.4rem] cursor-se-resize border border-white bg-[#3b82f6]"
+                        className="absolute bottom-[-0.8rem] right-[-0.8rem] h-[1.6rem] w-[1.6rem] cursor-se-resize border border-white bg-[#3b82f6]"
                         onPointerDown={startResize}
                         type="button"
                     />

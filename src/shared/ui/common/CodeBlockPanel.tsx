@@ -79,13 +79,13 @@ const CodeBlockPanel = ({
         <button
             type="button"
             onClick={handleCopy}
-            className="flex h-[3rem] w-[3rem] items-center justify-center rounded-[0.8rem] text-slate-400 transition-colors hover:bg-slate-800 hover:text-slate-200"
+            className="flex h-[3.2rem] w-[3.2rem] items-center justify-center rounded-[0.8rem] text-slate-400 transition-colors hover:bg-slate-800 hover:text-slate-200"
             aria-label="코드 복사"
         >
             {copied ? (
                 <MaterialIcon
                     name="check"
-                    size={18}
+                    size={20}
                 />
             ) : (
                 <IconComponent
@@ -105,12 +105,12 @@ const CodeBlockPanel = ({
                         type="button"
                         onClick={handleFormat}
                         disabled={isFormatting}
-                        className="flex h-[3rem] w-[3rem] items-center justify-center rounded-[0.8rem] text-slate-400 transition-colors hover:bg-slate-800 hover:text-slate-200 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="flex h-[3.2rem] w-[3.2rem] items-center justify-center rounded-[0.8rem] text-slate-400 transition-colors hover:bg-slate-800 hover:text-slate-200 disabled:cursor-not-allowed disabled:opacity-50"
                         aria-label="코드 정렬"
                     >
                         <MaterialIcon
                             name="code"
-                            size={18}
+                            size={20}
                         />
                     </button>
                 ) : null}
@@ -122,10 +122,10 @@ const CodeBlockPanel = ({
         return (
             <section className={`code-block-panel overflow-hidden rounded-[1.2rem] border border-slate-700/60 bg-[#13171F] my-[1.2rem] ${className}`}>
                 <div
-                    className={`code-block-panel__body flex items-center gap-[0.8rem] bg-[#1F232A] border border-[#2B2E36] overflow-x-auto font-mono text-[1.4rem] leading-1 text-slate-50 px-[1.2rem] ${bodyClassName}`}
+                    className={`code-block-panel__body flex items-center gap-[0.8rem] bg-[#1F232A] border border-[#2B2E36] overflow-x-auto font-mono text-[1.6rem] leading-1 text-slate-50 px-[1.2rem] ${bodyClassName}`}
                 >
                     <div className="min-w-0 flex-1">{children}</div>
-                    {showCopy ? <div className="flex h-[calc(1.35rem*1.7)] shrink-0 items-center">{copyButton}</div> : null}
+                    {showCopy ? <div className="flex h-[calc(1.2rem*1.7)] shrink-0 items-center">{copyButton}</div> : null}
                 </div>
             </section>
         );
@@ -155,7 +155,7 @@ const CodeBlockPanel = ({
             </header>
 
             <div
-                className={`code-block-panel__body bg-[#1F232A] rounded-[2.4rem] border border-[#2B2E36] overflow-x-auto px-[1.6rem] py-[1.4rem] font-mono text-[1.35rem] leading-[1.7] text-slate-50 ${bodyClassName}`}
+                className={`code-block-panel__body bg-[#1F232A] rounded-[2.4rem] border border-[#2B2E36] overflow-x-auto px-[1.6rem] py-[1.6rem] font-mono text-[1.2rem] leading-[1.7] text-slate-50 ${bodyClassName}`}
             >
                 {children}
             </div>

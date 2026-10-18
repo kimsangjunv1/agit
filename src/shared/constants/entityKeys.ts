@@ -1,4 +1,6 @@
 export const AgitRoutes = {
+    KEY_SEARCH: "search",
+    KEY_FEEDBACK: "feedback",
     KEY_HOME: "home",
     KEY_POST: "post",
     KEY_CATEGORY: "category",

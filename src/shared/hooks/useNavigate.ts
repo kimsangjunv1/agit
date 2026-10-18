@@ -100,7 +100,13 @@ const useNavigate = (_fallbackUrl = "/new-home") => {
         return () => window.removeEventListener("beforeunload", handleBeforeUnload);
     }, [isDirty]);
 
-    return { pushToUrl, replaceToUrl, backToUrl, currentPathName: pathName, isLandingPage: DEFENCE_ROUTE.includes(pathName) };
+    return {
+        pushToUrl,
+        replaceToUrl,
+        backToUrl,
+        currentPathName: pathName,
+        isLandingPage: DEFENCE_ROUTE.includes(pathName),
+    };
 };
 
 export default useNavigate;

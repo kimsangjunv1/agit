@@ -11,11 +11,7 @@ export async function GET(req: Request) {
         const idx = segments[segments.length - 1];
         const post_id = parseInt(idx, 10);
 
-        const { data: currentData, error: currentError } = await supabase
-            .from(TABLE_NAME_POST)
-            .select("*")
-            .eq("post_id", post_id)
-            .order("idx", { ascending: true });
+        const { data: currentData, error: currentError } = await supabase.from(TABLE_NAME_POST).select("*").eq("post_id", post_id).order("idx", { ascending: true });
 
         if (currentError) throw currentError;
 

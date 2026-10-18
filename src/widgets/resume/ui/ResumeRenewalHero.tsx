@@ -1,9 +1,9 @@
 "use client";
 
-import { renewalHero, renewalProfileDetails } from "@/shared/constants/resume/resumeRenewalData";
+import { renewalHero, renewalProfileDetails } from "@/entities/resume/constants/resumeRenewalData";
 import RenewalRightBlocks from "./RenewalRightBlocks";
 import RenewalSplitSection from "./RenewalSplitSection";
-import { resumeProfile } from "@/shared/constants/resume/resumeData";
+import { resumeProfile } from "@/entities/resume/constants/resumeData";
 import { R } from "./renewalStyles";
 import AwwwardsFluidCanvas from "./AwwwardsFluidCanvas";
 
@@ -69,7 +69,7 @@ const ResumeRenewalHero = () => {
                                 </div>
                             ))}
                         </div> */}
-                        <dl className={`${R.divider} pt-[2.4rem] grid grid-cols-[9rem_1fr] gap-y-[1rem] ${R.meta}`}>
+                        <dl className={`${R.divider} pt-[2.4rem] grid grid-cols-[9.2rem_1fr] gap-y-[1.2rem] ${R.meta}`}>
                             {/* <dt>경력</dt>
                             <dd>{resumeProfile.experience}</dd> */}
                             <dt>연락처</dt>
@@ -98,7 +98,7 @@ const ResumeRenewalHero = () => {
                                     rel="noopener noreferrer"
                                     className={R.link}
                                 >
-                                    codi-agit.com
+                                    agit.com
                                 </a>
                             </dd> */}
                         </dl>

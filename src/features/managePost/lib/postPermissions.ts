@@ -21,15 +21,7 @@ export const canManagePost = ({ userId, userRole, postOwnerId }: PostPermissionC
     return userId === postOwnerId;
 };
 
-export const getPostNavVisibility = ({
-    canManage,
-    isView,
-    hasToc,
-}: {
-    canManage: boolean;
-    isView: boolean;
-    hasToc: boolean;
-}): PostNavVisibility => ({
+export const getPostNavVisibility = ({ canManage, isView, hasToc }: { canManage: boolean; isView: boolean; hasToc: boolean }): PostNavVisibility => ({
     showShare: isView,
     showLike: isView,
     showComments: isView,
@@ -39,5 +31,4 @@ export const getPostNavVisibility = ({
     showDelete: canManage,
 });
 
-export const hasVisiblePostNavActions = (visibility: PostNavVisibility) =>
-    Object.values(visibility).some(Boolean);
+export const hasVisiblePostNavActions = (visibility: PostNavVisibility) => Object.values(visibility).some(Boolean);

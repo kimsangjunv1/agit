@@ -15,7 +15,18 @@ export const useSetUserQuery = () => {
         },
     });
 
-    return { mutate, mutateAsync, isError, isIdle, isSuccess, isPending, isPaused, data, error, reset };
+    return {
+        mutate,
+        mutateAsync,
+        isError,
+        isIdle,
+        isSuccess,
+        isPending,
+        isPaused,
+        data,
+        error,
+        reset,
+    };
 };
 
 export const useGetUserManagerListQuery = () => {

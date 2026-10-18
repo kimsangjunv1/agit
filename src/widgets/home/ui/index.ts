@@ -1,3 +1,2 @@
-export { default as ArchiveFeed } from "./ArchiveFeed";
+export { ArchiveFeed, Search, HomeViewModeFloatingMenu } from "@/features/browseArchive";
 export { default as Modal } from "./Modal";
-export { default as Search } from "./Search";

@@ -1,10 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import {
-    INVITE_CODE_STATUS,
-    getInviteCodeStatus,
-    type InviteCodeRecord,
-} from "@/shared/lib/invitation/validateInviteCode";
+import { INVITE_CODE_STATUS, getInviteCodeStatus, type InviteCodeRecord } from "@/shared/lib/invitation/validateInviteCode";
 
 const baseRecord: InviteCodeRecord = {
     id: 1,

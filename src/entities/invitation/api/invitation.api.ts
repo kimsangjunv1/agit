@@ -26,17 +26,17 @@ export const getInvitationCodeListOnManagerFetch = () => {
 /**
  * 초대코드 - 생성
  */
-export const setInvitationCodeFetch = (data: SetInvitationCodePayload) =>
-    clientApi.post<unknown>("/api/v1/set/invite_codes/manager", data);
+export const setInvitationCodeFetch = (data: SetInvitationCodePayload) => clientApi.post<unknown>("/api/v1/set/invite_codes/manager", data);
 
 /**
  * 초대코드 - 수정
  */
-export const patchInvitationFetch = (data: PatchInvitationCodePayload) =>
-    clientApi.patch<unknown>("/api/v1/patch/invite_codes/manager", data);
+export const patchInvitationFetch = (data: PatchInvitationCodePayload) => clientApi.patch<unknown>("/api/v1/patch/invite_codes/manager", data);
 
 /**
  * 초대코드 - 삭제
  */
 export const deleteInvitationFetch = (data: DeleteInvitationCodePayload) =>
-    clientApi.delete<unknown>("/api/v1/delete/invite_codes/manager", { body: data });
+    clientApi.delete<unknown>("/api/v1/delete/invite_codes/manager", {
+        body: data,
+    });

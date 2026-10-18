@@ -1,13 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { AgitRoutes } from "@/shared/constants/entityKeys";
-import {
-    deleteInvitationFetch,
-    getInvitationCodeCheckFetch,
-    getInvitationCodeListOnManagerFetch,
-    patchInvitationFetch,
-    setInvitationCodeFetch,
-} from "@/entities/invitation/api/invitation.api";
+import { deleteInvitationFetch, getInvitationCodeCheckFetch, getInvitationCodeListOnManagerFetch, patchInvitationFetch, setInvitationCodeFetch } from "@/entities/invitation/api/invitation.api";
 import {
     DeleteInvitationCodePayload,
     GetInvitationCodeCheckResponse,
@@ -48,7 +42,18 @@ export const useSetInvitationCodeQuery = () => {
         },
     });
 
-    return { mutate, mutateAsync, isError, isIdle, isSuccess, isPending, isPaused, data, error, reset };
+    return {
+        mutate,
+        mutateAsync,
+        isError,
+        isIdle,
+        isSuccess,
+        isPending,
+        isPaused,
+        data,
+        error,
+        reset,
+    };
 };
 
 export const usePatchInvitationCodeQuery = () => {
@@ -62,7 +67,18 @@ export const usePatchInvitationCodeQuery = () => {
         },
     });
 
-    return { mutate, mutateAsync, isError, isIdle, isSuccess, isPending, isPaused, data, error, reset };
+    return {
+        mutate,
+        mutateAsync,
+        isError,
+        isIdle,
+        isSuccess,
+        isPending,
+        isPaused,
+        data,
+        error,
+        reset,
+    };
 };
 
 export const useDeleteInvitationCodeQuery = () => {
@@ -76,5 +92,16 @@ export const useDeleteInvitationCodeQuery = () => {
         },
     });
 
-    return { mutate, mutateAsync, isError, isIdle, isSuccess, isPending, isPaused, data, error, reset };
+    return {
+        mutate,
+        mutateAsync,
+        isError,
+        isIdle,
+        isSuccess,
+        isPending,
+        isPaused,
+        data,
+        error,
+        reset,
+    };
 };

@@ -1,13 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import {
-    apiError,
-    apiSuccess,
-    buildPagination,
-    getPageParams,
-    resolveRouteError,
-    singleItemPagination,
-} from "@/shared/lib/utils/apiResponse";
+import { apiError, apiSuccess, buildPagination, getPageParams, resolveRouteError, singleItemPagination } from "@/shared/lib/utils/apiResponse";
 
 describe("buildPagination", () => {
     it("페이지 메타를 계산한다", () => {
@@ -67,7 +60,10 @@ describe("apiSuccess / apiError", () => {
     });
 
     it("ERROR 응답 본문과 상태 코드를 만든다", async () => {
-        const response = apiError("실패", { status: 400, resultCode: "BAD_REQUEST" });
+        const response = apiError("실패", {
+            status: 400,
+            resultCode: "BAD_REQUEST",
+        });
         const body = await response.json();
 
         expect(response.status).toBe(400);

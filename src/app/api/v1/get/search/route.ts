@@ -58,7 +58,9 @@ export async function GET(req: Request) {
         const limit = Math.max(1, Math.min(Number(searchParams.get("limit")) || DEFAULT_LIMIT, 20));
 
         if (keyword.length < 2) {
-            return apiSuccess([], { resultMessage: "검색어를 2글자 이상 입력해주세요" });
+            return apiSuccess([], {
+                resultMessage: "검색어를 2글자 이상 입력해주세요",
+            });
         }
 
         const cacheKey = `${keyword}:${limit}`;
@@ -68,9 +70,7 @@ export async function GET(req: Request) {
             return apiSuccess(cached.data, { resultMessage: "조회성공" });
         }
 
-        const results = await Promise.all(
-            searchSources.map((source) => source.search(supabase, keyword, limit))
-        );
+        const results = await Promise.all(searchSources.map((source) => source.search(supabase, keyword, limit)));
         const data = results.flat();
 
         searchCache.set(cacheKey, {

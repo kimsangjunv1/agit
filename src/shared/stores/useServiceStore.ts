@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { createJSONStorage, persist } from 'zustand/middleware';
+import { createJSONStorage, persist } from "zustand/middleware";
 
 interface ServiceStoreType {
     persistAdminState: boolean;
@@ -23,12 +23,17 @@ export const useServiceStore = create<ServiceStoreType>()(
             setPersistStoreName: (args: string) => set(() => ({ persistStoreName: args })),
             setPersistAdminState: (args: boolean) => set(() => ({ persistAdminState: args })),
 
-            reset: () => set(() => ({ persistStoreIdx: 0, persistStoreName: "", persistAdminState: false })),
+            reset: () =>
+                set(() => ({
+                    persistStoreIdx: 0,
+                    persistStoreName: "",
+                    persistAdminState: false,
+                })),
         }),
         {
             name: "service-session",
             storage: createJSONStorage(() => sessionStorage),
             version: 1.0,
-        }
-    )
+        },
+    ),
 );

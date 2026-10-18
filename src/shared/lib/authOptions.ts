@@ -15,11 +15,7 @@ export const authOptions: AuthOptions = {
             async authorize(credentials) {
                 const supabase = supabaseAdmin();
 
-                const { data: user, error } = await supabase
-                    .from("users")
-                    .select("*")
-                    .eq("email", credentials?.email)
-                    .single();
+                const { data: user, error } = await supabase.from("users").select("*").eq("email", credentials?.email).single();
 
                 if (error || !user) {
                     throw new Error("등록되지 않은 이메일입니다.");

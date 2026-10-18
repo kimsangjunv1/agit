@@ -1,7 +1,7 @@
 import type { FivepixelsScope } from "@/entities/fivepixels/model/fivepixels.type";
 
 export const FIVEPIXELS_PROJECT = {
-    id: process.env.NEXT_PUBLIC_FIVEPIXELS_PROJECT_ID ?? "codi-agit",
+    id: process.env.NEXT_PUBLIC_FIVEPIXELS_PROJECT_ID ?? "agit",
     env: process.env.NEXT_PUBLIC_FIVEPIXELS_ENV ?? "stage",
     version: process.env.NEXT_PUBLIC_FIVEPIXELS_VERSION ?? "1.0.0",
 };

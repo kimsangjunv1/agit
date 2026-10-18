@@ -23,3 +23,6 @@ export const FIVEPIXELS_FC_NUMBER_RETRY_COUNT = 5;
 
 /** Postgres unique_violation */
 export const POSTGRES_UNIQUE_VIOLATION_CODE = "23505";
+
+/** 팀 서명 요청 헤더. 브라우저에서 서버 검증 모듈을 참조하지 않도록 분리한다. */
+export const FIVEPIXELS_TEAM_AUTH_HEADER = "x-fivepixels-auth";

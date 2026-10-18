@@ -1,6 +1,6 @@
 "use client";
 
-import { renewalContact, renewalContactExtended } from "@/shared/constants/resume/resumeRenewalData";
+import { renewalContact, renewalContactExtended } from "@/entities/resume/constants/resumeRenewalData";
 import RenewalRightBlocks from "./RenewalRightBlocks";
 import RenewalSplitSection from "./RenewalSplitSection";
 import { R } from "./renewalStyles";
@@ -17,7 +17,7 @@ const ResumeRenewalFooter = () => {
                 label={<p className={R.label}>End</p>}
                 headline={<p className={R.keyline}>사용자에게 닿는 화면을 코드로 옮기는 일, 그 과정이 여전히 가장 즐겁습니다.</p>}
                 description={
-                    <div className="flex flex-col gap-[1rem]">
+                    <div className="flex flex-col gap-[1.2rem]">
                         <p className={R.bodyMuted}>프론트엔드 개발자로서, 읽기 좋은 코드와 팀에 도움이 되는 구현을 꾸준히 만들어가고 싶습니다. 함께 더 나은 제품을 만들 수 있는 자리를 기대합니다.</p>
                         <a
                             href={`mailto:${renewalContact.email}`}
@@ -65,7 +65,7 @@ const ResumeRenewalFooter = () => {
                             rel="noopener noreferrer"
                             className={R.link}
                         >
-                            codi-agit.com
+                            agit.com
                         </a>
                         {/* <a
                             href={renewalContactExtended.portfolio}

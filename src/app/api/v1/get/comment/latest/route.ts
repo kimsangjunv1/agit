@@ -7,11 +7,7 @@ export async function GET() {
     try {
         const supabase = await supabaseServer();
 
-        const { data: currentData, error: currentError } = await supabase
-            .from(TABLE_NAME_POST)
-            .select("msg, author, created_at, idx")
-            .order("created_at", { ascending: false })
-            .limit(10);
+        const { data: currentData, error: currentError } = await supabase.from(TABLE_NAME_POST).select("msg, author, created_at, idx").order("created_at", { ascending: false }).limit(10);
 
         if (currentError) throw currentError;
 

@@ -1,0 +1,231 @@
+@layer base {
+    :root {
+        // 초기 설정
+        font-family:
+            var(--custom-font),
+            -apple-system,
+            BlinkMacSystemFont,
+            "Malgun Gothic",
+            "맑은 고딕",
+            helvetica,
+            "Apple SD Gothic Neo",
+            sans-serif;
+        font-size: var(--root-font-size);
+        font-weight: 400;
+
+        font-synthesis: none;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+
+        background: var(--color-background-light);
+
+        color: var(--color-gray-1000);
+    }
+
+    html {
+        line-height: 1.25; /* 1 */
+        -webkit-text-size-adjust: 100%; /* 2 */
+        max-width: 100%;
+        background: var(--color-background-light);
+        scrollbar-width: none;
+    }
+
+    ::selection {
+        background: var(--color-brand-100);
+        color: var(--color-brand-700);
+    }
+
+    * {
+        scrollbar-width: thin;
+        box-sizing: border-box;
+    }
+
+    body {
+        position: relative;
+        // overflow-y: hidden;
+        min-height: 100dvh;
+        width: 100%;
+        background-color: var(--color-background-light);
+
+        display: block;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+
+    main {
+        scrollbar-color: rgba(0, 29, 58, 0.18) transparent;
+        scrollbar-width: thin;
+    }
+
+    html,
+    body,
+    div,
+    span,
+    applet,
+    object,
+    iframe,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p,
+    blockquote,
+    pre,
+    a,
+    abbr,
+    acronym,
+    address,
+    big,
+    cite,
+    code,
+    del,
+    dfn,
+    em,
+    img,
+    ins,
+    kbd,
+    q,
+    s,
+    samp,
+    small,
+    strike,
+    strong,
+    sub,
+    sup,
+    tt,
+    var,
+    b,
+    u,
+    i,
+    center,
+    dl,
+    dt,
+    dd,
+    ol,
+    ul,
+    li,
+    fieldset,
+    form,
+    label,
+    legend,
+    table,
+    caption,
+    tbody,
+    tfoot,
+    thead,
+    tr,
+    th,
+    td,
+    article,
+    button,
+    aside,
+    canvas,
+    details,
+    embed,
+    figure,
+    figcaption,
+    footer,
+    header,
+    hgroup,
+    menu,
+    nav,
+    output,
+    ruby,
+    section,
+    summary,
+    time,
+    mark,
+    audio,
+    video {
+        font-size: inherit;
+        margin: 0;
+        padding: 0;
+        vertical-align: baseline;
+        color: inherit;
+        line-height: inherit;
+    }
+
+    /* HTML5 display-role reset for older browsers */
+    article,
+    aside,
+    details,
+    figcaption,
+    figure,
+    footer,
+    header,
+    hgroup,
+    menu,
+    nav,
+    section {
+        display: block;
+    }
+
+    body {
+        font-size: 1.6rem;
+        line-height: 1;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+
+    ol,
+    ul {
+        list-style: none;
+    }
+
+    blockquote,
+    q {
+        quotes: none;
+    }
+
+    blockquote:before,
+    blockquote:after,
+    q:before,
+    q:after {
+        content: "";
+        content: none;
+    }
+
+    audio {
+        display: none;
+    }
+
+    table {
+        border-collapse: collapse;
+        border-spacing: 0;
+    }
+
+    input {
+        height: var(--input-height);
+        padding: var(--input-padding);
+    }
+
+    a {
+        display: inline-block;
+        text-decoration: none;
+    }
+
+    hr {
+        height: 4px;
+        background: var(--color-gray-200);
+    }
+
+    button {
+        cursor: pointer;
+        border: none;
+        padding: 0;
+        margin: 0;
+        background: none;
+    }
+
+    input {
+        &:focus {
+            outline: none;
+        }
+    }
+}

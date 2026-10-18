@@ -1,3 +1,4 @@
+import { RICH_TEXT_IMAGE_CLASS } from "@/shared/lib/richText/styles";
 import Image from "@tiptap/extension-image";
 import { ReactNodeViewRenderer } from "@tiptap/react";
 import { ResizableImageNodeView } from "@/shared/ui/common/richText/extensions/ResizableImageNodeView";
@@ -12,7 +13,9 @@ declare module "@tiptap/core" {
     }
 }
 
-export const ResizableImage = Image.extend({
+export const ResizableImage = Image.configure({
+    HTMLAttributes: { class: RICH_TEXT_IMAGE_CLASS },
+}).extend({
     addAttributes() {
         return {
             ...this.parent?.(),
@@ -39,11 +42,15 @@ export const ResizableImage = Image.extend({
             setImageAlign:
                 (align) =>
                 ({ commands }) =>
-                    commands.updateAttributes(this.name, { align: normalizeImageAlign(align) }),
+                    commands.updateAttributes(this.name, {
+                        align: normalizeImageAlign(align),
+                    }),
             setImageWidth:
                 (width) =>
                 ({ commands }) =>
-                    commands.updateAttributes(this.name, { imageWidth: normalizeImageWidth(width) }),
+                    commands.updateAttributes(this.name, {
+                        imageWidth: normalizeImageWidth(width),
+                    }),
         };
     },
     addNodeView() {

@@ -42,7 +42,7 @@ export function Toast() {
                             className={`${toast.type === "success" ? "bg-emerald-500" : toast.type === "fail" ? "bg-rose-500" : toast.type === "warning" ? "bg-amber-500" : "bg-slate-700"} w-[0.8rem] h-[0.8rem]`}
                         /> */}
                         <div className="min-w-0 flex-1">
-                            <p className="text-[1.8rem] text-white break-words font-semibold">{toast.msg}</p>
+                            <p className="text-[2rem] text-white break-words font-semibold">{toast.msg}</p>
                         </div>
 
                         <button

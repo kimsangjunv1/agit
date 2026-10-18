@@ -2,11 +2,7 @@ import { NextResponse } from "next/server";
 
 import type { ApiPaginationResponse, ApiResponse } from "@/shared/model/common.type";
 
-export function buildPagination(params: {
-    page: number;
-    pageSize: number;
-    totalCount: number;
-}): ApiPaginationResponse {
+export function buildPagination(params: { page: number; pageSize: number; totalCount: number }): ApiPaginationResponse {
     const { page, pageSize, totalCount } = params;
     const totalPages = pageSize > 0 ? Math.ceil(totalCount / pageSize) : 0;
 
@@ -27,11 +23,7 @@ export function getPageParams(searchParams: URLSearchParams, defaultPageSize = 1
     return { page, pageSize };
 }
 
-export function buildPaginationFromQuery(
-    searchParams: URLSearchParams,
-    totalCount: number,
-    defaultPageSize = 10
-): ApiPaginationResponse {
+export function buildPaginationFromQuery(searchParams: URLSearchParams, totalCount: number, defaultPageSize = 10): ApiPaginationResponse {
     const { page, pageSize } = getPageParams(searchParams, defaultPageSize);
     return buildPagination({ page, pageSize, totalCount });
 }
@@ -46,7 +38,7 @@ export function apiSuccess<T>(
         resultMessage?: string;
         pagination?: ApiPaginationResponse | null;
         status?: number;
-    }
+    },
 ) {
     const body: ApiResponse<T> = {
         pagination: options?.pagination ?? null,
@@ -65,7 +57,7 @@ export function apiError(
         status?: number;
         result?: unknown;
         pagination?: ApiPaginationResponse | null;
-    }
+    },
 ) {
     const body: ApiResponse<unknown> = {
         pagination: options?.pagination ?? null,
@@ -79,13 +71,7 @@ export function apiError(
 
 export function resolveRouteError(error: unknown, fallback = "문제가 생겼습니다") {
     const message = error instanceof Error ? error.message : fallback;
-    const status =
-        typeof error === "object" &&
-        error !== null &&
-        "status" in error &&
-        typeof (error as { status: unknown }).status === "number"
-            ? (error as { status: number }).status
-            : 500;
+    const status = typeof error === "object" && error !== null && "status" in error && typeof (error as { status: unknown }).status === "number" ? (error as { status: number }).status : 500;
 
     return { message, status };
 }

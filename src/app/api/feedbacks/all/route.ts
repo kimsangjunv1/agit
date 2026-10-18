@@ -1,17 +1,10 @@
 import { NextResponse } from "next/server";
 
 import { FIVEPIXELS_TABLE_NAME } from "@/entities/fivepixels/constants/fivepixels.constants";
-import {
-    FEEDBACK_SCOPE_REQUIRED_MESSAGE,
-    feedbackError,
-    feedbackErrorFrom,
-} from "@/entities/fivepixels/lib/feedbackResponse";
+import { FEEDBACK_SCOPE_REQUIRED_MESSAGE, feedbackError, feedbackErrorFrom } from "@/entities/fivepixels/lib/feedbackResponse";
 import { mapRowToFeedback } from "@/entities/fivepixels/lib/mapFeedback";
 import { parseFivepixelsListAllRange, parseFivepixelsScope } from "@/entities/fivepixels/lib/scope";
-import type {
-    FivepixelsFeedbackRow,
-    GetFeedbackListPagingResponse,
-} from "@/entities/fivepixels/model/fivepixels.type";
+import type { FivepixelsFeedbackRow, GetFeedbackListPagingResponse } from "@/entities/fivepixels/model/fivepixels.type";
 import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
 
 export async function GET(req: Request) {

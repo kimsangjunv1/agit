@@ -1,10 +1,7 @@
 import { createReportAuthMessage } from "@fivepixels-js/react";
 import type { ReportAuthProof } from "@fivepixels-js/react";
 
-import {
-    FIVEPIXELS_PERSONAL_KEY_STORAGE_PREFIX,
-    FIVEPIXELS_TEAM_AUTH_ACTION,
-} from "@/entities/fivepixels/constants/fivepixels.constants";
+import { FIVEPIXELS_PERSONAL_KEY_STORAGE_PREFIX, FIVEPIXELS_TEAM_AUTH_ACTION } from "@/entities/fivepixels/constants/fivepixels.constants";
 import type { FivepixelsScope } from "@/entities/fivepixels/model/fivepixels.type";
 
 const PRIVATE_KEY_PREFIX = "stpk2";
@@ -21,9 +18,7 @@ type ReviewerKeyBundle = {
 
 /** 라이브러리 storageKeys.getPersonalKeyStorageKey 와 동일 규칙. */
 function personalKeyStorageKey(scope: FivepixelsScope): string {
-    return [FIVEPIXELS_PERSONAL_KEY_STORAGE_PREFIX, scope.projectId, scope.environment]
-        .filter(Boolean)
-        .join(":");
+    return [FIVEPIXELS_PERSONAL_KEY_STORAGE_PREFIX, scope.projectId, scope.environment].filter(Boolean).join(":");
 }
 
 function decodeBase64Url(value: string): string {
@@ -54,9 +49,7 @@ function parsePrivateKeyBundle(key: string): ReviewerKeyBundle | null {
     try {
         const bundle = JSON.parse(decodeBase64Url(encoded)) as Partial<ReviewerKeyBundle>;
 
-        return bundle.projectId && bundle.authorId && bundle.privateKey && bundle.publicKey
-            ? (bundle as ReviewerKeyBundle)
-            : null;
+        return bundle.projectId && bundle.authorId && bundle.privateKey && bundle.publicKey ? (bundle as ReviewerKeyBundle) : null;
     } catch {
         return null;
     }
@@ -67,10 +60,7 @@ function parsePrivateKeyBundle(key: string): ReviewerKeyBundle | null {
  * 라이브러리가 signReportPayload 를 export 하지 않으므로 동일 포맷으로 자체 구현한다.
  * payload 는 auth 를 제외한 요청 본문과 동일해야 서버 verifyReportAuthProof 가 통과한다.
  */
-export async function signTeamAction(params: {
-    scope: FivepixelsScope;
-    payload: unknown;
-}): Promise<ReportAuthProof | null> {
+export async function signTeamAction(params: { scope: FivepixelsScope; payload: unknown }): Promise<ReportAuthProof | null> {
     if (typeof window === "undefined") return null;
 
     const stored = window.localStorage.getItem(personalKeyStorageKey(params.scope));
@@ -91,14 +81,8 @@ export async function signTeamAction(params: {
         payload: params.payload,
     });
 
-    const privateKey = await crypto.subtle.importKey("jwk", bundle.privateKey, ALGORITHM, false, [
-        "sign",
-    ]);
-    const signature = await crypto.subtle.sign(
-        { name: "ECDSA", hash: "SHA-256" },
-        privateKey,
-        new TextEncoder().encode(message)
-    );
+    const privateKey = await crypto.subtle.importKey("jwk", bundle.privateKey, ALGORITHM, false, ["sign"]);
+    const signature = await crypto.subtle.sign({ name: "ECDSA", hash: "SHA-256" }, privateKey, new TextEncoder().encode(message));
 
     return {
         author_id: bundle.authorId,

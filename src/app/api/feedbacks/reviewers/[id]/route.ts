@@ -1,28 +1,22 @@
 import { NextResponse } from "next/server";
 
 import { FIVEPIXELS_REVIEWERS_TABLE_NAME } from "@/entities/fivepixels/constants/fivepixels.constants";
-import {
-    FEEDBACK_NOT_FOUND_MESSAGE,
-    FEEDBACK_SCOPE_REQUIRED_MESSAGE,
-    feedbackError,
-    feedbackErrorFrom,
-} from "@/entities/fivepixels/lib/feedbackResponse";
+import { FEEDBACK_NOT_FOUND_MESSAGE, FEEDBACK_SCOPE_REQUIRED_MESSAGE, feedbackError, feedbackErrorFrom } from "@/entities/fivepixels/lib/feedbackResponse";
 import { mapReviewerRowToItem } from "@/entities/fivepixels/lib/mapReviewer";
 import { parseFivepixelsScope } from "@/entities/fivepixels/lib/scope";
 import { canManageTeam, outranks } from "@/entities/fivepixels/lib/teamRank";
 import { stripAuthFromPayload } from "@/entities/fivepixels/lib/verifyFeedbackAuth";
 import { verifyTeamActor } from "@/entities/fivepixels/lib/verifyTeamActor";
-import type {
-    FivepixelsReviewerRow,
-    ReportAuthProof,
-    UpdateReviewerPayload,
-} from "@/entities/fivepixels/model/fivepixels.type";
+import type { FivepixelsReviewerRow, ReportAuthProof, UpdateReviewerPayload } from "@/entities/fivepixels/model/fivepixels.type";
 import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
 
 type ReviewerRouteContext = { params: Promise<{ id: string }> };
 
 /** id 는 서명 재사용(다른 대상으로 replay)을 막기 위해 서명 payload 에도 포함된다. */
-type UpdateReviewerBody = UpdateReviewerPayload & { id?: string; auth?: ReportAuthProof };
+type UpdateReviewerBody = UpdateReviewerPayload & {
+    id?: string;
+    auth?: ReportAuthProof;
+};
 
 /**
  * 리뷰어 수정 (onUpdateReviewer). URL :id 는 라이브러리가 넘기는 author_id.
@@ -98,12 +92,7 @@ export async function PATCH(req: Request, { params }: ReviewerRouteContext) {
         if (body.role !== undefined) update.role = body.role;
         if (body.is_active !== undefined) update.is_active = body.is_active;
 
-        const { data, error } = await supabase
-            .from(FIVEPIXELS_REVIEWERS_TABLE_NAME)
-            .update(update)
-            .eq("id", target.id)
-            .select("*")
-            .single();
+        const { data, error } = await supabase.from(FIVEPIXELS_REVIEWERS_TABLE_NAME).update(update).eq("id", target.id).select("*").single();
 
         if (error) throw error;
 

@@ -9,7 +9,5 @@ const typeStyles: Record<ChangelogType, string> = {
 };
 
 export function ChangelogTypeBadge({ type }: { type: ChangelogType }) {
-    return (
-        <span className={`inline-flex rounded-full border px-[0.65rem] py-[0.35rem] text-[0.95rem] font-semibold uppercase tracking-[0.08em] ${typeStyles[type]}`}>{changelogTypeLabels[type]}</span>
-    );
+    return <span className={`inline-flex rounded-full border px-[0.8rem] py-[0.4rem] text-[0.8rem] font-semibold uppercase tracking-[0.08em] ${typeStyles[type]}`}>{changelogTypeLabels[type]}</span>;
 }

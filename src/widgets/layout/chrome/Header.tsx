@@ -11,7 +11,7 @@ import useNavigate from "@/shared/hooks/useNavigate";
 import { getPostRouteFlags } from "@/features/managePost";
 
 import { useLayoutStore } from "@/shared/stores/useLayoutStore";
-import HomeViewModeNav from "@/widgets/home/ui/HomeViewModeNav";
+import HomeViewModeNav from "@/features/browseArchive/ui/HomeViewModeNav";
 import Marquee from "@/shared/ui/layout/Marquee";
 
 const Header = () => {
@@ -26,9 +26,9 @@ const Header = () => {
     if (IS_ROUTE_POST) return null;
 
     return (
-        <header className="fixed left-0 z-[100] mx-auto h-[calc(var(--header-height)/2)] pc:h-[var(--header-height)] w-[100svw]">
-            {/* <header className="fixed left-0 z-[100] mx-auto h-[calc(var(--header-height)/2)] pc:h-[var(--header-height)] w-full after:absolute after:top-0 after:left-0 after:-z-[1] after:mx-auto after:h-[var(--header-height)] after:w-full after:backdrop-blur-[20px] after:content-[''] after:[mask-image:linear-gradient(rgb(0,0,0),rgb(0,0,0)_0%,rgb(0,0,0)_20%,rgba(0,0,0,0))]"> */}
-            <div className="relative mx-auto flex h-full w-full mobile:max-w-[calc(100dvw-(1.6rem*2))] tablet:max-w-[var(--size-pc)] items-center pc:h-full px-[2.0rem]">
+        <header className="fixed left-0 z-[100] mx-auto h-[var(--header-height)] w-[100svw]">
+            {/* <header className="fixed left-0 z-[100] mx-auto h-[var(--header-height)] w-full after:absolute after:top-0 after:left-0 after:-z-[1] after:mx-auto after:h-[var(--header-height)] after:w-full after:backdrop-blur-[20px] after:content-[''] after:[mask-image:linear-gradient(rgb(0,0,0),rgb(0,0,0)_0%,rgb(0,0,0)_20%,rgba(0,0,0,0))]"> */}
+            <div className="relative mx-auto flex h-full w-full mobile:max-w-[calc(100dvw-(1.6rem*2))] tablet:max-w-[var(--size-pc)] items-center pc:h-full px-[2rem]">
                 {/* <div className="relative mx-auto flex h-full w-full mobile:max-w-[calc(100dvw-(1.6rem*2))] tablet:max-w-[calc(100dvw-(2.0rem*2))] items-center pc:h-full px-[2.0rem]"> */}
                 <section className="menu flex gap-[4.8rem]">
                     <button
@@ -37,10 +37,10 @@ const Header = () => {
                     >
                         <IconComponent
                             type={`graphic-logo-horizontal`}
-                            alt={"코디 아지트"}
-                            width={138}
-                            height={42}
-                            className="mobile:h-[calc(1.6rem*2.2)] mobile:w-[calc(1.6rem*7)] pc:h-[3.8rem] pc:w-auto"
+                            alt={"아지트"}
+                            width={140}
+                            height={44}
+                            className="mobile:h-[calc(1.6rem*2.2)] mobile:w-[calc(1.6rem*7)] pc:h-[4rem] pc:w-auto"
                         />
                     </button>
 
@@ -96,7 +96,7 @@ const Header = () => {
 
                 {/* 모바일 버튼 */}
                 <button
-                    className="hamburger w-[2.4rem] h-[1.2rem] absolute top-[50%] right-[2.0rem] transform translate-x-[0] translate-y-[-50%] text-[2.4rem] z-[10000]"
+                    className="hamburger w-[2.4rem] h-[1.2rem] absolute top-[50%] right-[2rem] transform translate-x-[0] translate-y-[-50%] text-[2.4rem] z-[10000]"
                     // className="hamburger w-[1.6rem] h-[1.6rem] px-[4.0rem] py-[2.0rem] absolute top-[50%] right-0 transform translate-x-[0] translate-y-[-50%] text-[2.4rem] z-[10000]"
                     onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 >

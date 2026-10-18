@@ -29,7 +29,7 @@ const SettingOptionGroup = ({
     onSelect: (value: number) => void;
 }) => (
     <section className="flex flex-col gap-[1.2rem]">
-        <p className="text-[1.4rem] font-semibold text-[var(--color-gray-800)]">{title}</p>
+        <p className="text-[1.6rem] font-semibold text-[var(--color-gray-800)]">{title}</p>
         <div className="flex flex-wrap gap-[0.8rem]">
             {options.map((option) => {
                 const isActive = activeValue === option.value;
@@ -38,7 +38,7 @@ const SettingOptionGroup = ({
                     <UI.Button
                         key={option.label}
                         type="button"
-                        className={`rounded-[0.8rem] border px-[1.2rem] py-[0.8rem] text-[1.4rem] transition-colors ${
+                        className={`rounded-[0.8rem] border px-[1.2rem] py-[0.8rem] text-[1.6rem] transition-colors ${
                             isActive
                                 ? "border-[var(--color-blue-500)] bg-[var(--color-blue-500)] text-white"
                                 : "border-[var(--color-gray-300)] bg-white text-[var(--color-gray-700)] hover:border-[var(--color-gray-500)]"
@@ -74,7 +74,7 @@ const PostReadingSettingsContent = () => {
 
             <UI.Button
                 type="button"
-                className="self-start rounded-[0.8rem] border border-[var(--color-gray-300)] px-[1.2rem] py-[0.8rem] text-[1.4rem] text-[var(--color-gray-600)] hover:border-[var(--color-gray-500)]"
+                className="self-start rounded-[0.8rem] border border-[var(--color-gray-300)] px-[1.2rem] py-[0.8rem] text-[1.6rem] text-[var(--color-gray-600)] hover:border-[var(--color-gray-500)]"
                 onClick={reset}
             >
                 기본값으로 초기화

@@ -9,11 +9,7 @@ export async function DELETE(req: Request) {
     try {
         const supabase = supabaseAdmin();
 
-        const { data, error } = await supabase
-            .from(TABLE_NAME)
-            .delete()
-            .eq("idx", payload.idx)
-            .select();
+        const { data, error } = await supabase.from(TABLE_NAME).delete().eq("idx", payload.idx).select();
 
         if (error) throw error;
 

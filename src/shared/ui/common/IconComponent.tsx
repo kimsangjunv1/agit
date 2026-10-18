@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import dynamic from "next/dynamic";
 
@@ -79,50 +79,50 @@ const IconComponent = ({ isLottie = false, type, alt, className, width = 24, hei
 
             case "outlined-copy":
                 return PATH_DEFAULT + PATH_OUTLINED + "copy" + EXTENSION;
-        
+
             default:
                 return PATH_DEFAULT + PATH_OUTLINED + "normal" + EXTENSION;
         }
-    }
+    };
 
     const setTypeOfLottie = () => {
         switch (type) {
             case "qr-check":
-                // return lottieCheckQr;
+            // return lottieCheckQr;
 
             case "qr-check-error":
-                // return lottieCheckQrError;
+            // return lottieCheckQrError;
 
             case "result":
-                // return lottieResult;
+            // return lottieResult;
 
             case "timer":
-                // return lottieTimer;
+            // return lottieTimer;
         }
-    }
+    };
 
     return (
         <Fragment>
-            { isLottie ? (
+            {isLottie ? (
                 <Lottie
-                    animationData={ setTypeOfLottie() }
-                    className={ className }
-                    width={ width }
-                    height={ height }
-                    loop={ isLottieLoop }
+                    animationData={setTypeOfLottie()}
+                    className={className}
+                    width={width}
+                    height={height}
+                    loop={isLottieLoop}
                 />
             ) : (
                 // <img src={ setTypeOfIcon() } alt={ alt } className={ className } />
                 <Image
-                    src={ setTypeOfIcon() }
-                    className={ className }
-                    width={ width }
-                    height={ height }
-                    alt={ alt }
+                    src={setTypeOfIcon()}
+                    className={className}
+                    width={width}
+                    height={height}
+                    alt={alt}
                 />
-            ) }
+            )}
         </Fragment>
-    )
-}
+    );
+};
 
-export default IconComponent
+export default IconComponent;

@@ -2,33 +2,22 @@ import { randomUUID } from "node:crypto";
 
 import { NextResponse } from "next/server";
 
-import {
-    FIVEPIXELS_REVIEWERS_TABLE_NAME,
-    FIVEPIXELS_REVIEWER_REQUESTS_TABLE_NAME,
-} from "@/entities/fivepixels/constants/fivepixels.constants";
-import {
-    FEEDBACK_NOT_FOUND_MESSAGE,
-    FEEDBACK_SCOPE_REQUIRED_MESSAGE,
-    feedbackError,
-    feedbackErrorFrom,
-} from "@/entities/fivepixels/lib/feedbackResponse";
+import { FIVEPIXELS_REVIEWERS_TABLE_NAME, FIVEPIXELS_REVIEWER_REQUESTS_TABLE_NAME } from "@/entities/fivepixels/constants/fivepixels.constants";
+import { FEEDBACK_NOT_FOUND_MESSAGE, FEEDBACK_SCOPE_REQUIRED_MESSAGE, feedbackError, feedbackErrorFrom } from "@/entities/fivepixels/lib/feedbackResponse";
 import { mapReviewerRequestRowToItem } from "@/entities/fivepixels/lib/mapReviewer";
 import { parseFivepixelsScope } from "@/entities/fivepixels/lib/scope";
 import { canManageTeam, outranks } from "@/entities/fivepixels/lib/teamRank";
 import { stripAuthFromPayload } from "@/entities/fivepixels/lib/verifyFeedbackAuth";
 import { verifyTeamActor } from "@/entities/fivepixels/lib/verifyTeamActor";
-import type {
-    FivepixelsReviewerRequestRow,
-    FivepixelsReviewerRow,
-    ReportAuthProof,
-    ReportAuthorRole,
-    ResolveReviewerRequestPayload,
-} from "@/entities/fivepixels/model/fivepixels.type";
+import type { FivepixelsReviewerRequestRow, FivepixelsReviewerRow, ReportAuthProof, ReportAuthorRole, ResolveReviewerRequestPayload } from "@/entities/fivepixels/model/fivepixels.type";
 import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
 
 type ResolveRouteContext = { params: Promise<{ id: string }> };
 
-type ResolveRequestBody = ResolveReviewerRequestPayload & { id?: string; auth?: ReportAuthProof };
+type ResolveRequestBody = ResolveReviewerRequestPayload & {
+    id?: string;
+    auth?: ReportAuthProof;
+};
 
 /**
  * 등록 요청 승인/거절 (onResolveReviewerRequest). admin/sub_admin 만.
@@ -120,20 +109,18 @@ export async function POST(req: Request, { params }: ResolveRouteContext) {
 
                 if (updateError) throw updateError;
             } else {
-                const { error: insertError } = await supabase
-                    .from(FIVEPIXELS_REVIEWERS_TABLE_NAME)
-                    .insert({
-                        id: `fprev_${randomUUID()}`,
-                        project_id: scope.projectId,
-                        environment: scope.environment,
-                        author_id: request.author_id,
-                        author_name: request.author_name,
-                        public_key: request.public_key,
-                        role: grantRole,
-                        is_active: true,
-                        created_at: now,
-                        updated_at: now,
-                    });
+                const { error: insertError } = await supabase.from(FIVEPIXELS_REVIEWERS_TABLE_NAME).insert({
+                    id: `fprev_${randomUUID()}`,
+                    project_id: scope.projectId,
+                    environment: scope.environment,
+                    author_id: request.author_id,
+                    author_name: request.author_name,
+                    public_key: request.public_key,
+                    role: grantRole,
+                    is_active: true,
+                    created_at: now,
+                    updated_at: now,
+                });
 
                 if (insertError) throw insertError;
             }

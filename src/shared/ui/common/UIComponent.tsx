@@ -51,11 +51,11 @@ const CheckBox = ({ defaultState = false, className, checked, guide, desc_no, pr
                 }}
             >
                 <div
-                    className={`w-[2.0rem] h-[2.0rem] rounded-[0.6rem] m-[0.4rem] relative transition-colors ${currentState ? "bg-[var(--color-brand-500)] shadow-[var(--shadow-normal)]" : "bg-[var(--color-gray-200)] border-[0.15rem] border-[var(--color-gray-300)] hover:bg-[var(--color-gray-200)]"}`}
+                    className={`w-[2rem] h-[2rem] rounded-[0.8rem] m-[0.4rem] relative transition-colors ${currentState ? "bg-[var(--color-brand-500)] shadow-[var(--shadow-normal)]" : "bg-[var(--color-gray-200)] border-[0.4rem] border-[var(--color-gray-300)] hover:bg-[var(--color-gray-200)]"}`}
                     data-description={desc_no}
                 >
                     <p
-                        className={`absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] font-bold text-[1.4rem] pointer-events-none ${currentState ? "text-white" : "hidden"}`}
+                        className={`absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] font-bold text-[1.6rem] pointer-events-none ${currentState ? "text-white" : "hidden"}`}
                     >
                         ✓
                     </p>
@@ -96,9 +96,9 @@ const Radio = ({ list, defaultValue = 0, className, desc_no, onChange }: RadioPr
                     whileTap={{ scale: 0.9 }}
                     data-description={desc_no}
                 >
-                    <div className={`w-[1.8rem] h-[1.8rem] relative rounded-full ${currentSelected === e.value ? "bg-[var(--color-blue-1000)]" : "border border-[var(--color-gray-400)]"}`}>
+                    <div className={`w-[2rem] h-[2rem] relative rounded-full ${currentSelected === e.value ? "bg-[var(--color-blue-1000)]" : "border border-[var(--color-gray-400)]"}`}>
                         <div
-                            className={`absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] rounded-full w-[0.6rem] h-[0.6rem] ${currentSelected === e.value ? "bg-white" : "bg-transparent"}`}
+                            className={`absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] rounded-full w-[0.8rem] h-[0.8rem] ${currentSelected === e.value ? "bg-white" : "bg-transparent"}`}
                         />
                     </div>
                     <p className="font-medium pointer-events-none">{e.title}</p>
@@ -111,7 +111,7 @@ const Radio = ({ list, defaultValue = 0, className, desc_no, onChange }: RadioPr
 const Switch = ({ states, onChange, desc_no }: SwitchProps) => {
     return (
         <motion.section
-            className={`switch w-[calc(1.6rem*2+0.4rem)] h-[2.0rem] p-[0.2rem] rounded-full flex cursor-pointer ${states ? "justify-end" : "justify-start"}`}
+            className={`switch w-[calc(1.6rem*2+0.4rem)] h-[2rem] p-[0.4rem] rounded-full flex cursor-pointer ${states ? "justify-end" : "justify-start"}`}
             animate={{
                 background: states ? "var(--color-blue-1000)" : "var(--color-gray-400)",
             }}
@@ -157,7 +157,9 @@ const Input = forwardRef<{ reset: () => void }, InputProps & { phoneNumber?: boo
             reset() {
                 setValue("");
                 if (onChange) {
-                    onChange({ target: { value: "" } } as React.ChangeEvent<HTMLInputElement>);
+                    onChange({
+                        target: { value: "" },
+                    } as React.ChangeEvent<HTMLInputElement>);
                 }
             },
         }));
@@ -442,7 +444,12 @@ const Select = ({ list = [], trackingData, defaultValue, className, desc_no, onC
     const [showMenu, setShowMenu] = useState(false);
     const [currentValue, setCurrentValue] = useState();
     // const [ currentValue, setCurrentValue ] = useState( defaultValue ? defaultValue : INIT_VALUE?.value );
-    const [positionStyle, setPositionStyle] = useState<{ left?: number; right?: number; top?: number; bottom?: number }>({ left: 0 });
+    const [positionStyle, setPositionStyle] = useState<{
+        left?: number;
+        right?: number;
+        top?: number;
+        bottom?: number;
+    }>({ left: 0 });
 
     const detectOutsideClick = (e: MouseEvent) => {
         if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
@@ -515,7 +522,7 @@ const Select = ({ list = [], trackingData, defaultValue, className, desc_no, onC
             <AnimatePresence>
                 {showMenu && (
                     <motion.section
-                        className="absolute bg-[#ffffff90] backdrop-blur-sm max-h-[23.0rem] min-w-[calc(1.6rem*5)] overflow-y-auto flex flex-col gap-[0.4rem] shadow-[var(--shadow-normal)] p-[0.4rem] rounded-[1.2rem] z-1 overflow-hidden"
+                        className="absolute bg-[#ffffff90] backdrop-blur-sm max-h-[23.2rem] min-w-[calc(1.6rem*5)] overflow-y-auto flex flex-col gap-[0.4rem] shadow-[var(--shadow-normal)] p-[0.4rem] rounded-[1.2rem] z-1 overflow-hidden"
                         style={{
                             width: buttonRef.current?.offsetWidth,
                             ...positionStyle,
@@ -574,7 +581,12 @@ const Filter = forwardRef<{ reset: () => void }, FilterProps>(({ list = [], defa
     const [containerHeight, setContainerHeight] = useState<number>(0);
     const [initList, setInitList] = useState<{ title: string; state: boolean; value?: any }[]>([]);
     const [currentList, setCurrentList] = useState<{ title: string; state: boolean; value?: any }[]>(list);
-    const [positionStyle, setPositionStyle] = useState<{ left?: number; right?: number; top?: number; bottom?: number }>({ left: 0 });
+    const [positionStyle, setPositionStyle] = useState<{
+        left?: number;
+        right?: number;
+        top?: number;
+        bottom?: number;
+    }>({ left: 0 });
 
     const { setToast } = useToastStore();
 
@@ -657,7 +669,7 @@ const Filter = forwardRef<{ reset: () => void }, FilterProps>(({ list = [], defa
             <motion.button
                 ref={buttonRef}
                 layout="size"
-                className={`${className?.button ?? "h-full"} min-w-[20.0rem] flex items-center text-left px-[1.2rem] rounded-[0.8rem] bg-[var(--color-gray-100)] hover:bg-[var(--color-gray-200)] transition-colors`}
+                className={`${className?.button ?? "h-full"} min-w-[20rem] flex items-center text-left px-[1.2rem] rounded-[0.8rem] bg-[var(--color-gray-100)] hover:bg-[var(--color-gray-200)] transition-colors`}
                 data-description={desc_no}
                 onClick={() => setShowMenu(!showMenu)}
             >
@@ -674,7 +686,12 @@ const Filter = forwardRef<{ reset: () => void }, FilterProps>(({ list = [], defa
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
                                         exit={{ opacity: 0 }}
-                                        transition={{ type: "spring", mass: 0.1, stiffness: 100, damping: 10 }}
+                                        transition={{
+                                            type: "spring",
+                                            mass: 0.1,
+                                            stiffness: 100,
+                                            damping: 10,
+                                        }}
                                     >
                                         {item.title}
                                     </motion.p>
@@ -689,7 +706,12 @@ const Filter = forwardRef<{ reset: () => void }, FilterProps>(({ list = [], defa
                         initial={{ x: -20, opacity: 0 }}
                         animate={{ x: 0, opacity: 1 }}
                         exit={{ x: -20, opacity: 0 }}
-                        transition={{ type: "spring", mass: 0.1, stiffness: 100, damping: 10 }}
+                        transition={{
+                            type: "spring",
+                            mass: 0.1,
+                            stiffness: 100,
+                            damping: 10,
+                        }}
                     >
                         항목을 선택해주세요
                     </motion.p>
@@ -718,7 +740,7 @@ const Filter = forwardRef<{ reset: () => void }, FilterProps>(({ list = [], defa
                     <motion.section
                         key={"as"}
                         ref={filterContainerRef}
-                        className={`absolute bg-white overflow-y-auto scrollbar-hide top-[calc(4.2rem+0.8rem)] flex flex-col gap-[0.4rem] shadow-[var(--shadow-normal)] p-[0.4rem] rounded-[1.2rem] min-w-[26.0rem] z-1 ${className?.container ?? ""}`}
+                        className={`absolute bg-white overflow-y-auto scrollbar-hide top-[calc(4.4rem+0.8rem)] flex flex-col gap-[0.4rem] shadow-[var(--shadow-normal)] p-[0.4rem] rounded-[1.2rem] min-w-[26rem] z-1 ${className?.container ?? ""}`}
                         style={{
                             width: buttonRef.current?.offsetWidth,
                             ...style,
@@ -776,7 +798,7 @@ const Filter = forwardRef<{ reset: () => void }, FilterProps>(({ list = [], defa
                             </UI.Button>
                         </motion.section>
 
-                        <section className="max-h-[22.0rem] overflow-y-auto">
+                        <section className="max-h-[22rem] overflow-y-auto">
                             {currentList.map((item, key) => (
                                 <motion.div
                                     key={`${item}-${key}`}
@@ -832,7 +854,7 @@ const Filter = forwardRef<{ reset: () => void }, FilterProps>(({ list = [], defa
                             }}
                         >
                             <UI.Button
-                                className={`bg-[var(--color-gray-200)] font-medium whitespace-nowrap rounded-[0.6rem] px-[1.6rem] h-[4.2rem]`}
+                                className={`bg-[var(--color-gray-200)] font-medium whitespace-nowrap rounded-[0.8rem] px-[1.6rem] h-[4.4rem]`}
                                 onClick={() => {
                                     close();
 
@@ -843,7 +865,7 @@ const Filter = forwardRef<{ reset: () => void }, FilterProps>(({ list = [], defa
                             </UI.Button>
 
                             <UI.Button
-                                className={`text-white bg-[var(--color-blue-1000)] font-medium whitespace-nowrap rounded-[0.6rem] w-[12.8rem] h-[4.2rem]`}
+                                className={`text-white bg-[var(--color-blue-1000)] font-medium whitespace-nowrap rounded-[0.8rem] w-[12.8rem] h-[4.4rem]`}
                                 onClick={(e) => {
                                     setShowMenu(false);
 
@@ -868,7 +890,12 @@ const MiniModal = ({ element, className, defaultValue, desc_no, onConfirm, onCan
 
     const [showMenu, setShowMenu] = useState(false);
     const [currentValue, setCurrentValue] = useState("test");
-    const [positionStyle, setPositionStyle] = useState<{ left?: number; right?: number; top?: number; bottom?: number }>({ left: 0 });
+    const [positionStyle, setPositionStyle] = useState<{
+        left?: number;
+        right?: number;
+        top?: number;
+        bottom?: number;
+    }>({ left: 0 });
 
     const detectOutsideClick = (e: MouseEvent) => {
         if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
@@ -936,7 +963,7 @@ const MiniModal = ({ element, className, defaultValue, desc_no, onConfirm, onCan
             <AnimatePresence>
                 {showMenu && (
                     <motion.section
-                        className={`absolute bg-white flex flex-col gap-[0.4rem] border border-[var(--color-gray-200)] rounded-[1.2rem] z-1 w-[26.0rem] ${className?.container ? className.container : ""}`}
+                        className={`absolute bg-white flex flex-col gap-[0.4rem] border border-[var(--color-gray-200)] rounded-[1.2rem] z-1 w-[26rem] ${className?.container ? className.container : ""}`}
                         style={{
                             // width: buttonRef.current?.offsetWidth,
                             ...positionStyle,
@@ -1002,7 +1029,7 @@ const MiniModal = ({ element, className, defaultValue, desc_no, onConfirm, onCan
                                 }}
                             >
                                 <UI.Button
-                                    className={`bg-[var(--color-gray-200)] font-medium whitespace-nowrap rounded-[0.6rem] px-[1.6rem] h-[4.2rem]`}
+                                    className={`bg-[var(--color-gray-200)] font-medium whitespace-nowrap rounded-[0.8rem] px-[1.6rem] h-[4.4rem]`}
                                     onClick={(e) => {
                                         onCancel(e);
                                     }}
@@ -1011,7 +1038,7 @@ const MiniModal = ({ element, className, defaultValue, desc_no, onConfirm, onCan
                                 </UI.Button>
 
                                 <UI.Button
-                                    className={`text-white bg-[var(--color-blue-1000)] font-medium whitespace-nowrap rounded-[0.6rem] w-[12.8rem] h-[4.2rem]`}
+                                    className={`text-white bg-[var(--color-blue-1000)] font-medium whitespace-nowrap rounded-[0.8rem] w-[12.8rem] h-[4.4rem]`}
                                     onClick={(e) => {
                                         onConfirm(e);
                                     }}
@@ -1033,7 +1060,12 @@ const DropDown = ({ children, className, list, height = "var(--input-height)", d
     const floatingRef = useRef<HTMLElement>(null);
 
     const [isShowList, setIsShowList] = useState(false);
-    const [positionStyle, setPositionStyle] = useState<{ left?: number; right?: number; top?: number; bottom?: number }>({ left: 0 });
+    const [positionStyle, setPositionStyle] = useState<{
+        left?: number;
+        right?: number;
+        top?: number;
+        bottom?: number;
+    }>({ left: 0 });
 
     const detectOutsideClick = (e: MouseEvent) => {
         if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
@@ -1094,7 +1126,11 @@ const DropDown = ({ children, className, list, height = "var(--input-height)", d
                         // className={`${className?.inner ?? ""} absolute z-[100] flex flex-col cursor-pointer whitespace-nowrap bg-[#000000]`}
                         className={`${className?.inner ?? ""} absolute z-[100] grid grid-cols-1 cursor-pointer whitespace-nowrap bg-[#000000]`}
                         initial={{ opacity: 0, transform: "scale(0.99)", height: "0px" }}
-                        animate={{ opacity: 1, transform: "scale(1)", height: (floatingRef.current?.scrollHeight ? floatingRef.current?.scrollHeight : 0) + 10 }}
+                        animate={{
+                            opacity: 1,
+                            transform: "scale(1)",
+                            height: (floatingRef.current?.scrollHeight ? floatingRef.current?.scrollHeight : 0) + 10,
+                        }}
                         exit={{ opacity: 0, transform: "scale(0.99)", height: "0px" }}
                         transition={{
                             delay: 0,
@@ -1143,7 +1179,7 @@ const DropDown = ({ children, className, list, height = "var(--input-height)", d
 };
 
 const Calendar = ({
-    className = "bg-[var(--color-gray-100)] text-[var(--color-gray-1000)] rounded-[0.8rem] px-[1.2rem] h-[4.2rem]",
+    className = "bg-[var(--color-gray-100)] text-[var(--color-gray-1000)] rounded-[0.8rem] px-[1.2rem] h-[4.4rem]",
     containerClassName,
     icon = false,
     desc_no,
@@ -1155,10 +1191,16 @@ const Calendar = ({
     ruleDate, // "YYYY-MM-DD" string
     center = false,
     onRuleAdjust, // 상대 Calendar를 보정하기 위한 callback
-}: CalendarModalProps & { ruleDate?: string; onRuleAdjust?: (newDate: string) => void }) => {
+}: CalendarModalProps & {
+    ruleDate?: string;
+    onRuleAdjust?: (newDate: string) => void;
+}) => {
     const [modalOpen, setModalOpen] = useState(false);
     const [currentDate, setCurrentDate] = useState(defaultValue);
-    const [positionStyle, setPositionStyle] = useState<{ left?: number; right?: number }>({ left: 0 });
+    const [positionStyle, setPositionStyle] = useState<{
+        left?: number;
+        right?: number;
+    }>({ left: 0 });
 
     const { setToast } = useToastStore();
     const containerRef = useRef<HTMLElement>(null);
@@ -1305,11 +1347,20 @@ const Calendar = ({
                 {modalOpen && (
                     <motion.section
                         className={`${center ? "fixed top-[50%!important] left-[50%!important] transform translate-x-[-50%!important] translate-y-[-50%!important]" : "absolute"} flex items-center justify-center z-[1000] bg-white rounded-[1.2rem] shadow-[var(--shadow-normal)] overflow-hidden`}
-                        style={{ top: (calendarRef.current?.offsetHeight ?? 0) + 4, ...positionStyle }}
+                        style={{
+                            top: (calendarRef.current?.offsetHeight ?? 0) + 4,
+                            ...positionStyle,
+                        }}
                         initial={{ opacity: 0, transform: "scale(0.99)", height: "0px" }}
                         animate={{ opacity: 1, transform: "scale(1)", height: "auto" }}
                         exit={{ opacity: 0, transform: "scale(0.99)", height: "0px" }}
-                        transition={{ delay: 0, type: "spring", mass: 0.1, stiffness: 150, damping: 10 }}
+                        transition={{
+                            delay: 0,
+                            type: "spring",
+                            mass: 0.1,
+                            stiffness: 150,
+                            damping: 10,
+                        }}
                     >
                         <div
                             className="p-[2.4rem] w-[calc(1.6rem*20)] flex flex-col gap-[2.4rem]"
@@ -1327,7 +1378,7 @@ const Calendar = ({
                                         className="rotate-90"
                                     />
                                 </button>
-                                <h6 className="font-semibold text-[2.0rem]">
+                                <h6 className="font-semibold text-[2rem]">
                                     {month + 1}월 {year}
                                 </h6>
                                 <button
@@ -1344,7 +1395,7 @@ const Calendar = ({
                             </section>
 
                             <section>
-                                <section className="grid w-full grid-cols-7 mb-2 text-sm text-center gap-[1.8rem]">
+                                <section className="grid w-full grid-cols-7 mb-2 text-sm text-center gap-[2rem]">
                                     {DAYS.map((day, index) => (
                                         <p
                                             key={day}
@@ -1355,7 +1406,7 @@ const Calendar = ({
                                     ))}
                                 </section>
 
-                                <section className="grid grid-cols-7 gap-[1.8rem]">
+                                <section className="grid grid-cols-7 gap-[2rem]">
                                     {Array(firstDay)
                                         .fill(null)
                                         .map((_, idx) => (
@@ -1476,7 +1527,7 @@ const FileUpload = ({ placeholder = "파일을 여기에 드래그하거나", bu
                     <p className="text-gray-500">{placeholder}</p>
                     <button
                         type="button"
-                        className="h-[4.2rem] px-[1.2rem] text-black bg-[var(--color-gray-200)] rounded-[0.6rem]"
+                        className="h-[4.4rem] px-[1.2rem] text-black bg-[var(--color-gray-200)] rounded-[0.8rem]"
                         onClick={() => inputRef.current?.click()}
                     >
                         {buttonText}
@@ -1533,7 +1584,7 @@ const Tab = ({ list, type = "button", className, preventTargetIdx = 999, prevent
                             key={i}
                             value={e.value}
                             // className={ `${ e.value === menuState ? `${ className?.active }` : `${ className?.normal }` } ${ className?.button }` }
-                            className="px-[2.0rem] py-[1.2rem]"
+                            className="px-[2rem] py-[1.2rem]"
                             onClick={() => {
                                 const MOVE_TAB = () => {
                                     setMenuState(e.value);
@@ -1570,7 +1621,7 @@ const Tab = ({ list, type = "button", className, preventTargetIdx = 999, prevent
                                 key={"tab"}
                                 id="underline"
                                 layoutId="underline"
-                                className="h-[0.2rem] w-full bg-black"
+                                className="h-[0.4rem] w-full bg-black"
                             />
                         ) : (
                             ""
@@ -1613,12 +1664,11 @@ const Button = ({ children, className, type = "button", disabled = false, ripple
             {ripples.map((ripple) => (
                 <motion.div
                     key={ripple.id}
-                    className="absolute pointer-events-none w-full h-full z-10 rounded-[50%] blur-[10px]"
+                    className="absolute pointer-events-none w-full h-full z-10 rounded-full blur-[12px] [transform:translate(-50%,-50%)]"
                     style={{
                         left: `calc(${ripple.x}px - 50%)`,
                         top: `calc(${ripple.y}px - 50%)`,
                         background: `radial-gradient(circle, ${rippleColor}00 0%, ${rippleColor} 50%, ${rippleColor}00 70%)`,
-                        transform: "translate(-50%, -50%)",
                     }}
                     initial={{ scale: 0, opacity: 0.6 }}
                     animate={{ scale: 8, opacity: 0 }}
@@ -1737,7 +1787,7 @@ const Table = ({ className, desc_no, children }: TableProps) => {
             className={`${className ?? ""}`}
             data-description={desc_no}
         >
-            <section className="table-inner border border-[var(--color-gray-200)] rounded-[0.6rem]">{children}</section>
+            <section className="table-inner border border-[var(--color-gray-200)] rounded-[0.8rem]">{children}</section>
         </section>
     );
 };
@@ -1843,7 +1893,7 @@ const TableCell = ({
         <div
             className={`
                 ${typeof children === "string" ? "pointer-events-none" : ""}
-                ${className?.container ? className.container : "px-[2.0rem] py-[1.3rem]"} 
+                ${className?.container ? className.container : "px-[2rem] py-[1.2rem]"}
                 flex items-center justify-center flex-1 rounded-[0.8rem]
             `}
             onClick={onClick}
@@ -1868,7 +1918,12 @@ const ColorPicker = ({ defaultValue, onChange }: { defaultValue?: string; onChan
     const [colorMode, setColorMode] = useState(0);
     const [selectedColor, setSelectedColor] = useState("");
     const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
-    const [positionStyle, setPositionStyle] = useState<{ left?: number; right?: number; top?: number; bottom?: number }>({ left: 0 });
+    const [positionStyle, setPositionStyle] = useState<{
+        left?: number;
+        right?: number;
+        top?: number;
+        bottom?: number;
+    }>({ left: 0 });
 
     const containerRef = useRef<HTMLElement>(null);
 
@@ -1956,7 +2011,7 @@ const ColorPicker = ({ defaultValue, onChange }: { defaultValue?: string; onChan
             {/* 상위 색상 선택 */}
             <section className="flex items-center justify-center h-full">
                 <button
-                    className="w-[2.0rem] h-[2.0rem] border border-[var(--color-gray-200)] rounded-full"
+                    className="w-[2rem] h-[2rem] border border-[var(--color-gray-200)] rounded-full"
                     type="button"
                     style={{
                         backgroundColor: selectedColor !== "" ? selectedColor : defaultValue ? defaultValue : "black",
@@ -2089,7 +2144,7 @@ const ErrorBoundaryWrapper: React.FC<ErrorBoundaryWrapperProps> = ({ children, f
 const Empty = ({ title = "결과가 없습니다", desc_no, className }: { title?: string; desc_no?: string; className?: string }) => {
     return (
         <div
-            className={`col-span-3 p-[2.0rem] w-full flex items-center justify-center flex-col gap-[2.4rem] opacity-[0.2] ${className ? className : ""}`}
+            className={`col-span-3 p-[2rem] w-full flex items-center justify-center flex-col gap-[2.4rem] opacity-[0.2] ${className ? className : ""}`}
             data-description={desc_no}
         >
             <IconComponent

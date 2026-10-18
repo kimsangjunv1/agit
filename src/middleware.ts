@@ -14,10 +14,7 @@ export default withAuth(
             authorized: ({ token, req }) => {
                 const { pathname } = req.nextUrl;
 
-                const isProtectedRoute =
-                    pathname.startsWith("/manager") ||
-                    pathname === "/post/create" ||
-                    /^\/post\/[^/]+\/modify$/.test(pathname);
+                const isProtectedRoute = pathname.startsWith("/manager") || pathname === "/post/create" || /^\/post\/[^/]+\/modify$/.test(pathname);
 
                 if (!isProtectedRoute) {
                     return true;

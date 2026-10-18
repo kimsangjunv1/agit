@@ -4,12 +4,7 @@ import type { Editor } from "@tiptap/react";
 import { BubbleMenu } from "@tiptap/react/menus";
 
 import { getSelectedImagePosition } from "@/shared/ui/common/richText/extensions/imageSelection";
-import {
-    preventEditorBlur,
-    ToolbarDivider,
-    ToolbarIconButton,
-    useTipTapToolbarState,
-} from "@/shared/ui/layout/tipTapToolbarShared";
+import { preventEditorBlur, ToolbarDivider, ToolbarIconButton, useTipTapToolbarState } from "@/shared/ui/layout/tipTapToolbarShared";
 
 type TipTapBubbleMenuProps = {
     editor: Editor;
@@ -36,7 +31,7 @@ const TipTapBubbleMenu = ({ editor }: TipTapBubbleMenuProps) => {
             }}
         >
             <div
-                className="flex items-center gap-[0.2rem] p-[0.4rem] bg-white rounded-full shadow-[var(--shadow-normal)] border border-[var(--color-gray-200)]"
+                className="flex items-center gap-[0.4rem] p-[0.4rem] bg-white rounded-full shadow-[var(--shadow-normal)] border border-[var(--color-gray-200)]"
                 onMouseDown={preventEditorBlur}
             >
                 <ToolbarIconButton
@@ -90,7 +85,7 @@ const TipTapBubbleMenu = ({ editor }: TipTapBubbleMenuProps) => {
                     disabled={!state.canCode}
                     onClick={() => editor.chain().focus().toggleCode().run()}
                 >
-                    <span className="font-mono text-[1.1rem]">{`</>`}</span>
+                    <span className="font-mono text-[1.2rem]">{`</>`}</span>
                 </ToolbarIconButton>
                 <ToolbarIconButton
                     label="형광펜"

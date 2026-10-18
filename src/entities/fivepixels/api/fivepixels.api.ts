@@ -1,5 +1,5 @@
 import { signTeamAction } from "@/entities/fivepixels/lib/signTeamAction";
-import { FIVEPIXELS_TEAM_AUTH_HEADER } from "@/entities/fivepixels/lib/verifyTeamActor";
+import { FIVEPIXELS_TEAM_AUTH_HEADER } from "@/entities/fivepixels/constants/fivepixels.constants";
 import type {
     CreateReviewerRequestPayload,
     DeleteFeedbackPayload,
@@ -55,19 +55,23 @@ async function signedTeamHeader(scope: FivepixelsScope, payload: Record<string, 
 
 /** fivepixels 피드백 - 현재 pathname 목록 조회 */
 export const getFeedbackListFetch = ({ projectId, environment, pathname }: GetFeedbackListPayload) => {
-    const query = buildFeedbackQuery({ project: projectId, env: environment, pathname });
+    const query = buildFeedbackQuery({
+        project: projectId,
+        env: environment,
+        pathname,
+    });
 
     return clientApi.get<GetFeedbackListResponse>(`${FEEDBACKS_ENDPOINT}?${query}`);
 };
 
 /** fivepixels 피드백 - 전체 페이지 목록 조회 (커서 페이지네이션) */
-export const getFeedbackListPagingFetch = ({
-    projectId,
-    environment,
-    limit,
-    cursor,
-}: GetFeedbackListPagingPayload) => {
-    const query = buildFeedbackQuery({ project: projectId, env: environment, limit, cursor });
+export const getFeedbackListPagingFetch = ({ projectId, environment, limit, cursor }: GetFeedbackListPagingPayload) => {
+    const query = buildFeedbackQuery({
+        project: projectId,
+        env: environment,
+        limit,
+        cursor,
+    });
 
     return clientApi.get<GetFeedbackListPagingResponse>(`${FEEDBACKS_ENDPOINT}/all?${query}`);
 };
@@ -90,39 +94,40 @@ export const patchFeedbackFetch = ({ id, projectId, environment, feedback }: Pat
 export const deleteFeedbackFetch = async ({ id, projectId, environment }: DeleteFeedbackPayload) => {
     const scope: FivepixelsScope = { projectId, environment };
     const query = buildFeedbackQuery({ project: projectId, env: environment });
-    const headers = await signedTeamHeader(scope, { resource: "feedback:delete", id });
+    const headers = await signedTeamHeader(scope, {
+        resource: "feedback:delete",
+        id,
+    });
 
-    return clientApi.delete<void>(`${FEEDBACKS_ENDPOINT}/${id}?${query}`, { headers });
+    return clientApi.delete<void>(`${FEEDBACKS_ENDPOINT}/${id}?${query}`, {
+        headers,
+    });
 };
 
 /** fivepixels 리뷰어 - 명단 조회 (team.reviewers 주입 · 활성/비활성 모두) */
-export const getFeedbackReviewerListFetch = ({
-    projectId,
-    environment,
-}: GetFeedbackReviewerListPayload) => {
+export const getFeedbackReviewerListFetch = ({ projectId, environment }: GetFeedbackReviewerListPayload) => {
     const query = buildFeedbackQuery({ project: projectId, env: environment });
 
     return clientApi.get<GetFeedbackReviewerListResponse>(`${FEEDBACKS_ENDPOINT}/reviewers?${query}`);
 };
 
 /** fivepixels 리뷰어 - 수동 등록/재활성화 (onRegisterReviewer, admin/sub_admin) */
-export const registerFeedbackReviewerFetch = async (
-    scope: FivepixelsScope,
-    payload: RegisterReviewerPayload
-) => {
-    const query = buildFeedbackQuery({ project: scope.projectId, env: scope.environment });
+export const setFeedbackReviewerFetch = async (scope: FivepixelsScope, payload: RegisterReviewerPayload) => {
+    const query = buildFeedbackQuery({
+        project: scope.projectId,
+        env: scope.environment,
+    });
     const body = await signedTeamBody(scope, { ...payload });
 
     return clientApi.post<ReportAuthor>(`${FEEDBACKS_ENDPOINT}/reviewers?${query}`, body);
 };
 
 /** fivepixels 리뷰어 - 수정 (onUpdateReviewer, admin/sub_admin). id 를 서명에 포함해 replay 방지. */
-export const updateFeedbackReviewerFetch = async (
-    scope: FivepixelsScope,
-    id: string,
-    payload: UpdateReviewerPayload
-) => {
-    const query = buildFeedbackQuery({ project: scope.projectId, env: scope.environment });
+export const patchFeedbackReviewerFetch = async (scope: FivepixelsScope, id: string, payload: UpdateReviewerPayload) => {
+    const query = buildFeedbackQuery({
+        project: scope.projectId,
+        env: scope.environment,
+    });
     const body = await signedTeamBody(scope, { id, ...payload });
 
     return clientApi.patch<ReportAuthor>(`${FEEDBACKS_ENDPOINT}/reviewers/${id}?${query}`, body);
@@ -130,40 +135,35 @@ export const updateFeedbackReviewerFetch = async (
 
 /** fivepixels 등록 요청 - 승인 대기 목록 (onListReviewerRequests, admin/sub_admin). 서명 헤더 전달. */
 export const getFeedbackReviewerRequestListFetch = async (scope: FivepixelsScope) => {
-    const query = buildFeedbackQuery({ project: scope.projectId, env: scope.environment });
-    const headers = await signedTeamHeader(scope, { resource: "reviewer-requests:list" });
+    const query = buildFeedbackQuery({
+        project: scope.projectId,
+        env: scope.environment,
+    });
+    const headers = await signedTeamHeader(scope, {
+        resource: "reviewer-requests:list",
+    });
 
-    return clientApi.get<GetFeedbackReviewerRequestListResponse>(
-        `${FEEDBACKS_ENDPOINT}/reviewer-requests?${query}`,
-        { headers }
-    );
+    return clientApi.get<GetFeedbackReviewerRequestListResponse>(`${FEEDBACKS_ENDPOINT}/reviewer-requests?${query}`, { headers });
 };
 
 /** fivepixels 등록 요청 - 제출 (onCreateReviewerRequest, 온보딩 중 자기 서명) */
-export const createFeedbackReviewerRequestFetch = async (
-    scope: FivepixelsScope,
-    payload: CreateReviewerRequestPayload
-) => {
-    const query = buildFeedbackQuery({ project: scope.projectId, env: scope.environment });
+export const setFeedbackReviewerRequestFetch = async (scope: FivepixelsScope, payload: CreateReviewerRequestPayload) => {
+    const query = buildFeedbackQuery({
+        project: scope.projectId,
+        env: scope.environment,
+    });
     const body = await signedTeamBody(scope, { ...payload });
 
-    return clientApi.post<ReportReviewerRequest>(
-        `${FEEDBACKS_ENDPOINT}/reviewer-requests?${query}`,
-        body
-    );
+    return clientApi.post<ReportReviewerRequest>(`${FEEDBACKS_ENDPOINT}/reviewer-requests?${query}`, body);
 };
 
 /** fivepixels 등록 요청 - 승인/거절 (onResolveReviewerRequest, admin/sub_admin). id 를 서명에 포함. */
-export const resolveFeedbackReviewerRequestFetch = async (
-    scope: FivepixelsScope,
-    id: string,
-    payload: ResolveReviewerRequestPayload
-) => {
-    const query = buildFeedbackQuery({ project: scope.projectId, env: scope.environment });
+export const patchFeedbackReviewerRequestFetch = async (scope: FivepixelsScope, id: string, payload: ResolveReviewerRequestPayload) => {
+    const query = buildFeedbackQuery({
+        project: scope.projectId,
+        env: scope.environment,
+    });
     const body = await signedTeamBody(scope, { id, ...payload });
 
-    return clientApi.post<ReportReviewerRequest>(
-        `${FEEDBACKS_ENDPOINT}/reviewer-requests/${id}/resolve?${query}`,
-        body
-    );
+    return clientApi.post<ReportReviewerRequest>(`${FEEDBACKS_ENDPOINT}/reviewer-requests/${id}/resolve?${query}`, body);
 };

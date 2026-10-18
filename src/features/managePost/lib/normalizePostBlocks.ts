@@ -13,8 +13,7 @@ export const normalizeBlockForEditor = (block: SectionContent): SectionContent =
     return block;
 };
 
-export const normalizeBlocksForEditor = (rows: SectionContent[][]): SectionContent[][] =>
-    rows.map((row) => row.map(normalizeBlockForEditor));
+export const normalizeBlocksForEditor = (rows: SectionContent[][]): SectionContent[][] => rows.map((row) => row.map(normalizeBlockForEditor));
 
 export const normalizeBlockForSave = (block: SectionContent): SectionContent => {
     if (block.blockMode === "code" || block.type === 2) {
@@ -33,5 +32,4 @@ export const normalizeBlockForSave = (block: SectionContent): SectionContent => 
     return block;
 };
 
-export const normalizeBlocksForSave = (rows: SectionContent[][]): SectionContent[][] =>
-    rows.map((row) => row.map(normalizeBlockForSave));
+export const normalizeBlocksForSave = (rows: SectionContent[][]): SectionContent[][] => rows.map((row) => row.map(normalizeBlockForSave));
