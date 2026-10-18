@@ -8,5 +8,5 @@ export const headerMenuList = [
         title: "RESUME",
         route: "/resume",
         type: 1,
-    }
-]
+    },
+];

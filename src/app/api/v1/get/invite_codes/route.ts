@@ -21,11 +21,7 @@ export async function GET(req: Request) {
             });
         }
 
-        const { data, error } = await supabase
-            .from(TABLE_NAME)
-            .select("id, is_active, is_used, expire_at")
-            .eq("code", code)
-            .maybeSingle();
+        const { data, error } = await supabase.from(TABLE_NAME).select("id, is_active, is_used, expire_at").eq("code", code).maybeSingle();
 
         if (error) throw error;
 
@@ -40,8 +36,7 @@ export async function GET(req: Request) {
         });
     } catch (error: unknown) {
         const message = error instanceof Error ? error.message : "문제가 생겼습니다";
-        const status =
-            typeof error === "object" && error !== null && "status" in error ? Number(error.status) : 500;
+        const status = typeof error === "object" && error !== null && "status" in error ? Number(error.status) : 500;
 
         return apiError(message, { status, result: null });
     }

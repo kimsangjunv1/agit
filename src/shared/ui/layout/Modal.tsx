@@ -171,7 +171,7 @@ const Modal = () => {
 
                             <section
                                 data-lenis-prevent="true"
-                                className="relative flex flex-col gap-[2.4rem] max-h-[calc(100svh-(1.6rem*7))] bg-white rounded-[2.8rem] px-[1.6rem] py-[calc(1.2rem+4.0rem+0.8rem)] overflow-y-auto"
+                                className="relative flex flex-col gap-[2.4rem] max-h-[calc(100svh-(1.6rem*7))] bg-white rounded-[2.8rem] px-[1.6rem] py-[calc(1.2rem+4rem+0.8rem)] overflow-y-auto"
                             >
                                 <Body />
                             </section>
@@ -196,7 +196,7 @@ const Modal = () => {
                             {!initGlow ? (
                                 <motion.div
                                     key={`glow-${initGlow}-${modal.isOpen}`}
-                                    className="absolute inset-0 pointer-events-none blur-[10px]"
+                                    className="absolute inset-0 pointer-events-none blur-[12px] rounded-full origin-center bg-[radial-gradient(circle,rgba(255,255,255,0)_0%,var(--color-brand-500)_20%,rgba(255,255,255,0)_70%)]"
                                     initial={{ scale: 0, opacity: 0.4 }}
                                     animate={{ scale: 10, opacity: -10 }}
                                     transition={{
@@ -204,11 +204,6 @@ const Modal = () => {
                                         ease: "easeOut",
                                         repeat: 0, // 무한 반복
                                         // repeatType: "loop",
-                                    }}
-                                    style={{
-                                        background: "radial-gradient(circle, rgba(255,255,255,0) 0%, var(--color-brand-500) 20%, rgba(255,255,255,0) 70%)",
-                                        borderRadius: "50%",
-                                        transformOrigin: "center",
                                     }}
                                     onAnimationComplete={() => setInitGlow(true)}
                                 />
@@ -274,10 +269,10 @@ const Footer = ({ className, confirm, cancel, currentTime }: ModalFooterProps) =
     const closeModalState = () => setModal({ ...modal, isOpen: false });
 
     return (
-        <section className={`modal-footer w-[calc(100%-1.2rem*2)))] flex flex-wrap justify-between gap-[1.0rem] absolute bottom-[1.2rem] left-[1.2rem] z-[100000] ${className}`}>
+        <section className={`modal-footer w-[calc(100%-1.2rem*2)))] flex flex-wrap justify-between gap-[1.2rem] absolute bottom-[1.2rem] left-[1.2rem] z-[100000] ${className}`}>
             {cancel && cancel?.title !== " " && (
                 <UI.Button
-                    className={`${cancel?.className ? cancel?.className : "bg-white"} flex-1 font-regular text-[1.4rem] whitespace-nowrap rounded-full shadow-[var(--shadow-normal)] px-[2.0rem] h-[4.2rem]`}
+                    className={`${cancel?.className ? cancel?.className : "bg-white"} flex-1 font-regular text-[1.6rem] whitespace-nowrap rounded-full shadow-[var(--shadow-normal)] px-[2rem] h-[4.4rem]`}
                     onClick={cancel.onClick}
                     rippleColor="#65778a"
                 >
@@ -287,7 +282,7 @@ const Footer = ({ className, confirm, cancel, currentTime }: ModalFooterProps) =
 
             {confirm && confirm?.title !== " " && (
                 <UI.Button
-                    className={`${confirm?.className ? confirm.className : "bg-[var(--color-gray-1000)] text-white"} flex-1 font-regular text-[1.4rem] whitespace-nowrap rounded-full shadow-[var(--shadow-normal)] px-[2.0rem] h-[4.2rem]`}
+                    className={`${confirm?.className ? confirm.className : "bg-[var(--color-gray-1000)] text-white"} flex-1 font-regular text-[1.6rem] whitespace-nowrap rounded-full shadow-[var(--shadow-normal)] px-[2rem] h-[4.4rem]`}
                     disabled={isPrevent} // 클릭 방지 시에는 비활성화
                     onClick={async () => {
                         const result = await confirm.onClick();
@@ -312,8 +307,8 @@ const Footer = ({ className, confirm, cancel, currentTime }: ModalFooterProps) =
 const Guide = ({ text, currentTime }: ModalGuideProps) => {
     return (
         <section className="flex justify-center pb-[1.6rem]">
-            <p className=" text-[1.4rem] text-[var(--color-gray-600)]">
-                <i className="bg-[var(--color-gray-100)] px-[0.4rem] py-[0.2rem] rounded-[0.4rem] text-[var(--color-gray-600)] text-[1.2rem]">{currentTime}초</i> 후 자동으로 닫혀요
+            <p className=" text-[1.6rem] text-[var(--color-gray-600)]">
+                <i className="bg-[var(--color-gray-100)] px-[0.4rem] py-[0.4rem] rounded-[0.4rem] text-[var(--color-gray-600)] text-[1.2rem]">{currentTime}초</i> 후 자동으로 닫혀요
             </p>
         </section>
     );

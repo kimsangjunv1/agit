@@ -20,11 +20,7 @@ export async function POST(req: Request) {
             return apiError("필수 정보가 누락되었습니다", { status: 400 });
         }
 
-        const { data: inviteData, error: inviteError } = await supabase
-            .from(INVITE_CODES_TABLE)
-            .select("id, is_active, is_used, expire_at")
-            .eq("code", trimmedCode)
-            .maybeSingle();
+        const { data: inviteData, error: inviteError } = await supabase.from(INVITE_CODES_TABLE).select("id, is_active, is_used, expire_at").eq("code", trimmedCode).maybeSingle();
 
         if (inviteError) throw inviteError;
 
@@ -56,14 +52,16 @@ export async function POST(req: Request) {
             return apiError("이미 사용된 코드입니다", { status: 409 });
         }
 
-        return apiSuccess({ id: userData.id }, {
-            resultMessage: "등록성공",
-            pagination: singleItemPagination(),
-        });
+        return apiSuccess(
+            { id: userData.id },
+            {
+                resultMessage: "등록성공",
+                pagination: singleItemPagination(),
+            },
+        );
     } catch (error: unknown) {
         const message = error instanceof Error ? error.message : "문제가 생겼습니다";
-        const status =
-            typeof error === "object" && error !== null && "status" in error ? Number(error.status) : 500;
+        const status = typeof error === "object" && error !== null && "status" in error ? Number(error.status) : 500;
 
         return apiError(message, { status });
     }

@@ -13,11 +13,7 @@ export async function PATCH(req: Request) {
     try {
         const supabase = supabaseAdmin();
 
-        const { data, error } = await supabase
-            .from(TABLE_NAME)
-            .update(payload)
-            .eq("id", payload.id)
-            .select();
+        const { data, error } = await supabase.from(TABLE_NAME).update(payload).eq("id", payload.id).select();
 
         if (error) throw error;
 

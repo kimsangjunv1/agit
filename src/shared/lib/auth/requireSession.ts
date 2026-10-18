@@ -4,9 +4,7 @@ import { authOptions } from "@/shared/lib/authOptions";
 import { apiError } from "@/shared/lib/apiResponse";
 import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
 
-export type AuthGuardResult =
-    | { authorized: true; session: Session }
-    | { authorized: false; response: Response };
+export type AuthGuardResult = { authorized: true; session: Session } | { authorized: false; response: Response };
 
 export async function requireSession(): Promise<AuthGuardResult> {
     const session = await getServerSession(authOptions);
@@ -45,7 +43,11 @@ export async function requireAdmin(): Promise<AuthGuardResult> {
 }
 
 type PostAccessResult =
-    | { authorized: true; session: Session; post: { idx: number; user_id: string | null } }
+    | {
+          authorized: true;
+          session: Session;
+          post: { idx: number; user_id: string | null };
+      }
     | AuthGuardResult;
 
 export async function requirePostOwnerOrAdmin(postIdx: number | string): Promise<PostAccessResult> {
@@ -56,11 +58,7 @@ export async function requirePostOwnerOrAdmin(postIdx: number | string): Promise
     }
 
     const supabase = supabaseAdmin();
-    const { data: post, error } = await supabase
-        .from("posts")
-        .select("idx, user_id")
-        .eq("idx", postIdx)
-        .single();
+    const { data: post, error } = await supabase.from("posts").select("idx, user_id").eq("idx", postIdx).single();
 
     if (error || !post) {
         return {

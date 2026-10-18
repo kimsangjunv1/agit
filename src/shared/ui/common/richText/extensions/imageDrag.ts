@@ -95,7 +95,7 @@ export function moveImageNode(editor: Editor, fromPos: number, targetPos: number
 function createDropIndicator(editor: Editor) {
     const editorElement = editor.view.dom;
     const indicator = document.createElement("div");
-    indicator.className = "pointer-events-none absolute left-0 z-20 h-[0.2rem] bg-[#3b82f6]";
+    indicator.className = "pointer-events-none absolute left-0 z-20 h-[0.4rem] bg-[#3b82f6]";
     indicator.style.width = `${editorElement.clientWidth}px`;
     editorElement.parentElement?.appendChild(indicator);
 

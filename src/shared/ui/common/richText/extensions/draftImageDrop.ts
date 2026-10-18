@@ -26,7 +26,10 @@ export const DraftImageDrop = Extension.create({
                             return true;
                         }
 
-                        const coords = view.posAtCoords({ left: event.clientX, top: event.clientY });
+                        const coords = view.posAtCoords({
+                            left: event.clientX,
+                            top: event.clientY,
+                        });
 
                         if (!coords) {
                             return true;

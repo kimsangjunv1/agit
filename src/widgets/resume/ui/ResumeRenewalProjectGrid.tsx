@@ -5,13 +5,13 @@ import { motion, useReducedMotion } from "motion/react";
 import { useCallback, useEffect, useId, useState } from "react";
 import { createPortal } from "react-dom";
 
-import { resumeProjectDetails, type ResumeProjectDetail, type ResumeProjectDetailSection } from "@/shared/constants/resume/resumeProjectDetails";
+import { resumeProjectDetails, type ResumeProjectDetail, type ResumeProjectDetailSection } from "@/entities/resume/constants/resumeProjectDetails";
 import { R } from "./renewalStyles";
 
 const PROJECT_DIALOG_LAYER_ID = "resume-project-dialog-layer";
 const PROJECT_REVEAL_EASE = [0.22, 1, 0.36, 1] as const;
 const PROJECT_DETAIL_TITLE_CLASS_NAME = "font-semibold text-[1.6rem]";
-const PROJECT_DETAIL_CONTENT_CLASS_NAME = "text-[1.4rem] font-medium leading-[1.5] lg:text-[1.8rem]";
+const PROJECT_DETAIL_CONTENT_CLASS_NAME = "text-[1.6rem] font-medium leading-[1.5] pc:text-[2rem]";
 const PROJECT_REVEAL_VARIANTS = {
     hidden: { x: "100%" },
     visible: { x: 0 },
@@ -24,7 +24,7 @@ const ProjectTile = ({ project, index, onSelect }: { project: ResumeProjectDetai
         <motion.button
             type="button"
             // className="group aspect-square overflow-hidden bg-white p-0 text-left transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-black"
-            className="group h-[28.125vw] max-h-[54.0rem] overflow-hidden bg-white p-0 text-left transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-black"
+            className="group h-[28.125vw] max-h-[54rem] overflow-hidden bg-white p-0 text-left transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-black"
             // className="h-full w-full overflow-hidden bg-white p-0 text-left transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-black"
             aria-label={`${project.title} 상세 보기`}
             initial={reducedMotion ? false : "hidden"}
@@ -35,7 +35,11 @@ const ProjectTile = ({ project, index, onSelect }: { project: ResumeProjectDetai
             <motion.div
                 className="relative flex h-full w-full flex-col justify-between p-[2.4rem]"
                 variants={PROJECT_REVEAL_VARIANTS}
-                transition={{ duration: 0.75, delay: index * 0.08, ease: PROJECT_REVEAL_EASE }}
+                transition={{
+                    duration: 0.75,
+                    delay: index * 0.08,
+                    ease: PROJECT_REVEAL_EASE,
+                }}
             >
                 <div
                     aria-hidden="true"
@@ -43,17 +47,17 @@ const ProjectTile = ({ project, index, onSelect }: { project: ResumeProjectDetai
                 />
 
                 <div className="relative z-10 flex w-full items-start justify-between gap-[1.6rem]">
-                    <span className="text-[1.4rem] font-semibold text-black group-hover:text-white/55">{String(index + 1).padStart(2, "0")}</span>
-                    <ArrowUpRight size={18} />
+                    <span className="text-[1.6rem] font-semibold text-black group-hover:text-white/55">{String(index + 1).padStart(2, "0")}</span>
+                    <ArrowUpRight size={20} />
                 </div>
 
                 <div className="relative z-10">
                     <section>
-                        <p className="text-[1.8rem] leading-[1.5] text-black group-hover:text-white/55">{project.category}</p>
-                        <h3 className="text-[1.8rem] font-bold leading-[1.5]">{project.title}</h3>
+                        <p className="text-[2rem] leading-[1.5] text-black group-hover:text-white/55">{project.category}</p>
+                        <h3 className="text-[2rem] font-bold leading-[1.5]">{project.title}</h3>
                     </section>
 
-                    <p className="text-[1.8rem] font-medium leading-[1.5]">{project.tileMetric}</p>
+                    <p className="text-[2rem] font-medium leading-[1.5]">{project.tileMetric}</p>
                 </div>
             </motion.div>
         </motion.button>
@@ -132,7 +136,7 @@ const ProjectDetailModal = ({ project, onClose }: { project: ResumeProjectDetail
             >
                 <header className="sticky top-0 z-10 flex items-start justify-between border-b border-black/15 bg-white/95 p-[2.4rem]">
                     <section className="flex min-w-0 flex-col gap-[0.8rem]">
-                        <p className="text-[1.4rem] font-semibold uppercase text-black">{project.category}</p>
+                        <p className="text-[1.6rem] font-semibold uppercase text-black">{project.category}</p>
                         <h2
                             id={titleId}
                             className="text-[2.4rem] font-bold"
@@ -174,7 +178,7 @@ const ProjectDetailModal = ({ project, onClose }: { project: ResumeProjectDetail
                             <p className={PROJECT_DETAIL_CONTENT_CLASS_NAME}>{project.role}</p>
                         </div>
 
-                        <div className="h-full w-[0.1rem] bg-black/15" />
+                        <div className="h-full w-[0.4rem] bg-black/15" />
 
                         <div className="p-[2.4rem] flex flex-col gap-[1.6rem]">
                             <p className={PROJECT_DETAIL_TITLE_CLASS_NAME}>구성 인원</p>
@@ -220,11 +224,11 @@ const ResumeRenewalProjectGrid = () => {
             id="renewal-projects"
             className="mx-auto w-full max-w-[var(--size-pc)] scroll-mt-[10rem]"
             // className="mx-auto w-full max-w-[calc(72rem*2)] scroll-mt-[10rem]"
-            // className="mx-auto w-full max-w-[calc(72rem*2)] scroll-mt-[10rem] py-[8rem] lg:py-[12rem]"
+            // className="mx-auto w-full max-w-[calc(72rem*2)] scroll-mt-[10rem] py-[8rem] pc:py-[12rem]"
         >
             <h2 className={`${R.label} mb-[3.2rem]`}>Projects</h2>
 
-            <div className="grid grid-cols-1 gap-0 sm:grid-cols-2 lg:grid-cols-2">
+            <div className="grid grid-cols-1 gap-0 tablet:grid-cols-2">
                 {resumeProjectDetails.map((project, index) => (
                     <ProjectTile
                         key={project.id}

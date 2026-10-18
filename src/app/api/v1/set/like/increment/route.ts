@@ -22,13 +22,7 @@ export async function POST(req: Request) {
 
         const supabase = await supabaseServer();
 
-        const { data, error } = await supabase
-            .from("likes")
-            .select("id")
-            .eq("post_id", postId)
-            .or(`user_id.eq.${userId},ip.eq.${ip}`)
-            .limit(1)
-            .single();
+        const { data, error } = await supabase.from("likes").select("id").eq("post_id", postId).or(`user_id.eq.${userId},ip.eq.${ip}`).limit(1).single();
 
         if (error && error.code !== "PGRST116") throw error;
 
@@ -37,23 +31,14 @@ export async function POST(req: Request) {
         if (!existing) {
             const admin = supabaseAdmin();
 
-            const { error: insertError } = await admin
-                .from("likes")
-                .insert({ post_id: postId, user_id: userId, ip });
+            const { error: insertError } = await admin.from("likes").insert({ post_id: postId, user_id: userId, ip });
             if (insertError) throw insertError;
 
-            const { data: postData, error: selectError } = await admin
-                .from("posts")
-                .select("likes")
-                .eq("idx", postId)
-                .single();
+            const { data: postData, error: selectError } = await admin.from("posts").select("likes").eq("idx", postId).single();
             if (selectError) throw selectError;
 
             const newLikes = (postData?.likes || 0) + 1;
-            const { error: updateError } = await admin
-                .from("posts")
-                .update({ likes: newLikes })
-                .eq("idx", postId);
+            const { error: updateError } = await admin.from("posts").update({ likes: newLikes }).eq("idx", postId);
             if (updateError) throw updateError;
         }
 
@@ -63,7 +48,7 @@ export async function POST(req: Request) {
                 likesIncremented: !existing,
                 alreadyLiked: !!existing,
             },
-            { resultMessage: "좋아요 처리 완료", pagination: null }
+            { resultMessage: "좋아요 처리 완료", pagination: null },
         );
     } catch (err: unknown) {
         const message = err instanceof Error ? err.message : "좋아요 처리 중 문제가 발생했습니다.";

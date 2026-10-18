@@ -1,7 +1,7 @@
 "use client";
 
-import type { RenewalSectionEntry } from "@/shared/constants/resume/resumeRenewalData";
-import { getRenewalExperienceAnchorId, renewalExperiences } from "@/shared/constants/resume/resumeRenewalData";
+import type { RenewalSectionEntry } from "@/entities/resume/constants/resumeRenewalData";
+import { getRenewalExperienceAnchorId, renewalExperiences } from "@/entities/resume/constants/resumeRenewalData";
 import RenewalRightBlocks from "./RenewalRightBlocks";
 import RenewalSplitSection from "./RenewalSplitSection";
 import { R } from "./renewalStyles";
@@ -25,7 +25,7 @@ const ResumeRenewalExperience = ({ experience, anchorId }: ResumeRenewalExperien
                     <div>
                         <h2 className={R.keyline}>{experience.title}</h2>
                         <p className={`${R.body} mt-[0.8rem] font-normal`}>{experience.subtitle}</p>
-                        <p className="mt-[0.4rem] text-[1.8rem] leading-[1.75] text-[#000000]/50">{experience.period}</p>
+                        <p className="mt-[0.4rem] text-[2rem] leading-[1.75] text-[#000000]/50">{experience.period}</p>
                     </div>
                 }
                 details={

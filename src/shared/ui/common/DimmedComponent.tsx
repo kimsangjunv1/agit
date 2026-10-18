@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { Fragment } from "react";
 import { AnimatePresence, motion } from "motion/react";
@@ -11,24 +11,24 @@ const DimmedComponent = ({ isVisible }: { isVisible: boolean }) => {
     const { bottomSheet, initBottomSheet, setBottomSheet } = useBottomSheetStore();
 
     const closeBottomSheetState = () => {
-        if ( bottomSheet ) {
+        if (bottomSheet) {
             setBottomSheet({ ...bottomSheet, isOpen: false });
 
             // setPersistDetailShutdownState(true);
             // setBottomSheet(initBottomSheet);
         }
-    }
+    };
 
     const closeModalState = () => {
-        if ( modal ) {
+        if (modal) {
             setModal({ ...modal, isOpen: false });
         }
-    }
+    };
 
     return (
         <Fragment>
             <AnimatePresence>
-                { modal.isOpen || bottomSheet.isOpen ? (
+                {modal.isOpen || bottomSheet.isOpen ? (
                     <motion.div
                         className="fixed top-0 left-0 w-full h-full bg-[#000000c1] z-[999]"
                         exit={{ opacity: 0 }}
@@ -41,18 +41,19 @@ const DimmedComponent = ({ isVisible }: { isVisible: boolean }) => {
                             stiffness: 100,
                             damping: 10,
                         }}
-
                         onClick={() => {
-                            if ( bottomSheet.isOpen ) {
+                            if (bottomSheet.isOpen) {
                                 closeBottomSheetState();
                             }
 
-                            if ( modal.isOpen ) {
+                            if (modal.isOpen) {
                                 closeModalState();
                             }
                         }}
                     />
-                ) : ""}
+                ) : (
+                    ""
+                )}
             </AnimatePresence>
         </Fragment>
     );

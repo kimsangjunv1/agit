@@ -22,13 +22,7 @@ export async function POST(req: Request) {
 
         let existing: { id: number } | null = null;
         if (filters.length > 0) {
-            const { data, error } = await supabase
-                .from("views")
-                .select("id")
-                .eq("post_id", postId)
-                .or(filters.join(","))
-                .limit(1)
-                .single();
+            const { data, error } = await supabase.from("views").select("id").eq("post_id", postId).or(filters.join(",")).limit(1).single();
 
             if (error && error.code !== "PGRST116") throw error;
             existing = data;
@@ -37,23 +31,14 @@ export async function POST(req: Request) {
         if (!existing) {
             const admin = supabaseAdmin();
 
-            const { error: insertError } = await admin
-                .from("views")
-                .insert({ post_id: postId, user_id: userId ?? null, ip });
+            const { error: insertError } = await admin.from("views").insert({ post_id: postId, user_id: userId ?? null, ip });
             if (insertError) throw insertError;
 
-            const { data: postData, error: selectError } = await admin
-                .from("posts")
-                .select("views")
-                .eq("idx", postId)
-                .single();
+            const { data: postData, error: selectError } = await admin.from("posts").select("views").eq("idx", postId).single();
             if (selectError) throw selectError;
 
             const newViews = (postData?.views || 0) + 1;
-            const { error: updateError } = await admin
-                .from("posts")
-                .update({ views: newViews })
-                .eq("idx", postId);
+            const { error: updateError } = await admin.from("posts").update({ views: newViews }).eq("idx", postId);
             if (updateError) throw updateError;
         }
 
@@ -63,7 +48,7 @@ export async function POST(req: Request) {
                 viewsIncremented: !existing,
                 alreadyViewed: !!existing,
             },
-            { resultMessage: "조회수 처리 완료", pagination: null }
+            { resultMessage: "조회수 처리 완료", pagination: null },
         );
     } catch (err: unknown) {
         const { message, status } = resolveRouteError(err, "조회수 처리 중 문제가 발생했습니다.");

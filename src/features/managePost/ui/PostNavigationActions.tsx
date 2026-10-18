@@ -35,7 +35,7 @@ const rollingTransition = {
 const FONT_SCALE_OPTIONS = [0.9, 1, 1.15, 1.3] as const;
 const LINE_HEIGHT_OPTIONS = [1.4, 1.6, 1.8, 2] as const;
 
-const NavDivider = () => <div className="h-full w-[0.1rem] shrink-0 bg-[#ffffff20]" />;
+const NavDivider = () => <div className="h-full w-[0.4rem] shrink-0 bg-[#ffffff20]" />;
 
 const NavButton = ({ title, icon, onClick, disabled, className = "" }: NavButtonProps) => (
     <UI.Button
@@ -77,10 +77,10 @@ const ReadingSettingControl = ({
             >
                 <MaterialIcon
                     name="remove"
-                    size={18}
+                    size={20}
                 />
             </UI.Button>
-            <strong className="min-w-[4rem] text-center text-[1.4rem] text-white">{value}</strong>
+            <strong className="min-w-[4rem] text-center text-[1.6rem] text-white">{value}</strong>
             <UI.Button
                 type="button"
                 aria-label={`${label} 늘리기`}
@@ -90,7 +90,7 @@ const ReadingSettingControl = ({
             >
                 <MaterialIcon
                     name="add"
-                    size={18}
+                    size={20}
                 />
             </UI.Button>
         </section>
@@ -203,13 +203,13 @@ const PostNavigationActions = ({ showShare, showLike, showComments, showToc, sho
                                             >
                                                 <MaterialIcon
                                                     name="keyboard_arrow_up"
-                                                    size={18}
+                                                    size={20}
                                                     className="text-white"
                                                 />
                                             </UI.Button>
                                         </UI.DropDown>
                                     ) : null}
-                                    {activeTocLabel ? <p className="truncate mobile:text-[1.6rem] pc:text-[2.0rem] leading-[1.5] font-bold text-white">{activeTocLabel} 보는 중</p> : null}
+                                    {activeTocLabel ? <p className="truncate mobile:text-[1.6rem] pc:text-[2rem] leading-[1.5] font-bold text-white">{activeTocLabel} 보는 중</p> : null}
                                 </div>
                                 {/* <h2 className="mobile:text-[1.4rem] pc:text-[1.8rem] leading-[1.5] font-bold text-white">{postTitle}</h2> */}
                             </section>
@@ -222,7 +222,7 @@ const PostNavigationActions = ({ showShare, showLike, showComments, showToc, sho
                                     icon={
                                         <MaterialIcon
                                             name="content_copy"
-                                            size={18}
+                                            size={20}
                                             className="text-white"
                                         />
                                     }
@@ -240,7 +240,7 @@ const PostNavigationActions = ({ showShare, showLike, showComments, showToc, sho
                                     icon={
                                         <MaterialIcon
                                             name="thumb_up"
-                                            size={18}
+                                            size={20}
                                             className={isLiked ? "text-black" : "text-white"}
                                         />
                                     }
@@ -256,7 +256,7 @@ const PostNavigationActions = ({ showShare, showLike, showComments, showToc, sho
                                     icon={
                                         <MaterialIcon
                                             name="chat_bubble_outline"
-                                            size={18}
+                                            size={20}
                                             className="text-white"
                                         />
                                     }
@@ -272,7 +272,7 @@ const PostNavigationActions = ({ showShare, showLike, showComments, showToc, sho
                                     icon={
                                         <MaterialIcon
                                             name="text_fields"
-                                            size={18}
+                                            size={20}
                                             className="text-white"
                                         />
                                     }
@@ -288,7 +288,7 @@ const PostNavigationActions = ({ showShare, showLike, showComments, showToc, sho
                                     icon={
                                         <MaterialIcon
                                             name="edit"
-                                            size={18}
+                                            size={20}
                                             className="text-white"
                                         />
                                     }
@@ -306,7 +306,7 @@ const PostNavigationActions = ({ showShare, showLike, showComments, showToc, sho
                                     icon={
                                         <MaterialIcon
                                             name="delete"
-                                            size={18}
+                                            size={20}
                                             className="text-white"
                                         />
                                     }
@@ -350,7 +350,7 @@ const PostNavigationActions = ({ showShare, showLike, showComments, showToc, sho
                         >
                             <MaterialIcon
                                 name="arrow_back"
-                                size={18}
+                                size={20}
                             />
                         </UI.Button>
                     </motion.div>

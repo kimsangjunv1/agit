@@ -3,24 +3,12 @@ import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import {
-    FIVEPIXELS_FC_NUMBER_RETRY_COUNT,
-    FIVEPIXELS_TABLE_NAME,
-    POSTGRES_UNIQUE_VIOLATION_CODE,
-} from "@/entities/fivepixels/constants/fivepixels.constants";
-import {
-    FEEDBACK_SCOPE_REQUIRED_MESSAGE,
-    feedbackError,
-    feedbackErrorFrom,
-} from "@/entities/fivepixels/lib/feedbackResponse";
+import { FIVEPIXELS_FC_NUMBER_RETRY_COUNT, FIVEPIXELS_TABLE_NAME, POSTGRES_UNIQUE_VIOLATION_CODE } from "@/entities/fivepixels/constants/fivepixels.constants";
+import { FEEDBACK_SCOPE_REQUIRED_MESSAGE, feedbackError, feedbackErrorFrom } from "@/entities/fivepixels/lib/feedbackResponse";
 import { mapPayloadToInsert, mapRowToFeedback } from "@/entities/fivepixels/lib/mapFeedback";
 import { parseFivepixelsScope } from "@/entities/fivepixels/lib/scope";
 import { verifyFeedbackAuth } from "@/entities/fivepixels/lib/verifyFeedbackAuth";
-import type {
-    CreateReportFeedbackPayload,
-    FivepixelsFeedbackRow,
-    FivepixelsScope,
-} from "@/entities/fivepixels/model/fivepixels.type";
+import type { CreateReportFeedbackPayload, FivepixelsFeedbackRow, FivepixelsScope } from "@/entities/fivepixels/model/fivepixels.type";
 import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
 
 /** 스코프 내 최대 fc_number + 1. 유니크 충돌 시 호출부에서 재시도한다. */
@@ -110,11 +98,7 @@ export async function POST(req: Request) {
                 now,
             });
 
-            const { data, error } = await supabase
-                .from(FIVEPIXELS_TABLE_NAME)
-                .insert(insert)
-                .select("*")
-                .single();
+            const { data, error } = await supabase.from(FIVEPIXELS_TABLE_NAME).insert(insert).select("*").single();
 
             if (!error) {
                 return NextResponse.json(mapRowToFeedback(data as FivepixelsFeedbackRow), { status: 201 });

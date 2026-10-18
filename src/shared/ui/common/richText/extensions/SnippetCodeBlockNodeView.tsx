@@ -25,12 +25,12 @@ export function SnippetCodeBlockNodeView({ node, selected }: NodeViewProps) {
                 content={content}
                 variant="compact"
                 showFormat={false}
-                bodyClassName="py-[1.0rem]"
+                bodyClassName="py-[1.2rem]"
             >
                 <div className="snippet-code-block-editor relative min-w-0">
                     <pre
                         aria-hidden
-                        className="code-block hljs pointer-events-none absolute inset-0 m-0 overflow-hidden whitespace-pre-wrap break-words bg-transparent font-mono text-[1.35rem] leading-[1.7]"
+                        className="code-block hljs pointer-events-none absolute inset-0 m-0 overflow-hidden whitespace-pre-wrap break-words bg-transparent font-mono text-[1.2rem] leading-[1.7]"
                     >
                         <code
                             className={`language-${language}`}
@@ -39,7 +39,7 @@ export function SnippetCodeBlockNodeView({ node, selected }: NodeViewProps) {
                     </pre>
                     <pre className="relative m-0 bg-transparent">
                         <NodeViewContent
-                            className={`snippet-code-block-editor__input language-${language} block whitespace-pre-wrap break-words bg-transparent font-mono text-[1.35rem] leading-[1.7] outline-none`}
+                            className={`snippet-code-block-editor__input text-transparent caret-slate-200 selection:bg-blue-500/35 language-${language} block whitespace-pre-wrap break-words bg-transparent font-mono text-[1.2rem] leading-[1.7] outline-none`}
                         />
                     </pre>
                 </div>

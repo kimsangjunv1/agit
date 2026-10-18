@@ -1,10 +1,5 @@
 import { clientApi } from "@/shared/lib/api/client";
-import {
-    DeleteCommentManagerResponse,
-    GetCommentDetailResponse,
-    GetCommentLatestListResponse,
-    GetCommentManagerListResponse,
-} from "@/entities/comment/model/comment.type";
+import { DeleteCommentManagerResponse, GetCommentDetailResponse, GetCommentLatestListResponse, GetCommentManagerListResponse } from "@/entities/comment/model/comment.type";
 
 /**
  * 댓글 - 게시물에 해당하는 댓글 목록 불러오기
@@ -25,11 +20,8 @@ export const getCommentLatestListFetch = () => {
 /**
  * 댓글 - 생성
  */
-export const setCommentFetch = (data: unknown) =>
-    clientApi.post<unknown>("/api/v1/set/comment/create", data);
+export const setCommentFetch = (data: unknown) => clientApi.post<unknown>("/api/v1/set/comment/create", data);
 
-export const getCommentManagerListFetch = () =>
-    clientApi.get<GetCommentManagerListResponse>("/api/v1/get/comment/manager");
+export const getCommentManagerListFetch = () => clientApi.get<GetCommentManagerListResponse>("/api/v1/get/comment/manager");
 
-export const deleteCommentManagerFetch = (data: { idx: number }) =>
-    clientApi.delete<DeleteCommentManagerResponse>("/api/v1/delete/comment/manager", { body: data });
+export const deleteCommentManagerFetch = (data: { idx: number }) => clientApi.delete<DeleteCommentManagerResponse>("/api/v1/delete/comment/manager", { body: data });

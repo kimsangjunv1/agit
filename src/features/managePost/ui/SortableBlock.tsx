@@ -9,22 +9,26 @@ import TipTapToolbar from "@/shared/ui/layout/TipTapToolbar";
 import UI from "@/shared/ui/common/UIComponent";
 import IconComponent from "@/shared/ui/common/IconComponent";
 import { MaterialIcon } from "@/shared/ui/common/MaterialIcon";
-import { blockContentToHtml } from "@/widgets/post/lib/blockContent";
-import { getBlockModeLabel, getNextBlockModePatch, isCodeBlock, isMainBlock } from "@/widgets/post/lib/blockMode";
-import { getPostTocAnchorId } from "@/widgets/post/lib/postToc";
+import { blockContentToHtml } from "@/entities/post/lib/blockContent";
+import { getBlockModeLabel, getNextBlockModePatch, isCodeBlock, isMainBlock } from "@/entities/post/lib/blockMode";
+import { getPostTocAnchorId } from "@/entities/post/lib/postToc";
 
 import { usePostDraftImageStore } from "@/shared/stores/usePostDraftImageStore";
 import { useToastStore } from "@/shared/stores/useToastStore";
 import { Row, useBlockStore } from "@/features/managePost/model/useEditorBlockStore";
 import { normalizeBlocksForEditor } from "@/features/managePost/lib/normalizePostBlocks";
-import { BLOCK_COLUMN_CLASS, BLOCK_ROW_CLASS, CODE_BLOCK_COLUMN_CLASS } from "@/features/managePost/ui/blockEditor/blockEditorStyles";
+import { BLOCK_COLUMN_CLASS, BLOCK_ROW_CLASS, CODE_BLOCK_COLUMN_CLASS } from "@/shared/lib/richText/styles";
 import { detectCodeLanguage, extractCodeFromContent, getDefaultCodeFileBaseName, toCodeBlockHtml } from "@/shared/lib/codeHighlight";
 import { formatCodeContent } from "@/shared/lib/formatCodeContent";
 import CodeBlockPanel from "@/shared/ui/common/CodeBlockPanel";
 
 import type { SectionContent } from "@/entities/post/model/post.type";
 
-const REORDER_TRANSITION = { type: "spring" as const, stiffness: 500, damping: 42 };
+const REORDER_TRANSITION = {
+    type: "spring" as const,
+    stiffness: 500,
+    damping: 42,
+};
 
 const GROUP_ACTION_BUTTON_CLASS = "flex h-[2.4rem] w-[3.6rem] items-center justify-center rounded-[1.2rem] text-[var(--color-gray-900)] transition-colors hover:bg-[var(--color-gray-100)]";
 
@@ -137,7 +141,7 @@ const Item = ({ row, rowIndex }: { row: Row; rowIndex: number }) => {
                         <span className="sr-only">아래 그룹 추가</span>
                         <MaterialIcon
                             name="add_row_below"
-                            size={18}
+                            size={20}
                         />
                     </UI.Button>
 
@@ -158,7 +162,7 @@ const Item = ({ row, rowIndex }: { row: Row; rowIndex: number }) => {
                         <span className="sr-only">{row.length === 1 ? "블록 추가" : "좌우 전환"}</span>
                         <MaterialIcon
                             name={row.length === 1 ? "view_column" : "swap_horiz"}
-                            size={18}
+                            size={20}
                             className="mobile:rotate-90 pc:rotate-0"
                         />
                     </UI.Button>
@@ -273,7 +277,7 @@ const Block = ({ block, rowIndex, blockIndex, last, blockCount }: { block: Secti
         }
     }, [codeBlockMode]);
 
-    const columnClassName = `w-full min-w-0 flex flex-col gap-[1.6rem] h-full group/block ${!codeBlockMode && block.type !== 0 ? "rounded-[2.4rem]" : ""} ${blockCount === 1 && !codeBlockMode && block.type !== 0 ? "tablet:col-span-2" : blockCount > 1 && !codeBlockMode && block.type !== 0 ? "tablet:min-h-[36.0rem]" : ""} ${codeBlockMode ? "rounded-[2.4rem]" : ""}`;
+    const columnClassName = `w-full min-w-0 flex flex-col gap-[1.6rem] h-full group/block ${!codeBlockMode && block.type !== 0 ? "rounded-[2.4rem]" : ""} ${blockCount === 1 && !codeBlockMode && block.type !== 0 ? "tablet:col-span-2" : blockCount > 1 && !codeBlockMode && block.type !== 0 ? "tablet:min-h-[36rem]" : ""} ${codeBlockMode ? "rounded-[2.4rem]" : ""}`;
     // const columnClassName = `w-full min-w-0 flex flex-col gap-[1.6rem] h-full group/block ${!codeBlockMode && block.type !== 0 ? "rounded-[2.4rem]" : ""} ${blockCount === 1 && !codeBlockMode && block.type !== 0 ? "tablet:col-span-2" : blockCount > 1 && !codeBlockMode && block.type !== 0 ? "tablet:min-h-[36.0rem]" : ""} ${codeBlockMode ? "rounded-[2.4rem] overflow-hidden" : ""}`;
 
     const handleImageFile = (file: File) => {
@@ -401,14 +405,14 @@ const Block = ({ block, rowIndex, blockIndex, last, blockCount }: { block: Secti
                                     as="p"
                                     value={block.subtitle}
                                     placeholder="부제목을 입력해주세요"
-                                    className="text-[1.4rem] leading-[1.5] text-[#676767]"
+                                    className="text-[1.6rem] leading-[1.5] text-[#676767]"
                                     onChange={(subtitle) => updateBlock(rowIndex, blockIndex, { subtitle })}
                                 />
                                 <BlockEditableField
                                     as="h5"
                                     value={block.title}
                                     placeholder="제목을 입력해주세요"
-                                    className="text-[2.0rem] tablet:text-[2.4rem] leading-[1.5] font-bold text-[var(--color-gray-1000)]"
+                                    className="text-[2rem] tablet:text-[2.4rem] leading-[1.5] font-bold text-[var(--color-gray-1000)]"
                                     onChange={(title) => updateBlock(rowIndex, blockIndex, { title })}
                                 />
                             </section>
@@ -434,7 +438,7 @@ const Block = ({ block, rowIndex, blockIndex, last, blockCount }: { block: Secti
                         showFormat
                         onFormat={handleFormatCode}
                         onFileNameChange={(title) => updateBlock(rowIndex, blockIndex, { title })}
-                        bodyClassName="min-h-[12rem] p-0 px-[1.6rem] py-[1.4rem]"
+                        bodyClassName="min-h-[12rem] p-0 px-[1.6rem] py-[1.6rem]"
                     >
                         <TipTap.Code
                             key={`${block.id}-code`}

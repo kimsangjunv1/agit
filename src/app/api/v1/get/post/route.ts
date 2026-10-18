@@ -37,9 +37,7 @@ export async function GET(req: Request) {
 
         return apiSuccess(data, {
             resultMessage: "조회성공",
-            pagination: idx
-                ? null
-                : buildPaginationFromQuery(searchParams, count ?? 0, DEFAULT_PAGE_SIZE),
+            pagination: idx ? null : buildPaginationFromQuery(searchParams, count ?? 0, DEFAULT_PAGE_SIZE),
         });
     } catch (error: unknown) {
         const { message, status } = resolveRouteError(error);

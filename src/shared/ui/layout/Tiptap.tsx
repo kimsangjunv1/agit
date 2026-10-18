@@ -12,7 +12,7 @@ import { useEffect, useRef } from "react";
 import TipTapBubbleMenu from "@/shared/ui/layout/TipTapBubbleMenu";
 import TipTapImageBubbleMenu from "@/shared/ui/layout/TipTapImageBubbleMenu";
 import TipTapToolbar from "@/shared/ui/layout/TipTapToolbar";
-import { TIPTAP_PROSE_CLASS } from "@/features/managePost/ui/blockEditor/blockEditorStyles";
+import { TIPTAP_PROSE_CLASS, RICH_TEXT_PARAGRAPH_CLASS, RICH_TEXT_SPAN_CLASS, RICH_TEXT_BLOCKQUOTE_CLASS } from "@/shared/lib/richText/styles";
 import { createCodeBlockEditorExtensions } from "@/shared/ui/common/richText/extensions/codeBlockEditor";
 import { DEFAULT_CODE_LANGUAGE } from "@/shared/lib/codeHighlight";
 import { codeBlockLowlight } from "@/shared/ui/common/richText/extensions/codeBlockEditor";
@@ -28,11 +28,13 @@ type Props = {
     onEditorBlur?: () => void;
 };
 
-const TIPTAP_EDITOR_CLASS = ["tiptap-editor-content min-h-[12rem] outline-none focus:outline-none", TIPTAP_PROSE_CLASS, "[&_.rich-text-image-node]:w-full"].join(" ");
+const TIPTAP_EDITOR_CLASS = ["tiptap-editor-content min-h-[12rem] outline-none focus:outline-none", TIPTAP_PROSE_CLASS].join(" ");
 
 const TIPTAP_WRAPPER_CLASS = "min-h-[12rem] h-full rounded-[1.6rem] outline-none";
 
-const CustomTextStyle = TextStyle.extend({
+const CustomTextStyle = TextStyle.configure({
+    HTMLAttributes: { class: RICH_TEXT_SPAN_CLASS },
+}).extend({
     addAttributes() {
         return {
             ...this.parent?.(),
@@ -73,6 +75,14 @@ const Normal = ({ content = "", onChange, showToolbar = true, onEditorFocus, onE
         },
         extensions: [
             StarterKit.configure({
+                paragraph: { HTMLAttributes: { class: RICH_TEXT_PARAGRAPH_CLASS } },
+                bulletList: {
+                    HTMLAttributes: { class: "list-disc pl-[2rem] my-[0.8rem]" },
+                },
+                orderedList: {
+                    HTMLAttributes: { class: "list-decimal pl-[2rem] my-[0.8rem]" },
+                },
+                blockquote: { HTMLAttributes: { class: RICH_TEXT_BLOCKQUOTE_CLASS } },
                 horizontalRule: false,
                 trailingNode: false,
                 link: {
@@ -153,7 +163,7 @@ const Code = ({ content = "", onChange }: Props) => {
     const editor = useEditor({
         immediatelyRender: false,
         extensions: createCodeBlockEditorExtensions(),
-        content: initialContent.current || "<pre><code class=\"language-javascript\"></code></pre>",
+        content: initialContent.current || '<pre><code class="language-javascript"></code></pre>',
         editorProps: {
             attributes: {
                 autocomplete: "off",
@@ -161,7 +171,7 @@ const Code = ({ content = "", onChange }: Props) => {
                 autocapitalize: "off",
                 spellcheck: "false",
                 "aria-label": "코드 입력",
-                class: "tiptap-code-editor min-h-[15rem] outline-none focus:outline-none font-mono text-[1.4rem] leading-[1.6]",
+                class: "tiptap-code-editor h-full min-h-[12rem] outline-none focus:outline-none font-mono text-[1.6rem] leading-[1.6] text-slate-200 bg-transparent",
             },
         },
         onUpdate: ({ editor: currentEditor }) => {
@@ -196,7 +206,7 @@ const Code = ({ content = "", onChange }: Props) => {
             return;
         }
 
-        editor.commands.setContent(content || "<pre><code class=\"language-javascript\"></code></pre>", { emitUpdate: false });
+        editor.commands.setContent(content || '<pre><code class="language-javascript"></code></pre>', { emitUpdate: false });
         lastEmittedHtml.current = content;
     }, [content, editor]);
 
@@ -209,7 +219,7 @@ const Code = ({ content = "", onChange }: Props) => {
         >
             <EditorContent
                 editor={editor}
-                className="tiptap-code-editor-wrapper h-full min-h-[12rem] [&_.tiptap-code-editor]:h-full [&_.tiptap-code-editor]:min-h-[12rem] [&_.tiptap-code-editor_pre]:m-0 [&_.tiptap-code-editor_pre]:bg-transparent [&_.tiptap-code-editor_pre]:p-0 [&_.tiptap-code-editor_pre]:font-mono [&_.tiptap-code-editor_pre]:text-[1.4rem] [&_.tiptap-code-editor_pre]:leading-[1.6] [&_.tiptap-code-editor_pre]:whitespace-pre-wrap [&_.tiptap-code-editor_pre]:break-words [&_.tiptap-code-editor_pre]:[tab-size:4] [&_.tiptap-code-editor_code]:block [&_.tiptap-code-editor_code]:font-mono [&_.tiptap-code-editor_code]:[tab-size:4] [&_.tiptap-code-editor_code]:bg-transparent"
+                className="tiptap-code-editor-wrapper h-full min-h-[12rem]"
             />
         </div>
     );

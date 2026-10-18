@@ -9,13 +9,7 @@ import * as prettierPluginTypescript from "prettier/plugins/typescript";
 
 import { detectCodeLanguage } from "@/shared/lib/codeHighlight";
 
-const FORMAT_PLUGINS = [
-    prettierPluginBabel,
-    prettierPluginEstree,
-    prettierPluginHtml,
-    prettierPluginPostcss,
-    prettierPluginTypescript,
-];
+const FORMAT_PLUGINS = [prettierPluginBabel, prettierPluginEstree, prettierPluginHtml, prettierPluginPostcss, prettierPluginTypescript];
 
 const getPrettierParser = (language: string) => {
     switch (language) {

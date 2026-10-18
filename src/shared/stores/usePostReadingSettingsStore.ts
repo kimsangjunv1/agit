@@ -37,9 +37,7 @@ const readStoredSettings = (): PostReadingSettings => {
 
         return {
             fontScale: typeof parsed.fontScale === "number" ? parsed.fontScale : DEFAULT_SETTINGS.fontScale,
-            lineHeight: parsed.lineHeight === 1.6
-                ? DEFAULT_SETTINGS.lineHeight
-                : typeof parsed.lineHeight === "number" ? parsed.lineHeight : DEFAULT_SETTINGS.lineHeight,
+            lineHeight: parsed.lineHeight === 1.6 ? DEFAULT_SETTINGS.lineHeight : typeof parsed.lineHeight === "number" ? parsed.lineHeight : DEFAULT_SETTINGS.lineHeight,
         };
     } catch {
         return DEFAULT_SETTINGS;
@@ -55,13 +53,19 @@ export const usePostReadingSettingsStore = create<PostReadingSettingsStore>((set
 
     setFontScale: (fontScale) => {
         const next = { ...get(), fontScale };
-        persistSettings({ fontScale: next.fontScale, lineHeight: next.lineHeight });
+        persistSettings({
+            fontScale: next.fontScale,
+            lineHeight: next.lineHeight,
+        });
         set({ fontScale });
     },
 
     setLineHeight: (lineHeight) => {
         const next = { ...get(), lineHeight };
-        persistSettings({ fontScale: next.fontScale, lineHeight: next.lineHeight });
+        persistSettings({
+            fontScale: next.fontScale,
+            lineHeight: next.lineHeight,
+        });
         set({ lineHeight });
     },
 

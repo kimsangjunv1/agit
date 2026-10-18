@@ -8,8 +8,8 @@ function GlobalErrorFallback({ error }: FallbackProps) {
 
     return (
         <div className="flex min-h-[50svh] flex-col items-center justify-center gap-4 p-8">
-            <p className="text-[1.8rem] font-bold">문제가 발생했습니다.</p>
-            <p className="text-[1.4rem] text-[#00000090]">{message}</p>
+            <p className="text-[2rem] font-bold">문제가 발생했습니다.</p>
+            <p className="text-[1.6rem] text-[#00000090]">{message}</p>
         </div>
     );
 }

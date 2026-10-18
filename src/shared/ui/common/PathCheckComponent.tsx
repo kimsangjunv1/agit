@@ -1,33 +1,16 @@
-"use client"
-
-import { ReactNode, useEffect, useState } from "react";
-
-import { useLayoutStore } from '@/shared/stores/useLayoutStore';
-
-const MOBILE_QUERY = "(max-width: 960px)";
-
+"use client";
+import { type ReactNode, useEffect } from "react";
+import { useLayoutStore } from "@/shared/stores/useLayoutStore";
 const PathCheckComponent = ({ children }: { children: ReactNode }) => {
-    const [ isNowOnMobile, setIsNowOnMobile ] = useState<boolean>(false);
-    
-    const { setIsMobile } = useLayoutStore();
-
+    const setIsMobile = useLayoutStore((state) => state.setIsMobile);
     useEffect(() => {
-        const mediaQuery = window.matchMedia(MOBILE_QUERY);
-        const handleResize = () => setIsNowOnMobile(mediaQuery.matches);
-
-        handleResize();
-        mediaQuery.addEventListener("change", handleResize);
-
-        return () => {
-            mediaQuery.removeEventListener("change", handleResize);
-        };
-    }, []);
-
-    useEffect(() => {
-        setIsMobile(isNowOnMobile);
-    }, [ isNowOnMobile, setIsMobile ])
-
-    return children
-}
-
-export default PathCheckComponent
+        const tablet = getComputedStyle(document.documentElement).getPropertyValue("--breakpoint-tablet").trim();
+        const query = window.matchMedia(`(min-width: ${tablet})`);
+        const update = () => setIsMobile(!query.matches);
+        update();
+        query.addEventListener("change", update);
+        return () => query.removeEventListener("change", update);
+    }, [setIsMobile]);
+    return children;
+};
+export default PathCheckComponent;

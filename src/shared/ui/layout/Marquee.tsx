@@ -62,9 +62,8 @@ const Marquee = ({ content, duration = 1, paused = false, className }: MarqueePr
     return (
         <div
             ref={containerRef}
-            className={`${className?.container ?? ""} overflow-hidden max-w-full`}
+            className={`${className?.container ?? ""} relative overflow-hidden max-w-full`}
             style={{
-                position: "relative",
                 width: viewportWidth > 0 ? viewportWidth : undefined,
             }}
         >

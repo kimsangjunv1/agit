@@ -1,4 +1,4 @@
-import ImageManagerView from "@/views/manager/image/ImageManagerView";
+import ImageManagerView from "@/views/manager/images/ImageManagerView";
 
 const Page = async () => {
     return <ImageManagerView />;

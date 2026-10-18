@@ -89,13 +89,13 @@ const ResumeRenewalAwwwardsProject = () => {
                                         </li>
                                     ))}
                                 </ul>
-                                <dl className={`grid grid-cols-[7rem_1fr] gap-y-[0.8rem] ${RInverse.meta}`}>
-                                    <dt className="text-[1.8rem]">일정</dt>
-                                    <dd className="text-[1.8rem]">{project.period}</dd>
-                                    <dt className="text-[1.8rem]">기술</dt>
-                                    <dd className="text-[1.8rem]">{project.techStack}</dd>
-                                    <dt className="text-[1.8rem]">인력</dt>
-                                    <dd className="text-[1.8rem]">{project.team}</dd>
+                                <dl className={`grid grid-cols-[7.2rem_1fr] gap-y-[0.8rem] ${RInverse.meta}`}>
+                                    <dt className="text-[2rem]">일정</dt>
+                                    <dd className="text-[2rem]">{project.period}</dd>
+                                    <dt className="text-[2rem]">기술</dt>
+                                    <dd className="text-[2rem]">{project.techStack}</dd>
+                                    <dt className="text-[2rem]">인력</dt>
+                                    <dd className="text-[2rem]">{project.team}</dd>
                                 </dl>
 
                                 <section className="flex flex-wrap gap-x-[2rem] gap-y-[0.8rem]">

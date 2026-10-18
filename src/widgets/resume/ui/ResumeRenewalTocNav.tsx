@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import { renewalTocItems } from "@/shared/constants/resume/resumeRenewalData";
+import { renewalTocItems } from "@/entities/resume/constants/resumeRenewalData";
 import { R } from "./renewalStyles";
 
 const ResumeRenewalTocNav = () => {
@@ -37,7 +37,7 @@ const ResumeRenewalTocNav = () => {
             aria-label="페이지 목차"
             className={`${R.root} hidden pc:block fixed top-[12rem] right-[0] z-40 bg-black p-[2.4rem]`}
         >
-            <ul className="flex flex-col gap-[0.2rem]">
+            <ul className="flex flex-col gap-[0.4rem]">
                 {renewalTocItems.map((item) => {
                     const isActive = activeId === item.id;
 
@@ -46,7 +46,7 @@ const ResumeRenewalTocNav = () => {
                             <button
                                 type="button"
                                 onClick={() => handleClick(item.id)}
-                                className={`w-full font-bold uppercase text-left text-[1.8rem] py-[0.4rem] transition-colors ${isActive ? "text-[#ffffff] font-medium" : "text-[#ffffff]/40 hover:text-[#000000]/70"}`}
+                                className={`w-full font-bold uppercase text-left text-[2rem] py-[0.4rem] transition-colors ${isActive ? "text-[#ffffff] font-medium" : "text-[#ffffff]/40 hover:text-[#000000]/70"}`}
                             >
                                 {item.label}
                             </button>

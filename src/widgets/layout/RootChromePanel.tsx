@@ -2,7 +2,7 @@
 
 import { ReactNode } from "react";
 
-import Footer from "@/shared/ui/layout/Footer";
+import Footer from "@/widgets/layout/chrome/Footer";
 import Header from "@/widgets/layout/chrome/Header";
 import MobileMenu from "@/shared/ui/layout/MobileMenu";
 import Navigation from "@/widgets/layout/chrome/Navigation";

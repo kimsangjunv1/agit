@@ -79,8 +79,8 @@ const MobileMenu = () => {
                                 type="graphic-arrow-up"
                                 alt="나가기"
                                 className="rotate-270 invert"
-                                width={42}
-                                height={42}
+                                width={44}
+                                height={44}
                             />
                         </UI.Button>
                         {/* 목록 */}
@@ -118,7 +118,7 @@ const MobileMenu = () => {
                                     className="w-full h-auto overflow-hidden"
                                 >
                                     <motion.div
-                                        className="w-full bg-[#ffffff]/30 my-[1.6rem] h-[0.1rem]"
+                                        className="w-full bg-[#ffffff]/30 my-[1.6rem] h-[0.4rem]"
                                         initial={{ y: "4.8rem" }}
                                         animate={{ y: "0rem" }}
                                         transition={{
@@ -174,15 +174,11 @@ const MobileMenu = () => {
                                     <TextShimmer
                                         as="p"
                                         duration={3}
-                                        style={{
-                                            color: "#ffffff",
-                                            fontSize: "1.4rem",
-                                        }}
                                         color={{
                                             start: "#ffffff",
                                             end: "#8c8c8c",
                                         }}
-                                        className="h-[2.1rem] leading-[1.7]"
+                                        className="h-[2rem] text-white text-[1.6rem] leading-[1.7]"
                                     >
                                         © kimsangjunv1. All rights reserved.
                                     </TextShimmer>

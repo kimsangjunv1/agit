@@ -8,8 +8,8 @@ export interface CalendarModalProps {
     // desc_no?: string | number;
     onClose?: (value: string) => void;
     onDateSelect?: (value: string) => void;
-    limitMonths?: number;          // 추가
-    limitMessage?: string;         // 추가
+    limitMonths?: number; // 추가
+    limitMessage?: string; // 추가
     center?: boolean;
     containerClassName?: string;
 }
@@ -121,12 +121,12 @@ export interface FilterProps {
         state: boolean;
         value?: any;
     }[];
-    elementRef?: RefObject<HTMLElement | null>,
+    elementRef?: RefObject<HTMLElement | null>;
     style?: CSSProperties;
     defaultValue?: any;
-    onConfirm: (e: { title: string, state: boolean, value?: any }[]) => void;
-    onCancel: (e: { title: string, state: boolean, value?: any }[]) => void;
-    onChange: (e: { title: string, state: boolean, value?: any }[]) => void;
+    onConfirm: (e: { title: string; state: boolean; value?: any }[]) => void;
+    onCancel: (e: { title: string; state: boolean; value?: any }[]) => void;
+    onChange: (e: { title: string; state: boolean; value?: any }[]) => void;
     className?: {
         container?: string;
         button?: string;
@@ -198,15 +198,15 @@ export interface SwitchProps {
 }
 
 export interface NumberInputProps extends Omit<InputProps, "type" | "className"> {
-	defaultValue?: number;
-	max?: number;
+    defaultValue?: number;
+    max?: number;
     type?: string;
-    allowedChars?: string[]; // ["-","+","@"] 이런식으로 배열 전달    
+    allowedChars?: string[]; // ["-","+","@"] 이런식으로 배열 전달
     comma?: boolean;
     className?: {
         container?: string;
         input?: string;
-    }
+    };
 }
 
 export interface TextAreaProps {
@@ -216,7 +216,7 @@ export interface TextAreaProps {
     defaultValue?: string;
     className?: {
         container?: string;
-        textarea?: string
+        textarea?: string;
     };
     desc_no?: string;
 }

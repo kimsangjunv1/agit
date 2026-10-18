@@ -2,7 +2,7 @@
 
 import { ReactNode, useRef } from "react";
 
-import { RENEWAL_VIEWPORT } from "@/shared/constants/resume/resumeRenewalData";
+import { RENEWAL_VIEWPORT } from "@/entities/resume/constants/resumeRenewalData";
 import { useDirectionalRevealInView } from "@/shared/hooks/useDirectionalRevealInView";
 import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
 import { ClippedRevealBlock } from "./ClippedRevealText";
@@ -21,15 +21,7 @@ type RenewalRightBlocksProps = {
     className?: string;
 };
 
-const RenewalRightBlocks = ({
-    label,
-    headline,
-    description,
-    details,
-    detailItems,
-    detailItemsClassName = "flex flex-col gap-[2rem]",
-    className = "",
-}: RenewalRightBlocksProps) => {
+const RenewalRightBlocks = ({ label, headline, description, details, detailItems, detailItemsClassName = "flex flex-col gap-[2rem]", className = "" }: RenewalRightBlocksProps) => {
     const ref = useRef<HTMLDivElement>(null);
     const revealed = useDirectionalRevealInView(ref, RENEWAL_VIEWPORT);
     const reducedMotion = useReducedMotion();
@@ -63,7 +55,10 @@ const RenewalRightBlocks = ({
 
     if (reducedMotion) {
         return (
-            <div ref={ref} className={`flex flex-col gap-[3.2rem] ${className}`}>
+            <div
+                ref={ref}
+                className={`flex flex-col gap-[3.2rem] ${className}`}
+            >
                 {blocks.map(({ key, content }) => (
                     <div key={key}>{content}</div>
                 ))}
@@ -74,15 +69,25 @@ const RenewalRightBlocks = ({
     }
 
     return (
-        <div ref={ref} className={`flex flex-col gap-[3.2rem] ${className}`}>
+        <div
+            ref={ref}
+            className={`flex flex-col gap-[3.2rem] ${className}`}
+        >
             {blocks.map(({ key, content }, index) => (
-                <ClippedRevealBlock key={key} revealed={revealed} delay={index * BLOCK_STAGGER}>
+                <ClippedRevealBlock
+                    key={key}
+                    revealed={revealed}
+                    delay={index * BLOCK_STAGGER}
+                >
                     {content}
                 </ClippedRevealBlock>
             ))}
             {hasDetailItems ? renderDetailItems(blocks.length) : null}
             {hasDetails && !hasDetailItems ? (
-                <ClippedRevealBlock revealed={revealed} delay={blocks.length * BLOCK_STAGGER}>
+                <ClippedRevealBlock
+                    revealed={revealed}
+                    delay={blocks.length * BLOCK_STAGGER}
+                >
                     {details}
                 </ClippedRevealBlock>
             ) : null}

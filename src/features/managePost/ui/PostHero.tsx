@@ -98,13 +98,16 @@ const PostHero = (props: PostHeroProps) => {
             className="relative flex flex-col items-end justify-end gap-[1.6rem] w-full h-full overflow-hidden"
             initial={reducedMotion ? false : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: reducedMotion ? 0 : 0.45, ease: [0.25, 0.8, 0.25, 1] }}
+            transition={{
+                duration: reducedMotion ? 0 : 0.45,
+                ease: [0.25, 0.8, 0.25, 1],
+            }}
             onDragEnter={props.mode === "edit" ? handleThumbnailDragEnter : undefined}
             onDragLeave={props.mode === "edit" ? handleThumbnailDragLeave : undefined}
             onDragOver={props.mode === "edit" ? handleThumbnailDragOver : undefined}
             onDrop={props.mode === "edit" ? handleThumbnailDrop : undefined}
         >
-            <section className="flex flex-col items-start justify-end mobile:gap-[3.2rem] pc:gap-[5.2rem] h-full w-full max-w-[var(--size-tablet)] mobile:p-[5.2rem_2.0rem] pc:p-[7.2rem_1.2rem] z-[100] absolute left-[50%] top-[50%] transform translate-x-[-50%] translate-y-[-50%] pointer-events-none">
+            <section className="flex flex-col items-start justify-end mobile:gap-[3.2rem] pc:gap-[5.2rem] h-full w-full max-w-[var(--size-tablet)] mobile:p-[5.2rem_2rem] pc:p-[7.2rem_1.2rem] z-[100] absolute left-[50%] top-[50%] transform translate-x-[-50%] translate-y-[-50%] pointer-events-none">
                 {props.mode === "edit" ? <PostHeroEditContent {...props} /> : <PostHeroViewContent {...props} />}
             </section>
 
@@ -169,7 +172,7 @@ const PostHeroViewContent = ({ title, summary, createDate, viewCount, likeCount 
             </TextShimmer> */}
             <p className="font-bold mobile:text-[1.6rem] tablet:text-[2.4rem] text-[#ffffff90] leading-[1.5]">{title}</p>
             <h2 className="font-extrabold mobile:text-[2.4rem] tablet:text-[3.2rem] text-white leading-[1.5] whitespace-break-spaces">&quot;{summary}&quot;</h2>
-            <p className="font-semibold mobile:text-[1.6rem] tablet:text-[2.0rem] text-white">
+            <p className="font-semibold mobile:text-[1.6rem] tablet:text-[2rem] text-white">
                 {util.string.getCurrentTime(createDate, 4)} ・ {viewCount} view ・ {likeCount} likes
             </p>
         </section>
@@ -179,13 +182,13 @@ const PostHeroViewContent = ({ title, summary, createDate, viewCount, likeCount 
                 <img
                     src="/images/picture/post-profile.png"
                     alt="프로필"
-                    className="object-cover rounded-[1.6rem] w-[8.2rem] h-[9.2rem] shadow-[var(--shadow-normal)]"
+                    className="object-cover rounded-[1.6rem] w-[8.4rem] h-[9.2rem] shadow-[var(--shadow-normal)]"
                 />
             </div>
 
             <section className="flex flex-col items-start gap-[1.2rem]">
-                <p className="font-extrabold text-[2.0rem] text-white">김상준</p>
-                <p className="text-[2.0rem] font-semibold text-[#ffffff90]">FRONT END DEVELOPER</p>
+                <p className="font-extrabold text-[2rem] text-white">김상준</p>
+                <p className="text-[2rem] font-semibold text-[#ffffff90]">FRONT END DEVELOPER</p>
             </section>
         </section>
     </>
@@ -246,14 +249,14 @@ const PostHeroEditContent = ({ title, summary, categoryIdx, editLabel = "작성 
                 <PostHeroEditableField
                     value={title}
                     placeholder="제목을 입력해주세요"
-                    className="h-auto p-0 font-bold tablet:text-[2.0rem] mobile:text-[1.4rem] text-white leading-[1.5] outline-none focus:ring-2 focus:ring-[#ffffff40] rounded-[0.8rem]"
+                    className="h-auto p-0 font-bold tablet:text-[2rem] mobile:text-[1.6rem] text-white leading-[1.5] outline-none focus:ring-2 focus:ring-[#ffffff40] rounded-[0.8rem]"
                     onChange={onTitleChange}
                 />
 
                 <PostHeroEditableField
                     value={summary}
                     placeholder="요약을 입력해주세요"
-                    className="h-auto p-0 font-extrabold text-left tablet:text-[3.2rem] mobile:text-[2.0rem] text-white leading-[1.5] whitespace-break-spaces outline-none focus:ring-2 focus:ring-[#ffffff40] rounded-[0.8rem]"
+                    className="h-auto p-0 font-extrabold text-left tablet:text-[3.2rem] mobile:text-[2rem] text-white leading-[1.5] whitespace-break-spaces outline-none focus:ring-2 focus:ring-[#ffffff40] rounded-[0.8rem]"
                     onChange={onSummaryChange}
                 />
             </section>
@@ -269,8 +272,8 @@ const PostHeroEditContent = ({ title, summary, categoryIdx, editLabel = "작성 
 
                 <section className="flex flex-col items-start gap-[1.2rem]">
                     <section className="flex flex-col items-center gap-[0.8rem] flex-wrap">
-                        <p className="font-extrabold text-[2.0rem] text-white">김상준</p>
-                        <p className="text-[2.0rem] font-semibold text-[#ffffff90]">FRONT END DEVELOPER</p>
+                        <p className="font-extrabold text-[2rem] text-white">김상준</p>
+                        <p className="text-[2rem] font-semibold text-[#ffffff90]">FRONT END DEVELOPER</p>
                     </section>
                     {/* <p className="font-semibold text-[2.0rem] text-[#ffffff90]">{editLabel}</p> */}
                 </section>

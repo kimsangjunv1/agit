@@ -53,12 +53,7 @@ export async function clientFetch<T>(url: string, options: ClientFetchOptions = 
         const response = await fetch(url, {
             ...options,
             headers,
-            body:
-                options.body === undefined
-                    ? undefined
-                    : isFormData
-                      ? (options.body as FormData)
-                      : JSON.stringify(options.body),
+            body: options.body === undefined ? undefined : isFormData ? (options.body as FormData) : JSON.stringify(options.body),
         });
         const data = await response.json().catch(() => null);
 
@@ -82,9 +77,7 @@ export async function clientFetch<T>(url: string, options: ClientFetchOptions = 
 
 export const clientApi = {
     get: <T>(url: string, options?: ClientFetchOptions) => clientFetch<T>(url, options),
-    post: <T>(url: string, body?: unknown, options?: ClientFetchOptions) =>
-        clientFetch<T>(url, { ...options, method: "POST", body }),
-    patch: <T>(url: string, body?: unknown, options?: ClientFetchOptions) =>
-        clientFetch<T>(url, { ...options, method: "PATCH", body }),
+    post: <T>(url: string, body?: unknown, options?: ClientFetchOptions) => clientFetch<T>(url, { ...options, method: "POST", body }),
+    patch: <T>(url: string, body?: unknown, options?: ClientFetchOptions) => clientFetch<T>(url, { ...options, method: "PATCH", body }),
     delete: <T>(url: string, options?: ClientFetchOptions) => clientFetch<T>(url, { ...options, method: "DELETE" }),
 };

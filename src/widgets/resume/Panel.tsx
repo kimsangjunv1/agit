@@ -1,6 +1,6 @@
 "use client";
 
-import { renewalExperiences } from "@/shared/constants/resume/resumeRenewalData";
+import { renewalExperiences } from "@/entities/resume/constants/resumeRenewalData";
 
 import * as Layer from "./ui";
 import { R } from "./ui/renewalStyles";

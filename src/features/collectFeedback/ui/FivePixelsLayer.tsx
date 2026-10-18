@@ -1,21 +1,22 @@
 "use client";
+import { useGetFeedbackReviewerListQuery } from "@/entities/fivepixels/api/fivepixels.query";
 
 import { useCallback, useEffect, useState } from "react";
 
 import { FivePixels } from "@fivepixels-js/react";
 
 import {
-    createFeedbackReviewerRequestFetch,
+    setFeedbackReviewerRequestFetch,
     deleteFeedbackFetch,
     getFeedbackListFetch,
     getFeedbackListPagingFetch,
     getFeedbackReviewerListFetch,
     getFeedbackReviewerRequestListFetch,
     patchFeedbackFetch,
-    registerFeedbackReviewerFetch,
-    resolveFeedbackReviewerRequestFetch,
+    setFeedbackReviewerFetch,
+    patchFeedbackReviewerRequestFetch,
     setFeedbackFetch,
-    updateFeedbackReviewerFetch,
+    patchFeedbackReviewerFetch,
 } from "@/entities/fivepixels/api/fivepixels.api";
 import type {
     CreateReportFeedbackPayload,
@@ -27,12 +28,7 @@ import type {
     UpdateReportFeedbackPayload,
     UpdateReviewerPayload,
 } from "@/entities/fivepixels/model/fivepixels.type";
-import {
-    FIVEPIXELS_DEV_ONLY,
-    FIVEPIXELS_PROJECT,
-    FIVEPIXELS_SCOPE,
-    FIVEPIXELS_USER,
-} from "@/features/collectFeedback/lib/fivepixelsProject";
+import { FIVEPIXELS_DEV_ONLY, FIVEPIXELS_PROJECT, FIVEPIXELS_SCOPE, FIVEPIXELS_USER } from "@/features/collectFeedback/lib/fivepixelsProject";
 
 /**
  * fivepixels 피드백 레이어.
@@ -44,46 +40,15 @@ import {
  * 팀 handler(등록/수정/승인)는 개인키로 서명한다 → §docs P3-auth.
  */
 export default function FivePixelsLayer() {
-    const [reviewers, setReviewers] = useState<FivepixelsReviewerItem[]>([]);
+    const { data: reviewers = [] } = useGetFeedbackReviewerListQuery(FIVEPIXELS_SCOPE);
 
-    useEffect(() => {
-        let cancelled = false;
+    const onList = useCallback(({ pathname }: { pathname: string }) => getFeedbackListFetch({ ...FIVEPIXELS_SCOPE, pathname }), []);
 
-        getFeedbackReviewerListFetch(FIVEPIXELS_SCOPE)
-            .then((items) => {
-                if (!cancelled) setReviewers(items);
-            })
-            .catch((error: unknown) => {
-                console.error("[fivepixels] reviewers fetch failed", error);
-                if (!cancelled) setReviewers([]);
-            });
+    const onListAll = useCallback(({ limit, cursor }: ReportListAllParams) => getFeedbackListPagingFetch({ ...FIVEPIXELS_SCOPE, limit, cursor }), []);
 
-        return () => {
-            cancelled = true;
-        };
-    }, []);
+    const onCreate = useCallback((feedback: CreateReportFeedbackPayload) => setFeedbackFetch({ ...FIVEPIXELS_SCOPE, feedback }), []);
 
-    const onList = useCallback(
-        ({ pathname }: { pathname: string }) => getFeedbackListFetch({ ...FIVEPIXELS_SCOPE, pathname }),
-        []
-    );
-
-    const onListAll = useCallback(
-        ({ limit, cursor }: ReportListAllParams) =>
-            getFeedbackListPagingFetch({ ...FIVEPIXELS_SCOPE, limit, cursor }),
-        []
-    );
-
-    const onCreate = useCallback(
-        (feedback: CreateReportFeedbackPayload) => setFeedbackFetch({ ...FIVEPIXELS_SCOPE, feedback }),
-        []
-    );
-
-    const onUpdate = useCallback(
-        (id: string, feedback: UpdateReportFeedbackPayload) =>
-            patchFeedbackFetch({ ...FIVEPIXELS_SCOPE, id, feedback }),
-        []
-    );
+    const onUpdate = useCallback((id: string, feedback: UpdateReportFeedbackPayload) => patchFeedbackFetch({ ...FIVEPIXELS_SCOPE, id, feedback }), []);
 
     const onDelete = useCallback(async (id: string) => {
         await deleteFeedbackFetch({ ...FIVEPIXELS_SCOPE, id });
@@ -91,33 +56,15 @@ export default function FivePixelsLayer() {
 
     const onListReviewers = useCallback(() => getFeedbackReviewerListFetch(FIVEPIXELS_SCOPE), []);
 
-    const onListReviewerRequests = useCallback(
-        () => getFeedbackReviewerRequestListFetch(FIVEPIXELS_SCOPE),
-        []
-    );
+    const onListReviewerRequests = useCallback(() => getFeedbackReviewerRequestListFetch(FIVEPIXELS_SCOPE), []);
 
-    const onCreateReviewerRequest = useCallback(
-        (payload: CreateReviewerRequestPayload) =>
-            createFeedbackReviewerRequestFetch(FIVEPIXELS_SCOPE, payload),
-        []
-    );
+    const onCreateReviewerRequest = useCallback((payload: CreateReviewerRequestPayload) => setFeedbackReviewerRequestFetch(FIVEPIXELS_SCOPE, payload), []);
 
-    const onResolveReviewerRequest = useCallback(
-        (id: string, payload: ResolveReviewerRequestPayload) =>
-            resolveFeedbackReviewerRequestFetch(FIVEPIXELS_SCOPE, id, payload),
-        []
-    );
+    const onResolveReviewerRequest = useCallback((id: string, payload: ResolveReviewerRequestPayload) => patchFeedbackReviewerRequestFetch(FIVEPIXELS_SCOPE, id, payload), []);
 
-    const onRegisterReviewer = useCallback(
-        (payload: RegisterReviewerPayload) => registerFeedbackReviewerFetch(FIVEPIXELS_SCOPE, payload),
-        []
-    );
+    const onRegisterReviewer = useCallback((payload: RegisterReviewerPayload) => setFeedbackReviewerFetch(FIVEPIXELS_SCOPE, payload), []);
 
-    const onUpdateReviewer = useCallback(
-        (id: string, payload: UpdateReviewerPayload) =>
-            updateFeedbackReviewerFetch(FIVEPIXELS_SCOPE, id, payload),
-        []
-    );
+    const onUpdateReviewer = useCallback((id: string, payload: UpdateReviewerPayload) => patchFeedbackReviewerFetch(FIVEPIXELS_SCOPE, id, payload), []);
 
     return (
         <FivePixels

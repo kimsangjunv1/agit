@@ -82,9 +82,7 @@ export async function serverFetch<T>(url: string, options: ServerFetchOptions = 
 
 export const serverApi = {
     get: <T>(url: string, options?: ServerFetchOptions) => serverFetch<T>(url, options),
-    post: <T>(url: string, body?: unknown, options?: ServerFetchOptions) =>
-        serverFetch<T>(url, { ...options, method: "POST", body }),
-    patch: <T>(url: string, body?: unknown, options?: ServerFetchOptions) =>
-        serverFetch<T>(url, { ...options, method: "PATCH", body }),
+    post: <T>(url: string, body?: unknown, options?: ServerFetchOptions) => serverFetch<T>(url, { ...options, method: "POST", body }),
+    patch: <T>(url: string, body?: unknown, options?: ServerFetchOptions) => serverFetch<T>(url, { ...options, method: "PATCH", body }),
     delete: <T>(url: string, options?: ServerFetchOptions) => serverFetch<T>(url, { ...options, method: "DELETE" }),
 };

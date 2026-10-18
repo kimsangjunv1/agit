@@ -1,5 +1,5 @@
 import Main from "@/widgets/layout/Main";
-import PostModifyView from "@/views/post/modify/PostModifyView";
+import PostModifyView from "@/views/post/[id]/modify/PostModifyView";
 
 const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
     const { id } = await params;

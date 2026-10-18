@@ -54,15 +54,7 @@ export function buildPostMetadata(post: PostMetadataInput): Metadata {
     };
 }
 
-export function buildPageMetadata({
-    title,
-    description = SITE_DESCRIPTION,
-    path,
-}: {
-    title: string;
-    description?: string;
-    path: string;
-}): Metadata {
+export function buildPageMetadata({ title, description = SITE_DESCRIPTION, path }: { title: string; description?: string; path: string }): Metadata {
     return {
         title,
         description,

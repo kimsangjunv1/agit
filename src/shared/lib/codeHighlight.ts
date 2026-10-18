@@ -1,3 +1,4 @@
+import { styleSyntaxHtml } from "@/shared/lib/richText/syntax";
 import hljs from "highlight.js/lib/core";
 import bash from "highlight.js/lib/languages/bash";
 import css from "highlight.js/lib/languages/css";
@@ -14,7 +15,8 @@ export const CODE_TAB_STRING = " ".repeat(CODE_TAB_SIZE);
 const AUTO_DETECT_LANGUAGES = ["javascript", "typescript", "html", "xml", "css", "json", "python", "bash"] as const;
 
 const HTML_TAG_PATTERN = /<\/?[a-zA-Z][\w-]*(\s|\/>|>)/;
-const JS_JSX_PATTERN = /\b(import|export|from|const|let|var|function|return|class|extends|async|await|new|if|else|for|while|switch|case|default|try|catch|finally|throw|typeof|instanceof|void|delete|in|of|do|yield|await)\b|=>|\(\)\s*=>|\{|\}|;/;
+const JS_JSX_PATTERN =
+    /\b(import|export|from|const|let|var|function|return|class|extends|async|await|new|if|else|for|while|switch|case|default|try|catch|finally|throw|typeof|instanceof|void|delete|in|of|do|yield|await)\b|=>|\(\)\s*=>|\{|\}|;/;
 
 export const isJsxLikeCode = (code: string) => HTML_TAG_PATTERN.test(code) && JS_JSX_PATTERN.test(code);
 
@@ -33,12 +35,7 @@ REGISTERED_LANGUAGES.forEach(([name, grammar]) => {
     hljs.registerLanguage(name, grammar);
 });
 
-const escapeHtml = (text: string) =>
-    text
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;");
+const escapeHtml = (text: string) => text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
 const decodeHtmlEntities = (text: string) =>
     text
@@ -86,15 +83,16 @@ export const extractCodeFromContent = (content: string): { language: string; cod
 
     const legacyParagraphs = content.match(/<p>([\s\S]*?)<\/p>/gi);
     if (legacyParagraphs?.length) {
-        const code = legacyParagraphs
-            .map((paragraph) => paragraph.replace(/<\/?p>/gi, ""))
-            .join("\n");
+        const code = legacyParagraphs.map((paragraph) => paragraph.replace(/<\/?p>/gi, "")).join("\n");
 
         return { language: DEFAULT_CODE_LANGUAGE, code: decodeHtmlEntities(code) };
     }
 
     const stripped = content.replace(/<[^>]+>/g, "\n").trim();
-    return { language: DEFAULT_CODE_LANGUAGE, code: decodeHtmlEntities(stripped) };
+    return {
+        language: DEFAULT_CODE_LANGUAGE,
+        code: decodeHtmlEntities(stripped),
+    };
 };
 
 export const toCodeBlockHtml = (code: string, language = DEFAULT_CODE_LANGUAGE) => {
@@ -133,9 +131,7 @@ export const detectCodeLanguage = (code: string): string => {
     }
 
     const hasHtmlTags = HTML_TAG_PATTERN.test(code);
-    const hasTypeScript =
-        /\b(interface|type\s+[A-Z]\w*)\b/.test(code) ||
-        /:\s*(string|number|boolean|void|unknown|never|React[A-Za-z]*|JSX\.[A-Za-z]*)\b/.test(code);
+    const hasTypeScript = /\b(interface|type\s+[A-Z]\w*)\b/.test(code) || /:\s*(string|number|boolean|void|unknown|never|React[A-Za-z]*|JSX\.[A-Za-z]*)\b/.test(code);
 
     if (hasHtmlTags && isJsxLikeCode(code)) {
         return hasTypeScript ? "typescript" : "javascript";
@@ -186,9 +182,7 @@ export const resolveCodeBlockFileName = (content: string, customBaseName?: strin
 
 export const highlightCodeWithHljs = (content: string, language?: string): string => {
     const { language: storedLanguage, code } = extractCodeFromContent(content);
-    const targetLanguage =
-        language ??
-        (storedLanguage === DEFAULT_CODE_LANGUAGE ? detectCodeLanguage(code) : storedLanguage);
+    const targetLanguage = language ?? (storedLanguage === DEFAULT_CODE_LANGUAGE ? detectCodeLanguage(code) : storedLanguage);
 
     if (!code.trim()) {
         return "";
@@ -196,10 +190,10 @@ export const highlightCodeWithHljs = (content: string, language?: string): strin
 
     try {
         if (targetLanguage && targetLanguage !== "plaintext" && hljs.getLanguage(targetLanguage)) {
-            return hljs.highlight(code, { language: targetLanguage }).value;
+            return styleSyntaxHtml(hljs.highlight(code, { language: targetLanguage }).value);
         }
 
-        return hljs.highlightAuto(code).value;
+        return styleSyntaxHtml(hljs.highlightAuto(code).value);
     } catch {
         return escapeHtml(code);
     }

@@ -8,8 +8,7 @@ export async function GET(req: Request) {
         const segments = url.pathname.split("/");
         const idx = segments[segments.length - 1];
 
-        const skipTracking =
-            req.headers.get("x-internal-fetch") === "isr" || req.headers.get("x-skip-tracking") === "true";
+        const skipTracking = req.headers.get("x-internal-fetch") === "isr" || req.headers.get("x-skip-tracking") === "true";
         const ip = req.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
 
         let alreadyViewed = false;
@@ -23,20 +22,8 @@ export async function GET(req: Request) {
 
             if (filters.length > 0) {
                 const [viewResult, likeResult] = await Promise.all([
-                    supabase
-                        .from("views")
-                        .select("id")
-                        .eq("post_id", idx)
-                        .or(filters.join(","))
-                        .limit(1)
-                        .single(),
-                    supabase
-                        .from("likes")
-                        .select("id")
-                        .eq("post_id", idx)
-                        .or(filters.join(","))
-                        .limit(1)
-                        .single(),
+                    supabase.from("views").select("id").eq("post_id", idx).or(filters.join(",")).limit(1).single(),
+                    supabase.from("likes").select("id").eq("post_id", idx).or(filters.join(",")).limit(1).single(),
                 ]);
 
                 if (viewResult.error && viewResult.error.code !== "PGRST116") throw viewResult.error;
@@ -69,16 +56,11 @@ export async function GET(req: Request) {
         if (!skipTracking && !alreadyViewed && currentData) {
             const admin = supabaseAdmin();
 
-            const { error: insertError } = await admin
-                .from("views")
-                .insert({ post_id: idx, user_id: userId ?? null, ip });
+            const { error: insertError } = await admin.from("views").insert({ post_id: idx, user_id: userId ?? null, ip });
             if (insertError) throw insertError;
 
             const newViews = (currentData.views || 0) + 1;
-            const { error: updateError } = await admin
-                .from("posts")
-                .update({ views: newViews })
-                .eq("idx", idx);
+            const { error: updateError } = await admin.from("posts").update({ views: newViews }).eq("idx", idx);
             if (updateError) throw updateError;
 
             currentData.views = newViews;
@@ -96,7 +78,7 @@ export async function GET(req: Request) {
             {
                 resultMessage: "조회수 처리 및 포스트 정보 조회 완료",
                 pagination: singleItemPagination(),
-            }
+            },
         );
     } catch (err: unknown) {
         const { message, status } = resolveRouteError(err, "조회수 처리 중 문제가 발생했습니다.");

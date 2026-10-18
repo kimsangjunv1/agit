@@ -1,20 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { AgitRoutes } from "@/shared/constants/entityKeys";
-import {
-    deleteCategoryFetch,
-    getCategoryListFetch,
-    getCategoryListOnManagerFetch,
-    patchCategoryFetch,
-    setCategoryFetch,
-} from "@/entities/category/api/category.api";
-import {
-    DeleteCategoryPayload,
-    GetCategoryListOnManagerResponse,
-    GetCategoryListResponse,
-    PatchCategoryPayload,
-    SetCategoryPayload,
-} from "@/entities/category/model/category.type";
+import { deleteCategoryFetch, getCategoryListFetch, getCategoryListOnManagerFetch, patchCategoryFetch, setCategoryFetch } from "@/entities/category/api/category.api";
+import { DeleteCategoryPayload, GetCategoryListOnManagerResponse, GetCategoryListResponse, PatchCategoryPayload, SetCategoryPayload } from "@/entities/category/model/category.type";
 
 export const useGetCategoryListQuery = () => {
     const { data, isLoading, isError, isFetching, refetch } = useQuery<GetCategoryListResponse>({
@@ -47,7 +35,18 @@ export const useSetCategoryQuery = () => {
         },
     });
 
-    return { mutate, mutateAsync, isError, isIdle, isSuccess, isPending, isPaused, data, error, reset };
+    return {
+        mutate,
+        mutateAsync,
+        isError,
+        isIdle,
+        isSuccess,
+        isPending,
+        isPaused,
+        data,
+        error,
+        reset,
+    };
 };
 
 export const usePatchCategoryQuery = () => {
@@ -61,7 +60,18 @@ export const usePatchCategoryQuery = () => {
         },
     });
 
-    return { mutate, mutateAsync, isError, isIdle, isSuccess, isPending, isPaused, data, error, reset };
+    return {
+        mutate,
+        mutateAsync,
+        isError,
+        isIdle,
+        isSuccess,
+        isPending,
+        isPaused,
+        data,
+        error,
+        reset,
+    };
 };
 
 export const useDeleteCategoryQuery = () => {
@@ -75,5 +85,16 @@ export const useDeleteCategoryQuery = () => {
         },
     });
 
-    return { mutate, mutateAsync, isError, isIdle, isSuccess, isPending, isPaused, data, error, reset };
+    return {
+        mutate,
+        mutateAsync,
+        isError,
+        isIdle,
+        isSuccess,
+        isPending,
+        isPaused,
+        data,
+        error,
+        reset,
+    };
 };

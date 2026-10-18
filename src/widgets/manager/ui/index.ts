@@ -1,14 +1,3 @@
-export { default as ManagerHub } from "./ManagerHub";
-export { default as ManagerThreePaneShell } from "./ManagerThreePaneShell";
-export { default as ManagerSidebar } from "./ManagerSidebar";
-export { default as ManagerListPane } from "./ManagerListPane";
-export { default as ManagerDetailPane } from "./ManagerDetailPane";
-export { default as ManagerEmptyState } from "./ManagerEmptyState";
-export { default as ManagerListItemCard } from "./ManagerListItemCard";
-export { default as ManagerDetailMetaGrid } from "./ManagerDetailMetaGrid";
-export { default as ManagerListPaneHeader } from "./ManagerListPaneHeader";
-export { default as ManagerDetailPaneHeader } from "./ManagerDetailPaneHeader";
-export { default as useManagerSelection } from "./useManagerSelection";
-export { default as ManagerListSkeleton } from "./ManagerListSkeleton";
-export { MANAGER_MENUS } from "./managerMenus";
+export { default as ManagerTitle } from "./ManagerTitle";
+export { default as ManagerMenu } from "./ManagerMenu";
 export { default as Modal } from "./Modal";

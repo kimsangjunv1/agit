@@ -1,25 +1,14 @@
 "use client";
-
 import { createContext, useContext, type ReactNode } from "react";
-
-import useSearch from "./useSearch";
-
-type InvitationManagerPageContextValue = ReturnType<typeof useSearch>;
-
-const InvitationManagerPageContext = createContext<InvitationManagerPageContextValue | null>(null);
-
+import useInvitationManager from "./useInvitationManager";
+type InvitationManagerValue = ReturnType<typeof useInvitationManager>;
+const Context = createContext<InvitationManagerValue | null>(null);
 export function InvitationManagerPageProvider({ children }: { children: ReactNode }) {
-    const search = useSearch();
-
-    return <InvitationManagerPageContext.Provider value={search}>{children}</InvitationManagerPageContext.Provider>;
+    const value = useInvitationManager();
+    return <Context.Provider value={value}>{children}</Context.Provider>;
 }
-
 export function useInvitationManagerProvider() {
-    const context = useContext(InvitationManagerPageContext);
-
-    if (!context) {
-        throw new Error("useInvitationManagerProvider must be used within InvitationManagerPageProvider");
-    }
-
-    return context;
+    const value = useContext(Context);
+    if (!value) throw new Error("useInvitationManagerProvider must be used within InvitationManagerPageProvider");
+    return value;
 }

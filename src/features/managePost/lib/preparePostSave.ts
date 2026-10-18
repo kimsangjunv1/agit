@@ -1,7 +1,7 @@
 import { uploadPostImageFetch } from "@/entities/post/api/post.image.api";
 import type { SectionContent } from "@/entities/post/model/post.type";
 import { normalizeBlocksForSave } from "@/features/managePost/lib/normalizePostBlocks";
-import { collectPostImageUrls } from "@/shared/lib/image/collectPostImageUrls";
+import { collectPostImageUrls } from "@/entities/post/lib/collectPostImageUrls";
 import { usePostDraftImageStore } from "@/shared/stores/usePostDraftImageStore";
 
 type PostContentRow = SectionContent[];
@@ -16,10 +16,7 @@ const replaceUrlInHtml = (html: string, replaceMap: Map<string, string>) => {
     return next;
 };
 
-const replaceRowUrls = (
-    rows: PostContentRow[],
-    replaceMap: Map<string, string>,
-): PostContentRow[] =>
+const replaceRowUrls = (rows: PostContentRow[], replaceMap: Map<string, string>): PostContentRow[] =>
     rows.map((row) =>
         row.map((block) => {
             const nextBlock: SectionContent = { ...block };

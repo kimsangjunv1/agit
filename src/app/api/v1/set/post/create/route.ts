@@ -2,7 +2,7 @@ import { requireSession } from "@/shared/lib/auth/requireSession";
 import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
 import { apiError, apiSuccess } from "@/shared/lib/apiResponse";
 import { revalidatePostPages } from "@/shared/lib/revalidatePost";
-import { sanitizePostContents } from "@/shared/lib/sanitizeHtml";
+import { sanitizePostContents } from "@/entities/post/lib/sanitizePostContents";
 
 const TABLE_NAME = "posts";
 
@@ -28,10 +28,7 @@ export async function POST(req: Request) {
         if (error) throw error;
 
         if (typeof draftId === "string") {
-            await supabase.from("post_drafts")
-                .delete()
-                .eq("id", draftId)
-                .eq("user_id", auth.session.user.id);
+            await supabase.from("post_drafts").delete().eq("id", draftId).eq("user_id", auth.session.user.id);
         }
 
         revalidatePostPages(data.idx);
@@ -41,7 +38,7 @@ export async function POST(req: Request) {
                 statusCode: 1,
                 postIdx: data.idx,
             },
-            { resultMessage: "등록성공", pagination: null }
+            { resultMessage: "등록성공", pagination: null },
         );
     } catch (error: unknown) {
         const message = error instanceof Error ? error.message : "문제가 생겼습니다";

@@ -199,7 +199,7 @@ const PageRevealOverlay = () => {
                 >
                     <IconComponent
                         type="graphic-logo-horizontal"
-                        alt="코디 아지트"
+                        alt="아지트"
                         width={256}
                         height={52}
                         // width={138}

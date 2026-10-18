@@ -3,26 +3,14 @@ import { randomUUID } from "node:crypto";
 import { verifyReportAuthProof } from "@fivepixels-js/react";
 import { NextResponse } from "next/server";
 
-import {
-    FIVEPIXELS_REVIEWER_REQUESTS_TABLE_NAME,
-    FIVEPIXELS_TEAM_AUTH_ACTION,
-    POSTGRES_UNIQUE_VIOLATION_CODE,
-} from "@/entities/fivepixels/constants/fivepixels.constants";
-import {
-    FEEDBACK_SCOPE_REQUIRED_MESSAGE,
-    feedbackError,
-    feedbackErrorFrom,
-} from "@/entities/fivepixels/lib/feedbackResponse";
+import { FIVEPIXELS_REVIEWER_REQUESTS_TABLE_NAME, FIVEPIXELS_TEAM_AUTH_ACTION, POSTGRES_UNIQUE_VIOLATION_CODE } from "@/entities/fivepixels/constants/fivepixels.constants";
+import { FEEDBACK_SCOPE_REQUIRED_MESSAGE, feedbackError, feedbackErrorFrom } from "@/entities/fivepixels/lib/feedbackResponse";
 import { mapReviewerRequestRowToItem } from "@/entities/fivepixels/lib/mapReviewer";
 import { parseFivepixelsScope } from "@/entities/fivepixels/lib/scope";
 import { canManageTeam } from "@/entities/fivepixels/lib/teamRank";
 import { stripAuthFromPayload } from "@/entities/fivepixels/lib/verifyFeedbackAuth";
 import { readTeamAuthHeader, verifyTeamActor } from "@/entities/fivepixels/lib/verifyTeamActor";
-import type {
-    CreateReviewerRequestPayload,
-    FivepixelsReviewerRequestRow,
-    ReportAuthProof,
-} from "@/entities/fivepixels/model/fivepixels.type";
+import type { CreateReviewerRequestPayload, FivepixelsReviewerRequestRow, ReportAuthProof } from "@/entities/fivepixels/model/fivepixels.type";
 import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
 
 /** GET 목록 조회 시 서명 대상이 되는 canonical payload. */
@@ -62,15 +50,15 @@ export async function GET(req: Request) {
 
         if (error) throw error;
 
-        return NextResponse.json(
-            (data as FivepixelsReviewerRequestRow[]).map(mapReviewerRequestRowToItem)
-        );
+        return NextResponse.json((data as FivepixelsReviewerRequestRow[]).map(mapReviewerRequestRowToItem));
     } catch (error: unknown) {
         return feedbackErrorFrom(error, "등록 요청 목록 조회에 실패했습니다.");
     }
 }
 
-type CreateReviewerRequestBody = CreateReviewerRequestPayload & { auth?: ReportAuthProof };
+type CreateReviewerRequestBody = CreateReviewerRequestPayload & {
+    auth?: ReportAuthProof;
+};
 
 /**
  * 등록 요청 제출 (onCreateReviewerRequest). 온보딩 중 아직 미등록 사용자가 호출한다.
@@ -150,19 +138,14 @@ export async function POST(req: Request) {
 
                 if (existingError) throw existingError;
                 if (existing) {
-                    return NextResponse.json(
-                        mapReviewerRequestRowToItem(existing as FivepixelsReviewerRequestRow)
-                    );
+                    return NextResponse.json(mapReviewerRequestRowToItem(existing as FivepixelsReviewerRequestRow));
                 }
             }
 
             throw error;
         }
 
-        return NextResponse.json(
-            mapReviewerRequestRowToItem(data as FivepixelsReviewerRequestRow),
-            { status: 201 }
-        );
+        return NextResponse.json(mapReviewerRequestRowToItem(data as FivepixelsReviewerRequestRow), { status: 201 });
     } catch (error: unknown) {
         return feedbackErrorFrom(error, "등록 요청 제출에 실패했습니다.");
     }

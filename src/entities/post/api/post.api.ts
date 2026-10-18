@@ -44,35 +44,29 @@ export const getPostLatestListFetch = () => {
 /**
  * 포스트 - 생성
  */
-export const setPostFetch = (data: unknown) =>
-    clientApi.post<SetPostResponse>("/api/v1/set/post/create", data);
+export const setPostFetch = (data: unknown) => clientApi.post<SetPostResponse>("/api/v1/set/post/create", data);
 
-export const getPostDraftListFetch = () =>
-    clientApi.get<ApiResponse<PostDraftListItem[]>>("/api/v1/post/drafts");
+export const getPostDraftListFetch = () => clientApi.get<ApiResponse<PostDraftListItem[]>>("/api/v1/post/drafts");
 
-export const getPostDraftDetailFetch = (id: string) =>
-    clientApi.get<ApiResponse<PostDraftDetail>>(`/api/v1/post/drafts/${encodeURIComponent(id)}`);
+export const getPostDraftDetailFetch = (id: string) => clientApi.get<ApiResponse<PostDraftDetail>>(`/api/v1/post/drafts/${encodeURIComponent(id)}`);
 
-export const savePostDraftFetch = (payload: PostDraftPayload & { id?: string }) =>
-    clientApi.post<ApiResponse<{ id: string }>>("/api/v1/post/drafts", payload);
+export const setPostDraftFetch = (payload: PostDraftPayload & { id?: string }) => clientApi.post<ApiResponse<{ id: string }>>("/api/v1/post/drafts", payload);
 
 /**
  * 포스트 - 수정
  */
-export const patchPostFetch = ({ data, idx }: { data: unknown; idx: number }) =>
-    clientApi.patch<PatchPostResponse>(`/api/v1/patch/post/${idx}`, data);
+export const patchPostFetch = ({ data, idx }: { data: unknown; idx: number }) => clientApi.patch<PatchPostResponse>(`/api/v1/patch/post/${idx}`, data);
 
-export const getPostManagerListFetch = () =>
-    clientApi.get<GetPostManagerListResponse>("/api/v1/get/post/manager");
+export const getPostManagerListFetch = () => clientApi.get<GetPostManagerListResponse>("/api/v1/get/post/manager");
 
 export const deletePostManagerFetch = (data: { idx: number }) =>
-    clientApi.delete<DeletePostManagerResponse>("/api/v1/delete/post/manager", { body: data });
+    clientApi.delete<DeletePostManagerResponse>("/api/v1/delete/post/manager", {
+        body: data,
+    });
 
 /**
  * 포스트 - 조회수 증가(사용안함)
  */
-export const setPostViewIncrementFetch = (data: { postId: number; userId?: string }) =>
-    clientApi.post<SetIncrementPostViewResponse>(`/api/v1/set/view/increment`, data);
+export const setPostViewIncrementFetch = (data: { postId: number; userId?: string }) => clientApi.post<SetIncrementPostViewResponse>(`/api/v1/set/view/increment`, data);
 
-export const setPostLikeIncrementFetch = (data: { postId: number; userId?: string }) =>
-    clientApi.post<SetIncrementPostLikeResponse>(`/api/v1/set/like/increment`, data);
+export const setPostLikeIncrementFetch = (data: { postId: number; userId?: string }) => clientApi.post<SetIncrementPostLikeResponse>(`/api/v1/set/like/increment`, data);

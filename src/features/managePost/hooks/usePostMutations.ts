@@ -1,11 +1,6 @@
 "use client";
 
-import {
-    useDeletePostManagerQuery,
-    usePatchPostQuery,
-    useSetLikeIncrementQuery,
-    useSetPostQuery,
-} from "@/entities/post/api/post.query";
+import { useDeletePostManagerQuery, usePatchPostQuery, useSetLikeIncrementQuery, useSetPostQuery } from "@/entities/post/api/post.query";
 import type { DeletePostManagerPayload, SetIncrementPostLikeResponse } from "@/entities/post/model/post.type";
 import useNavigate from "@/shared/hooks/useNavigate";
 import { useMutationToastHandlers } from "@/shared/hooks/useMutationToastHandlers";
@@ -69,17 +64,13 @@ export const useDeletePostWithFeedback = () => {
         mutation.mutate(payload, toastHandlers);
     };
 
-    const mutateAsync = (payload: DeletePostManagerPayload) =>
-        mutation.mutateAsync(payload, toastHandlers);
+    const mutateAsync = (payload: DeletePostManagerPayload) => mutation.mutateAsync(payload, toastHandlers);
 
     return { ...mutation, mutate, mutateAsync };
 };
 
 export const useLikeIncrementWithFeedback = () => {
-    const toastHandlers = useMutationToastHandlers<
-        SetIncrementPostLikeResponse,
-        { postId: number; userId?: string }
-    >((data) => {
+    const toastHandlers = useMutationToastHandlers<SetIncrementPostLikeResponse, { postId: number; userId?: string }>((data) => {
         if (data?.result?.alreadyLiked) {
             return "이미 좋아요를 눌렀어요";
         }

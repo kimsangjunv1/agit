@@ -15,20 +15,7 @@ export type FivepixelsFeedbackInsert = Omit<FivepixelsFeedbackRow, "created_at" 
 };
 
 export type FivepixelsFeedbackUpdate = Partial<
-    Pick<
-        FivepixelsFeedbackRow,
-        | "cases"
-        | "status"
-        | "category"
-        | "field_values"
-        | "replies"
-        | "reply_count"
-        | "latest_reply"
-        | "report_id"
-        | "report_type"
-        | "integrations"
-        | "auth"
-    >
+    Pick<FivepixelsFeedbackRow, "cases" | "status" | "category" | "field_values" | "replies" | "reply_count" | "latest_reply" | "report_id" | "report_type" | "integrations" | "auth">
 > & { updated_at: string };
 
 function toIsoUtc(value: string): string {
@@ -86,13 +73,7 @@ export function mapRowToFeedback(row: FivepixelsFeedbackRow): ReportFeedback {
 }
 
 /** create payload → insert row. 스코프(project/env)는 쿼리 값이 우선한다. */
-export function mapPayloadToInsert(params: {
-    id: string;
-    fcNumber: number;
-    scope: FivepixelsScope;
-    payload: CreateReportFeedbackPayload;
-    now: string;
-}): FivepixelsFeedbackInsert {
+export function mapPayloadToInsert(params: { id: string; fcNumber: number; scope: FivepixelsScope; payload: CreateReportFeedbackPayload; now: string }): FivepixelsFeedbackInsert {
     const { id, fcNumber, scope, payload, now } = params;
     const replies = payload.replies ?? [];
     const { reply_count, latest_reply } = summarizeReplies(replies);

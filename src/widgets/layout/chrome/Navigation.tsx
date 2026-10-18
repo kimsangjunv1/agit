@@ -78,7 +78,10 @@ const Navigation = () => {
 
         if (!file) return;
         if (!file.name.toLowerCase().endsWith(".md")) {
-            setToast({ msg: "Markdown(.md) 파일만 불러올 수 있어요", type: "warning" });
+            setToast({
+                msg: "Markdown(.md) 파일만 불러올 수 있어요",
+                type: "warning",
+            });
             return;
         }
 
@@ -89,7 +92,10 @@ const Navigation = () => {
         try {
             const parsed = parsePostMarkdown(await file.text());
             if (!parsed.title || parsed.rows.length === 0) {
-                setToast({ msg: "제목과 본문을 확인할 수 없는 Markdown 파일이에요", type: "warning" });
+                setToast({
+                    msg: "제목과 본문을 확인할 수 없는 Markdown 파일이에요",
+                    type: "warning",
+                });
                 return;
             }
 
@@ -98,7 +104,10 @@ const Navigation = () => {
             setRows(parsed.rows);
             setDraftId(null);
             setShowDraftModal(false);
-            setToast({ msg: `${parsed.rows.length}개 그룹을 불러왔어요`, type: "success" });
+            setToast({
+                msg: `${parsed.rows.length}개 그룹을 불러왔어요`,
+                type: "success",
+            });
         } catch {
             setToast({ msg: "Markdown 파일을 불러오지 못했어요", type: "fail" });
         }
@@ -125,11 +134,11 @@ const Navigation = () => {
                         onClick={() => pushToUrl("/")}
                         className="transition-colors flex flex-col items-start"
                     >
-                        <p className="bg-black text-white p-[2.0rem] text-[2.4rem] font-semibold tablet:block mobile:hidden">{IS_ROUTE_POST_VIEW ? "메인으로" : "이전으로"}</p>
+                        <p className="bg-black text-white p-[2rem] text-[2.4rem] font-semibold tablet:block mobile:hidden">{IS_ROUTE_POST_VIEW ? "메인으로" : "이전으로"}</p>
                         <MaterialIcon
                             name="arrow_back"
                             size={24}
-                            className="bg-black text-white p-[2.0rem]"
+                            className="bg-black text-white p-[2rem]"
                         />
                     </UI.Button>
 
@@ -137,14 +146,14 @@ const Navigation = () => {
                         <>
                             <UI.Button
                                 type="button"
-                                onClick={() => IS_ROUTE_POST_CREATE ? setShowDraftModal(true) : markdownInputRef.current?.click()}
+                                onClick={() => (IS_ROUTE_POST_CREATE ? setShowDraftModal(true) : markdownInputRef.current?.click())}
                                 className="transition-colors flex flex-col items-start"
                             >
-                                <p className="bg-black text-white p-[2.0rem] text-[2.4rem] font-semibold tablet:block mobile:hidden">불러오기</p>
+                                <p className="bg-black text-white p-[2rem] text-[2.4rem] font-semibold tablet:block mobile:hidden">불러오기</p>
                                 <MaterialIcon
                                     name="upload_file"
                                     size={24}
-                                    className="bg-black text-white p-[2.0rem]"
+                                    className="bg-black text-white p-[2rem]"
                                 />
                             </UI.Button>
                             <input
@@ -225,10 +234,12 @@ const Navigation = () => {
                                 onClick={() => saveDraft(rows)}
                                 className="transition-colors flex flex-col items-end disabled:opacity-60"
                             >
-                                <p className="bg-black text-white p-[2.0rem] text-[2.4rem] font-semibold tablet:block mobile:hidden">
-                                    {isDraftPending ? "저장 중..." : "임시저장"}
-                                </p>
-                                <MaterialIcon name="save" size={24} className="bg-black text-white p-[2.0rem]" />
+                                <p className="bg-black text-white p-[2rem] text-[2.4rem] font-semibold tablet:block mobile:hidden">{isDraftPending ? "저장 중..." : "임시저장"}</p>
+                                <MaterialIcon
+                                    name="save"
+                                    size={24}
+                                    className="bg-black text-white p-[2rem]"
+                                />
                             </UI.Button>
                         ) : null}
                         <PostSaveNavButton

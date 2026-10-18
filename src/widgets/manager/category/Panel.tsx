@@ -1,13 +1,12 @@
 "use client";
-
 import { CategoryManagerPageProvider } from "./model/CategoryManagerContext";
-import * as CategoryManagerLayer from "@/widgets/manager/category/ui";
-
+import * as Layer from "@/widgets/manager/category/ui";
 export default function Panel() {
     return (
         <CategoryManagerPageProvider>
-            <CategoryManagerLayer.CategoryManager />
-            <CategoryManagerLayer.Modal />
+            <Layer.CategoryManagerList />
+            <Layer.CategoryManagerDetail />
+            <Layer.Modal />
         </CategoryManagerPageProvider>
     );
 }

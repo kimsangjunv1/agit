@@ -22,7 +22,14 @@ const PostThumbnail = ({ src, seed, readinessKey, fill = false, className = "", 
     }, [src]);
 
     if (shouldShowPlaceholder) {
-        return <PostThumbnailPlaceholder seed={seed} className={className} fill={fill} readinessKey={readinessKey} />;
+        return (
+            <PostThumbnailPlaceholder
+                seed={seed}
+                className={className}
+                fill={fill}
+                readinessKey={readinessKey}
+            />
+        );
     }
 
     return (

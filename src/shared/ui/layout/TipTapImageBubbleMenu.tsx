@@ -26,10 +26,7 @@ const TipTapImageBubbleMenu = ({ editor }: TipTapImageBubbleMenuProps) => {
 
             return {
                 position,
-                align:
-                    position !== null
-                        ? normalizeImageAlign(currentEditor?.state.doc.nodeAt(position)?.attrs.align)
-                        : ("left" as ImageAlign),
+                align: position !== null ? normalizeImageAlign(currentEditor?.state.doc.nodeAt(position)?.attrs.align) : ("left" as ImageAlign),
             };
         },
     });
@@ -44,7 +41,7 @@ const TipTapImageBubbleMenu = ({ editor }: TipTapImageBubbleMenuProps) => {
             shouldShow={({ editor: currentEditor }) => getSelectedImagePosition(currentEditor) !== null}
         >
             <div
-                className="flex items-center gap-[0.2rem] p-[0.4rem] bg-white rounded-full shadow-[var(--shadow-normal)] border border-[var(--color-gray-200)]"
+                className="flex items-center gap-[0.4rem] p-[0.4rem] bg-white rounded-full shadow-[var(--shadow-normal)] border border-[var(--color-gray-200)]"
                 onMouseDown={preventEditorBlur}
             >
                 {ALIGN_OPTIONS.map((option) => (
@@ -68,9 +65,7 @@ const TipTapImageBubbleMenu = ({ editor }: TipTapImageBubbleMenuProps) => {
 
                 <ToolbarDivider />
 
-                <span className="px-[0.8rem] text-[1.1rem] text-[var(--color-gray-500)] whitespace-nowrap">
-                    드래그 이동 · 모서리 크기 조절
-                </span>
+                <span className="px-[0.8rem] text-[1.2rem] text-[var(--color-gray-500)] whitespace-nowrap">드래그 이동 · 모서리 크기 조절</span>
             </div>
         </BubbleMenu>
     );

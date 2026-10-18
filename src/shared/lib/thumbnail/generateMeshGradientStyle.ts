@@ -19,12 +19,7 @@ const pickFromHash = (hash: number, slot: number, min: number, max: number): num
 export const generateMeshGradientStyle = (seed: string | number): CSSProperties => {
     const hash = hashString(String(seed));
     const baseHue = hash % 360;
-    const hues = [
-        baseHue,
-        (baseHue + 35 + pickFromHash(hash, 1, 0, 70)) % 360,
-        (baseHue + 110 + pickFromHash(hash, 2, 0, 55)) % 360,
-        (baseHue + 195 + pickFromHash(hash, 3, 0, 65)) % 360,
-    ];
+    const hues = [baseHue, (baseHue + 35 + pickFromHash(hash, 1, 0, 70)) % 360, (baseHue + 110 + pickFromHash(hash, 2, 0, 55)) % 360, (baseHue + 195 + pickFromHash(hash, 3, 0, 65)) % 360];
 
     const blobs = hues.map((hue, index) => ({
         hue,
@@ -42,10 +37,7 @@ export const generateMeshGradientStyle = (seed: string | number): CSSProperties 
     const baseColor = `hsl(${baseHue} ${baseSaturation}% ${baseLightness}%)`;
 
     const gradients = blobs
-        .map(
-            (blob) =>
-                `radial-gradient(ellipse ${blob.width}% ${blob.height}% at ${blob.x}% ${blob.y}%, hsl(${blob.hue} ${blob.saturation}% ${blob.lightness}% / ${blob.opacity}), transparent)`,
-        )
+        .map((blob) => `radial-gradient(ellipse ${blob.width}% ${blob.height}% at ${blob.x}% ${blob.y}%, hsl(${blob.hue} ${blob.saturation}% ${blob.lightness}% / ${blob.opacity}), transparent)`)
         .join(", ");
 
     return {

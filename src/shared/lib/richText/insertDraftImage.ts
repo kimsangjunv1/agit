@@ -2,8 +2,7 @@ import type { Editor } from "@tiptap/core";
 
 import { usePostDraftImageStore } from "@/shared/stores/usePostDraftImageStore";
 
-export const findDraftImageByPreviewUrl = (previewUrl: string) =>
-    usePostDraftImageStore.getState().images.find((image) => image.previewUrl === previewUrl);
+export const findDraftImageByPreviewUrl = (previewUrl: string) => usePostDraftImageStore.getState().images.find((image) => image.previewUrl === previewUrl);
 
 export const insertDraftImageAtPosition = (editor: Editor, position: number, previewUrl: string) => {
     const image = findDraftImageByPreviewUrl(previewUrl);

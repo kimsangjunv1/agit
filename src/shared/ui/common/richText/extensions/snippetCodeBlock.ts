@@ -106,7 +106,9 @@ export const SnippetCodeBlockLanguageAutoDetect = Extension.create({
         const current = parent.attrs.language as string | null | undefined;
 
         if (current !== detected) {
-            editor.commands.updateAttributes("snippetCodeBlock", { language: detected });
+            editor.commands.updateAttributes("snippetCodeBlock", {
+                language: detected,
+            });
         }
     },
 });

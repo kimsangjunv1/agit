@@ -20,7 +20,7 @@ const Main = ({ children, id = "main", className }: MainProps) => {
     return (
         <main
             id={id}
-            className={`${containerClass} w-full`}
+            className={`${containerClass} w-full min-h-[100svh] mx-auto`}
         >
             <div
                 className={`main-inner ${innerClass} min-h-[100svh] m-auto w-full flex flex-col items-start justify-between flex-1`}

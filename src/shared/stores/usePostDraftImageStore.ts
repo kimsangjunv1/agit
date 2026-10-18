@@ -23,8 +23,7 @@ const createId = () => `draft-${Date.now()}-${Math.random().toString(36).slice(2
 
 const getFileFingerprint = (file: File) => `${file.name}-${file.size}-${file.lastModified}`;
 
-const isDuplicateFile = (file: File, images: PostDraftImage[]) =>
-    images.some((image) => image.file && getFileFingerprint(image.file) === getFileFingerprint(file));
+const isDuplicateFile = (file: File, images: PostDraftImage[]) => images.some((image) => image.file && getFileFingerprint(image.file) === getFileFingerprint(file));
 
 const revokeIfBlob = (url: string) => {
     if (url.startsWith("blob:")) {

@@ -15,4 +15,6 @@ export const getPostDetailServerFetch = (idx: number) =>
  * 포스트 - 최근 목록 SSR 조회
  */
 export const getPostLatestListServerFetch = () =>
-    serverApi.get<GetPostLatestListResponse>("/api/v1/get/post/latest", { skipAuth: true });
+    serverApi.get<GetPostLatestListResponse>("/api/v1/get/post/latest", {
+        skipAuth: true,
+    });

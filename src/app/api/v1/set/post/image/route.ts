@@ -13,11 +13,17 @@ export async function POST(req: Request) {
         const file = formData.get("file");
 
         if (!(file instanceof File)) {
-            return apiError("업로드할 파일이 없습니다.", { status: 400, result: { statusCode: 0 } });
+            return apiError("업로드할 파일이 없습니다.", {
+                status: 400,
+                result: { statusCode: 0 },
+            });
         }
 
         if (!file.type.startsWith("image/")) {
-            return apiError("이미지 파일만 업로드할 수 있습니다.", { status: 400, result: { statusCode: 0 } });
+            return apiError("이미지 파일만 업로드할 수 있습니다.", {
+                status: 400,
+                result: { statusCode: 0 },
+            });
         }
 
         const supabase = supabaseAdmin();

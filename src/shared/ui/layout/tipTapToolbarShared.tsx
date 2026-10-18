@@ -3,9 +3,9 @@
 import type { Editor } from "@tiptap/react";
 import { useEditorState } from "@tiptap/react";
 
-export const DEFAULT_FONT_SIZE = "1.8rem";
+export const DEFAULT_FONT_SIZE = "2rem";
 export const DEFAULT_LINE_HEIGHT = "1.5";
-export const FONT_SIZES = ["1.4rem", "1.6rem", "1.8rem", "2.0rem", "2.4rem"] as const;
+export const FONT_SIZES = ["1.2rem", "1.6rem", "2rem", "2.4rem", "2.8rem"] as const;
 export const LINE_HEIGHTS = ["1", "1.2", "1.5", "1.8", "2"] as const;
 export type TextAlignValue = "left" | "center" | "right";
 
@@ -86,7 +86,7 @@ export const getActiveHeading = (state: ReturnType<typeof useTipTapToolbarState>
 };
 
 export const iconButtonClass = (active: boolean, disabled = false, compact = false, variant: ToolbarVariant = "default") => {
-    const size = compact ? "w-[3.2rem] h-[3.2rem] text-[1.3rem]" : "w-[3.6rem] h-[2.4rem] text-[1.4rem]";
+    const size = compact ? "w-[3.2rem] h-[3.2rem] text-[1.2rem]" : "w-[3.6rem] h-[2.4rem] text-[1.6rem]";
     // const size = compact ? "w-[3.2rem] h-[3.2rem] text-[1.3rem]" : "w-[3.6rem] h-[2.4rem] text-[1.4rem]";
 
     if (variant === "glass") {
@@ -112,7 +112,7 @@ export const preventEditorBlur = (e: React.MouseEvent) => {
 
 export const ToolbarDivider = ({ variant = "default" }: { variant?: ToolbarVariant }) => (
     <span
-        className={`shrink-0 w-[0.1rem] h-[2.4rem] mx-[0.2rem] ${variant === "glass" ? "bg-white/20" : "bg-[var(--color-gray-200)]"}`}
+        className={`shrink-0 w-[0.4rem] h-[2.4rem] mx-[0.4rem] ${variant === "glass" ? "bg-white/20" : "bg-[var(--color-gray-200)]"}`}
         aria-hidden
     />
 );
@@ -173,7 +173,7 @@ export const ToolbarSelect = ({
             onMouseDown={preventEditorBlur}
             onClick={(e) => e.stopPropagation()}
             onChange={(e) => onChange(e.target.value)}
-            className={`relative z-20 h-[2.4rem] pl-[1rem] pr-[2.4rem] rounded-[1.2rem] text-[1.2rem] font-semibold outline-none cursor-pointer appearance-none ${
+            className={`relative z-20 h-[2.4rem] pl-[1.2rem] pr-[2.4rem] rounded-[1.2rem] text-[1.2rem] font-semibold outline-none cursor-pointer appearance-none ${
                 variant === "glass"
                     ? "text-white bg-white/10 hover:bg-white/15 border border-white/20"
                     : "text-[var(--color-gray-1000)] bg-[var(--color-gray-100)] hover:bg-[var(--color-gray-200)] border border-[var(--color-gray-200)]"
@@ -188,7 +188,7 @@ export const ToolbarSelect = ({
                 </option>
             ))}
         </select>
-        <span className={`pointer-events-none absolute right-[0.8rem] text-[1rem] ${variant === "glass" ? "text-white/70" : "text-[var(--color-gray-500)]"}`}>▾</span>
+        <span className={`pointer-events-none absolute right-[0.8rem] text-[1.2rem] ${variant === "glass" ? "text-white/70" : "text-[var(--color-gray-500)]"}`}>▾</span>
     </label>
 );
 

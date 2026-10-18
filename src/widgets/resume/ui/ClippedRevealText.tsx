@@ -3,7 +3,7 @@
 import { ReactNode } from "react";
 import { motion } from "motion/react";
 
-import { RENEWAL_REVEAL_EASE } from "@/shared/constants/resume/resumeRenewalData";
+import { RENEWAL_REVEAL_EASE } from "@/entities/resume/constants/resumeRenewalData";
 import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
 
 type ClippedRevealBlockProps = {

@@ -46,9 +46,7 @@ const RenewalSplitSection = ({
                     leftFill ? (
                         <div className={`relative box-border ${leftFillClasses}`}>{left}</div>
                     ) : (
-                        <div
-                            className={`flex items-start justify-center px-[2.4rem] tablet:px-[4rem] py-[4rem] tablet:py-[8rem] min-h-[24rem] tablet:min-h-[48rem] ${leftWrapperClassName}`}
-                        >
+                        <div className={`flex items-start justify-center px-[2.4rem] tablet:px-[4rem] py-[4rem] tablet:py-[8rem] min-h-[24rem] tablet:min-h-[48rem] ${leftWrapperClassName}`}>
                             <div className={R.leftInner}>{left}</div>
                         </div>
                     )

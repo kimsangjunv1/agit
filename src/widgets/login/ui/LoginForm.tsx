@@ -66,7 +66,7 @@ const CredentialsForm = () => {
         <Fragment>
             <article
                 id="list"
-                className="px-[2.0rem] bg-[linear-gradient(90deg,_#ffffff_10%,_var(--color-gray-100),_#ffffff_90%)] h-[100svh] w-full flex items-center justify-center overflow-hidden"
+                className="px-[2rem] bg-[linear-gradient(90deg,_#ffffff_10%,_var(--color-gray-100),_#ffffff_90%)] h-[100svh] w-full flex items-center justify-center overflow-hidden"
             >
                 <motion.form
                     onSubmit={handleSubmit}
@@ -80,9 +80,9 @@ const CredentialsForm = () => {
                     <section className="flex justify-center w-full">
                         <IconComponent
                             type="graphic-logo-vertical"
-                            alt="코디 아지트"
+                            alt="아지트"
                             width={100}
-                            height={106}
+                            height={108}
                         />
                     </section>
                     {/* 헤더 END */}
@@ -129,15 +129,10 @@ const CredentialsForm = () => {
                     {!initGlow ? (
                         <motion.div
                             key={`glow-${initGlow}`}
-                            className="absolute inset-0 z-10 pointer-events-none blur-[10px]"
+                            className="absolute inset-0 z-10 pointer-events-none blur-[12px] rounded-full origin-center bg-[radial-gradient(circle,rgba(255,255,255,0)_0%,var(--color-gray-500)_20%,rgba(255,255,255,0)_70%)]"
                             initial={{ scale: 0, opacity: 0.4 }}
                             animate={{ scale: 10, opacity: -10 }}
                             transition={{ duration: 3, ease: "easeOut", repeat: 0 }}
-                            style={{
-                                background: "radial-gradient(circle, rgba(255,255,255,0) 0%, var(--color-gray-500) 20%, rgba(255,255,255,0) 70%)",
-                                borderRadius: "50%",
-                                transformOrigin: "center",
-                            }}
                             onAnimationComplete={() => setInitGlow(true)}
                         />
                     ) : null}

@@ -3,21 +3,13 @@ import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 
 import { FIVEPIXELS_REVIEWERS_TABLE_NAME } from "@/entities/fivepixels/constants/fivepixels.constants";
-import {
-    FEEDBACK_SCOPE_REQUIRED_MESSAGE,
-    feedbackError,
-    feedbackErrorFrom,
-} from "@/entities/fivepixels/lib/feedbackResponse";
+import { FEEDBACK_SCOPE_REQUIRED_MESSAGE, feedbackError, feedbackErrorFrom } from "@/entities/fivepixels/lib/feedbackResponse";
 import { mapReviewerRowToItem } from "@/entities/fivepixels/lib/mapReviewer";
 import { parseFivepixelsScope } from "@/entities/fivepixels/lib/scope";
 import { canManageTeam, outranks } from "@/entities/fivepixels/lib/teamRank";
 import { stripAuthFromPayload } from "@/entities/fivepixels/lib/verifyFeedbackAuth";
 import { verifyTeamActor } from "@/entities/fivepixels/lib/verifyTeamActor";
-import type {
-    FivepixelsReviewerRow,
-    RegisterReviewerPayload,
-    ReportAuthProof,
-} from "@/entities/fivepixels/model/fivepixels.type";
+import type { FivepixelsReviewerRow, RegisterReviewerPayload, ReportAuthProof } from "@/entities/fivepixels/model/fivepixels.type";
 import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
 
 /**
@@ -48,7 +40,9 @@ export async function GET(req: Request) {
     }
 }
 
-type RegisterReviewerBody = RegisterReviewerPayload & { auth?: ReportAuthProof };
+type RegisterReviewerBody = RegisterReviewerPayload & {
+    auth?: ReportAuthProof;
+};
 
 /**
  * 리뷰어 수동 등록/재활성화 (onRegisterReviewer).
