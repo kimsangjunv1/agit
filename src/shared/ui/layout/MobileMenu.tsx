@@ -17,7 +17,7 @@ import useNavigate from "@/shared/hooks/useNavigate";
 import { headerMenuList } from "@/shared/constants/lists/configServiceList";
 
 const CLIP_MENU = {
-    hidden: "inset(0 100% 0 0)",
+    hidden: "inset(0 0 0 100%)",
     visible: "inset(0 0 0 0)",
     exit: "inset(0 0 0 100%)",
 } as const;
@@ -46,7 +46,8 @@ const MobileMenu = () => {
             <AnimatePresence mode="wait">
                 {isMobileMenuOpen ? (
                     <motion.article
-                        className="mobile flex flex-col justify-center items-center gap-[1.6rem] fixed top-0 left-0 w-full h-full bg-[#232323] z-10000"
+                        className="mobile flex flex-col justify-center items-center gap-[1.6rem] fixed top-0 right-0 w-[50svw] h-[100svh] bg-[#232323] z-[100000000]"
+                        // className="mobile flex flex-col justify-center items-center gap-[1.6rem] fixed top-0 left-0 w-full h-full bg-[#232323] z-10000"
                         initial={{ clipPath: CLIP_MENU.hidden }}
                         animate={{ clipPath: CLIP_MENU.visible }}
                         exit={{
@@ -62,34 +63,25 @@ const MobileMenu = () => {
                         }}
                     >
                         <UI.Button
-                            className="hamburger absolute top-[3.2rem] right-[3.2rem] z-[10000]"
+                            className="hamburger w-full p-[2.0rem] flex items-center z-[10000]"
                             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                         >
-                            {/* <div
-                                className={`w-[2.4rem] h-[0.3rem] bg-[var(--color-gray-1000)] absolute left-[50%] transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ${
-                                    isMobileMenuOpen ? "top-[calc(50%-0rem)] rotate-[225deg]" : "top-[calc(50%-0.8rem)] rotate-0"
-                                }`}
-                            />
-                            <div
-                                className={`w-[2.4rem] h-[0.3rem] bg-[var(--color-gray-1000)] absolute left-[50%] transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ${
-                                    isMobileMenuOpen ? "top-[calc(50%+0rem)] rotate-[135deg]" : "top-[calc(50%+0.8rem)] rotate-0"
-                                }`}
-                            /> */}
                             <IconComponent
                                 type="graphic-arrow-up"
                                 alt="나가기"
                                 className="rotate-270 invert"
-                                width={44}
-                                height={44}
+                                width={32}
+                                height={32}
                             />
+                            <p className="text-white text-[2.4rem]">Close.</p>
                         </UI.Button>
                         {/* 목록 */}
-                        <section className="mobile-inner max-w-[calc(var(--size-tablet)/2)] px-[2.4rem] py-[2.4rem] w-full h-full flex flex-col items-start justify-between">
+                        <section className="mobile-inner px-[2.4rem] py-[2.4rem] w-full h-full flex flex-col items-start justify-between">
                             <section className="flex flex-col items-start">
-                                <div className="w-full overflow-hidden mb-[2.4rem]">
+                                {/* <div className="w-full overflow-hidden mb-[2.4rem]">
                                     <p className="text-[5.2rem] font-bold leading-[1.5] text-[#ffffff]">Hej!</p>
                                     <p className="text-[2.4rem] font-semibold leading-[1.5] text-[#ffffff]">아래에서 메뉴를 선택해주세요.</p>
-                                </div>
+                                </div> */}
 
                                 {headerMenuList.map((e, i) => (
                                     <div
@@ -118,7 +110,7 @@ const MobileMenu = () => {
                                     className="w-full h-auto overflow-hidden"
                                 >
                                     <motion.div
-                                        className="w-full bg-[#ffffff]/30 my-[1.6rem] h-[0.4rem]"
+                                        className="w-full bg-[#ffffff]/30 my-[1.6rem] h-[0.1rem]"
                                         initial={{ y: "4.8rem" }}
                                         animate={{ y: "0rem" }}
                                         transition={{
@@ -152,7 +144,7 @@ const MobileMenu = () => {
                                         ) : (
                                             <UI.Button
                                                 onClick={() => pushToUrl("/login")}
-                                                className="flex justify-center text-center gap-[0.4rem] w-full items-center text-[2.4rem] font-semibold whitespace-nowrap py-[1.2rem] text-[#ffffff]"
+                                                className="flex justify-center text-center gap-[0.4rem] w-full items-center text-[2.4rem] font-semibold whitespace-nowrap py-[1.2rem] text-[#ff4321]"
                                             >
                                                 로그인
                                             </UI.Button>
@@ -211,7 +203,7 @@ const Item = ({ title, href }: { title: string; href: string }) => {
     return (
         <UI.Button
             type="button"
-            className="flex justify-center text-center gap-[0.4rem] w-full items-center text-[2.4rem] font-semibold whitespace-nowrap py-[1.2rem] text-[#ffffff]"
+            className="flex justify-center text-center gap-[0.4rem] w-full items-center text-[2.4rem] whitespace-nowrap py-[1.2rem] text-[#ffffff]"
             onClick={() => pushToUrl(href)}
         >
             {title}

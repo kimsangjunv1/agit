@@ -6,7 +6,6 @@ export default function Panel() {
         <UserManagerPageProvider>
             <Layer.UserManagerList />
             <Layer.UserManagerDetail />
-            <Layer.Modal />
         </UserManagerPageProvider>
     );
 }

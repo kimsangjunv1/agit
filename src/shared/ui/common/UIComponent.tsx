@@ -195,7 +195,7 @@ const Input = forwardRef<{ reset: () => void }, InputProps & { phoneNumber?: boo
 
         return (
             <section
-                className={`flex items-center gap-[0.8rem] max-h-[var(--input-height)] h-full transition-colors bg-[#ffffff28] border border-[var(--color-gray-200)] rounded-[1.2rem] hover:border-[var(--color-brand-500)] relative ${className?.container ? className?.container : "px-[1.2rem] border border-[var(--color-gray-200)] hover:border-[var(--color-gray-500)] focus:border-[var(--color-gray-500)]"}`}
+                className={`flex items-center gap-[0.8rem] max-h-[var(--input-height)] h-full transition-colors bg-[#ffffff28] border border-[var(--color-gray-200)] hover:border-[var(--color-brand-500)] relative ${className?.container ? className?.container : "px-[1.2rem] border border-[var(--color-gray-200)] hover:border-[var(--color-gray-500)] focus:border-[var(--color-gray-500)]"}`}
                 data-description={desc_no}
             >
                 {guide && <p className="absolute top-[50%] right-[1.6rem] transform -translate-y-1/2">{guide}</p>}

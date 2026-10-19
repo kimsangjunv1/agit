@@ -7,7 +7,6 @@ export default function Panel() {
     return (
         <SignupPageProvider>
             <SignupLayer.SignupForm />
-            <SignupLayer.Modal />
         </SignupPageProvider>
     );
 }

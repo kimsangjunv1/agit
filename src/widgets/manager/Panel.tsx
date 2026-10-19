@@ -10,7 +10,6 @@ export default function Panel() {
                 <ManagerLayer.ManagerTitle />
                 <ManagerLayer.ManagerMenu />
             </article>
-            <ManagerLayer.Modal />
         </ManagerPageProvider>
     );
 }

@@ -9,7 +9,6 @@ export default function Panel({ initialData }: { initialData: GetPostLatestListR
             <Layer.ArchiveFeed initialData={initialData} />
             <Layer.Search />
             <Layer.HomeViewModeFloatingMenu />
-            <Layer.Modal />
         </FivepixelsPageProvider>
     );
 }

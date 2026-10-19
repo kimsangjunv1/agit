@@ -13,7 +13,7 @@ export default function Panel({ id, initialData }: { id: string; initialData: Ge
                         <>
                             <Layer.Hero />
                             <article
-                                className="post-reading-root z-[100] mt-[100svh] pt-[10rem] flex w-full gap-[0.4rem] bg-white"
+                                className="post-reading-root z-[100] pt-[4.2rem] flex w-full gap-[0.4rem]"
                                 style={{
                                     ["--post-read-scale" as string]: page.fontScale,
                                     ["--post-read-line-height" as string]: page.lineHeight,
@@ -33,7 +33,6 @@ export default function Panel({ id, initialData }: { id: string; initialData: Ge
                     )}
                 </section>
             </section>
-            <Layer.Modal />
         </PostDetailPageProvider>
     );
 }

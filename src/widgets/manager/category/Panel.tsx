@@ -6,7 +6,6 @@ export default function Panel() {
         <CategoryManagerPageProvider>
             <Layer.CategoryManagerList />
             <Layer.CategoryManagerDetail />
-            <Layer.Modal />
         </CategoryManagerPageProvider>
     );
 }

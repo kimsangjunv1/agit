@@ -27,7 +27,7 @@ const HomeViewModeNav = ({ variant }: HomeViewModeNavProps) => {
     const activeTextClass = isFloating ? "text-white" : "text-black";
     const inactiveTextClass = isFloating ? "text-white/50" : "text-[#00000050]";
     const dividerClass = isFloating ? "h-[1.6rem] w-[0.4rem] bg-white/30 shrink-0" : "h-[1.6rem] w-[0.1rem] bg-[var(--color-gray-400)] shrink-0";
-    const buttonTextClass = isFloating ? "font-extrabold text-[2rem]" : "font-extrabold text-[2.4rem] whitespace-nowrap";
+    const buttonTextClass = isFloating ? "text-[2rem]" : "text-[2.0rem] whitespace-nowrap";
 
     return (
         <section className={isFloating ? "fixed z-100 left-1/2 -translate-x-1/2 bottom-[calc(1.6rem+env(safe-area-inset-bottom))] w-full" : "flex items-center"}>
@@ -52,7 +52,7 @@ const HomeViewModeNav = ({ variant }: HomeViewModeNavProps) => {
                                 window.scrollTo({ top: 0, left: 0 });
                                 setMainViewMode(1);
                             }}
-                            className={`${activeTextClass} text-[2rem] font-bold shrink-0`}
+                            className={`${activeTextClass} text-[2rem] shrink-0`}
                         >
                             <span className={buttonTextClass}>최신글</span>
                             {/* {isFloating ? (

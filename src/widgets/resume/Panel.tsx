@@ -17,7 +17,6 @@ export default function Panel() {
             <Layer.Awwwards />
             <Layer.Footer />
             <Layer.EmailBannerSection />
-            <Layer.Modal />
         </article>
     );
 }

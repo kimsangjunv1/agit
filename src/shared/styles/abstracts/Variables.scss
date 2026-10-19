@@ -9,10 +9,10 @@
     // --preview-font: "NanumMyeongjo";
 
     /* 배경 색상 */
-    --color-background-light: #ffffff;
-    --color-background-outside: #ffffff;
-    --color-background-normal: white;
-    --color-background-funnel: #ffffff;
+    --color-background-light: #ededed;
+    --color-background-outside: #ededed;
+    --color-background-normal: #ededed;
+    --color-background-funnel: #ededed;
 
     /* 텍스트 색상 */
     --color-main-text-light: var(--color-gray-800);
@@ -88,7 +88,7 @@
     --button-height: 4rem;
     --button-min-height: 3.2rem;
     --nav-height: 5.2rem;
-    --header-height: 4.8rem;
+    --header-height: 7.2rem;
     --notice-height: 4rem;
     --footer-height: calc(1.6rem * 8);
     --letter-line-height: 1.29;

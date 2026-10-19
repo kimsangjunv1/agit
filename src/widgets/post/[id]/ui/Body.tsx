@@ -27,9 +27,9 @@ const ContentColumn = memo(({ col, rowLength, onCopySentence }: { col: SectionCo
             {col.type === 0 ? (
                 <Fragment>
                     {showHeading ? (
-                        <section className="flex flex-col gap-[0.8rem]">
-                            {subtitle ? <p className="mobile:text-[1.6rem] pc:text-[2rem] leading-[1.5] font-semibold">{subtitle}</p> : null}
-                            {title ? <h5 className="mobile:text-[2.4rem] pc:text-[2.8rem] leading-[1.5] font-bold">{title}</h5> : null}
+                        <section className="flex flex-col">
+                            {subtitle ? <p className="mobile:text-[1.4rem] pc:text-[1.8rem] leading-[1.5] font-semibold">{subtitle}</p> : null}
+                            {title ? <h5 className="mobile:text-[2.0rem] pc:text-[2.4rem] leading-[1.5] font-semibold">{title}</h5> : null}
                         </section>
                     ) : null}
 
@@ -110,7 +110,7 @@ const Body = () => {
     const { contents, prev, next, postId, imageUrl, title, summary, createDate, viewCount, likeCount, thumbnailAlt, pushToUrl, setToast, handleCopySentence } = usePostDetailProvider();
     return (
         <section className="w-full max-w-[var(--size-tablet)] mx-auto">
-            <div className="mx-[1.6rem_6.4rem] flex flex-col mobile:gap-[5.2rem] pc:gap-[2.4rem]">
+            <div className="flex flex-col mobile:gap-[5.2rem] pc:gap-[2.4rem]">
                 {contents?.map((row, rowIdx) => (
                     <section
                         key={rowIdx}

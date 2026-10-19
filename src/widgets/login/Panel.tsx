@@ -7,7 +7,6 @@ export default function Panel() {
     return (
         <LoginPageProvider>
             <LoginLayer.LoginForm />
-            <LoginLayer.Modal />
         </LoginPageProvider>
     );
 }

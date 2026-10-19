@@ -5,7 +5,6 @@ export default function Panel() {
     return (
         <HydrationPageProvider>
             <Layer.HydrationExample />
-            <Layer.Modal />
         </HydrationPageProvider>
     );
 }

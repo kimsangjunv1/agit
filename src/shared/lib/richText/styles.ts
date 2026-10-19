@@ -1,6 +1,6 @@
 export const BLOCK_MIN_HEIGHT_CLASS = "min-h-[18rem]";
 export const BLOCK_ROW_CLASS = "flex flex-col tablet:flex-row tablet:flex-wrap gap-[0.4rem] w-full min-w-0";
-export const BLOCK_COLUMN_CLASS = "w-full min-w-0 tablet:flex-1 tablet:min-w-[calc((var(--size-tablet)-(1.6rem*10))/2)] p-[1.6rem] bg-[#ffffff] rounded-[2.4rem] flex flex-col gap-[2.4rem]";
+export const BLOCK_COLUMN_CLASS = "w-full min-w-0 tablet:flex-1 tablet:min-w-[calc((var(--size-tablet)-(1.6rem*10))/2)] p-[1.6rem] rounded-[2.4rem] flex flex-col gap-[2.4rem]";
 export const CODE_BLOCK_COLUMN_CLASS = "w-full min-w-0 tablet:flex-1 tablet:min-w-[calc((var(--size-tablet)-(1.6rem*10))/2)] bg-[#ffffff] rounded-[2.4rem] flex flex-col gap-[2.4rem]";
 // "w-full min-w-0 tablet:flex-1 tablet:min-w-[calc((var(--size-tablet)-(1.6rem*10))/2)] p-[1.6rem] bg-[#ffffff] rounded-[2.4rem] flex flex-col gap-[2.4rem]";
 export const BLOCK_DETAIL_COLUMN_CLASS = "w-full min-w-0 tablet:min-w-[calc((var(--size-tablet)-(1.6rem*10))/2)] p-[1.6rem] bg-[#ffffff] rounded-[2.4rem]";

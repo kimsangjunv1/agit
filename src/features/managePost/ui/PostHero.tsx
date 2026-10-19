@@ -95,7 +95,7 @@ const PostHero = (props: PostHeroProps) => {
     return (
         <motion.article
             // className="relative flex flex-col items-end justify-end gap-[1.6rem] w-full h-full rounded-[calc(1.6rem*3)] overflow-hidden"
-            className="relative flex flex-col items-end justify-end gap-[1.6rem] w-full h-full overflow-hidden"
+            className="relative flex flex-col gap-[1.6rem] max-w-[var(--size-tablet)] px-[2.0rem] w-full"
             initial={reducedMotion ? false : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{
@@ -107,15 +107,7 @@ const PostHero = (props: PostHeroProps) => {
             onDragOver={props.mode === "edit" ? handleThumbnailDragOver : undefined}
             onDrop={props.mode === "edit" ? handleThumbnailDrop : undefined}
         >
-            <section className="flex flex-col items-start justify-end mobile:gap-[3.2rem] pc:gap-[5.2rem] h-full w-full max-w-[var(--size-tablet)] mobile:p-[5.2rem_2rem] pc:p-[7.2rem_1.2rem] z-[100] absolute left-[50%] top-[50%] transform translate-x-[-50%] translate-y-[-50%] pointer-events-none">
-                {props.mode === "edit" ? <PostHeroEditContent {...props} /> : <PostHeroViewContent {...props} />}
-            </section>
-
-            <div className="absolute top-0 left-[50%] transform translate-x-[-50%] w-full h-full bg-[linear-gradient(0deg,_#000,_#00000000)] z-[1] pointer-events-none" />
-            {/* <div className="absolute top-0 left-[50%] transform translate-x-[-50%] w-full h-full bg-[linear-gradient(0deg,_#000,_#00000000)] z-[1] rounded-[2.4rem] pointer-events-none" /> */}
-
-            {/* <div className="absolute inset-0 rounded-[2.4rem] overflow-hidden z-0 relative w-full h-full"> */}
-            <div className="absolute inset-0 overflow-hidden z-0 relative w-full h-full">
+            {/* <div className="z-0 relative w-[25.6rem] h-[25.6rem]">
                 {heroImageSrc ? (
                     canOptimizeImage ? (
                         <Image
@@ -144,7 +136,9 @@ const PostHero = (props: PostHeroProps) => {
                         readinessKey="post-hero-image"
                     />
                 )}
-            </div>
+            </div> */}
+
+            <section className="flex flex-col items-start justify-center gap-[1.6rem]">{props.mode === "edit" ? <PostHeroEditContent {...props} /> : <PostHeroViewContent {...props} />}</section>
 
             {props.mode === "edit" ? (
                 <PostHeroImageDropZone
@@ -158,23 +152,12 @@ const PostHero = (props: PostHeroProps) => {
 
 const PostHeroViewContent = ({ title, summary, createDate, viewCount, likeCount }: PostHeroViewProps) => (
     <>
-        <section className="flex flex-col items-start gap-[1.2rem] pointer-events-none">
-            {/* <TextShimmer
-                as="h1"
-                duration={2}
-                color={{
-                    start: "#ffffff90",
-                    end: "var(--color-gray-1000)",
-                }}
-                className="font-bold tablet:text-[2.0rem] mobile:text-[1.4rem]"
-            >
-                {title}
-            </TextShimmer> */}
-            <p className="font-bold mobile:text-[1.6rem] tablet:text-[2.4rem] text-[#ffffff90] leading-[1.5]">{title}</p>
-            <h2 className="font-extrabold mobile:text-[2.4rem] tablet:text-[3.2rem] text-white leading-[1.5] whitespace-break-spaces">&quot;{summary}&quot;</h2>
-            <p className="font-semibold mobile:text-[1.6rem] tablet:text-[2rem] text-white">
+        <section className="flex flex-col items-start pointer-events-none">
+            <p className="mobile:text-[1.6rem] tablet:text-[1.4rem] text-[#00000090] leading-[1.5]">
                 {util.string.getCurrentTime(createDate, 4)} ・ {viewCount} view ・ {likeCount} likes
             </p>
+            <p className="mobile:text-[1.6rem] tablet:text-[2.0rem] text-[#000000] leading-[1.5]">{title}</p>
+            <h2 className="font-semibold mobile:text-[1.8rem] tablet:text-[2.4rem] leading-[1.5] whitespace-break-spaces">&quot;{summary}&quot;</h2>
         </section>
 
         <section className="flex justify-start items-end gap-[1.6rem] pointer-events-none">
@@ -182,13 +165,13 @@ const PostHeroViewContent = ({ title, summary, createDate, viewCount, likeCount 
                 <img
                     src="/images/picture/post-profile.png"
                     alt="프로필"
-                    className="object-cover rounded-[1.6rem] w-[8.4rem] h-[9.2rem] shadow-[var(--shadow-normal)]"
+                    className="object-cover w-[7.2rem] h-[9.2rem]"
                 />
             </div>
 
-            <section className="flex flex-col items-start gap-[1.2rem]">
-                <p className="font-extrabold text-[2rem] text-white">김상준</p>
-                <p className="text-[2rem] font-semibold text-[#ffffff90]">FRONT END DEVELOPER</p>
+            <section className="flex flex-col justify-center items-start gap-[0.4rem]">
+                <p className="text-[1.8rem] font-semibold">김상준</p>
+                <p className="text-[1.4rem]">FRONT END DEVELOPER</p>
             </section>
         </section>
     </>

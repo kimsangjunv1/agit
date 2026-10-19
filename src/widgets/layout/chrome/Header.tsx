@@ -19,21 +19,22 @@ const Header = () => {
 
     const { isMobile, isMobileMenuOpen, setIsMobileMenuOpen } = useLayoutStore();
     const { currentPathName, pushToUrl } = useNavigate();
-    const { IS_ROUTE_POST } = getPostRouteFlags(currentPathName);
+    // const { IS_ROUTE_POST } = getPostRouteFlags(currentPathName);
+
     const IS_ROUTE_HOME = currentPathName === "/";
+
     const IS_ROUTE_RESUME = currentPathName === "/resume";
 
-    if (IS_ROUTE_POST) return null;
+    // if (IS_ROUTE_POST) return null;
 
     return (
-        <header className="fixed left-0 z-[100] mx-auto h-[var(--header-height)] w-[100svw]">
-            {/* <header className="fixed left-0 z-[100] mx-auto h-[var(--header-height)] w-full after:absolute after:top-0 after:left-0 after:-z-[1] after:mx-auto after:h-[var(--header-height)] after:w-full after:backdrop-blur-[20px] after:content-[''] after:[mask-image:linear-gradient(rgb(0,0,0),rgb(0,0,0)_0%,rgb(0,0,0)_20%,rgba(0,0,0,0))]"> */}
-            <div className="relative mx-auto flex h-full w-full mobile:max-w-[calc(100dvw-(1.6rem*2))] tablet:max-w-[var(--size-pc)] items-center pc:h-full px-[2rem]">
-                {/* <div className="relative mx-auto flex h-full w-full mobile:max-w-[calc(100dvw-(1.6rem*2))] tablet:max-w-[calc(100dvw-(2.0rem*2))] items-center pc:h-full px-[2.0rem]"> */}
+        <header className="fixed left-0 z-[1000000] mx-auto w-[100svw]">
+            <div className="relative mx-auto flex h-full w-full  items-center p-[2.4rem]">
                 <section className="menu flex gap-[4.8rem]">
                     <button
                         type="button"
                         onClick={() => pushToUrl("/")}
+                        className="flex flex-col gap-[0.4rem]"
                     >
                         <IconComponent
                             type={`graphic-logo-horizontal`}
@@ -42,6 +43,7 @@ const Header = () => {
                             height={44}
                             className="mobile:h-[calc(1.6rem*2.2)] mobile:w-[calc(1.6rem*7)] pc:h-[4rem] pc:w-auto"
                         />
+                        <p className="text-[1.8rem]">agit.</p>
                     </button>
 
                     <section className="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] flex items-center justify-center gap-[1.6rem]">
@@ -104,12 +106,12 @@ const Header = () => {
                         // className={`w-[2.4rem] h-[0.3rem] bg-[var(--color-gray-1000)] absolute left-[50%] transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ${
                         //     showMenu ? "top-[calc(50%-0rem)] rotate-[225deg]" : "top-[calc(50%-0.8rem)] rotate-0"
                         // }`}
-                        className={`w-full h-[0.4rem] bg-[var(--color-gray-1000)] absolute left-[50%] transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ${
+                        className={`w-full h-[0.2rem] bg-[var(--color-gray-1000)] absolute left-[50%] transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ${
                             showMenu ? "top-[calc(50%-0rem)] rotate-[225deg]" : "top-[calc(50%-0.8rem)] rotate-0"
                         }`}
                     />
                     <div
-                        className={`w-full h-[0.4rem] bg-[var(--color-gray-1000)] absolute left-[50%] transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ${
+                        className={`w-full h-[0.2rem] bg-[var(--color-gray-1000)] absolute left-[50%] transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ${
                             showMenu ? "top-[calc(50%+0rem)] rotate-[135deg]" : "top-[calc(50%+0.8rem)] rotate-0"
                         }`}
                     />

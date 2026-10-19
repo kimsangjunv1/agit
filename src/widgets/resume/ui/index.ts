@@ -5,7 +5,6 @@ export { default as Hero } from "./ResumeRenewalHero";
 export { default as ProjectGrid } from "./ResumeRenewalProjectGrid";
 export { default as Awwwards } from "./ResumeRenewalAwwwards";
 export { default as Worklog } from "./ResumeRenewalWorklog";
-export { default as Modal } from "./Modal";
 export { default as SideProject } from "./ResumeRenewalSideProject";
 export { default as SkillSection } from "./ResumeRenewalSkillSection";
 export { default as TocNav } from "./ResumeRenewalTocNav";

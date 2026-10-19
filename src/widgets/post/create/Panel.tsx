@@ -16,7 +16,6 @@ export default function Panel() {
                 </section>
                 <Layer.Toc />
             </section>
-            <Layer.Modal />
         </PostCreatePageProvider>
     );
 }

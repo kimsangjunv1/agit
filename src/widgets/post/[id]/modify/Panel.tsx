@@ -16,7 +16,6 @@ export default function Panel({ id }: { id: string }) {
                 </section>
                 <Layer.Toc />
             </section>
-            <Layer.Modal />
         </PostModifyPageProvider>
     );
 }

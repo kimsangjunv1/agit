@@ -92,11 +92,9 @@ const ArchiveSliderHorizontalCard = ({ post, index, containerRef, shouldBlockCli
                 />
             </div>
 
-            <div className="absolute bottom-[1.6rem] left-[1.6rem] w-full flex flex-col justify-start items-start">
-                <h5 className="bg-[#000000] text-[#ff4321] text-left mobile:text-[1.6rem] pc:text-[2rem] font-semibold p-[0.4rem_0.4rem_0_0.4rem] leading-[1.5]">{post.title}</h5>
-                <p className="bg-[#000000] text-[#ffffff] text-left font-bold leading-[1.5] line-clamp-2 mobile:text-[1.6rem] tablet:text-[2rem] p-[0.8rem_0.4rem_0.4rem_0.4rem]">
-                    &quot;{post.summary}&quot;
-                </p>
+            <div className="bottom-[1.6rem] left-[1.6rem] w-full flex flex-col justify-start items-start">
+                <h5 className="text-left mobile:text-[1.6rem] pc:text-[2rem] p-[0.4rem_0.4rem_0_0.4rem] leading-[1.5]">{post.title}</h5>
+                {/* <p className="text-left leading-[1.5] line-clamp-2 mobile:text-[1.6rem] tablet:text-[2rem] p-[0.8rem_0.4rem_0.4rem_0.4rem]">&quot;{post.summary}&quot;</p> */}
             </div>
         </motion.button>
     );
@@ -151,7 +149,7 @@ const ArchiveSliderHorizontalContent = ({ posts }: ArchiveSliderHorizontalConten
             {/* <section className="flex h-[100svh] w-full items-center overflow-hidden"> */}
             <div
                 ref={containerRef}
-                className="flex h-full w-full cursor-grab touch-pan-x select-none items-center gap-[2.4rem] overflow-x-auto px-[calc(50dvw-(36rem/2))] scrollbar-hide active:cursor-grabbing"
+                className="flex h-full w-full cursor-grab touch-pan-x select-none items-center gap-[0.8rem] overflow-x-auto px-[calc(50dvw-(36rem/2))] scrollbar-hide active:cursor-grabbing"
                 onPointerDown={(event) => {
                     if (event.button !== 0) return;
 

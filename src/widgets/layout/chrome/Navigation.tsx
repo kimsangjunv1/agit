@@ -129,7 +129,7 @@ const Navigation = () => {
         <nav className="fixed tablet:top-[calc(1.6rem*3)] mobile:top-[calc(1.6rem*1)] left-0 z-[1000] w-[calc(100dvw-(1.6rem*2))]">
             <div className="nav-inner menu flex justify-between gap-[4.8rem] w-full">
                 <section className="flex items-start gap-[0.4rem] z-1">
-                    <UI.Button
+                    {/* <UI.Button
                         type="button"
                         onClick={() => pushToUrl("/")}
                         className="transition-colors flex flex-col items-start"
@@ -140,7 +140,7 @@ const Navigation = () => {
                             size={24}
                             className="bg-black text-white p-[2rem]"
                         />
-                    </UI.Button>
+                    </UI.Button> */}
 
                     {IS_ROUTE_POST_EDIT || IS_ROUTE_POST_CREATE ? (
                         <>
