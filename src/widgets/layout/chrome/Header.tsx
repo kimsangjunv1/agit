@@ -30,7 +30,10 @@ const Header = () => {
     const IS_ROUTE_RESUME = currentPathName === "/resume";
 
     return (
-        <header className="fixed left-0 z-[1000000] mx-auto w-[100svw]">
+        <header
+            data-page-transition-fixed="header"
+            className="fixed left-0 z-[1000000] mx-auto w-[100svw]"
+        >
             {/* <div className="relative mx-auto flex gap-[2.4rem] h-[12.8rem] w-full items-start p-[5.2rem]"> */}
             <div className="relative mx-auto flex gap-[2.4rem] w-full items-start p-[5.2rem]">
                 <section className="flex-1 flex justify-start items-start gap-[3.2rem]">
@@ -96,37 +99,7 @@ const Header = () => {
                                 />
                             )}
 
-                            {IS_ROUTE_RESUME && (
-                                <motion.section
-                                    key={"resume_title"}
-                                    initial={{ opacity: 0, transform: "scale(0.8)" }}
-                                    animate={{ opacity: 1, transform: "scale(1)" }}
-                                    exit={{ opacity: 0, transform: "scale(0.8)" }}
-                                    transition={{
-                                        type: "spring",
-                                        mass: 0.1,
-                                        stiffness: 100,
-                                        damping: 10,
-                                    }}
-                                    className="flex gap-[1.6rem] flex-1 justify-center"
-                                >
-                                    <TextShimmer
-                                        as="h2"
-                                        duration={3}
-                                        style={{
-                                            color: "#000000",
-                                            fontSize: "2.4rem",
-                                        }}
-                                        color={{
-                                            start: "#000000",
-                                            end: "#9393a0",
-                                        }}
-                                        className="font-extrabold"
-                                    >
-                                        RESUME
-                                    </TextShimmer>
-                                </motion.section>
-                            )}
+                            {IS_ROUTE_RESUME && <p>resume</p>}
                         </AnimatePresence>
                     </section>
                 </section>

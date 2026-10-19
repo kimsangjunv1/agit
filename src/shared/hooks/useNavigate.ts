@@ -11,11 +11,9 @@ const useNavigate = (_fallbackUrl = "/new-home") => {
 
     const { setModal } = useModalStore();
     const { isDirty, resetDirty } = useDirtyStore();
-    const { transitionPhase, beginRouteTransition } = useLayoutStore();
+    const { beginRouteTransition } = useLayoutStore();
 
     const DEFENCE_ROUTE = ["/", "/new-home", "/check", "/password", "/exit/receipt", "/exit/payment"];
-
-    const isTransitioning = transitionPhase !== "idle";
 
     const setPreventModal = ({ onClick }: { onClick: () => void }) =>
         setModal({
@@ -34,9 +32,14 @@ const useNavigate = (_fallbackUrl = "/new-home") => {
         });
 
     const pushToUrl = (url: string) => {
-        if (isTransitioning) return;
+        if (useLayoutStore.getState().transitionPhase !== "idle") return;
 
         const MOVE = () => {
+            if (new URL(url, window.location.href).pathname === pathName) {
+                router.push(url);
+                return;
+            }
+
             beginRouteTransition({
                 direction: "forward",
                 navigation: { type: "push", url },
@@ -51,10 +54,10 @@ const useNavigate = (_fallbackUrl = "/new-home") => {
     };
 
     const replaceToUrl = (url: string, animation: boolean = true) => {
-        if (isTransitioning) return;
+        if (useLayoutStore.getState().transitionPhase !== "idle") return;
 
         const MOVE = () => {
-            if (animation) {
+            if (animation && new URL(url, window.location.href).pathname !== pathName) {
                 beginRouteTransition({
                     direction: "forward",
                     navigation: { type: "replace", url },
@@ -73,7 +76,7 @@ const useNavigate = (_fallbackUrl = "/new-home") => {
     };
 
     const backToUrl = () => {
-        if (isTransitioning) return;
+        if (useLayoutStore.getState().transitionPhase !== "idle") return;
 
         const MOVE = () => {
             beginRouteTransition({

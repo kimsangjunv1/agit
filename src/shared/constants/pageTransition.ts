@@ -9,5 +9,7 @@ export const PAGE_REVEAL_COVER_DURATION = 1.1;
 export const PAGE_REVEAL_UNCOVER_DURATION = 1.1;
 // export const PAGE_REVEAL_UNCOVER_DURATION = 0.62;
 
+export const PAGE_SLIDE_DURATION = 0.8;
+
 /** API·이미지 준비 대기 최대 시간 — 초과 시 강제 reveal */
 export const PAGE_REVEAL_READY_TIMEOUT = 5000;

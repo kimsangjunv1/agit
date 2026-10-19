@@ -2,7 +2,7 @@
 
 import React, { Fragment, useEffect } from "react";
 import { signOut, useSession } from "next-auth/react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion, usePresence } from "motion/react";
 
 import { PAGE_REVEAL_COVER_DURATION, PAGE_REVEAL_COVER_EASE, PAGE_REVEAL_UNCOVER_DURATION, PAGE_REVEAL_UNCOVER_EASE } from "@/shared/constants/pageTransition";
 import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
@@ -46,6 +46,7 @@ const MobileMenu = () => {
             <AnimatePresence mode="wait">
                 {isMobileMenuOpen ? (
                     <motion.article
+                        data-page-transition-fixed="sidebar"
                         className="mobile flex flex-col justify-center items-center gap-[1.6rem] fixed top-0 right-0 w-[50svw] h-[100svh] bg-[#232323] z-[100000000]"
                         // className="mobile flex flex-col justify-center items-center gap-[1.6rem] fixed top-0 left-0 w-full h-full bg-[#232323] z-10000"
                         initial={{ clipPath: CLIP_MENU.hidden }}
@@ -62,6 +63,7 @@ const MobileMenu = () => {
                             ease: PAGE_REVEAL_COVER_EASE,
                         }}
                     >
+                        <SidebarTransitionPresence />
                         <UI.Button
                             className="hamburger w-full p-[2.0rem] flex items-center z-[10000]"
                             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -196,6 +198,18 @@ const MobileMenu = () => {
             {/* 모바일 메뉴 END */}
         </Fragment>
     );
+};
+
+const SidebarTransitionPresence = () => {
+    const [isPresent, safeToRemove] = usePresence();
+    const transitionPhase = useLayoutStore((state) => state.transitionPhase);
+
+    useEffect(() => {
+        // 전환 중 요소를 제거하면 브라우저가 본문 애니메이션도 중단해요.
+        if (!isPresent && transitionPhase === "idle") safeToRemove?.();
+    }, [isPresent, transitionPhase, safeToRemove]);
+
+    return null;
 };
 
 const Item = ({ title, href }: { title: string; href: string }) => {

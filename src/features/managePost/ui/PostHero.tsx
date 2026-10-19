@@ -11,7 +11,6 @@ import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
 
 import { util } from "@/shared/lib/util";
 import { useGetCategoryListQuery } from "@/entities/category/api/category.query";
-import usePageTransitionReady from "@/shared/hooks/usePageTransitionReady";
 import PostThumbnailPlaceholder from "@/shared/ui/common/PostThumbnailPlaceholder";
 
 type PostHeroSharedProps = {
@@ -53,14 +52,7 @@ const PostHero = (props: PostHeroProps) => {
     const heroImageSrc = props.imageUrl || undefined;
     const heroImageAlt = props.mode === "view" ? props.thumbnailAlt || props.title : "";
     const canOptimizeImage = heroImageSrc ? isOptimizableImageSrc(heroImageSrc) : false;
-    const [isHeroImageReady, setIsHeroImageReady] = useState(!heroImageSrc);
     const handleThumbnailFile = useHeroThumbnailFileHandler(props.mode === "edit" ? props.onThumbnailChange : () => {});
-
-    useEffect(() => {
-        setIsHeroImageReady(!heroImageSrc);
-    }, [heroImageSrc]);
-
-    usePageTransitionReady("post-hero-image", isHeroImageReady);
 
     const handleThumbnailDragEnter = (event: React.DragEvent<HTMLElement>) => {
         event.preventDefault();

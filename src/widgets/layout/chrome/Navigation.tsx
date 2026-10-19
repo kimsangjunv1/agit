@@ -126,7 +126,10 @@ const Navigation = () => {
 
     return (
         // <nav className="fixed tablet:top-[calc(1.6rem*3)] mobile:top-[calc(1.6rem*1)] left-[50%] tablet:px-[calc(1.6rem*2)] mobile:px-0 transform translate-x-[-50%] z-[1000] w-[calc(100dvw-(1.6rem*2))]">
-        <nav className="fixed tablet:top-[calc(1.6rem*3)] mobile:top-[calc(1.6rem*1)] left-0 z-[1000] w-[calc(100dvw-(1.6rem*2))]">
+        <nav
+            data-page-transition-fixed="navigation"
+            className="fixed tablet:top-[calc(1.6rem*3)] mobile:top-[calc(1.6rem*1)] left-0 z-[1000] w-[calc(100dvw-(1.6rem*2))]"
+        >
             <div className="nav-inner menu flex justify-between gap-[4.8rem] w-full">
                 <section className="flex items-start gap-[0.4rem] z-1">
                     {/* <UI.Button
