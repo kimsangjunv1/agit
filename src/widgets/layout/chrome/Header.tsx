@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 
 import UI from "@/shared/ui/common/UIComponent";
@@ -13,9 +13,13 @@ import { getPostRouteFlags } from "@/features/managePost";
 import { useLayoutStore } from "@/shared/stores/useLayoutStore";
 import HomeViewModeNav from "@/features/browseArchive/ui/HomeViewModeNav";
 import Marquee from "@/shared/ui/layout/Marquee";
+import ActionFloatingButtons from "./ActionFloatingButtons";
+import { useSession } from "next-auth/react";
 
 const Header = () => {
     const [showMenu, setShowMenu] = useState(false);
+    const { data: session } = useSession();
+    const isAdmin = session?.user.role === "admin";
 
     const { isMobile, isMobileMenuOpen, setIsMobileMenuOpen } = useLayoutStore();
     const { currentPathName, pushToUrl } = useNavigate();
@@ -29,13 +33,13 @@ const Header = () => {
         <header className="fixed left-0 z-[1000000] mx-auto w-[100svw]">
             {/* <div className="relative mx-auto flex gap-[2.4rem] h-[12.8rem] w-full items-start p-[5.2rem]"> */}
             <div className="relative mx-auto flex gap-[2.4rem] w-full items-start p-[5.2rem]">
-                <section className="flex-1 flex justify-start gap-[3.2rem]">
-                    <button
-                        type="button"
-                        onClick={() => pushToUrl("/")}
-                        className="flex flex-col items-start gap-[2.4rem]"
-                    >
-                        <section className="flex flex-col items-start gap-[1.2rem]">
+                <section className="flex-1 flex justify-start items-start gap-[3.2rem]">
+                    <section className="flex flex-col gap-[2.4rem]">
+                        <button
+                            type="button"
+                            onClick={() => pushToUrl("/")}
+                            className="flex flex-col items-start gap-[1.2rem]"
+                        >
                             <IconComponent
                                 type={`graphic-logo-horizontal`}
                                 alt={"아지트"}
@@ -44,7 +48,7 @@ const Header = () => {
                                 className="mobile:h-[calc(1.6rem*2.2)] mobile:w-[calc(1.6rem*7)] pc:h-[4rem] pc:w-auto"
                             />
                             <p className="text-[1.8rem]">agit.</p>
-                        </section>
+                        </button>
 
                         <div className="h-[0.1rem] w-[2.4rem] bg-[#00000030]" />
 
@@ -59,8 +63,26 @@ const Header = () => {
                                     marquee: "gap-[0.4rem] text-black text-[1.2rem]",
                                 }}
                             />
+                            {isAdmin ? (
+                                <Fragment>
+                                    <div className="h-[0.1rem] w-[2.4rem] bg-[#00000030]" />
+                                    <UI.Button
+                                        type="button"
+                                        onClick={() => pushToUrl("/manager")}
+                                    >
+                                        <span>Admin</span>
+                                    </UI.Button>
+
+                                    <UI.Button
+                                        type="button"
+                                        onClick={() => pushToUrl("/post/create")}
+                                    >
+                                        <span>Create</span>
+                                    </UI.Button>
+                                </Fragment>
+                            ) : null}
                         </section>
-                    </button>
+                    </section>
 
                     <section className={`flex items-start justify-start gap-[1.6rem]`}>
                         <AnimatePresence mode="popLayout">
@@ -112,7 +134,6 @@ const Header = () => {
                 {/* 모바일 버튼 */}
                 <button
                     className="hamburger relative w-[2.4rem] h-[2.4rem] text-[2.4rem] z-[10000]"
-                    // className="hamburger w-[1.6rem] h-[1.6rem] px-[4.0rem] py-[2.0rem] absolute top-[50%] right-0 transform translate-x-[0] translate-y-[-50%] text-[2.4rem] z-[10000]"
                     onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 >
                     <div

@@ -170,7 +170,7 @@ const PostNavigationActions = ({ showShare, showLike, showComments, showToc, sho
     };
 
     return (
-        <section className={`${!isReadingSettingsOpen ? "" : "overflow-hidden"} relative flex min-w-0 flex-1`}>
+        <section className={`${!isReadingSettingsOpen ? "" : "overflow-hidden"} relative flex flex-col min-w-0 flex-1`}>
             <AnimatePresence initial={false}>
                 {!isReadingSettingsOpen ? (
                     <motion.div
@@ -214,6 +214,13 @@ const PostNavigationActions = ({ showShare, showLike, showComments, showToc, sho
                                             </UI.Button>
                                         </UI.DropDown>
                                     ) : null}
+                                </div>
+
+                                <div className="pointer-events-none w-[12.8rem] bg-[#00000090] h-[0.2rem]">
+                                    <div
+                                        ref={progressBarRef}
+                                        className="h-full w-0 will-change-[width]"
+                                    />
                                 </div>
                             </Fragment>
                         )}
@@ -260,6 +267,103 @@ const PostNavigationActions = ({ showShare, showLike, showComments, showToc, sho
                     </motion.div>
                 )}
             </AnimatePresence>
+
+            <section className="flex max-w-[70%] shrink-0 overflow-x-auto">
+                {showShare ? (
+                    <NavButton
+                        title="공유하기"
+                        icon={
+                            <MaterialIcon
+                                name="content_copy"
+                                size={20}
+                            />
+                        }
+                        onClick={() => onAction("share")}
+                    />
+                ) : null}
+
+                {showShare && (showLike || showComments || showReading || showEdit || showDelete) ? <NavDivider /> : null}
+
+                {showLike ? (
+                    <NavButton
+                        title={likeLabel}
+                        className={isLiked ? "bg-[#00ff61]" : ""}
+                        // className={isLiked ? "bg-[#00ff61]" : "bg-[#000000c4] hover:bg-[var(--color-blue-500)]"}
+                        icon={
+                            <MaterialIcon
+                                name="thumb_up"
+                                size={20}
+                                className={isLiked ? "text-black" : ""}
+                            />
+                        }
+                        onClick={() => onAction("like")}
+                    />
+                ) : null}
+
+                {showLike && (showComments || showReading || showEdit || showDelete) ? <NavDivider /> : null}
+
+                {showComments ? (
+                    <NavButton
+                        title="댓글"
+                        icon={
+                            <MaterialIcon
+                                name="chat_bubble_outline"
+                                size={20}
+                            />
+                        }
+                        onClick={() => onAction("comments")}
+                    />
+                ) : null}
+
+                {showComments && (showReading || showEdit || showDelete) ? <NavDivider /> : null}
+
+                {showReading ? (
+                    <NavButton
+                        title="읽기 설정"
+                        icon={
+                            <MaterialIcon
+                                name="text_fields"
+                                size={20}
+                            />
+                        }
+                        onClick={() => setIsReadingSettingsOpen(true)}
+                    />
+                ) : null}
+
+                {showReading && (showEdit || showDelete) ? <NavDivider /> : null}
+
+                {showEdit ? (
+                    <NavButton
+                        title="수정하기"
+                        icon={
+                            <MaterialIcon
+                                name="edit"
+                                size={20}
+                                className="text-white"
+                            />
+                        }
+                        onClick={() => onAction("edit")}
+                    />
+                ) : null}
+
+                {showEdit && showDelete ? <NavDivider /> : null}
+
+                {showDelete ? (
+                    <NavButton
+                        title="게시물 삭제하기"
+                        disabled={isDeletePending}
+                        className="bg-[var(--color-pink-500)] hover:bg-[var(--color-pink-500)]"
+                        icon={
+                            <MaterialIcon
+                                name="delete"
+                                size={20}
+                                className="text-white"
+                            />
+                        }
+                        onClick={() => onAction("delete")}
+                    />
+                ) : null}
+            </section>
         </section>
     );
 };

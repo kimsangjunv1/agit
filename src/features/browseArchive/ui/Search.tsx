@@ -18,7 +18,7 @@ const CLIP_SEARCH = {
     exit: "inset(0 0 100% 0)",
 } as const;
 
-const quickActions = [
+const quickActions: { title: string; url: string; badge?: string }[] = [
     { title: "이력서", url: "/resume" },
     { title: "메인", url: "/" },
     // { title: "포스트 관리", url: "/manager/post", badge: "ADMIN" },

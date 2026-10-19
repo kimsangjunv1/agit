@@ -1,6 +1,8 @@
 @import "tailwindcss";
 
 @theme static {
+    --font-sans: var(--custom-font), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
     --breakpoint-*: initial;
     --breakpoint-mobile: 21.5rem;
     --breakpoint-tablet: 48rem;
