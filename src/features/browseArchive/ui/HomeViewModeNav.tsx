@@ -38,11 +38,12 @@ const HomeViewModeNav = ({ variant }: HomeViewModeNavProps) => {
                         onClick={() => setIsSearchOpen(true)}
                         className={isFloating ? "bg-black w-[6.4rem] h-[5.2rem] text-white rounded-full" : `${activeTextClass} ${buttonTextClass}`}
                     >
-                        <span className="sr-only">검색</span>
+                        search
+                        {/* <span className="sr-only">검색</span>
                         <MaterialIcon
                             name="search"
                             size={24}
-                        />
+                        /> */}
                     </UI.Button>
 
                     <section className={`${isFloating ? "bg-black rounded-full h-[5.2rem] px-[2rem]" : ""} flex items-center gap-[1.6rem]`}>

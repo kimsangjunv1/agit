@@ -68,7 +68,7 @@ const ArchiveList = () => {
 
     return (
         <article ref={listRef}>
-            <div className="relative w-full grid grid-cols-2 tablet:grid-cols-4 pc:grid-cols-7 gap-[2.4rem_0.4rem] max-w-[var(--size-pc)] mx-auto mobile:px-[0.4rem] pc:px-[2rem]">
+            <div className="relative w-full grid grid-cols-2 tablet:grid-cols-4 pc:grid-cols-7 gap-[2.4rem_0.4rem] mobile:px-[0.4rem] pc:px-[2rem]">
                 <AnimatePresence mode="popLayout">
                     {filtered.map((post) => (
                         <ArchiveListDefaultItem

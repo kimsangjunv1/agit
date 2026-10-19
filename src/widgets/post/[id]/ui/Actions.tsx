@@ -36,19 +36,17 @@ const PostActions = () => {
     return (
         <nav
             aria-label="포스트 메뉴"
-            className="relative flex h-[5.2rem] pc:h-[7.2rem] w-full justify-center"
+            className="relative flex w-full justify-center"
         >
-            <div className="flex h-full w-full min-w-0">
-                <PostNavigationActions
-                    {...navVisibility}
-                    likeCount={likeCount}
-                    alreadyLiked={alreadyLiked}
-                    isDeletePending={isDeletePending}
-                    onAction={handleNavAction}
-                />
-            </div>
+            <PostNavigationActions
+                {...navVisibility}
+                likeCount={likeCount}
+                alreadyLiked={alreadyLiked}
+                isDeletePending={isDeletePending}
+                onAction={handleNavAction}
+            />
 
-            <div className="pointer-events-none absolute bottom-0 left-[50%] transform translate-x-[-50%] w-[12.8rem] bg-[#00000090] h-[0.2rem]">
+            <div className="pointer-events-none absolute bottom-[-1.2rem] left-0 w-[12.8rem] bg-[#00000090] h-[0.2rem]">
                 <div
                     ref={progressBarRef}
                     className="h-full w-0 will-change-[width]"

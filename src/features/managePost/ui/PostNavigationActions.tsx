@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { Fragment, useEffect, useRef, useState, type ReactNode } from "react";
 import { AnimatePresence, motion } from "motion/react";
 
 import type { PostNavAction } from "@/features/managePost/lib/postNavigationActions";
@@ -179,10 +179,10 @@ const PostNavigationActions = ({ showShare, showLike, showComments, showToc, sho
                         animate={{ y: 0, opacity: 1 }}
                         exit={{ y: "-100%", opacity: 0 }}
                         transition={rollingTransition}
-                        className="flex h-full w-full min-w-0"
+                        className="flex min-w-0 flex-1 flex-col items-start justify-center h-full w-full min-w-0"
                     >
                         {IS_ROUTE_POST_VIEW && (
-                            <section className="flex min-w-0 flex-1 flex-col items-center justify-center pl-[1.2rem]">
+                            <Fragment>
                                 <h2 className="truncate text-[1.4rem] leading-[1.5]">{postTitle}</h2>
 
                                 <div className="flex min-w-0 items-center">
@@ -215,109 +215,8 @@ const PostNavigationActions = ({ showShare, showLike, showComments, showToc, sho
                                         </UI.DropDown>
                                     ) : null}
                                 </div>
-                                {/* <h2 className="mobile:text-[1.4rem] pc:text-[1.8rem] leading-[1.5] font-bold text-white">{postTitle}</h2> */}
-                            </section>
+                            </Fragment>
                         )}
-
-                        {/* <section className="flex max-w-[70%] shrink-0 overflow-x-auto">
-                            {showShare ? (
-                                <NavButton
-                                    title="공유하기"
-                                    icon={
-                                        <MaterialIcon
-                                            name="content_copy"
-                                            size={20}
-                                            className="text-white"
-                                        />
-                                    }
-                                    onClick={() => onAction("share")}
-                                />
-                            ) : null}
-
-                            {showShare && (showLike || showComments || showReading || showEdit || showDelete) ? <NavDivider /> : null}
-
-                            {showLike ? (
-                                <NavButton
-                                    title={likeLabel}
-                                    className={isLiked ? "bg-[#00ff61]" : ""}
-                                    // className={isLiked ? "bg-[#00ff61]" : "bg-[#000000c4] hover:bg-[var(--color-blue-500)]"}
-                                    icon={
-                                        <MaterialIcon
-                                            name="thumb_up"
-                                            size={20}
-                                            className={isLiked ? "text-black" : "text-white"}
-                                        />
-                                    }
-                                    onClick={() => onAction("like")}
-                                />
-                            ) : null}
-
-                            {showLike && (showComments || showReading || showEdit || showDelete) ? <NavDivider /> : null}
-
-                            {showComments ? (
-                                <NavButton
-                                    title="댓글"
-                                    icon={
-                                        <MaterialIcon
-                                            name="chat_bubble_outline"
-                                            size={20}
-                                            className="text-white"
-                                        />
-                                    }
-                                    onClick={() => onAction("comments")}
-                                />
-                            ) : null}
-
-                            {showComments && (showReading || showEdit || showDelete) ? <NavDivider /> : null}
-
-                            {showReading ? (
-                                <NavButton
-                                    title="읽기 설정"
-                                    icon={
-                                        <MaterialIcon
-                                            name="text_fields"
-                                            size={20}
-                                            className="text-white"
-                                        />
-                                    }
-                                    onClick={() => setIsReadingSettingsOpen(true)}
-                                />
-                            ) : null}
-
-                            {showReading && (showEdit || showDelete) ? <NavDivider /> : null}
-
-                            {showEdit ? (
-                                <NavButton
-                                    title="수정하기"
-                                    icon={
-                                        <MaterialIcon
-                                            name="edit"
-                                            size={20}
-                                            className="text-white"
-                                        />
-                                    }
-                                    onClick={() => onAction("edit")}
-                                />
-                            ) : null}
-
-                            {showEdit && showDelete ? <NavDivider /> : null}
-
-                            {showDelete ? (
-                                <NavButton
-                                    title="게시물 삭제하기"
-                                    disabled={isDeletePending}
-                                    className="bg-[var(--color-pink-500)] hover:bg-[var(--color-pink-500)]"
-                                    icon={
-                                        <MaterialIcon
-                                            name="delete"
-                                            size={20}
-                                            className="text-white"
-                                        />
-                                    }
-                                    onClick={() => onAction("delete")}
-                                />
-                            ) : null}
-                        </section> */}
                     </motion.div>
                 ) : (
                     <motion.div

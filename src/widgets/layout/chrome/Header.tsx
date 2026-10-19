@@ -27,30 +27,42 @@ const Header = () => {
 
     return (
         <header className="fixed left-0 z-[1000000] mx-auto w-[100svw]">
-            <div className="relative mx-auto flex h-full w-full  items-center p-[2.4rem]">
-                <section className="menu flex gap-[4.8rem]">
+            {/* <div className="relative mx-auto flex gap-[2.4rem] h-[12.8rem] w-full items-start p-[5.2rem]"> */}
+            <div className="relative mx-auto flex gap-[2.4rem] w-full items-start p-[5.2rem]">
+                <section className="flex-1 flex justify-start gap-[3.2rem]">
                     <button
                         type="button"
                         onClick={() => pushToUrl("/")}
-                        className="flex flex-col gap-[0.4rem]"
+                        className="flex flex-col items-start gap-[2.4rem]"
                     >
-                        <IconComponent
-                            type={`graphic-logo-horizontal`}
-                            alt={"아지트"}
-                            width={140}
-                            height={44}
-                            className="mobile:h-[calc(1.6rem*2.2)] mobile:w-[calc(1.6rem*7)] pc:h-[4rem] pc:w-auto"
-                        />
-                        <p className="text-[1.8rem]">agit.</p>
+                        <section className="flex flex-col items-start gap-[1.2rem]">
+                            <IconComponent
+                                type={`graphic-logo-horizontal`}
+                                alt={"아지트"}
+                                width={140}
+                                height={44}
+                                className="mobile:h-[calc(1.6rem*2.2)] mobile:w-[calc(1.6rem*7)] pc:h-[4rem] pc:w-auto"
+                            />
+                            <p className="text-[1.8rem]">agit.</p>
+                        </section>
+
+                        <div className="h-[0.1rem] w-[2.4rem] bg-[#00000030]" />
+
+                        <section className="flex flex-col items-start gap-[1.2rem]">
+                            <p>Github</p>
+                            <p>LinkedIn</p>
+                            <Marquee
+                                content={"Career"}
+                                duration={2}
+                                className={{
+                                    container: "border p-[0.2rem]",
+                                    marquee: "gap-[0.4rem] text-black text-[1.2rem]",
+                                }}
+                            />
+                        </section>
                     </button>
 
-                    <section
-                        className={`absolute left-[50%] -translate-x-1/2 flex items-center justify-center gap-[1.6rem] ${
-                            IS_ROUTE_POST_VIEW
-                                ? "top-full w-[calc(100%-3.2rem)] max-w-[var(--size-tablet)] tablet:top-1/2 tablet:w-[calc(100%-32rem)] tablet:-translate-y-1/2"
-                                : "top-[50%] -translate-y-1/2"
-                        }`}
-                    >
+                    <section className={`flex items-start justify-start gap-[1.6rem]`}>
                         <AnimatePresence mode="popLayout">
                             {IS_ROUTE_HOME && !isMobile && <HomeViewModeNav variant="header" />}
 
@@ -97,27 +109,13 @@ const Header = () => {
                     </section>
                 </section>
 
-                {/* <section className="absolute right-[calc(1.6rem*3)]">
-                    <Marquee
-                        content={"현재 구직중이에요"}
-                        duration={10}
-                        className={{
-                            container: "bg-black rounded-full p-[0.8rem]",
-                            marquee: "gap-[1.2rem] text-white font-bold",
-                        }}
-                    />
-                </section> */}
-
                 {/* 모바일 버튼 */}
                 <button
-                    className="hamburger w-[2.4rem] h-[1.2rem] absolute top-[50%] right-[2rem] transform translate-x-[0] translate-y-[-50%] text-[2.4rem] z-[10000]"
+                    className="hamburger relative w-[2.4rem] h-[2.4rem] text-[2.4rem] z-[10000]"
                     // className="hamburger w-[1.6rem] h-[1.6rem] px-[4.0rem] py-[2.0rem] absolute top-[50%] right-0 transform translate-x-[0] translate-y-[-50%] text-[2.4rem] z-[10000]"
                     onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 >
                     <div
-                        // className={`w-[2.4rem] h-[0.3rem] bg-[var(--color-gray-1000)] absolute left-[50%] transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ${
-                        //     showMenu ? "top-[calc(50%-0rem)] rotate-[225deg]" : "top-[calc(50%-0.8rem)] rotate-0"
-                        // }`}
                         className={`w-full h-[0.2rem] bg-[var(--color-gray-1000)] absolute left-[50%] transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ${
                             showMenu ? "top-[calc(50%-0rem)] rotate-[225deg]" : "top-[calc(50%-0.8rem)] rotate-0"
                         }`}
