@@ -5,7 +5,7 @@ import { Block, SectionContent } from "@/entities/post/model/post.type";
 import { highlightCodeWithHljs } from "@/shared/lib/codeHighlight";
 import { sanitizeHtml, styleRichTextHtml } from "@/shared/lib/sanitizeHtml";
 import CodeBlockPanel from "@/shared/ui/common/CodeBlockPanel";
-import { BLOCK_COLUMN_CLASS, BLOCK_ROW_CLASS, POST_TIPTAP_CONTENT_CLASS } from "@/shared/lib/richText/styles";
+import { BLOCK_COLUMN_CLASS, BLOCK_ROW_CLASS, POST_BLOCK_HEADING_CLASS, POST_BLOCK_IMAGE_CLASS, POST_BLOCK_LIST_CLASS, POST_BLOCK_SUBTITLE_CLASS, POST_BLOCK_TITLE_CLASS, POST_CODE_BODY_CLASS, POST_CONTENT_WIDTH_CLASS, POST_TIPTAP_CONTENT_CLASS } from "@/shared/lib/richText/styles";
 import PostRichTextContent from "@/widgets/post/[id]/ui/PostRichTextContent";
 import { isMainBlock } from "@/entities/post/lib/blockMode";
 import { getPostTocAnchorId } from "@/entities/post/lib/postToc";
@@ -27,9 +27,9 @@ const ContentColumn = memo(({ col, rowLength, onCopySentence }: { col: SectionCo
             {col.type === 0 ? (
                 <Fragment>
                     {showHeading ? (
-                        <section className="flex flex-col">
-                            {subtitle ? <p className="mobile:text-[1.4rem] pc:text-[1.8rem] leading-[1.5] font-semibold">{subtitle}</p> : null}
-                            {title ? <h5 className="mobile:text-[2.0rem] pc:text-[2.4rem] leading-[1.5] font-semibold">{title}</h5> : null}
+                        <section className={POST_BLOCK_HEADING_CLASS}>
+                            {subtitle ? <p className={POST_BLOCK_SUBTITLE_CLASS}>{subtitle}</p> : null}
+                            {title ? <h5 className={POST_BLOCK_TITLE_CLASS}>{title}</h5> : null}
                         </section>
                     ) : null}
 
@@ -75,7 +75,7 @@ const ContentColumn = memo(({ col, rowLength, onCopySentence }: { col: SectionCo
                 <img
                     src={col.imageUrl}
                     alt=""
-                    className="w-full rounded-[2.4rem] shadow-[var(--shadow-normal)]"
+                    className={POST_BLOCK_IMAGE_CLASS}
                 />
             ) : null}
 
@@ -96,7 +96,7 @@ const CodeBlockContent = memo(({ content, fileName }: { content: string; fileNam
         <CodeBlockPanel
             content={content}
             fileName={fileName}
-            bodyClassName="p-0 px-[1.6rem] py-[1.6rem]"
+            bodyClassName={POST_CODE_BODY_CLASS}
         >
             <div
                 className="code-block-view select-text"
@@ -109,8 +109,8 @@ const CodeBlockContent = memo(({ content, fileName }: { content: string; fileNam
 const Body = () => {
     const { contents, prev, next, postId, imageUrl, title, summary, createDate, viewCount, likeCount, thumbnailAlt, pushToUrl, setToast, handleCopySentence } = usePostDetailProvider();
     return (
-        <section className="w-full max-w-[var(--size-tablet)] mx-auto">
-            <div className="flex flex-col mobile:gap-[5.2rem] pc:gap-[2.4rem]">
+        <section className={POST_CONTENT_WIDTH_CLASS}>
+            <div className={POST_BLOCK_LIST_CLASS}>
                 {contents?.map((row, rowIdx) => (
                     <section
                         key={rowIdx}

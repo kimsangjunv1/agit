@@ -132,7 +132,7 @@ const CodeBlockPanel = ({
     }
 
     return (
-        <section className={`code-block-panel overflow-hidden rounded-[2.4rem] border border-slate-700/60 bg-[#13171F] p-[0.4rem] ${className}`}>
+        <section className={`code-block-panel overflow-hidden border border-slate-700/60 bg-[#13171F] p-[0.4rem] ${className}`}>
             <header className="flex items-center justify-between gap-[1.2rem] px-[1.6rem]">
                 {editableFileName ? (
                     <label className="flex min-w-0 items-center gap-0 font-mono text-[1.2rem] tracking-[0.02em]">

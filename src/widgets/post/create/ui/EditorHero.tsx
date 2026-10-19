@@ -1,10 +1,11 @@
 "use client";
 import PostHero from "@/features/managePost/ui/PostHero";
 import { usePostCreateProvider } from "../model/PostCreateContext";
+import { POST_HERO_SECTION_CLASS } from "@/shared/lib/richText/styles";
 export default function EditorHero() {
     const { title, summary, thumbnail, category_idx, setTitle, setSummary, setThumbnail, setCategoryIdx } = usePostCreateProvider();
     return (
-        <section className="flex flex-col justify-center items-center gap-[3.2rem] h-[100svh] w-full">
+        <section className={POST_HERO_SECTION_CLASS}>
             <PostHero
                 mode="edit"
                 imageUrl={thumbnail}

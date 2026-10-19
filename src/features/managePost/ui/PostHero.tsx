@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { motion } from "motion/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import UI from "@/shared/ui/common/UIComponent";
 import TextShimmer from "@/shared/ui/common/TextShimmerComponent";
@@ -12,6 +12,7 @@ import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
 import { util } from "@/shared/lib/util";
 import { useGetCategoryListQuery } from "@/entities/category/api/category.query";
 import PostThumbnailPlaceholder from "@/shared/ui/common/PostThumbnailPlaceholder";
+import { POST_HERO_META_CLASS, POST_HERO_SUMMARY_CLASS, POST_HERO_TITLE_CLASS } from "@/shared/lib/richText/styles";
 
 type PostHeroSharedProps = {
     placeholderSeed?: string | number;
@@ -145,68 +146,70 @@ const PostHero = (props: PostHeroProps) => {
 const PostHeroViewContent = ({ title, summary, createDate, viewCount, likeCount }: PostHeroViewProps) => (
     <>
         <section className="flex flex-col items-start pointer-events-none">
-            <p className="mobile:text-[1.6rem] tablet:text-[1.4rem] text-[#00000090] leading-[1.5]">
+            <p className={POST_HERO_META_CLASS}>
                 {util.string.getCurrentTime(createDate, 4)} ・ {viewCount} view ・ {likeCount} likes
             </p>
-            <p className="mobile:text-[1.6rem] tablet:text-[2.0rem] text-[#000000] leading-[1.5]">{title}</p>
-            <h2 className="font-semibold mobile:text-[1.8rem] tablet:text-[2.4rem] leading-[1.5] whitespace-break-spaces">&quot;{summary}&quot;</h2>
+            <p className={POST_HERO_TITLE_CLASS}>{title}</p>
+            <PostHeroSummary>{summary}</PostHeroSummary>
         </section>
 
-        <section className="flex justify-start items-end gap-[1.6rem] pointer-events-none">
-            <div className="relative">
-                <img
-                    src="/images/picture/post-profile.png"
-                    alt="프로필"
-                    className="object-cover w-[7.2rem] h-[9.2rem]"
-                />
-            </div>
-
-            <section className="flex flex-col justify-center items-start gap-[0.4rem]">
-                <p className="text-[1.8rem] font-semibold">김상준</p>
-                <p className="text-[1.4rem]">FRONT END DEVELOPER</p>
-            </section>
-        </section>
+        <PostHeroAuthor />
     </>
 );
 
-const PostHeroEditableField = ({ value, placeholder, className, onChange }: { value: string; placeholder: string; className: string; onChange: (value: string) => void }) => {
-    const ref = useRef<HTMLHeadingElement>(null);
-    const lastExternalValue = useRef(value);
+const PostHeroSummary = ({ children }: { children: ReactNode }) => <h2 className={POST_HERO_SUMMARY_CLASS}>&quot;{children}&quot;</h2>;
+
+const PostHeroAuthor = () => (
+    <section className="flex justify-start items-end gap-[1.6rem] pointer-events-none">
+        <div className="relative">
+            <img
+                src="/images/picture/post-profile.png"
+                alt="프로필"
+                className="object-cover w-[7.2rem] h-[9.2rem]"
+            />
+        </div>
+
+        <section className="flex flex-col justify-center items-start gap-[0.4rem]">
+            <p className="text-[1.8rem] font-semibold">김상준</p>
+            <p className="text-[1.4rem]">FRONT END DEVELOPER</p>
+        </section>
+    </section>
+);
+
+const PostHeroEditableField = ({ value, placeholder, className, as: Tag = "p", onChange }: { value: string; placeholder: string; className: string; as?: "p" | "span"; onChange: (value: string) => void }) => {
+    const ref = useRef<HTMLElement>(null);
 
     useEffect(() => {
-        if (value === lastExternalValue.current) return;
-
-        lastExternalValue.current = value;
-
-        if (ref.current && document.activeElement !== ref.current) {
+        if (ref.current && document.activeElement !== ref.current && ref.current.textContent !== value) {
             ref.current.textContent = value;
         }
     }, [value]);
 
     return (
-        <h2
-            ref={ref}
+        <Tag
+            ref={ref as never}
             contentEditable
             suppressContentEditableWarning
+            role="textbox"
+            aria-label={placeholder}
             data-placeholder={placeholder}
-            className={`${className} empty:before:content-[attr(data-placeholder)] empty:before:text-[#ffffff60] empty:before:pointer-events-none`}
+            className={`${className} outline-none focus:ring-2 focus:ring-black/10 rounded-[0.8rem] empty:before:content-[attr(data-placeholder)] empty:before:text-[var(--color-gray-400)] empty:before:pointer-events-none`}
             onInput={(e) => {
                 const text = e.currentTarget.textContent ?? "";
-                lastExternalValue.current = text;
                 onChange(text);
             }}
         />
     );
 };
 
-const PostHeroEditContent = ({ title, summary, categoryIdx, editLabel = "작성 중", onTitleChange, onSummaryChange, onCategoryChange }: PostHeroEditProps) => {
+const PostHeroEditContent = ({ title, summary, categoryIdx, onTitleChange, onSummaryChange, onCategoryChange }: PostHeroEditProps) => {
     const { data: getCategoryListData } = useGetCategoryListQuery();
     const enabledCategories = getCategoryListData?.result?.filter((e) => e.is_enabled) ?? [];
     const selectedCategory = enabledCategories.find((e) => e.idx === categoryIdx);
 
     return (
         <>
-            <section className="flex flex-col items-start gap-[1.2rem] w-full pointer-events-auto">
+            <section className="flex flex-col items-start w-full pointer-events-auto">
                 <UI.Select
                     trackingData={selectedCategory?.title ?? ""}
                     defaultValue={selectedCategory?.idx}
@@ -217,42 +220,29 @@ const PostHeroEditContent = ({ title, summary, categoryIdx, editLabel = "작성 
                     onChange={onCategoryChange}
                     className={{
                         container: "px-0 w-fit",
-                        button: "bg-[#ffffff20] backdrop-blur-sm px-[1.2rem] min-w-[5.2rem] text-white border border-[#ffffff30]",
+                        button: `${POST_HERO_META_CLASS} h-[1.5em] gap-[0.8rem]`,
                     }}
                 />
 
                 <PostHeroEditableField
                     value={title}
                     placeholder="제목을 입력해주세요"
-                    className="h-auto p-0 font-bold tablet:text-[2rem] mobile:text-[1.6rem] text-white leading-[1.5] outline-none focus:ring-2 focus:ring-[#ffffff40] rounded-[0.8rem]"
+                    className={POST_HERO_TITLE_CLASS}
                     onChange={onTitleChange}
                 />
 
-                <PostHeroEditableField
-                    value={summary}
-                    placeholder="요약을 입력해주세요"
-                    className="h-auto p-0 font-extrabold text-left tablet:text-[3.2rem] mobile:text-[2rem] text-white leading-[1.5] whitespace-break-spaces outline-none focus:ring-2 focus:ring-[#ffffff40] rounded-[0.8rem]"
-                    onChange={onSummaryChange}
-                />
-            </section>
-
-            <section className="flex flex-col items-center flex-wrap gap-[1.6rem] pointer-events-none">
-                <div className="relative rounded-[2.4rem] w-[9.2rem] h-[9.2rem] shadow-[var(--shadow-normal)]">
-                    <img
-                        src="/images/picture/profile.png"
-                        alt="프로필"
-                        className="object-cover rounded-[2.4rem] w-[9.2rem] h-[9.2rem] shadow-[var(--shadow-normal)]"
+                <PostHeroSummary>
+                    <PostHeroEditableField
+                        as="span"
+                        value={summary}
+                        placeholder="요약을 입력해주세요"
+                        className=""
+                        onChange={onSummaryChange}
                     />
-                </div>
-
-                <section className="flex flex-col items-start gap-[1.2rem]">
-                    <section className="flex flex-col items-center gap-[0.8rem] flex-wrap">
-                        <p className="font-extrabold text-[2rem] text-white">김상준</p>
-                        <p className="text-[2rem] font-semibold text-[#ffffff90]">FRONT END DEVELOPER</p>
-                    </section>
-                    {/* <p className="font-semibold text-[2.0rem] text-[#ffffff90]">{editLabel}</p> */}
-                </section>
+                </PostHeroSummary>
             </section>
+
+            <PostHeroAuthor />
         </>
     );
 };

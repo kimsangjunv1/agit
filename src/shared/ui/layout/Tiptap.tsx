@@ -12,7 +12,7 @@ import { useEffect, useRef } from "react";
 import TipTapBubbleMenu from "@/shared/ui/layout/TipTapBubbleMenu";
 import TipTapImageBubbleMenu from "@/shared/ui/layout/TipTapImageBubbleMenu";
 import TipTapToolbar from "@/shared/ui/layout/TipTapToolbar";
-import { TIPTAP_PROSE_CLASS, RICH_TEXT_PARAGRAPH_CLASS, RICH_TEXT_SPAN_CLASS, RICH_TEXT_BLOCKQUOTE_CLASS } from "@/shared/lib/richText/styles";
+import { CODE_PRE_CLASS, CODE_TEXT_CLASS, POST_TIPTAP_CONTENT_CLASS, RICH_TEXT_PARAGRAPH_CLASS, RICH_TEXT_SPAN_CLASS, RICH_TEXT_BLOCKQUOTE_CLASS } from "@/shared/lib/richText/styles";
 import { createCodeBlockEditorExtensions } from "@/shared/ui/common/richText/extensions/codeBlockEditor";
 import { DEFAULT_CODE_LANGUAGE } from "@/shared/lib/codeHighlight";
 import { codeBlockLowlight } from "@/shared/ui/common/richText/extensions/codeBlockEditor";
@@ -28,9 +28,9 @@ type Props = {
     onEditorBlur?: () => void;
 };
 
-const TIPTAP_EDITOR_CLASS = ["tiptap-editor-content min-h-[12rem] outline-none focus:outline-none", TIPTAP_PROSE_CLASS].join(" ");
+const TIPTAP_EDITOR_CLASS = ["tiptap-editor-content outline-none focus:outline-none", POST_TIPTAP_CONTENT_CLASS].join(" ");
 
-const TIPTAP_WRAPPER_CLASS = "min-h-[12rem] h-full rounded-[1.6rem] outline-none";
+const TIPTAP_WRAPPER_CLASS = "h-full rounded-[1.6rem] outline-none pb-[3.4rem]";
 
 const CustomTextStyle = TextStyle.configure({
     HTMLAttributes: { class: RICH_TEXT_SPAN_CLASS },
@@ -76,6 +76,7 @@ const Normal = ({ content = "", onChange, showToolbar = true, onEditorFocus, onE
         extensions: [
             StarterKit.configure({
                 paragraph: { HTMLAttributes: { class: RICH_TEXT_PARAGRAPH_CLASS } },
+                code: { HTMLAttributes: { class: CODE_TEXT_CLASS } },
                 bulletList: {
                     HTMLAttributes: { class: "list-disc pl-[2rem] my-[0.8rem]" },
                 },
@@ -171,7 +172,7 @@ const Code = ({ content = "", onChange }: Props) => {
                 autocapitalize: "off",
                 spellcheck: "false",
                 "aria-label": "코드 입력",
-                class: "tiptap-code-editor h-full min-h-[12rem] outline-none focus:outline-none font-mono text-[1.6rem] leading-[1.6] text-slate-200 bg-transparent",
+                class: `tiptap-code-editor outline-none focus:outline-none ${CODE_PRE_CLASS}`,
             },
         },
         onUpdate: ({ editor: currentEditor }) => {
@@ -214,12 +215,12 @@ const Code = ({ content = "", onChange }: Props) => {
 
     return (
         <div
-            className="w-full h-full min-h-[12rem] flex-1"
+            className="w-full flex-1"
             onClick={(e) => e.stopPropagation()}
         >
             <EditorContent
                 editor={editor}
-                className="tiptap-code-editor-wrapper h-full min-h-[12rem]"
+                className="tiptap-code-editor-wrapper"
             />
         </div>
     );

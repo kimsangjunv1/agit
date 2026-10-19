@@ -17,7 +17,17 @@ import { usePostDraftImageStore } from "@/shared/stores/usePostDraftImageStore";
 import { useToastStore } from "@/shared/stores/useToastStore";
 import { Row, useBlockStore } from "@/features/managePost/model/useEditorBlockStore";
 import { normalizeBlocksForEditor } from "@/features/managePost/lib/normalizePostBlocks";
-import { BLOCK_COLUMN_CLASS, BLOCK_ROW_CLASS, CODE_BLOCK_COLUMN_CLASS } from "@/shared/lib/richText/styles";
+import {
+    BLOCK_COLUMN_CLASS,
+    BLOCK_ROW_CLASS,
+    POST_BLOCK_CONTENT_CLASS,
+    POST_BLOCK_HEADING_CLASS,
+    POST_BLOCK_IMAGE_CLASS,
+    POST_BLOCK_LIST_CLASS,
+    POST_BLOCK_SUBTITLE_CLASS,
+    POST_BLOCK_TITLE_CLASS,
+    POST_CODE_BODY_CLASS,
+} from "@/shared/lib/richText/styles";
 import { detectCodeLanguage, extractCodeFromContent, getDefaultCodeFileBaseName, toCodeBlockHtml } from "@/shared/lib/codeHighlight";
 import { formatCodeContent } from "@/shared/lib/formatCodeContent";
 import CodeBlockPanel from "@/shared/ui/common/CodeBlockPanel";
@@ -88,7 +98,7 @@ const SortableBlock = ({ contents }: { contents?: Row[] }) => {
             values={rows}
             onReorder={(newRows) => useBlockStore.getState().setRows(newRows)}
             as="section"
-            className="flex flex-col flex-1 mobile:gap-[5.2rem] pc:gap-[2.4rem] min-h-[51.2rem]"
+            className={POST_BLOCK_LIST_CLASS}
         >
             {rows.map((row, rowIndex) => (
                 <Item
@@ -120,18 +130,18 @@ const Item = ({ row, rowIndex }: { row: Row; rowIndex: number }) => {
             dragControls={dragControls}
             dragListener={false}
         >
-            <section className="mobile:hidden pc:flex absolute top-0 left-[-10%] items-center gap-[0.4rem] bg-[#00000090] rounded-full p-[0.4rem_0.8rem]">
+            {/* <section className="mobile:hidden pc:flex absolute top-0 left-[-10%] items-center gap-[0.4rem] bg-[#00000090] rounded-full p-[0.4rem_0.8rem]">
                 <MaterialIcon
                     name="deployed_code"
                     size={16}
                     className="invert"
                 />
                 <p className="text-[#ffffff] font-mono">group</p>
-            </section>
+            </section> */}
 
             <motion.section
                 layout="position"
-                className="absolute top-0 right-[-4.8rem] flex flex-col items-center gap-[1.2rem]"
+                className="absolute top-0 right-0 tablet:right-[max(-4.8rem,calc((var(--size-tablet)-100svw)/2))] flex flex-col items-center gap-[1.2rem]"
             >
                 <section className="shadow-[var(--shadow-normal)] bg-white rounded-full py-[0.8rem]">
                     <UI.Button
@@ -207,7 +217,7 @@ const Item = ({ row, rowIndex }: { row: Row; rowIndex: number }) => {
                     <motion.section
                         key={block.id}
                         layout="position"
-                        className={isCodeBlock(block) ? CODE_BLOCK_COLUMN_CLASS : BLOCK_COLUMN_CLASS}
+                        className={BLOCK_COLUMN_CLASS}
                     >
                         <Block
                             block={block}
@@ -227,6 +237,7 @@ const Block = ({ block, rowIndex, blockIndex, last, blockCount }: { block: Secti
     const { updateBlock, deleteBlock, copyBlock, pasteBlock, selectBlock, unSelectBlock } = useBlockStore();
     const { setToast } = useToastStore();
     const addFromFile = usePostDraftImageStore((state) => state.addFromFile);
+    const [test, setTest] = useState("");
 
     const blockRef = useRef<HTMLDivElement>(null);
     const imageInputRef = useRef<HTMLInputElement>(null);
@@ -277,7 +288,7 @@ const Block = ({ block, rowIndex, blockIndex, last, blockCount }: { block: Secti
         }
     }, [codeBlockMode]);
 
-    const columnClassName = `w-full min-w-0 flex flex-col gap-[1.6rem] h-full group/block ${!codeBlockMode && block.type !== 0 ? "rounded-[2.4rem]" : ""} ${blockCount === 1 && !codeBlockMode && block.type !== 0 ? "tablet:col-span-2" : blockCount > 1 && !codeBlockMode && block.type !== 0 ? "tablet:min-h-[36rem]" : ""} ${codeBlockMode ? "rounded-[2.4rem]" : ""}`;
+    const columnClassName = "w-full min-w-0 flex flex-col h-full group/block";
     // const columnClassName = `w-full min-w-0 flex flex-col gap-[1.6rem] h-full group/block ${!codeBlockMode && block.type !== 0 ? "rounded-[2.4rem]" : ""} ${blockCount === 1 && !codeBlockMode && block.type !== 0 ? "tablet:col-span-2" : blockCount > 1 && !codeBlockMode && block.type !== 0 ? "tablet:min-h-[36.0rem]" : ""} ${codeBlockMode ? "rounded-[2.4rem] overflow-hidden" : ""}`;
 
     const handleImageFile = (file: File) => {
@@ -310,6 +321,12 @@ const Block = ({ block, rowIndex, blockIndex, last, blockCount }: { block: Secti
             onClick={() => {
                 selectBlock(rowIndex, blockIndex);
             }}
+            onMouseEnter={() => {
+                setTest(getPostTocAnchorId(block.id));
+            }}
+            onMouseLeave={() => {
+                setTest("");
+            }}
             onKeyDown={(e: React.KeyboardEvent) => {
                 const target = e.target as HTMLElement;
 
@@ -338,7 +355,8 @@ const Block = ({ block, rowIndex, blockIndex, last, blockCount }: { block: Secti
         >
             {block.type === 0 || last ? (
                 <section
-                    className={`absolute top-[calc((2.8rem/1)*-1)] left-[50%] transform translate-x-[-50%] z-10 flex items-center rounded-full overflow-hidden p-[0.4rem] ${block.blockMode === "code" ? "bg-[#2d2d2d]" : "bg-white"}`}
+                    className={`${test === getPostTocAnchorId(block.id) ? "" : "opacity-30 pointer-events-none"} absolute bottom-[4.8rem] right-[1.2rem] z-10 flex items-center rounded-full overflow-hidden p-[0.4rem] ${block.blockMode === "code" ? "bg-[#2d2d2d]" : "bg-white"}`}
+                    // className={`absolute top-[calc((2.8rem/1)*-1)] left-[50%] transform translate-x-[-50%] z-10 flex items-center rounded-full overflow-hidden p-[0.4rem] ${block.blockMode === "code" ? "bg-[#2d2d2d]" : "bg-white"}`}
                     onClick={(event) => event.stopPropagation()}
                 >
                     {block.type === 0 ? (
@@ -396,28 +414,28 @@ const Block = ({ block, rowIndex, blockIndex, last, blockCount }: { block: Secti
                 </section>
             ) : null}
 
-            <section className="relative flex flex-col gap-[1.6rem] h-full">
+            <section className={`relative ${POST_BLOCK_CONTENT_CLASS} h-full`}>
                 {block.type === 0 && !codeBlockMode ? (
                     <>
                         {showHeadingFields ? (
-                            <section className="flex flex-col gap-[0.8rem]">
+                            <section className={POST_BLOCK_HEADING_CLASS}>
                                 <BlockEditableField
                                     as="p"
                                     value={block.subtitle}
                                     placeholder="부제목을 입력해주세요"
-                                    className="text-[1.6rem] leading-[1.5] text-[#676767]"
+                                    className={POST_BLOCK_SUBTITLE_CLASS}
                                     onChange={(subtitle) => updateBlock(rowIndex, blockIndex, { subtitle })}
                                 />
                                 <BlockEditableField
                                     as="h5"
                                     value={block.title}
                                     placeholder="제목을 입력해주세요"
-                                    className="text-[2rem] tablet:text-[2.4rem] leading-[1.5] font-bold text-[var(--color-gray-1000)]"
+                                    className={POST_BLOCK_TITLE_CLASS}
                                     onChange={(title) => updateBlock(rowIndex, blockIndex, { title })}
                                 />
                             </section>
                         ) : null}
-                        <section className="w-full min-h-[12rem] flex-1">
+                        <section className="w-full flex-1">
                             <TipTap.Normal
                                 key={block.id}
                                 content={textContent}
@@ -438,7 +456,7 @@ const Block = ({ block, rowIndex, blockIndex, last, blockCount }: { block: Secti
                         showFormat
                         onFormat={handleFormatCode}
                         onFileNameChange={(title) => updateBlock(rowIndex, blockIndex, { title })}
-                        bodyClassName="min-h-[12rem] p-0 px-[1.6rem] py-[1.6rem]"
+                        bodyClassName={POST_CODE_BODY_CLASS}
                     >
                         <TipTap.Code
                             key={`${block.id}-code`}
@@ -453,7 +471,7 @@ const Block = ({ block, rowIndex, blockIndex, last, blockCount }: { block: Secti
                         <img
                             src={block.imageUrl !== "" ? block.imageUrl : "https://dummyimage.com/200x200/ededed/000000&text=placeholder"}
                             alt=""
-                            className={`w-full ${blockCount === 1 ? "" : "h-full object-cover"}`}
+                            className={POST_BLOCK_IMAGE_CLASS}
                         />
                         <UI.Button
                             onClick={() => imageInputRef.current?.click()}
@@ -478,7 +496,8 @@ const Block = ({ block, rowIndex, blockIndex, last, blockCount }: { block: Secti
 
             {focusedEditor && !codeBlockMode && !focusedEditor.isDestroyed ? (
                 <div
-                    className="pointer-events-auto absolute bottom-[calc((2.8rem/1)*-1)] left-[50%] transform translate-x-[-50%] mobile:w-[80%] pc:w-[50%]"
+                    className="pointer-events-auto absolute bottom-[0] left-[50%] transform translate-x-[-50%] mobile:w-[80%] pc:w-full"
+                    // className="pointer-events-auto absolute bottom-[calc((2.8rem/1)*-1)] left-[50%] transform translate-x-[-50%] mobile:w-[80%] pc:w-[50%]"
                     onPointerDown={(event) => event.stopPropagation()}
                 >
                     <TipTapToolbar editor={focusedEditor} />

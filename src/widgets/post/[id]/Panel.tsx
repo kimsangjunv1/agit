@@ -3,29 +3,25 @@ import type { GetPostDetailResponse } from "@/entities/post/model/post.type";
 import { PostDetailPageProvider } from "./model/PostDetailContext";
 import usePostDetail from "./model/usePostDetail";
 import * as Layer from "@/widgets/post/[id]/ui";
+import PostContentBody from "@/features/managePost/ui/PostContentBody";
+import { POST_INNER_CLASS, POST_PAGE_CLASS } from "@/shared/lib/richText/styles";
 export default function Panel({ id, initialData }: { id: string; initialData: GetPostDetailResponse }) {
     const page = usePostDetail(id, initialData);
     return (
         <PostDetailPageProvider value={page}>
-            <section className="flex flex-col w-full post">
-                <section className="mx-auto post-inner flex flex-col w-full items-center">
+            <section className={POST_PAGE_CLASS}>
+                <section className={POST_INNER_CLASS}>
                     {page.isReady ? (
                         <>
                             <Layer.Hero />
-                            <article
-                                className="post-reading-root z-[100] pt-[4.2rem] flex w-full gap-[0.4rem]"
-                                style={{
-                                    ["--post-read-scale" as string]: page.fontScale,
-                                    ["--post-read-line-height" as string]: page.lineHeight,
-                                }}
-                            >
+                            <PostContentBody>
                                 <section className="flex flex-col flex-1 min-w-0">
                                     <Layer.Body />
                                     <Layer.Comments />
                                     <Layer.RelatedPosts />
                                     <Layer.Actions />
                                 </section>
-                            </article>
+                            </PostContentBody>
                             <Layer.Toc />
                         </>
                     ) : (
