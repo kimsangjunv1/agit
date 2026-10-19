@@ -1,11 +1,22 @@
 "use client";
 import { usePostDetailProvider } from "../model/PostDetailContext";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import useNavigate from "@/shared/hooks/useNavigate";
 import { PostNavigationActions, usePostNavigationActions } from "@/features/managePost";
 import { useScrollProgressBar } from "@/shared/hooks/useScrollProgress";
 
 const Actions = () => {
+    const [headerContainer, setHeaderContainer] = useState<HTMLElement | null>(null);
+
+    useEffect(() => {
+        setHeaderContainer(document.getElementById("post-header-actions"));
+    }, []);
+
+    return headerContainer ? createPortal(<PostActions />, headerContainer) : null;
+};
+
+const PostActions = () => {
     const { postIdx } = usePostDetailProvider();
     const { pushToUrl } = useNavigate();
     const progressBarRef = useRef<HTMLDivElement>(null);
@@ -23,9 +34,11 @@ const Actions = () => {
     }
 
     return (
-        // <section className="sticky bottom-0 flex h-[5.2rem] w-full flex-wrap justify-center bg-black">
-        <section className="sticky bottom-0 flex mobile:h-[5.2rem] pc:h-[7.2rem] w-full flex-wrap justify-center bg-black">
-            <div className="mx-auto flex w-full max-w-[var(--size-tablet)]">
+        <nav
+            aria-label="포스트 메뉴"
+            className="relative flex h-[5.2rem] pc:h-[7.2rem] w-full justify-center"
+        >
+            <div className="flex h-full w-full min-w-0">
                 <PostNavigationActions
                     {...navVisibility}
                     likeCount={likeCount}
@@ -35,14 +48,13 @@ const Actions = () => {
                 />
             </div>
 
-            {/* <div className="absolute top-[calc((0.8rem/2)*-1)] left-0 w-full h-[0.8rem]"> */}
-            <div className="absolute top-[calc((0.8rem/1)*-1)] left-0 w-full h-[0.8rem]">
+            <div className="pointer-events-none absolute bottom-0 left-[50%] transform translate-x-[-50%] w-[12.8rem] bg-[#00000090] h-[0.2rem]">
                 <div
                     ref={progressBarRef}
                     className="h-full w-0 will-change-[width]"
                 />
             </div>
-        </section>
+        </nav>
     );
 };
 export default Actions;

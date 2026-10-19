@@ -19,13 +19,11 @@ const Header = () => {
 
     const { isMobile, isMobileMenuOpen, setIsMobileMenuOpen } = useLayoutStore();
     const { currentPathName, pushToUrl } = useNavigate();
-    // const { IS_ROUTE_POST } = getPostRouteFlags(currentPathName);
+    const { IS_ROUTE_POST_VIEW } = getPostRouteFlags(currentPathName);
 
     const IS_ROUTE_HOME = currentPathName === "/";
 
     const IS_ROUTE_RESUME = currentPathName === "/resume";
-
-    // if (IS_ROUTE_POST) return null;
 
     return (
         <header className="fixed left-0 z-[1000000] mx-auto w-[100svw]">
@@ -46,9 +44,23 @@ const Header = () => {
                         <p className="text-[1.8rem]">agit.</p>
                     </button>
 
-                    <section className="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] flex items-center justify-center gap-[1.6rem]">
+                    <section
+                        className={`absolute left-[50%] -translate-x-1/2 flex items-center justify-center gap-[1.6rem] ${
+                            IS_ROUTE_POST_VIEW
+                                ? "top-full w-[calc(100%-3.2rem)] max-w-[var(--size-tablet)] tablet:top-1/2 tablet:w-[calc(100%-32rem)] tablet:-translate-y-1/2"
+                                : "top-[50%] -translate-y-1/2"
+                        }`}
+                    >
                         <AnimatePresence mode="popLayout">
                             {IS_ROUTE_HOME && !isMobile && <HomeViewModeNav variant="header" />}
+
+                            {IS_ROUTE_POST_VIEW && (
+                                <div
+                                    key="post-header-actions"
+                                    id="post-header-actions"
+                                    className="w-full min-w-0"
+                                />
+                            )}
 
                             {IS_ROUTE_RESUME && (
                                 <motion.section

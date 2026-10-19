@@ -122,7 +122,7 @@ const Navigation = () => {
         }
     }, [currentPathName]);
 
-    if (!IS_ROUTE_POST) return null;
+    if (!IS_ROUTE_POST || IS_ROUTE_POST_VIEW) return null;
 
     return (
         // <nav className="fixed tablet:top-[calc(1.6rem*3)] mobile:top-[calc(1.6rem*1)] left-[50%] tablet:px-[calc(1.6rem*2)] mobile:px-0 transform translate-x-[-50%] z-[1000] w-[calc(100dvw-(1.6rem*2))]">

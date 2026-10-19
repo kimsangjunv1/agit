@@ -44,6 +44,7 @@ const NavButton = ({ title, icon, onClick, disabled, className = "" }: NavButton
         className={`flex shrink-0 items-center justify-center gap-[0.8rem] px-[1.2rem] backdrop-blur-2xl transition-colors disabled:opacity-60 ${className}`}
         onClick={onClick}
     >
+        <span className="sr-only">{title}</span>
         {icon}
         {/* <p className="whitespace-nowrap text-[1.8rem] text-white">{title}</p> */}
     </UI.Button>
@@ -75,6 +76,7 @@ const ReadingSettingControl = ({
                 className="flex h-[3.2rem] w-[3.2rem] shrink-0 items-center justify-center rounded-full text-[2rem] text-white transition-colors bg-[#1e1e1e] hover:bg-white/10 disabled:opacity-30 rounded-full"
                 onClick={onDecrease}
             >
+                <span className="sr-only">{label} 줄이기</span>
                 <MaterialIcon
                     name="remove"
                     size={20}
@@ -88,6 +90,7 @@ const ReadingSettingControl = ({
                 className="flex h-[3.2rem] w-[3.2rem] shrink-0 items-center justify-center rounded-full text-[2rem] text-white transition-colors bg-[#1e1e1e] hover:bg-white/10 disabled:opacity-30 rounded-full"
                 onClick={onIncrease}
             >
+                <span className="sr-only">{label} 늘리기</span>
                 <MaterialIcon
                     name="add"
                     size={20}
@@ -179,20 +182,22 @@ const PostNavigationActions = ({ showShare, showLike, showComments, showToc, sho
                         className="flex h-full w-full min-w-0"
                     >
                         {IS_ROUTE_POST_VIEW && (
-                            <section className="flex min-w-0 flex-1 flex-col justify-center pl-[1.2rem]">
-                                {/* <h2 className="truncate mobile:text-[1.8rem] pc:text-[2.4rem] leading-[1.5] font-bold text-white">{postTitle}</h2> */}
-                                <h2 className="truncate text-[1.2rem] leading-[1.4] text-white/60">{postTitle}</h2>
+                            <section className="flex min-w-0 flex-1 flex-col items-center justify-center pl-[1.2rem]">
+                                <h2 className="truncate text-[1.4rem] leading-[1.5]">{postTitle}</h2>
+
                                 <div className="flex min-w-0 items-center">
+                                    {activeTocLabel ? <p className="truncate mobile:text-[1.6rem] pc:text-[1.8rem] leading-[1.5] font-semibold">{activeTocLabel} 보는 중</p> : null}
+
                                     {showToc ? (
                                         <UI.DropDown
                                             className={{
                                                 container: "shrink-0",
-                                                inner: "max-h-[50svh] w-[min(28rem,calc(100vw-2.4rem))] overflow-y-auto",
+                                                inner: "max-h-[50svh] w-[min(28rem,calc(100vw-2.4rem))] overflow-y-auto text-white",
                                             }}
                                             list={tocItems.map((item) => ({
                                                 title: item.label,
                                                 value: item.id,
-                                                className: `w-full text-left ${item.level === 1 ? "font-bold text-white" : "pl-[2.4rem] text-[#ffffff90]"}`,
+                                                className: `w-full text-left ${item.level === 1 ? "font-bold" : "pl-[2.4rem]"}`,
                                                 onClick: () => scrollToTocSection(item.id),
                                             }))}
                                         >
@@ -201,21 +206,20 @@ const PostNavigationActions = ({ showShare, showLike, showComments, showToc, sho
                                                 aria-label="목차 열기"
                                                 className="flex h-[3.2rem] w-[3.2rem] items-center justify-center"
                                             >
+                                                <span className="sr-only">목차 열기</span>
                                                 <MaterialIcon
-                                                    name="keyboard_arrow_up"
+                                                    name="keyboard_arrow_down"
                                                     size={20}
-                                                    className="text-white"
                                                 />
                                             </UI.Button>
                                         </UI.DropDown>
                                     ) : null}
-                                    {activeTocLabel ? <p className="truncate mobile:text-[1.6rem] pc:text-[2rem] leading-[1.5] font-bold text-white">{activeTocLabel} 보는 중</p> : null}
                                 </div>
                                 {/* <h2 className="mobile:text-[1.4rem] pc:text-[1.8rem] leading-[1.5] font-bold text-white">{postTitle}</h2> */}
                             </section>
                         )}
 
-                        <section className="flex justify-end overflow-auto flex-1">
+                        {/* <section className="flex max-w-[70%] shrink-0 overflow-x-auto">
                             {showShare ? (
                                 <NavButton
                                     title="공유하기"
@@ -313,7 +317,7 @@ const PostNavigationActions = ({ showShare, showLike, showComments, showToc, sho
                                     onClick={() => onAction("delete")}
                                 />
                             ) : null}
-                        </section>
+                        </section> */}
                     </motion.div>
                 ) : (
                     <motion.div
@@ -348,6 +352,7 @@ const PostNavigationActions = ({ showShare, showLike, showComments, showToc, sho
                             className="flex h-full shrink-0 items-center justify-center px-[1.2rem] text-white transition-colors hover:bg-white/10"
                             onClick={() => setIsReadingSettingsOpen(false)}
                         >
+                            <span className="sr-only">원래 메뉴로 돌아가기</span>
                             <MaterialIcon
                                 name="arrow_back"
                                 size={20}

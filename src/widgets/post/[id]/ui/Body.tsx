@@ -22,7 +22,7 @@ const ContentColumn = memo(({ col, rowLength, onCopySentence }: { col: SectionCo
     return (
         <section
             id={col.type === 0 ? getPostTocAnchorId(col.id) : undefined}
-            className={`${columnClassName} ${col.type === 0 ? "scroll-mt-[12rem]" : ""}`}
+            className={`${columnClassName} ${col.type === 0 ? "scroll-mt-[18rem] tablet:scroll-mt-[12rem]" : ""}`}
         >
             {col.type === 0 ? (
                 <Fragment>
