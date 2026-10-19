@@ -2,6 +2,7 @@
 
 import { useParams } from "next/navigation";
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
+import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "motion/react";
 
 import UI from "@/shared/ui/common/UIComponent";
@@ -32,6 +33,7 @@ const Navigation = () => {
     const params = useParams();
     const [showMenu, setShowMenu] = useState(false);
     const [showDraftModal, setShowDraftModal] = useState(false);
+    const [createHeaderContainer, setCreateHeaderContainer] = useState<HTMLElement | null>(null);
     const progressBarRef = useRef<HTMLDivElement>(null);
     const markdownInputRef = useRef<HTMLInputElement>(null);
 
@@ -114,6 +116,7 @@ const Navigation = () => {
     };
 
     useEffect(() => {
+        setCreateHeaderContainer(document.getElementById("post-create-header-actions"));
         if (showMenu) {
             setShowMenu(false);
         }
@@ -123,6 +126,54 @@ const Navigation = () => {
     }, [currentPathName]);
 
     if (!IS_ROUTE_POST || IS_ROUTE_POST_VIEW) return null;
+
+    const markdownInput = (
+        <input
+            ref={markdownInputRef}
+            type="file"
+            accept=".md,text/markdown,text/plain"
+            className="hidden"
+            onChange={handleMarkdownFile}
+        />
+    );
+
+    if (IS_ROUTE_POST_CREATE) {
+        return createHeaderContainer
+            ? createPortal(
+                  <>
+                      <nav
+                          aria-label="포스트 작성 메뉴"
+                          className="flex flex-col items-start gap-[1.2rem]"
+                      >
+                          <UI.Button onClick={() => setShowDraftModal(true)}>불러오기</UI.Button>
+                          <UI.Button
+                              disabled={isSavePending || isDraftPending}
+                              onClick={() => savePost(rows)}
+                              className="whitespace-nowrap disabled:opacity-60"
+                          >
+                              {isSavePending ? "생성 중..." : "생성하기"}
+                          </UI.Button>
+                          <UI.Button
+                              disabled={isDraftPending || isSavePending}
+                              onClick={() => saveDraft(rows)}
+                              className="whitespace-nowrap disabled:opacity-60"
+                          >
+                              {isDraftPending ? "저장 중..." : "임시저장"}
+                          </UI.Button>
+                      </nav>
+                      {markdownInput}
+                      {showDraftModal ? (
+                          <PostDraftLoadModal
+                              onClose={() => setShowDraftModal(false)}
+                              onLoad={handleLoadDraft}
+                              onMarkdownClick={() => markdownInputRef.current?.click()}
+                          />
+                      ) : null}
+                  </>,
+                  createHeaderContainer,
+              )
+            : null;
+    }
 
     return (
         // <nav className="fixed tablet:top-[calc(1.6rem*3)] mobile:top-[calc(1.6rem*1)] left-[50%] tablet:px-[calc(1.6rem*2)] mobile:px-0 transform translate-x-[-50%] z-[1000] w-[calc(100dvw-(1.6rem*2))]">
@@ -145,11 +196,11 @@ const Navigation = () => {
                         />
                     </UI.Button> */}
 
-                    {IS_ROUTE_POST_EDIT || IS_ROUTE_POST_CREATE ? (
+                    {IS_ROUTE_POST_EDIT ? (
                         <>
                             <UI.Button
                                 type="button"
-                                onClick={() => (IS_ROUTE_POST_CREATE ? setShowDraftModal(true) : markdownInputRef.current?.click())}
+                                onClick={() => markdownInputRef.current?.click()}
                                 className="transition-colors flex flex-col items-start"
                             >
                                 <p className="bg-black text-white p-[2rem] text-[2.4rem] font-semibold tablet:block mobile:hidden">불러오기</p>
@@ -159,13 +210,7 @@ const Navigation = () => {
                                     className="bg-black text-white p-[2rem]"
                                 />
                             </UI.Button>
-                            <input
-                                ref={markdownInputRef}
-                                type="file"
-                                accept=".md,text/markdown,text/plain"
-                                className="hidden"
-                                onChange={handleMarkdownFile}
-                            />
+                            {markdownInput}
                         </>
                     ) : null}
                 </section>
@@ -202,20 +247,6 @@ const Navigation = () => {
                             </section>
                         )}
 
-                        {IS_ROUTE_POST_CREATE && (
-                            <section className="flex flex-col gap-[0.8rem]">
-                                <motion.section
-                                    key={"post_title_create"}
-                                    initial={{ opacity: 0, transform: "scale(0.8)" }}
-                                    animate={{ opacity: 1, transform: "scale(1)" }}
-                                    exit={{ opacity: 0, transform: "scale(0.8)" }}
-                                    transition={springTransition}
-                                    className="flex gap-[1.6rem] flex-1 justify-center"
-                                >
-                                    <h2 className="tablet:text-[2.8rem] mobile:text-[2.4rem] text-center leading-[1.5] font-bold text-white">생성 중</h2>
-                                </motion.section>
-                            </section>
-                        )}
                     </AnimatePresence>
 
                     {/* <div className="w-[7.2rem] h-[0.8rem] p-[0.2rem] bg-[#ffffff40] backdrop-blur-sm rounded-full shadow-[var(--shadow-normal)]">
@@ -228,38 +259,16 @@ const Navigation = () => {
                     {/* <div className={`absolute top-0 left-[50%] transform translate-x-[-50%] w-[calc(100%*2)] h-full bg-[linear-gradient(90deg,_transparent,_#000000ee,_transparent)] blur-lg z-[-1]`} /> */}
                 </section>
 
-                {IS_ROUTE_POST_EDIT || IS_ROUTE_POST_CREATE ? (
+                {IS_ROUTE_POST_EDIT ? (
                     <section className="menu flex gap-[0.4rem] tablet:relative tablet:flex-row tablet:right-auto mobile:absolute mobile:flex-col mobile:right-0">
-                        {IS_ROUTE_POST_CREATE ? (
-                            <UI.Button
-                                type="button"
-                                disabled={isDraftPending || isSavePending}
-                                onClick={() => saveDraft(rows)}
-                                className="transition-colors flex flex-col items-end disabled:opacity-60"
-                            >
-                                <p className="bg-black text-white p-[2rem] text-[2.4rem] font-semibold tablet:block mobile:hidden">{isDraftPending ? "저장 중..." : "임시저장"}</p>
-                                <MaterialIcon
-                                    name="save"
-                                    size={24}
-                                    className="bg-black text-white p-[2rem]"
-                                />
-                            </UI.Button>
-                        ) : null}
                         <PostSaveNavButton
-                            isCreate={IS_ROUTE_POST_CREATE}
+                            isCreate={false}
                             isPending={isSavePending || isDraftPending}
                             onSave={() => savePost(rows)}
                         />
                     </section>
                 ) : null}
             </div>
-            {showDraftModal && IS_ROUTE_POST_CREATE ? (
-                <PostDraftLoadModal
-                    onClose={() => setShowDraftModal(false)}
-                    onLoad={handleLoadDraft}
-                    onMarkdownClick={() => markdownInputRef.current?.click()}
-                />
-            ) : null}
         </nav>
     );
 };

@@ -28,6 +28,7 @@ const Header = () => {
     const IS_ROUTE_HOME = currentPathName === "/";
 
     const IS_ROUTE_RESUME = currentPathName === "/resume";
+    const IS_ROUTE_POST_CREATE = currentPathName === "/post/create";
 
     return (
         <header
@@ -100,6 +101,15 @@ const Header = () => {
                             )}
 
                             {IS_ROUTE_RESUME && <p>resume</p>}
+                            {IS_ROUTE_POST_CREATE && (
+                                <section
+                                    key="post-create-header"
+                                    className="flex flex-col items-start gap-[1.2rem]"
+                                >
+                                    <p>create</p>
+                                    <div id="post-create-header-actions" />
+                                </section>
+                            )}
                         </AnimatePresence>
                     </section>
                 </section>
