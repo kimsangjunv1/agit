@@ -35,7 +35,10 @@ const WidthControl = ({ value, onChange }: WidthControlProps) => {
 
     return (
         <div className="fixed bottom-[calc(1.6rem+env(safe-area-inset-bottom))] left-1/2 z-[120] -translate-x-1/2">
-            <DynamicIsland ariaLabel="본문 너비 선택">
+            <DynamicIsland
+                ariaLabel="본문 너비 선택"
+                placement="bottom"
+            >
                 <div className="flex items-center gap-[0.4rem]">
                     {WIDTH_OPTIONS.map((option) => (
                         <button

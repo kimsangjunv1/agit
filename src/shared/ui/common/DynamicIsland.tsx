@@ -7,12 +7,13 @@ type DynamicIslandProps = {
     children: ReactNode;
     ariaLabel: string;
     className?: string;
+    placement?: "top" | "bottom";
 };
 
 const CIRCLE_SIZE = 48;
 const springTransition = { type: "spring", stiffness: 380, damping: 30, mass: 0.7 } as const;
 
-const DynamicIsland = ({ children, ariaLabel, className = "" }: DynamicIslandProps) => {
+const DynamicIsland = ({ children, ariaLabel, className = "", placement = "top" }: DynamicIslandProps) => {
     const reducedMotion = useReducedMotion();
     const contentRef = useRef<HTMLDivElement>(null);
     const [phase, setPhase] = useState<"drop" | "expand" | "ready">("drop");
@@ -40,8 +41,8 @@ const DynamicIsland = ({ children, ariaLabel, className = "" }: DynamicIslandPro
         <motion.div
             role="group"
             aria-label={ariaLabel}
-            className={`overflow-hidden rounded-full bg-[var(--color-surface-floating)] text-[var(--color-text-primary)] shadow-[0_0.8rem_3.2rem_#00000026] backdrop-blur-[5px] ${className}`}
-            initial={{ y: -80, opacity: 0, width: CIRCLE_SIZE, height: CIRCLE_SIZE }}
+            className={`overflow-hidden rounded-full bg-[var(--color-surface-floating)] text-[var(--color-text-primary)] backdrop-blur-[5px] ${className}`}
+            initial={{ y: placement === "bottom" ? 80 : -80, opacity: 0, width: CIRCLE_SIZE, height: CIRCLE_SIZE }}
             animate={{ y: 0, opacity: 1, width: isExpanded ? size.width : CIRCLE_SIZE, height: isExpanded ? size.height : CIRCLE_SIZE }}
             transition={reducedMotion ? { duration: 0 } : springTransition}
             onAnimationComplete={() => setPhase((current) => (current === "drop" ? "expand" : "ready"))}

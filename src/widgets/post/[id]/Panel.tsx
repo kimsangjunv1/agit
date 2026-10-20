@@ -5,6 +5,7 @@ import { PostDetailPageProvider } from "./model/PostDetailContext";
 import usePostDetail from "./model/usePostDetail";
 import * as Layer from "@/widgets/post/[id]/ui";
 import PostContentBody from "@/features/managePost/ui/PostContentBody";
+import { canShowPostComments } from "@/features/managePost/lib/postPermissions";
 import { POST_INNER_CLASS, POST_PAGE_CLASS } from "@/shared/lib/richText/styles";
 import Scrollbar from "@/shared/ui/common/Scrollbar";
 import WidthControl, { type PostContentWidth } from "./ui/WidthControl";
@@ -31,7 +32,7 @@ export default function Panel({ id, initialData }: { id: string; initialData: Ge
                                 <PostContentBody>
                                     <section className="flex flex-col flex-1 min-w-0">
                                         <Layer.Body />
-                                        <Layer.Comments />
+                                        {canShowPostComments(page.data?.result?.post_type) ? <Layer.Comments /> : null}
                                         <Layer.RelatedPosts />
                                         <Layer.Actions />
                                     </section>

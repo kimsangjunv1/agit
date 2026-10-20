@@ -21,10 +21,12 @@ export const canManagePost = ({ userId, userRole, postOwnerId }: PostPermissionC
     return userId === postOwnerId;
 };
 
-export const getPostNavVisibility = ({ canManage, isView, hasToc }: { canManage: boolean; isView: boolean; hasToc: boolean }): PostNavVisibility => ({
+export const canShowPostComments = (postType?: string) => postType !== "til" && postType !== "diary";
+
+export const getPostNavVisibility = ({ canManage, isView, hasToc, postType }: { canManage: boolean; isView: boolean; hasToc: boolean; postType?: string }): PostNavVisibility => ({
     showShare: isView,
     showLike: isView,
-    showComments: isView,
+    showComments: isView && canShowPostComments(postType),
     showToc: isView && hasToc,
     showReading: isView,
     showEdit: canManage,

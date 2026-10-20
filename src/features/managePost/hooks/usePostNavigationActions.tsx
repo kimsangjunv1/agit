@@ -56,7 +56,10 @@ export const usePostNavigationActions = ({ postIdx, isView, isCreate, isEdit, pu
     const tocItems = useMemo(() => buildPostToc(postDetailData?.result?.contents ?? []), [postDetailData?.result?.contents]);
     const hasToc = tocItems.length > 0;
 
-    const navVisibility = useMemo(() => getPostNavVisibility({ canManage, isView, hasToc }), [canManage, hasToc, isView]);
+    const navVisibility = useMemo(
+        () => getPostNavVisibility({ canManage, isView, hasToc, postType: postDetailData?.result?.post_type }),
+        [canManage, hasToc, isView, postDetailData?.result?.post_type],
+    );
 
     const hasNavActions = hasVisiblePostNavActions(navVisibility);
 
