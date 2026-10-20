@@ -1,5 +1,17 @@
 @import "tailwindcss";
 
+:where(button, a[href], [role="button"]) {
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow;
+    transition-duration: var(--interaction-duration);
+    transition-timing-function: var(--interaction-easing);
+}
+
+@media (hover: hover) {
+    :where(button, a[href], [role="button"]):not(:disabled):not([aria-disabled="true"]):hover {
+        color: var(--color-interaction-hover);
+    }
+}
+
 :root[data-page-transition="slide"] {
     overflow: hidden;
 }

@@ -12,7 +12,7 @@ import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
 import { util } from "@/shared/lib/util";
 import { useGetCategoryListQuery } from "@/entities/category/api/category.query";
 import PostThumbnailPlaceholder from "@/shared/ui/common/PostThumbnailPlaceholder";
-import { POST_HERO_META_CLASS, POST_HERO_SUMMARY_CLASS, POST_HERO_TITLE_CLASS } from "@/shared/lib/richText/styles";
+import { POST_CONTENT_WIDTH_CLASS, POST_HERO_META_CLASS, POST_HERO_SUMMARY_CLASS, POST_HERO_TITLE_CLASS } from "@/shared/lib/richText/styles";
 
 type PostHeroSharedProps = {
     placeholderSeed?: string | number;
@@ -88,7 +88,7 @@ const PostHero = (props: PostHeroProps) => {
     return (
         <motion.article
             // className="relative flex flex-col items-end justify-end gap-[1.6rem] w-full h-full rounded-[calc(1.6rem*3)] overflow-hidden"
-            className="relative flex flex-col gap-[1.6rem] max-w-[var(--size-tablet)] px-[2.0rem] w-full"
+            className={`relative flex flex-col gap-[1.6rem] ${POST_CONTENT_WIDTH_CLASS}`}
             initial={reducedMotion ? false : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{
@@ -147,7 +147,7 @@ const PostHeroViewContent = ({ title, summary, createDate, viewCount, likeCount 
     <>
         <section className="flex flex-col items-start pointer-events-none">
             <p className={POST_HERO_META_CLASS}>
-                {util.string.getCurrentTime(createDate, 4)} ・ {viewCount} view ・ {likeCount} likes
+                {util.string.getCurrentTime(createDate, 4)} ・ {viewCount} view ・ {likeCount} Cheer Up
             </p>
             <p className={POST_HERO_TITLE_CLASS}>{title}</p>
             <PostHeroSummary>{summary}</PostHeroSummary>

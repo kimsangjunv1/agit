@@ -53,7 +53,7 @@ const ArchiveListDefaultItem = forwardRef<HTMLElement, ArchiveListDefaultItemPro
                 {/* <div className="pointer-events-none absolute h-[50%] mask-[linear-gradient(0deg,_#000,_#000_2.5%,_#000_50%,_#0000)] bottom-0 left-0 w-full bg-[#00000000] backdrop-blur-[30px]" /> */}
                 <div className="pointer-events-none flex flex-col items-start flex-1 w-full absolute top-0 p-[0.8rem]">
                     {/* className="absolute bottom-0 left-[50%] bg-[linear-gradient(0deg,#00000000_0%,#00000000)] transform translate-x-[-50%] w-full flex flex-col justify-center items-center" */}
-                    <h5 className="bg-[var(--color-surface-floating)] text-[var(--color-text-primary)] text-left text-[2rem] font-bold p-[0.4rem_0.4rem_0_0.4rem]">{post.title}</h5>
+                    <h5 className="bg-[var(--color-surface-floating)] text-inherit text-left text-[2rem] font-bold p-[0.4rem_0.4rem_0_0.4rem]">{post.title}</h5>
                     <p className="bg-[var(--color-surface-floating)] text-left font-semibold leading-[1.5] text-[var(--color-text-muted)] line-clamp-2 mobile:text-[1.6rem] tablet:text-[1.6rem] p-[0.8rem_0.4rem_0.4rem_0.4rem]">
                         &quot;{post.summary}&quot;
                     </p>

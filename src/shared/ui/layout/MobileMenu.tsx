@@ -75,7 +75,7 @@ const MobileMenu = () => {
                                 width={32}
                                 height={32}
                             />
-                            <p className="text-[var(--color-text-primary)] text-[2.4rem]">Close.</p>
+                            <p className="text-inherit text-[2.4rem]">Close.</p>
                         </UI.Button>
                         {/* 목록 */}
                         <section className="mobile-inner px-[2.4rem] py-[2.4rem] w-full h-full flex flex-col items-start justify-between">

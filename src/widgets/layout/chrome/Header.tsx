@@ -58,7 +58,7 @@ const Header = () => {
                                     duration={2}
                                     className={{
                                         container: "border p-[0.2rem]",
-                                        marquee: "gap-[0.4rem] text-[var(--color-text-primary)] text-[1.2rem]",
+                                        marquee: "gap-[0.4rem] text-inherit text-[1.2rem]",
                                     }}
                                 />
                             </section>
@@ -121,12 +121,12 @@ const Header = () => {
                     onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 >
                     <div
-                        className={`w-full h-[0.2rem] bg-[var(--color-text-primary)] absolute left-[50%] transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ${
+                        className={`w-full h-[0.2rem] bg-current absolute left-[50%] transform -translate-x-1/2 -translate-y-1/2 transition-[top,rotate,translate,transform] duration-250 ease-[var(--interaction-easing)] ${
                             showMenu ? "top-[calc(50%-0rem)] rotate-[225deg]" : "top-[calc(50%-0.8rem)] rotate-0"
                         }`}
                     />
                     <div
-                        className={`w-full h-[0.2rem] bg-[var(--color-text-primary)] absolute left-[50%] transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ${
+                        className={`w-full h-[0.2rem] bg-current absolute left-[50%] transform -translate-x-1/2 -translate-y-1/2 transition-[top,rotate,translate,transform] duration-250 ease-[var(--interaction-easing)] ${
                             showMenu ? "top-[calc(50%+0rem)] rotate-[135deg]" : "top-[calc(50%+0.8rem)] rotate-0"
                         }`}
                     />

@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 // `ssr: false` 옵션을 추가하여 서버에서 실행되지 않도록 설정
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
-import { Fragment } from "react";
+import { Fragment, type CSSProperties } from "react";
 
 import Image from "next/image";
 
@@ -112,12 +112,29 @@ const IconComponent = ({ isLottie = false, type, alt, className, width = 24, hei
                     height={height}
                     loop={isLottieLoop}
                 />
+            ) : isMonochrome ? (
+                <span
+                    role={alt ? "img" : undefined}
+                    aria-label={alt || undefined}
+                    aria-hidden={alt ? undefined : true}
+                    className={`inline-block w-[var(--icon-width)] max-w-full shrink-0 bg-current ${className ?? ""}`}
+                    style={
+                        {
+                            "--icon-width": `${width}px`,
+                            aspectRatio: type === "graphic-logo-vertical" ? "102 / 107" : type === "outlined-chart" ? "25 / 24" : "1",
+                            maskImage: `url("${setTypeOfIcon()}")`,
+                            maskSize: "contain",
+                            maskPosition: "center",
+                            maskRepeat: "no-repeat",
+                            filter: "none",
+                        } as CSSProperties
+                    }
+                />
             ) : (
                 // <img src={ setTypeOfIcon() } alt={ alt } className={ className } />
                 <Image
                     src={setTypeOfIcon()}
                     className={className}
-                    style={isMonochrome ? { filter: "var(--filter-icon)" } : undefined}
                     width={width}
                     height={height}
                     alt={alt}

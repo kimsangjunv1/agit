@@ -130,7 +130,7 @@ const PostNavigationActions = ({
 
     const { currentPathName, pushToUrl } = useNavigate();
     const isLiked = alreadyLiked ?? false;
-    const likeLabel = likeCount > 0 ? `좋아요 ${likeCount}` : "좋아요";
+    const likeLabel = likeCount > 0 ? `Cheer Up ${likeCount}` : "Cheer Up";
 
     const { IS_ROUTE_POST_VIEW, IS_ROUTE_POST_EDIT, IS_ROUTE_POST_CREATE } = getPostRouteFlags(currentPathName);
     const { postTitle, tocItems } = usePostNavigationActions({
@@ -375,10 +375,17 @@ const PostNavigationActions = ({
                                             pressed={isLiked}
                                             className={isLiked ? "bg-[#00ff61] text-[var(--color-on-accent)]" : ""}
                                             icon={
-                                                <MaterialIcon
-                                                    name="thumb_up"
-                                                    size={20}
-                                                />
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    width={20}
+                                                    height={20}
+                                                    viewBox="0 -960 960 960"
+                                                    fill="currentColor"
+                                                    aria-hidden="true"
+                                                    focusable="false"
+                                                >
+                                                    <path d="m80-80 200-560 360 360L80-80Zm502-378-42-42 224-224q32-32 77-32t77 32l24 24-42 42-24-24q-14-14-35-14t-35 14L582-458ZM422-618l-42-42 24-24q14-14 14-34t-14-34l-26-26 42-42 26 26q32 32 32 76t-32 76l-24 24Zm80 80-42-42 144-144q14-14 14-35t-14-35l-64-64 42-42 64 64q32 32 32 77t-32 77L502-538Zm160 160-42-42 64-64q32-32 77-32t77 32l64 64-42 42-64-64q-14-14-35-14t-35 14l-64 64Z" />
+                                                </svg>
                                             }
                                             onClick={() => onAction("like")}
                                         />

@@ -72,11 +72,11 @@ export const useDeletePostWithFeedback = () => {
 export const useLikeIncrementWithFeedback = () => {
     const toastHandlers = useMutationToastHandlers<SetIncrementPostLikeResponse, { postId: number; userId?: string }>((data) => {
         if (data?.result?.alreadyLiked) {
-            return "이미 좋아요를 눌렀어요";
+            return "이미 Cheer Up을 보냈어요";
         }
 
         if (data?.result?.likesIncremented) {
-            return "좋아요!";
+            return "Cheer Up을 보냈어요!";
         }
 
         return undefined;
