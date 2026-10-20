@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { useLenis } from "lenis/react";
 
 import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
@@ -46,6 +46,7 @@ const PageRevealOverlay = () => {
     const isInitialReveal = transitionPhase !== "idle" && pendingNavigation === null;
     const isInitialCovering = transitionPhase === "covering" && pendingNavigation === null;
     const isRouteTransitioning = pendingNavigation !== null;
+    const isRoutePreparing = isRouteTransitioning && (transitionPhase === "covering" || transitionPhase === "navigating" || transitionPhase === "waiting");
 
     useEffect(() => {
         if (!lenis || !isRouteTransitioning) return;
@@ -202,6 +203,37 @@ const PageRevealOverlay = () => {
 
     return (
         <>
+            {/* 전환 도중 고정 레이어를 제거하면 본문 애니메이션도 중단돼요. */}
+            <div
+                data-page-transition-fixed="progress"
+                className="fixed inset-x-0 top-0 z-[1000000002] h-[3px] overflow-hidden pointer-events-none"
+            >
+                <AnimatePresence initial={false}>
+                    {isRoutePreparing ? (
+                        <motion.div
+                            key="page-progress"
+                            role="progressbar"
+                            aria-label="다음 페이지 준비 중"
+                            className="h-full w-full"
+                            exit={{ opacity: 0 }}
+                            transition={{ delay: reducedMotion ? 0 : 0.15, duration: reducedMotion ? 0 : 0.15 }}
+                        >
+                            <motion.div
+                                className="h-full w-full origin-left bg-[var(--color-brand-500)]"
+                                initial={{ scaleX: 0.3, x: "0%" }}
+                                animate={{ scaleX: 0.3, x: reducedMotion ? "0%" : ["0%", "100%"] }}
+                                transition={{ x: { duration: 1.2, repeat: Infinity, ease: "linear" } }}
+                                exit={{
+                                    scaleX: 1,
+                                    x: "0%",
+                                    transition: { duration: reducedMotion ? 0 : 0.15, repeat: 0, ease: "easeOut" },
+                                }}
+                            />
+                        </motion.div>
+                    ) : null}
+                </AnimatePresence>
+            </div>
+
             {!isPageContentVisible ? (
                 <div
                     aria-hidden

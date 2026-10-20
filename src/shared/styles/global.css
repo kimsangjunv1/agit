@@ -21,6 +21,15 @@
     view-transition-name: page-sidebar;
 }
 
+:root[data-page-transition="slide"] [data-page-transition-fixed="progress"] {
+    view-transition-name: page-progress;
+}
+
+:root[data-page-transition="slide"]::view-transition-group(page-progress) {
+    z-index: 4;
+    animation: none;
+}
+
 :root[data-page-transition="slide"]::view-transition-group(page-sidebar) {
     z-index: 3;
     animation: none;
@@ -38,13 +47,15 @@
 
 :root[data-page-transition="slide"]::view-transition-old(page-header),
 :root[data-page-transition="slide"]::view-transition-old(page-navigation),
-:root[data-page-transition="slide"]::view-transition-old(page-sidebar) {
+:root[data-page-transition="slide"]::view-transition-old(page-sidebar),
+:root[data-page-transition="slide"]::view-transition-old(page-progress) {
     display: none;
 }
 
 :root[data-page-transition="slide"]::view-transition-new(page-header),
 :root[data-page-transition="slide"]::view-transition-new(page-navigation),
-:root[data-page-transition="slide"]::view-transition-new(page-sidebar) {
+:root[data-page-transition="slide"]::view-transition-new(page-sidebar),
+:root[data-page-transition="slide"]::view-transition-new(page-progress) {
     mix-blend-mode: normal;
     animation: none;
 }

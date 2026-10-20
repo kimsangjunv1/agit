@@ -176,7 +176,19 @@ const PostHeroAuthor = () => (
     </section>
 );
 
-const PostHeroEditableField = ({ value, placeholder, className, as: Tag = "p", onChange }: { value: string; placeholder: string; className: string; as?: "p" | "span"; onChange: (value: string) => void }) => {
+const PostHeroEditableField = ({
+    value,
+    placeholder,
+    className,
+    as: Tag = "p",
+    onChange,
+}: {
+    value: string;
+    placeholder: string;
+    className: string;
+    as?: "p" | "span";
+    onChange: (value: string) => void;
+}) => {
     const ref = useRef<HTMLElement>(null);
 
     useEffect(() => {

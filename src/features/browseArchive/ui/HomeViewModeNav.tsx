@@ -55,7 +55,7 @@ const HomeViewModeNav = ({ variant }: HomeViewModeNavProps) => {
                             }}
                             className={`${activeTextClass} text-[2rem] shrink-0`}
                         >
-                            <span className={buttonTextClass}>최신글</span>
+                            <span className={buttonTextClass}>New</span>
                             {/* {isFloating ? (
                                 <span className={buttonTextClass}>최신글</span>
                             ) : (
@@ -95,7 +95,7 @@ const HomeViewModeNav = ({ variant }: HomeViewModeNavProps) => {
                                     onClick={() => setMainViewMode(2)}
                                     className={`${inactiveTextClass} ${buttonTextClass}`}
                                 >
-                                    카테고리
+                                    Category
                                 </UI.Button>
                             </motion.section>
                         )}

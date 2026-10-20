@@ -23,7 +23,7 @@ const Header = () => {
 
     const { isMobile, isMobileMenuOpen, setIsMobileMenuOpen } = useLayoutStore();
     const { currentPathName, pushToUrl } = useNavigate();
-    const { IS_ROUTE_POST_VIEW } = getPostRouteFlags(currentPathName);
+    const { IS_ROUTE_POST_VIEW, IS_ROUTE_POST_EDIT } = getPostRouteFlags(currentPathName);
 
     const IS_ROUTE_HOME = currentPathName === "/";
 
@@ -37,12 +37,12 @@ const Header = () => {
         >
             {/* <div className="relative mx-auto flex gap-[2.4rem] h-[12.8rem] w-full items-start p-[5.2rem]"> */}
             <div className="relative mx-auto flex gap-[2.4rem] w-full items-start p-[5.2rem]">
-                <section className="flex-1 flex justify-start items-start gap-[3.2rem]">
+                <section className="min-w-0 flex-1 flex justify-start items-start gap-[3.2rem]">
                     <section className="flex flex-col gap-[2.4rem]">
                         <button
                             type="button"
                             onClick={() => pushToUrl("/")}
-                            className="flex flex-col items-start gap-[1.2rem]"
+                            className="flex justify-start items-start gap-[1.2rem]"
                         >
                             <IconComponent
                                 type={`graphic-logo-horizontal`}
@@ -51,22 +51,23 @@ const Header = () => {
                                 height={44}
                                 className="mobile:h-[calc(1.6rem*2.2)] mobile:w-[calc(1.6rem*7)] pc:h-[4rem] pc:w-auto"
                             />
-                            <p className="text-[1.8rem]">agit.</p>
+                            <section className="flex flex-col gap-[0.4rem]">
+                                <p className="text-[1.8rem]">agit.</p>
+                                <Marquee
+                                    content={"Career"}
+                                    duration={2}
+                                    className={{
+                                        container: "border p-[0.2rem]",
+                                        marquee: "gap-[0.4rem] text-black text-[1.2rem]",
+                                    }}
+                                />
+                            </section>
                         </button>
-
-                        <div className="h-[0.1rem] w-[2.4rem] bg-[#00000030]" />
 
                         <section className="flex flex-col items-start gap-[1.2rem]">
                             <p>Github</p>
                             <p>LinkedIn</p>
-                            <Marquee
-                                content={"Career"}
-                                duration={2}
-                                className={{
-                                    container: "border p-[0.2rem]",
-                                    marquee: "gap-[0.4rem] text-black text-[1.2rem]",
-                                }}
-                            />
+
                             {isAdmin ? (
                                 <Fragment>
                                     <div className="h-[0.1rem] w-[2.4rem] bg-[#00000030]" />
@@ -88,11 +89,11 @@ const Header = () => {
                         </section>
                     </section>
 
-                    <section className={`flex items-start justify-start gap-[1.6rem]`}>
+                    <section className="flex min-w-0 flex-1 items-start justify-start gap-[1.6rem]">
                         <AnimatePresence mode="popLayout">
                             {IS_ROUTE_HOME && !isMobile && <HomeViewModeNav variant="header" />}
 
-                            {IS_ROUTE_POST_VIEW && (
+                            {(IS_ROUTE_POST_VIEW || IS_ROUTE_POST_EDIT) && (
                                 <div
                                     key="post-header-actions"
                                     id="post-header-actions"

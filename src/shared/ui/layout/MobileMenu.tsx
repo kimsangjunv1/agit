@@ -160,12 +160,12 @@ const MobileMenu = () => {
                                     <IconComponent
                                         type="graphic-logo-horizontal"
                                         alt="로고"
-                                        height={132}
-                                        width={152}
+                                        height={72}
+                                        width={72}
                                         className="invert"
                                     />
 
-                                    <TextShimmer
+                                    {/* <TextShimmer
                                         as="p"
                                         duration={3}
                                         color={{
@@ -174,8 +174,8 @@ const MobileMenu = () => {
                                         }}
                                         className="h-[2rem] text-white text-[1.6rem] leading-[1.7]"
                                     >
-                                        © kimsangjunv1. All rights reserved.
-                                    </TextShimmer>
+                                    </TextShimmer> */}
+                                    <p className="text-white">© kimsangjunv1. All rights reserved.</p>
                                 </section>
 
                                 <UI.Button
