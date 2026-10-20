@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion, useScroll, useTransform } from "motion/react";
-import { useRef } from "react";
+import { useRef, type RefObject } from "react";
 
 import { PostLatestItem } from "@/entities/post/model/post.type";
 import PostThumbnail from "@/shared/ui/common/PostThumbnail";
@@ -14,13 +14,15 @@ const MotionLink = motion.create(Link);
 
 type ArchiveSliderVerticalCardProps = {
     post: PostLatestItem;
+    containerRef: RefObject<HTMLDivElement | null>;
 };
 
-const ArchiveSliderVerticalCard = ({ post }: ArchiveSliderVerticalCardProps) => {
+const ArchiveSliderVerticalCard = ({ post, containerRef }: ArchiveSliderVerticalCardProps) => {
     const cardRef = useRef<HTMLButtonElement | null>(null);
     const postHref = `/post/${post.idx}`;
     const { pushToUrl } = useNavigate();
     const { scrollYProgress } = useScroll({
+        container: containerRef,
         target: cardRef,
         offset: ["start end", "center center", "end start"],
     });

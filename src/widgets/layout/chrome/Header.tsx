@@ -33,11 +33,11 @@ const Header = () => {
     return (
         <header
             data-page-transition-fixed="header"
-            className="fixed left-0 z-[1000000] mx-auto w-[100svw]"
+            className={`fixed left-0 z-[1000000] mx-auto w-[100svw] ${IS_ROUTE_POST_VIEW ? "pointer-events-none" : ""}`}
         >
             {/* <div className="relative mx-auto flex gap-[2.4rem] h-[12.8rem] w-full items-start p-[5.2rem]"> */}
             <div className="relative mx-auto flex gap-[2.4rem] w-full items-start p-[5.2rem]">
-                <section className="min-w-0 flex-1 flex justify-start items-start gap-[3.2rem]">
+                <section className="pointer-events-auto min-w-0 flex-1 flex justify-start items-start gap-[3.2rem]">
                     <section className="flex flex-col gap-[2.4rem]">
                         <button
                             type="button"
@@ -89,7 +89,7 @@ const Header = () => {
                         </section>
                     </section>
 
-                    <section className="flex min-w-0 flex-1 items-start justify-start gap-[1.6rem]">
+                    {/* <section className="flex min-w-0 flex-1 items-start justify-start gap-[1.6rem]">
                         <AnimatePresence mode="popLayout">
                             {IS_ROUTE_HOME && !isMobile && <HomeViewModeNav variant="header" />}
 
@@ -112,12 +112,12 @@ const Header = () => {
                                 </section>
                             )}
                         </AnimatePresence>
-                    </section>
+                    </section> */}
                 </section>
 
                 {/* 모바일 버튼 */}
                 <button
-                    className="hamburger relative w-[2.4rem] h-[2.4rem] text-[2.4rem] z-[10000]"
+                    className="hamburger pointer-events-auto relative w-[2.4rem] h-[2.4rem] text-[2.4rem] z-[10000]"
                     onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 >
                     <div

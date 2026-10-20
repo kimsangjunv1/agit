@@ -51,6 +51,7 @@ const HomeViewModeNav = ({ variant }: HomeViewModeNavProps) => {
                             key="latest"
                             onClick={() => {
                                 window.scrollTo({ top: 0, left: 0 });
+                                document.querySelector<HTMLDivElement>("main [data-scrollbar-viewport]")?.scrollTo({ top: 0, left: 0 });
                                 setMainViewMode(1);
                             }}
                             className={`${activeTextClass} text-[2rem] shrink-0`}

@@ -1,8 +1,8 @@
 import { RefObject, useEffect, useState } from "react";
 
-const getScrollPercent = () => {
-    const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+const getScrollPercent = (scrollElement?: HTMLElement | null) => {
+    const winScroll = scrollElement ? scrollElement.scrollTop : document.body.scrollTop || document.documentElement.scrollTop;
+    const height = scrollElement ? scrollElement.scrollHeight - scrollElement.clientHeight : document.documentElement.scrollHeight - document.documentElement.clientHeight;
 
     if (height <= 0) return 0;
 
@@ -41,15 +41,17 @@ const useScrollProgress = () => {
 };
 
 /** 스크롤 프로그레스 바를 React state 없이 DOM에 직접 반영 — Navigation 등 스크롤 중 리렌더 방지 */
-export const useScrollProgressBar = (barRef: RefObject<HTMLElement | null>) => {
+export const useScrollProgressBar = (barRef: RefObject<HTMLElement | null>, scrollViewportRef?: RefObject<HTMLElement | null>) => {
     useEffect(() => {
         const bar = barRef.current;
         if (!bar) return;
 
         let rafId = 0;
+        const scrollElement = scrollViewportRef?.current;
+        const scrollTarget = scrollElement ?? window;
 
         const update = () => {
-            const safe = getScrollPercent();
+            const safe = getScrollPercent(scrollElement);
             bar.style.width = `${safe}%`;
             bar.style.backgroundColor = safe >= 99 ? "#ff4321" : "#ff4321";
         };
@@ -60,13 +62,21 @@ export const useScrollProgressBar = (barRef: RefObject<HTMLElement | null>) => {
         };
 
         update();
-        window.addEventListener("scroll", onScroll, { passive: true });
+        scrollTarget.addEventListener("scroll", onScroll, { passive: true });
+        window.addEventListener("resize", onScroll);
+        const observer = new ResizeObserver(onScroll);
+        if (scrollElement) {
+            observer.observe(scrollElement);
+            if (scrollElement.firstElementChild) observer.observe(scrollElement.firstElementChild);
+        }
 
         return () => {
             cancelAnimationFrame(rafId);
-            window.removeEventListener("scroll", onScroll);
+            scrollTarget.removeEventListener("scroll", onScroll);
+            window.removeEventListener("resize", onScroll);
+            observer.disconnect();
         };
-    }, [barRef]);
+    }, [barRef, scrollViewportRef]);
 };
 
 /** 스크롤 %가 threshold를 넘었는지 — 경계에서만 state 갱신 (리렌더 최소화) */

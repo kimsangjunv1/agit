@@ -14,9 +14,11 @@ const GiscusComments = ({ term, className }: GiscusCommentsProps) => {
     if (!isGiscusConfigured()) return null;
 
     return (
-        <section className={className}>
+        <section
+            id="comments"
+            className={`scroll-mt-[18rem] tablet:scroll-mt-[12rem] ${className ?? ""}`}
+        >
             <Giscus
-                id="comments"
                 repo={process.env.NEXT_PUBLIC_GISCUS_REPO as `${string}/${string}`}
                 repoId={process.env.NEXT_PUBLIC_GISCUS_REPO_ID!}
                 category={process.env.NEXT_PUBLIC_GISCUS_CATEGORY}

@@ -17,7 +17,7 @@ const Actions = () => {
 };
 
 const PostActions = () => {
-    const { postIdx } = usePostDetailProvider();
+    const { postIdx, scrollViewportRef } = usePostDetailProvider();
     const { pushToUrl } = useNavigate();
 
     const { alreadyLiked, likeCount, navVisibility, hasNavActions, isDeletePending, handleNavAction } = usePostNavigationActions({
@@ -39,6 +39,7 @@ const PostActions = () => {
         >
             <PostNavigationActions
                 {...navVisibility}
+                scrollViewportRef={scrollViewportRef}
                 likeCount={likeCount}
                 alreadyLiked={alreadyLiked}
                 isDeletePending={isDeletePending}

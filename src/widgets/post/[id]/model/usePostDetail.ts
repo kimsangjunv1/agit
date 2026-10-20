@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import type { GetPostDetailResponse } from "@/entities/post/model/post.type";
 import { useGetPostDetailQuery, useIncrementPostViewOnVisit } from "@/entities/post/api/post.query";
@@ -10,6 +10,7 @@ import { useCreatePostStore } from "@/shared/stores/useCreatePostStore";
 import { useToastStore } from "@/shared/stores/useToastStore";
 import { util } from "@/shared/lib/util";
 export default function usePostDetail(id: string, initialData: GetPostDetailResponse) {
+    const scrollViewportRef = useRef<HTMLDivElement | null>(null);
     const postIdx = Number(id),
         queryClient = useQueryClient();
     const { setPostIdx } = useCreatePostStore();
@@ -36,6 +37,7 @@ export default function usePostDetail(id: string, initialData: GetPostDetailResp
     );
     return {
         ...query,
+        scrollViewportRef,
         isReady,
         postIdx,
         postId: id,

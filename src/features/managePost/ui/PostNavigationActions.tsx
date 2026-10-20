@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useRef, useState, type ReactNode, type Ref } from "react";
+import { Fragment, useEffect, useRef, useState, type ReactNode, type Ref, type RefObject } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 
 import type { PostNavAction } from "@/features/managePost/lib/postNavigationActions";
@@ -21,6 +21,7 @@ type PostNavigationActionsProps = PostNavVisibility & {
     alreadyLiked?: boolean;
     isDeletePending: boolean;
     onAction: (action: PostNavAction) => void;
+    scrollViewportRef?: RefObject<HTMLDivElement | null>;
 };
 
 type NavButtonProps = {
@@ -106,13 +107,26 @@ const ReadingSettingControl = ({
     </div>
 );
 
-const PostNavigationActions = ({ showShare, showLike, showComments, showToc, showReading, showEdit, showDelete, likeCount, alreadyLiked, isDeletePending, onAction }: PostNavigationActionsProps) => {
+const PostNavigationActions = ({
+    showShare,
+    showLike,
+    showComments,
+    showToc,
+    showReading,
+    showEdit,
+    showDelete,
+    likeCount,
+    alreadyLiked,
+    isDeletePending,
+    onAction,
+    scrollViewportRef,
+}: PostNavigationActionsProps) => {
     const reducedMotion = useReducedMotion();
     const shouldShowIsland = useLayoutStore((state) => state.isPageContentVisible && state.transitionPhase === "idle");
     const params = useParams();
     const postIdx = parseInt(params?.id as string);
     const progressBarRef = useRef<HTMLDivElement>(null);
-    useScrollProgressBar(progressBarRef);
+    useScrollProgressBar(progressBarRef, scrollViewportRef);
 
     const { currentPathName, pushToUrl } = useNavigate();
     const isLiked = alreadyLiked ?? false;
@@ -154,10 +168,12 @@ const PostNavigationActions = ({ showShare, showLike, showComments, showToc, sho
         }
 
         let rafId = 0;
+        const scrollElement = scrollViewportRef?.current;
+        const scrollTarget = scrollElement ?? window;
 
         const updateActiveToc = () => {
             rafId = 0;
-            const threshold = window.innerHeight * 0.35;
+            const threshold = scrollElement ? scrollElement.getBoundingClientRect().top + scrollElement.clientHeight * 0.35 : window.innerHeight * 0.35;
             const activeItem =
                 [...tocItems].reverse().find((item) => {
                     const section = document.getElementById(item.id);
@@ -174,15 +190,21 @@ const PostNavigationActions = ({ showShare, showLike, showComments, showToc, sho
         };
 
         updateActiveToc();
-        window.addEventListener("scroll", handleScroll, { passive: true });
+        scrollTarget.addEventListener("scroll", handleScroll, { passive: true });
         window.addEventListener("resize", handleScroll);
+        const observer = new ResizeObserver(handleScroll);
+        if (scrollElement) {
+            observer.observe(scrollElement);
+            if (scrollElement.firstElementChild) observer.observe(scrollElement.firstElementChild);
+        }
 
         return () => {
             cancelAnimationFrame(rafId);
-            window.removeEventListener("scroll", handleScroll);
+            scrollTarget.removeEventListener("scroll", handleScroll);
             window.removeEventListener("resize", handleScroll);
+            observer.disconnect();
         };
-    }, [IS_ROUTE_POST_VIEW, tocItems]);
+    }, [IS_ROUTE_POST_VIEW, tocItems, scrollViewportRef]);
 
     const scrollToTocSection = (id: string) => {
         document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
