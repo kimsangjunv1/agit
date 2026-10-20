@@ -1,13 +1,18 @@
-import { supabaseServer } from "@/shared/lib/supabase/supabaseServer";
+import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
 import { apiError, apiSuccess, resolveRouteError, buildPagination } from "@/shared/lib/apiResponse";
 
 const TABLE_NAME_POST = "comments";
 
 export async function GET() {
     try {
-        const supabase = await supabaseServer();
+        const supabase = supabaseAdmin();
 
-        const { data: currentData, error: currentError } = await supabase.from(TABLE_NAME_POST).select("msg, author, created_at, idx").order("created_at", { ascending: false }).limit(10);
+        const { data: currentData, error: currentError } = await supabase
+            .from(TABLE_NAME_POST)
+            .select("msg, author, created_at, idx")
+            .or("is_secret.is.null,is_secret.eq.false")
+            .order("created_at", { ascending: false })
+            .limit(10);
 
         if (currentError) throw currentError;
 

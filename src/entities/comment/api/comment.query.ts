@@ -2,17 +2,19 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { AgitRoutes } from "@/shared/constants/entityKeys";
 import { deleteCommentManagerFetch, getCommentLatestListFetch, getCommentListFetch, getCommentManagerListFetch, setCommentFetch } from "@/entities/comment/api/comment.api";
-import { DeleteCommentManagerPayload, GetCommentDetailResponse, GetCommentLatestListResponse, GetCommentManagerListResponse } from "@/entities/comment/model/comment.type";
+import type { DeleteCommentManagerPayload, GetCommentDetailResponse, GetCommentLatestListResponse, GetCommentManagerListResponse, SetCommentPayload } from "@/entities/comment/model/comment.type";
 
-export const useGetCommentDetailQuery = (commentIdx?: number) => {
-    const { data, isLoading, isError, isFetching, refetch } = useQuery<GetCommentDetailResponse>({
-        queryKey: [AgitRoutes.KEY_COMMENT, "detail", commentIdx],
-        queryFn: () => getCommentListFetch(commentIdx!),
+export const useGetCommentDetailQuery = (postIdx?: number) => {
+    const { data, isLoading, isError, error, isFetching, refetch } = useQuery<GetCommentDetailResponse>({
+        queryKey: [AgitRoutes.KEY_COMMENT, "detail", postIdx],
+        queryFn: () => getCommentListFetch(postIdx!),
         staleTime: 0,
-        enabled: !!commentIdx,
+        refetchOnMount: true,
+        enabled: !!postIdx,
+        throwOnError: false,
     });
 
-    return { data, isLoading, isError, isFetching, refetch };
+    return { data, isLoading, isError, error, isFetching, refetch };
 };
 
 export const useGetCommentLatestListQuery = () => {
@@ -30,9 +32,9 @@ export const useSetCommentQuery = () => {
 
     const { data, mutate, mutateAsync, error, isError, isSuccess, isIdle, isPending, isPaused, reset } = useMutation({
         mutationKey: [AgitRoutes.KEY_COMMENT, "set"],
-        mutationFn: (payload: unknown) => setCommentFetch(payload),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [AgitRoutes.KEY_COMMENT] });
+        mutationFn: (payload: SetCommentPayload) => setCommentFetch(payload),
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: [AgitRoutes.KEY_COMMENT] });
         },
     });
 

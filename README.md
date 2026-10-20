@@ -21,7 +21,7 @@ Agit는 개발하면서 배운 내용을 글로 남기고, 만든 프로젝트�
 | 인증             | NextAuth.js · bcrypt     | 로그인, 세션 관리, 비밀번호 해싱        |
 | 에디터           | Tiptap · lowlight        | 리치 텍스트 편집과 코드 구문 강조       |
 | 인터랙션         | Motion · Lenis           | 화면 애니메이션과 부드러운 스크롤       |
-| 댓글             | Giscus                   | GitHub Discussions와 댓글 연동          |
+| 댓글             | Supabase                 | 비회원 댓글 작성·조회와 관리자 삭제     |
 | 코드 검사·테스트 | ESLint · Vitest          | 코드 규칙 검사와 주요 로직 테스트       |
 
 ## 프로젝트 구조
@@ -43,4 +43,5 @@ supabase/
 ## 참고 사항
 
 - 관리 화면 접근·글 작성·수정·삭제는 관리자만 가능합니다.
-- 댓글은 Giscus 연동 설정이 완료된 경우에만 표시됩니다.
+- 댓글은 로그인 없이 닉네임과 내용으로 작성할 수 있으며, 관리자가 삭제할 수 있습니다.
+- 댓글 조회 권한을 보호하려면 DB에 `supabase/migrations/20261020000000_restrict_comment_access.sql`을 적용해야 합니다. 댓글 조회·등록 API에는 `SUPABASE_SERVICE_ROLE_KEY`가 필요합니다.
