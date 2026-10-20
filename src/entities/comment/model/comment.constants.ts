@@ -1,0 +1,2 @@
+export const COMMENT_AUTHOR_MAX_LENGTH = 30;
+export const COMMENT_MESSAGE_MAX_LENGTH = 2000;

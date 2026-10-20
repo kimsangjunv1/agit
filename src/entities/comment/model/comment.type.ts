@@ -7,7 +7,6 @@ export interface GetCommentDetailData {
     profile: number;
     author: string;
     msg: string;
-    password: string | null;
     is_admin: boolean;
     is_modified: boolean;
     created_at: string;
@@ -15,6 +14,14 @@ export interface GetCommentDetailData {
 }
 
 export type GetCommentDetailResponse = ApiResponse<GetCommentDetailData[]>;
+
+export interface SetCommentPayload {
+    post_id: number;
+    author: string;
+    msg: string;
+}
+
+export type SetCommentResponse = ApiResponse<null>;
 
 export interface GetCommentLatestListItem {
     idx: number;

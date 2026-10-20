@@ -16,20 +16,6 @@ const nextConfig: NextConfig = {
         ];
     },
 
-    async headers() {
-        return [
-            {
-                source: "/styles/giscus-light.css",
-                headers: [
-                    {
-                        key: "Access-Control-Allow-Origin",
-                        value: "*",
-                    },
-                ],
-            },
-        ];
-    },
-
     images: {
         remotePatterns: [
             {
