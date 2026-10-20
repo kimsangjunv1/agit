@@ -9,6 +9,7 @@ import { GET as search } from "./get/search/route";
 import { GET as getImage } from "./post/image/[...path]/route";
 import { POST as createPost } from "./set/post/create/route";
 import { PATCH as updatePost } from "./patch/post/[idx]/route";
+import { POST as saveDraft } from "./post/drafts/route";
 
 vi.mock("next-auth", () => ({ getServerSession: vi.fn() }));
 vi.mock("server-only", () => ({}));
@@ -24,19 +25,23 @@ const posts = [
     { idx: 3, title: "다른 사람의 비공개 기록", post_type: "diary", visibility: "private", user_id: otherId },
     { idx: 4, title: "TIL 기록", post_type: "til", visibility: "public", user_id: ownerId },
     { idx: 5, title: "공개 일기 기록", post_type: "diary", visibility: "public", user_id: ownerId },
+    { idx: 6, title: "추가한 종류의 기록", post_type: "reading", visibility: "public", user_id: ownerId },
 ];
 
 // 쿼리에 접근 조건을 빠뜨리면 모든 fixture가 반환되므로 비공개 글 유출을 잡는다.
 const createQuery = (table: string) => {
     let rows = table === "posts" ? [...posts] : [];
     let single = false;
+    let writing = false;
     const query: any = {
         select: () => query,
         insert: (payload: unknown) => {
+            writing = true;
             database.inserted.push(payload);
             return query;
         },
         update: (payload: unknown) => {
+            writing = true;
             database.updated.push(payload);
             return query;
         },
@@ -79,7 +84,7 @@ const createQuery = (table: string) => {
             single = true;
             return query;
         },
-        then: (resolve: (value: unknown) => unknown) => Promise.resolve({ data: single ? (rows[0] ?? null) : rows, count: rows.length, error: null }).then(resolve),
+        then: (resolve: (value: unknown) => unknown) => Promise.resolve({ data: single ? (rows[0] ?? null) : rows, count: rows.length, error: writing ? database.writeError : null }).then(resolve),
     };
     return query;
 };
@@ -88,6 +93,7 @@ const database = {
     from: vi.fn(createQuery),
     inserted: [] as unknown[],
     updated: [] as unknown[],
+    writeError: null as { code: string } | null,
     rpc: vi.fn(),
     storage: { from: vi.fn(() => ({ download })) },
 };
@@ -104,6 +110,7 @@ beforeEach(() => {
     vi.clearAllMocks();
     database.inserted = [];
     database.updated = [];
+    database.writeError = null;
     vi.mocked(getServerSession).mockResolvedValue(null);
     vi.mocked(supabaseAdmin).mockReturnValue(database as unknown as ReturnType<typeof supabaseAdmin>);
     vi.mocked(supabaseServer).mockResolvedValue(database as unknown as Awaited<ReturnType<typeof supabaseServer>>);
@@ -114,7 +121,7 @@ beforeEach(() => {
 describe("게시글 공개 범위", () => {
     it("비회원 목록에 비공개 글이 섞이지 않고 공용 캐시를 막는다", async () => {
         const response = await getList(request("get/post"));
-        expect((await response.json()).result.map((post: { idx: number }) => post.idx)).toEqual([1, 4, 5]);
+        expect((await response.json()).result.map((post: { idx: number }) => post.idx)).toEqual([1, 4, 5, 6]);
         expect(response.headers.get("Cache-Control")).toContain("private, no-store");
         expect(response.headers.get("Vary")).toContain("Cookie");
     });
@@ -147,8 +154,14 @@ describe("게시글 공개 범위", () => {
         expect((await response.json()).result.map((post: { idx: number }) => post.idx)).toEqual([4]);
     });
 
-    it("지원하지 않는 글 종류를 거부한다", async () => {
-        expect((await getLatest(request("get/post/latest?type=unknown"))).status).toBe(400);
+    it("어드민에서 추가한 종류로도 필터링할 수 있다", async () => {
+        const response = await getLatest(request("get/post/latest?type=reading"));
+        expect((await response.json()).result.map((post: { idx: number }) => post.idx)).toEqual([6]);
+    });
+
+    it("존재하지 않는 종류에는 빈 목록을 반환하고 잘못된 주소 형식은 거부한다", async () => {
+        expect((await (await getLatest(request("get/post/latest?type=unknown"))).json()).result).toEqual([]);
+        expect((await getLatest(request("get/post/latest?type=invalid.type"))).status).toBe(400);
     });
 
     it("작성자 검색 후 비회원 검색에 이전 사용자의 비공개 결과가 재사용되지 않는다", async () => {
@@ -193,7 +206,7 @@ describe("게시글 설정 저장", () => {
         login(ownerId);
         const response = await save({ ...payload, user_id: otherId, idx: 999, id: "forged" });
         expect(response.status).toBe(200);
-        expect(database.inserted).toEqual([{ ...payload, user_id: ownerId }]);
+        expect(database.inserted).toEqual([{ ...payload, category_idx: null, user_id: ownerId }]);
     });
 
     it("설정이 없는 이전 수정 요청이 비공개 글을 전체공개로 바꾸지 않는다", async () => {
@@ -203,6 +216,7 @@ describe("게시글 설정 저장", () => {
         expect(response.status).toBe(200);
         expect(database.updated[0]).not.toHaveProperty("visibility");
         expect(database.updated[0]).not.toHaveProperty("post_type");
+        expect(database.updated[0]).toHaveProperty("category_idx", null);
     });
 
     it("작성자가 없는 기존 글을 관리자가 비공개로 저장하면 작성자를 지정한다", async () => {
@@ -215,10 +229,27 @@ describe("게시글 설정 저장", () => {
     it.each([
         { ...payload, visibility: true },
         { ...payload, visibility: "members" },
-        { ...payload, post_type: "unknown" },
+        { ...payload, post_type: "invalid.type" },
     ])("잘못된 설정이 DB에 저장되지 않는다", async (body) => {
         login(ownerId);
         expect((await save(body)).status).toBe(400);
         expect(database.inserted).toHaveLength(0);
+    });
+
+    it("일반 글은 카테고리가 필수이고 새 종류의 글은 카테고리 없이 저장한다", async () => {
+        login(ownerId);
+        expect((await save({ ...payload, post_type: "article", category_idx: null })).status).toBe(400);
+        expect(database.inserted).toHaveLength(0);
+        expect((await save({ ...payload, post_type: "reading", category_idx: null })).status).toBe(200);
+        expect(database.inserted[0]).toMatchObject({ post_type: "reading", category_idx: null, visibility: "private" });
+    });
+
+    it("저장 직전에 삭제된 종류는 게시글과 임시저장 API에서 안내한다", async () => {
+        login(ownerId);
+        database.writeError = { code: "23503" };
+        expect((await save(payload)).status).toBe(400);
+        const draft = await saveDraft(new Request("http://localhost/api/v1/post/drafts", { method: "POST", body: JSON.stringify(payload) }));
+        expect(draft.status).toBe(400);
+        expect((await draft.json()).resultMessage).toContain("글 종류");
     });
 });

@@ -22,7 +22,7 @@ const usePostModify = (id: string) => {
         if (data?.title && data?.summary) {
             setTitle(data.title);
             setSummary(data.summary);
-            setCategoryIdx(data.category_idx);
+            setCategoryIdx(data.category_idx ?? 0);
             setThumbnail(data.thumbnail ?? "");
             setPostType(data.post_type ?? "article");
             setVisibility(data.visibility ?? "public");

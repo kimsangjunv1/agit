@@ -26,6 +26,7 @@ const Header = () => {
     const { IS_ROUTE_POST_VIEW, IS_ROUTE_POST_EDIT } = getPostRouteFlags(currentPathName);
 
     const IS_ROUTE_HOME = currentPathName === "/";
+    const IS_ROUTE_MANAGER = currentPathName.startsWith("/manager");
 
     const IS_ROUTE_RESUME = currentPathName === "/resume";
     const IS_ROUTE_POST_CREATE = currentPathName === "/post/create";
@@ -33,10 +34,10 @@ const Header = () => {
     return (
         <header
             data-page-transition-fixed="header"
-            className={`fixed left-0 z-[1000000] mx-auto w-[100svw] ${IS_ROUTE_POST_VIEW ? "pointer-events-none" : ""}`}
+            className={`fixed left-0 z-[1000000] mx-auto w-[100svw] ${IS_ROUTE_POST_VIEW || IS_ROUTE_MANAGER ? "pointer-events-none" : ""}`}
         >
             {/* <div className="relative mx-auto flex gap-[2.4rem] h-[12.8rem] w-full items-start p-[5.2rem]"> */}
-            <div className="relative mx-auto flex gap-[2.4rem] w-full items-start p-[5.2rem]">
+            <div className={`relative mx-auto flex gap-[2.4rem] w-full items-start ${IS_ROUTE_MANAGER ? "px-[2rem] py-[1.6rem]" : "p-[5.2rem]"}`}>
                 <section className="pointer-events-auto min-w-0 flex-1 flex justify-start items-start gap-[3.2rem]">
                     <section className="flex flex-col gap-[2.4rem]">
                         <button
@@ -64,7 +65,7 @@ const Header = () => {
                             </section>
                         </button>
 
-                        <section className="flex flex-col items-start gap-[1.2rem]">
+                        <section className={`${IS_ROUTE_MANAGER ? "hidden" : "flex"} flex-col items-start gap-[1.2rem]`}>
                             <p>Github</p>
                             <p>LinkedIn</p>
 

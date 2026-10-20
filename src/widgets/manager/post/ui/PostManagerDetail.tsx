@@ -7,10 +7,12 @@ import ManagerDetailMetaGrid from "@/widgets/manager/shared/ui/ManagerDetailMeta
 import ManagerDetailPane from "@/widgets/manager/shared/ui/ManagerDetailPane";
 import ManagerDetailPaneHeader from "@/widgets/manager/shared/ui/ManagerDetailPaneHeader";
 import ManagerEmptyState from "@/widgets/manager/shared/ui/ManagerEmptyState";
-import { POST_TYPE_OPTIONS, POST_VISIBILITY_OPTIONS } from "@/entities/post/model/postSettings";
+import { POST_VISIBILITY_OPTIONS } from "@/entities/post/model/postSettings";
+import { useGetPostTypesQuery } from "@/entities/postType/api/postType.query";
 
 const PostManagerDetail = () => {
     const { pushToUrl, selectedPost, deletePostModal } = usePostManagerProvider();
+    const { data: postTypes } = useGetPostTypesQuery();
     return (
         <ManagerDetailPane>
             {selectedPost ? (
@@ -33,11 +35,11 @@ const PostManagerDetail = () => {
                         </div>
                         <ManagerDetailMetaGrid
                             items={[
-                                { label: "글 종류", value: POST_TYPE_OPTIONS.find((option) => option.value === selectedPost.post_type)?.title ?? "일반 글" },
+                                { label: "글 종류", value: postTypes?.result.find((type) => type.code === selectedPost.post_type)?.title ?? selectedPost.post_type },
                                 { label: "공개 설정", value: POST_VISIBILITY_OPTIONS.find((option) => option.value === selectedPost.visibility)?.title ?? "전체공개" },
                                 {
                                     label: "Category",
-                                    value: selectedPost.category?.title ?? "미분류",
+                                    value: selectedPost.post_type === "article" ? (selectedPost.category?.title ?? "미분류") : "해당 없음",
                                 },
                                 { label: "Views", value: selectedPost.views ?? 0 },
                                 {

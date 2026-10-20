@@ -65,7 +65,7 @@ export const preparePostPayloadForSave = async ({
         title,
         summary,
         thumbnail: replaceMap.get(thumbnail) ?? thumbnail,
-        category_idx,
+        category_idx: post_type === "article" ? category_idx : null,
         post_type,
         visibility,
         contents: normalizeBlocksForSave(replaceRowUrls(contents, replaceMap)),

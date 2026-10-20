@@ -4,6 +4,7 @@ import { useEffect, useLayoutEffect } from "react";
 
 import UI from "@/shared/ui/common/UIComponent";
 import { GetPostLatestListResponse } from "@/entities/post/model/post.type";
+import { usePostTypeFilter } from "@/entities/post/model/usePostTypeFilter";
 import { useLayoutStore } from "@/shared/stores/useLayoutStore";
 import { clampPageScroll } from "@/features/browseArchive/lib/clampPageScroll";
 
@@ -16,7 +17,8 @@ type ArchiveFeedProps = {
 };
 
 const ArchiveFeed = ({ initialData }: ArchiveFeedProps) => {
-    const { mainViewMode, categoryFilter, isMobile } = useLayoutStore();
+    const isMobile = useLayoutStore((state) => state.isMobile);
+    const { mainViewMode, categoryFilter } = usePostTypeFilter();
 
     useEffect(() => {
         window.scrollTo({ top: 0 });

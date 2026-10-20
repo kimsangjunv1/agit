@@ -76,7 +76,7 @@ export const usePostNavigationActions = ({ postIdx, isView, isCreate, isEdit, pu
             return;
         }
 
-        if (!category_idx) {
+        if (post_type === "article" && !category_idx) {
             setToast({ msg: "카테고리를 선택해주세요", time: 2 });
             return;
         }

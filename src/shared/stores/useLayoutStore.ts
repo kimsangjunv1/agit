@@ -27,8 +27,6 @@ interface LayoutStoreType {
     isMiniMapCapture: boolean;
     statusViewMode: number;
 
-    mainViewMode: number;
-    categoryFilter: number;
     listViewMode: "default" | "grid";
 
     setListViewMode: (args: "default" | "grid") => void;
@@ -53,9 +51,6 @@ interface LayoutStoreType {
     setIsAccountSidebarOpen: (args: boolean) => void;
     setIsMiniMapCapture: (args: boolean) => void;
     setStatusViewMode: (args: number) => void;
-
-    setMainViewMode: (args: number) => void;
-    setCategoryFilter: (args: number) => void;
 }
 
 export const useLayoutStore = create<LayoutStoreType>()((set) => ({
@@ -77,8 +72,6 @@ export const useLayoutStore = create<LayoutStoreType>()((set) => ({
     isMiniMapCapture: false,
     statusViewMode: 0,
 
-    mainViewMode: 1,
-    categoryFilter: 999,
     listViewMode: "default",
 
     setStatusViewMode: (args: number) => {
@@ -196,16 +189,6 @@ export const useLayoutStore = create<LayoutStoreType>()((set) => ({
     setIsMobileMenuOpen: (args: boolean) => {
         set(() => ({
             isMobileMenuOpen: args,
-        }));
-    },
-    setMainViewMode: (args: number) => {
-        set(() => ({
-            mainViewMode: args,
-        }));
-    },
-    setCategoryFilter: (args: number) => {
-        set(() => ({
-            categoryFilter: args,
         }));
     },
     setListViewMode: (args: "default" | "grid") => {

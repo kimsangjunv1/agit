@@ -12,7 +12,9 @@ const RouteFunction = () => {
     const { IS_ROUTE_HOME, IS_ROUTE_RESUME, IS_ROUTE_POST_VIEW, IS_ROUTE_POST_EDIT, IS_ROUTE_POST_CREATE } = getPostRouteFlags(currentPathName);
 
     return (
-        <section className={`fixed ${IS_ROUTE_POST_VIEW ? "bottom-[calc(8rem+env(safe-area-inset-bottom))] tablet:bottom-[5.2rem]" : "bottom-[5.2rem]"} left-[5.2rem] opacity-[0.5] flex min-w-0 flex-1 items-start justify-start gap-[1.6rem]`}>
+        <section
+            className={`fixed ${IS_ROUTE_POST_VIEW ? "bottom-[calc(8rem+env(safe-area-inset-bottom))] tablet:bottom-[5.2rem]" : "bottom-[5.2rem]"} left-[5.2rem] ${IS_ROUTE_HOME ? "right-[5.2rem]" : ""} opacity-[0.5] flex min-w-0 flex-1 items-start justify-start gap-[1.6rem]`}
+        >
             <AnimatePresence mode="popLayout">
                 {IS_ROUTE_HOME && !isMobile && <HomeViewModeNav variant="header" />}
 

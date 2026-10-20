@@ -51,7 +51,7 @@ const Navigation = () => {
         }
 
         const payload = draft.payload;
-        setPost({ ...payload, draft_id: draft.id });
+        setPost({ ...payload, category_idx: payload.category_idx ?? 0, draft_id: draft.id });
         setRows(normalizeBlocksForEditor(payload.contents));
         const images = usePostDraftImageStore.getState();
         images.reset();

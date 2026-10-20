@@ -6,6 +6,11 @@ export type ManagerMenuItem = {
 
 export const MANAGER_MENUS: ManagerMenuItem[] = [
     {
+        title: "글 종류",
+        description: "글 종류 추가·수정·순서·삭제",
+        url: "/manager/post-type",
+    },
+    {
         title: "카테고리",
         description: "게시판 카테고리 생성·수정·활성화",
         url: "/manager/category",

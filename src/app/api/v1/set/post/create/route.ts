@@ -45,6 +45,9 @@ export async function POST(req: Request) {
             { resultMessage: "등록성공", pagination: null },
         );
     } catch (error: unknown) {
+        if (typeof error === "object" && error !== null && "code" in error && error.code === "23503") {
+            return apiError("글 종류나 카테고리가 삭제되었어요. 다시 선택해주세요.", { status: 400 });
+        }
         const message = error instanceof Error ? error.message : "문제가 생겼습니다";
         const status = typeof error === "object" && error !== null && "status" in error ? Number(error.status) : 500;
 

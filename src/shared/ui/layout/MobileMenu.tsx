@@ -214,16 +214,12 @@ const SidebarTransitionPresence = () => {
 
 const Item = ({ title, href }: { title: string; href: string }) => {
     const { pushToUrl } = useNavigate();
-    const { setMainViewMode, setCategoryFilter, setIsMobileMenuOpen } = useLayoutStore();
+    const { setIsMobileMenuOpen } = useLayoutStore();
     return (
         <UI.Button
             type="button"
             className="flex justify-center text-center gap-[0.4rem] w-full items-center text-[2.4rem] whitespace-nowrap py-[1.2rem] text-[var(--color-text-primary)]"
             onClick={() => {
-                if (href === "/") {
-                    setMainViewMode(1);
-                    setCategoryFilter(999);
-                }
                 setIsMobileMenuOpen(false);
                 pushToUrl(href);
             }}

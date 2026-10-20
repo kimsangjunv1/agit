@@ -31,10 +31,7 @@ export async function POST(req: Request) {
         const { id } = body;
         const parsed = parsePostPayload(body, true);
 
-        if (
-            (id !== undefined && (typeof id !== "string" || !/^[0-9a-f-]{36}$/i.test(id))) ||
-            !parsed
-        ) {
+        if ((id !== undefined && (typeof id !== "string" || !/^[0-9a-f-]{36}$/i.test(id))) || !parsed) {
             return apiError("임시저장 데이터가 올바르지 않습니다.", { status: 400 });
         }
 
@@ -56,6 +53,9 @@ export async function POST(req: Request) {
         if (!data) return apiError("임시저장 글을 찾을 수 없습니다.", { status: 404 });
         return apiSuccess(data);
     } catch (error) {
+        if (typeof error === "object" && error !== null && "code" in error && error.code === "23503") {
+            return apiError("글 종류가 삭제되었어요. 다시 선택해주세요.", { status: 400 });
+        }
         const { message, status } = resolveRouteError(error);
         return apiError(message, { status });
     }

@@ -17,6 +17,7 @@ type ManagerSidebarProps = {
 };
 
 const MENU_ICONS: Record<string, string> = {
+    "/manager/post-type": "label",
     "/manager/category": "category",
     "/manager/invitation": "confirmation_number",
     "/manager/post": "article",

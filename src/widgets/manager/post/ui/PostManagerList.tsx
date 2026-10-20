@@ -8,10 +8,12 @@ import ManagerListItemCard from "@/widgets/manager/shared/ui/ManagerListItemCard
 import ManagerListPane from "@/widgets/manager/shared/ui/ManagerListPane";
 import ManagerListPaneHeader from "@/widgets/manager/shared/ui/ManagerListPaneHeader";
 import ManagerListSkeleton from "@/widgets/manager/shared/ui/ManagerListSkeleton";
-import { POST_TYPE_OPTIONS, POST_VISIBILITY_OPTIONS } from "@/entities/post/model/postSettings";
+import { POST_VISIBILITY_OPTIONS } from "@/entities/post/model/postSettings";
+import { useGetPostTypesQuery } from "@/entities/postType/api/postType.query";
 
 const PostManagerList = () => {
     const { data, isLoading, isError, error, refetch, selectedItem, setSelectedItem, list } = usePostManagerProvider();
+    const { data: postTypes } = useGetPostTypesQuery();
     return (
         <ManagerListPane>
             <ManagerListPaneHeader
@@ -55,7 +57,9 @@ const PostManagerList = () => {
                                     <div className="min-w-0">
                                         <p className="truncate text-[1.6rem] font-semibold">{item.title}</p>
                                         <p className="mt-[0.4rem] truncate text-[1.2rem] text-[var(--color-gray-500)]">
-                                            {POST_TYPE_OPTIONS.find((option) => option.value === item.post_type)?.title} · {POST_VISIBILITY_OPTIONS.find((option) => option.value === item.visibility)?.title} · {item.category?.title ?? "미분류"} · 조회 {item.views ?? 0} · {util.string.getCurrentDate(item.created_at)}
+                                            {postTypes?.result.find((type) => type.code === item.post_type)?.title ?? item.post_type} ·{" "}
+                                            {POST_VISIBILITY_OPTIONS.find((option) => option.value === item.visibility)?.title} ·{" "}
+                                            {item.post_type === "article" ? `${item.category?.title ?? "미분류"} · ` : ""}조회 {item.views ?? 0} · {util.string.getCurrentDate(item.created_at)}
                                         </p>
                                     </div>
                                 </div>

@@ -72,7 +72,7 @@ export interface PostItem {
     title: string;
     thumbnail: string;
     contents: SectionContent[][];
-    category_idx: number;
+    category_idx: number | null;
     created_at: string;
     summary: string;
     views: number;
@@ -136,7 +136,7 @@ export interface PostDraftPayload {
     title: string;
     summary: string;
     thumbnail: string;
-    category_idx: number;
+    category_idx: number | null;
     contents: SectionContent[][];
 }
 
@@ -158,7 +158,7 @@ export interface PostManagerItem {
     thumbnail: string;
     summary: string;
     created_at: string;
-    category_idx: number;
+    category_idx: number | null;
     views: number;
     category?: {
         title: string;

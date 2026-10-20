@@ -3,6 +3,7 @@
 import { useLayoutEffect, useRef } from "react";
 
 import { useGetPostListQuery } from "@/entities/post/api/post.query";
+import { usePostTypeFilter } from "@/entities/post/model/usePostTypeFilter";
 import usePageTransitionReady from "@/shared/hooks/usePageTransitionReady";
 import { useLayoutStore } from "@/shared/stores/useLayoutStore";
 import { clampPageScroll } from "@/features/browseArchive/lib/clampPageScroll";
@@ -13,11 +14,12 @@ import { AnimatePresence } from "motion/react";
 
 const ArchiveList = () => {
     const { data, isLoading, isError, error, refetch } = useGetPostListQuery();
-    const { categoryFilter, listViewMode } = useLayoutStore();
+    const listViewMode = useLayoutStore((state) => state.listViewMode);
+    const { categoryFilter } = usePostTypeFilter();
     const listRef = useRef<HTMLElement | null>(null);
 
     const posts = data?.result ?? [];
-    const filtered = categoryFilter !== 999 ? posts.filter((item) => item.category_idx === categoryFilter) : posts;
+    const filtered = categoryFilter !== null ? posts.filter((item) => item.category_idx === categoryFilter) : posts;
     const isDataReady = !isLoading || posts.length > 0 || isError || data?.resultCode === "ERROR";
 
     usePageTransitionReady("archive-list-data", isDataReady);

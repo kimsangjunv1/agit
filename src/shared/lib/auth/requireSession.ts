@@ -46,7 +46,7 @@ type PostAccessResult =
     | {
           authorized: true;
           session: Session;
-          post: { idx: number; user_id: string | null; visibility: string };
+          post: { idx: number; user_id: string | null; visibility: string; post_type: string };
       }
     | Extract<AuthGuardResult, { authorized: false }>;
 
@@ -58,7 +58,7 @@ export async function requirePostOwnerOrAdmin(postIdx: number | string): Promise
     }
 
     const supabase = supabaseAdmin();
-    const { data: post, error } = await supabase.from("posts").select("idx, user_id, visibility").eq("idx", postIdx).single();
+    const { data: post, error } = await supabase.from("posts").select("idx, user_id, visibility, post_type").eq("idx", postIdx).single();
 
     if (error || !post) {
         return {

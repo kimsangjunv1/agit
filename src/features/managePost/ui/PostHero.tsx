@@ -13,6 +13,7 @@ import { util } from "@/shared/lib/util";
 import { useGetCategoryListQuery } from "@/entities/category/api/category.query";
 import PostThumbnailPlaceholder from "@/shared/ui/common/PostThumbnailPlaceholder";
 import PostPublicationSettings from "./PostPublicationSettings";
+import { useCreatePostStore } from "@/shared/stores/useCreatePostStore";
 import { POST_CONTENT_WIDTH_CLASS, POST_HERO_META_CLASS, POST_HERO_SUMMARY_CLASS, POST_HERO_TITLE_CLASS } from "@/shared/lib/richText/styles";
 
 type PostHeroSharedProps = {
@@ -216,6 +217,7 @@ const PostHeroEditableField = ({
 };
 
 const PostHeroEditContent = ({ title, summary, categoryIdx, onTitleChange, onSummaryChange, onCategoryChange }: PostHeroEditProps) => {
+    const postType = useCreatePostStore((state) => state.post_type);
     const { data: getCategoryListData } = useGetCategoryListQuery();
     const enabledCategories = getCategoryListData?.result?.filter((e) => e.is_enabled) ?? [];
     const selectedCategory = enabledCategories.find((e) => e.idx === categoryIdx);
@@ -224,19 +226,26 @@ const PostHeroEditContent = ({ title, summary, categoryIdx, onTitleChange, onSum
         <>
             <section className="flex flex-col items-start w-full pointer-events-auto">
                 <PostPublicationSettings />
-                <UI.Select
-                    trackingData={selectedCategory?.title ?? ""}
-                    defaultValue={selectedCategory?.idx}
-                    list={enabledCategories.map((e) => ({
-                        title: e.title,
-                        value: e.idx,
-                    }))}
-                    onChange={onCategoryChange}
-                    className={{
-                        container: "px-0 w-fit",
-                        button: `${POST_HERO_META_CLASS} h-[1.5em] gap-[0.8rem]`,
-                    }}
-                />
+                {postType === "article" ? (
+                    <div
+                        role="group"
+                        aria-label="일반 글 카테고리"
+                    >
+                        <UI.Select
+                            trackingData={selectedCategory?.title ?? ""}
+                            defaultValue={selectedCategory?.idx}
+                            list={enabledCategories.map((e) => ({
+                                title: e.title,
+                                value: e.idx,
+                            }))}
+                            onChange={onCategoryChange}
+                            className={{
+                                container: "px-0 w-fit",
+                                button: `${POST_HERO_META_CLASS} h-[1.5em] gap-[0.8rem]`,
+                            }}
+                        />
+                    </div>
+                ) : null}
 
                 <PostHeroEditableField
                     value={title}
