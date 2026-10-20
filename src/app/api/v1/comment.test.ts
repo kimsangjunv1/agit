@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { COMMENT_AUTHOR_MAX_LENGTH, COMMENT_MESSAGE_MAX_LENGTH } from "@/entities/comment/model/comment.constants";
+import { COMMENT_AUTHOR_MAX_CODE_UNITS, COMMENT_AUTHOR_MAX_LENGTH, COMMENT_MESSAGE_MAX_LENGTH } from "@/entities/comment/model/comment.constants";
 import { requireAdmin } from "@/shared/lib/auth/requireSession";
 import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
 import { apiError } from "@/shared/lib/apiResponse";
@@ -11,6 +11,7 @@ import { GET as getLatest } from "./get/comment/latest/route";
 import { GET as getManager } from "./get/comment/manager/route";
 
 vi.mock("next-auth", () => ({ getServerSession: vi.fn() }));
+vi.mock("server-only", () => ({}));
 vi.mock("@/shared/lib/authOptions", () => ({ authOptions: {} }));
 vi.mock("@/shared/lib/auth/requireSession", () => ({ requireAdmin: vi.fn() }));
 vi.mock("@/shared/lib/supabase/supabaseServer", () => ({ supabaseAdmin: vi.fn() }));
@@ -83,6 +84,48 @@ describe("댓글 등록", () => {
         await POST(createRequest({ ...validPayload, is_admin: true }));
 
         expect(query.insert).toHaveBeenCalledWith({ ...validPayload, is_admin: false, is_secret: false });
+    });
+
+    it.each([
+        { ...validPayload, author: "관리자", is_admin: true },
+        { ...validPayload, author: "씨발" },
+        { ...validPayload, msg: "씨!발" },
+        { ...validPayload, msg: "ㅆ ㅣ ㅂ ㅏ ㄹ" },
+        { ...validPayload, author: "👨‍👩‍👧‍👦".repeat(COMMENT_AUTHOR_MAX_LENGTH + 1) },
+        { ...validPayload, author: "가" + "\u0301".repeat(COMMENT_AUTHOR_MAX_CODE_UNITS) },
+    ])("화면 검사를 우회해 직접 요청해도 닉네임·내용 정책을 적용한다: %j", async (payload) => {
+        const response = await POST(createRequest(payload));
+
+        expect(response.status).toBe(400);
+        expect(supabaseAdmin).not.toHaveBeenCalled();
+    });
+
+    it("보이는 10글자를 허용하고 한글은 정규화하되 본문 코드는 보존한다", async () => {
+        const msg = "class Example {\n  return '시발점';\n}";
+        const author = "가나다라마바사아자차";
+
+        const response = await POST(createRequest({ ...validPayload, author: author.normalize("NFD"), msg }));
+
+        expect(response.status).toBe(201);
+        expect(query.insert).toHaveBeenCalledWith({ post_id: validPayload.post_id, author, msg, is_admin: false, is_secret: false });
+    });
+
+    it("UTF-16 길이가 길어도 보이는 10글자의 이모지는 등록할 수 있다", async () => {
+        const author = "👨‍👩‍👧‍👦".repeat(COMMENT_AUTHOR_MAX_LENGTH);
+
+        const response = await POST(createRequest({ ...validPayload, author }));
+
+        expect(response.status).toBe(201);
+        expect(query.insert).toHaveBeenCalledWith({ ...validPayload, author, is_admin: false, is_secret: false });
+    });
+
+    it("서버에서 인증된 관리자의 운영진 닉네임은 허용한다", async () => {
+        vi.mocked(getServerSession).mockResolvedValue({ user: { id: "admin-1", email: "admin@example.com", name: "관리자", role: "admin" }, expires: "2099-01-01" });
+
+        const response = await POST(createRequest({ ...validPayload, author: "관리자" }));
+
+        expect(response.status).toBe(201);
+        expect(query.insert).toHaveBeenCalledWith({ ...validPayload, author: "관리자", is_admin: true, is_secret: false });
     });
 
     it.each([

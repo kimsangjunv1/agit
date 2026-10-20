@@ -1,9 +1,10 @@
 "use client";
 
-import { useId, useState, type FormEvent } from "react";
+import { useId, useRef, useState, type FormEvent } from "react";
 
 import { useGetCommentDetailQuery, useSetCommentQuery } from "@/entities/comment/api/comment.query";
-import { COMMENT_AUTHOR_MAX_LENGTH, COMMENT_MESSAGE_MAX_LENGTH } from "@/entities/comment/model/comment.constants";
+import { COMMENT_AUTHOR_MAX_CODE_UNITS, COMMENT_AUTHOR_MAX_LENGTH, COMMENT_MESSAGE_MAX_LENGTH } from "@/entities/comment/model/comment.constants";
+import { getCommentAuthorLength, getRandomCommentNickname, limitCommentAuthor } from "@/entities/comment/lib/commentNickname";
 import { util } from "@/shared/lib/util";
 import { usePostDetailProvider } from "../model/PostDetailContext";
 import { POST_CONTENT_WIDTH_CLASS } from "@/shared/lib/richText/styles";
@@ -15,16 +16,22 @@ const Comments = () => {
     const [author, setAuthor] = useState("");
     const [msg, setMsg] = useState("");
     const [submitError, setSubmitError] = useState("");
+    const isAuthorComposing = useRef(false);
     const formId = useId();
     const comments = data?.result ?? [];
     const hasListError = isError || data?.resultCode === "ERROR";
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        if (isPending) return;
+        if (isPending || isAuthorComposing.current) return;
 
         if (!author.trim() || !msg.trim()) {
             setSubmitError("닉네임과 댓글 내용을 입력해주세요.");
+            return;
+        }
+
+        if (getCommentAuthorLength(author.trim()) > COMMENT_AUTHOR_MAX_LENGTH) {
+            setSubmitError(`닉네임은 ${COMMENT_AUTHOR_MAX_LENGTH}글자까지 입력할 수 있어요.`);
             return;
         }
 
@@ -122,17 +129,43 @@ const Comments = () => {
                         >
                             닉네임
                         </label>
-                        <input
-                            id={`${formId}-author`}
-                            name="author"
-                            autoComplete="nickname"
-                            value={author}
-                            onChange={(event) => setAuthor(event.target.value)}
-                            maxLength={COMMENT_AUTHOR_MAX_LENGTH}
-                            required
-                            placeholder="닉네임을 입력해주세요"
-                            className="w-full rounded-[0.8rem] border border-[var(--color-border)] bg-[var(--color-surface)] px-[1.6rem] py-[1.2rem] text-[1.6rem] focus-visible:outline-2 focus-visible:outline-[var(--color-brand-500)] disabled:opacity-50"
-                        />
+                        <div className="flex min-w-0 items-center gap-[0.8rem]">
+                            <input
+                                id={`${formId}-author`}
+                                name="author"
+                                autoComplete="nickname"
+                                value={author}
+                                onChange={(event) => setAuthor(isAuthorComposing.current ? event.target.value : limitCommentAuthor(event.target.value))}
+                                onCompositionStart={() => {
+                                    isAuthorComposing.current = true;
+                                }}
+                                onCompositionEnd={(event) => {
+                                    isAuthorComposing.current = false;
+                                    setAuthor(limitCommentAuthor(event.currentTarget.value));
+                                }}
+                                aria-describedby={`${formId}-author-length`}
+                                maxLength={COMMENT_AUTHOR_MAX_CODE_UNITS}
+                                required
+                                placeholder="최대 10글자로 입력해주세요"
+                                className="min-w-0 w-full flex-1 rounded-[0.8rem] border border-[var(--color-border)] bg-[var(--color-surface)] px-[1.6rem] py-[1.2rem] text-[1.6rem] focus-visible:outline-2 focus-visible:outline-[var(--color-brand-500)] disabled:opacity-50"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setAuthor(getRandomCommentNickname(author));
+                                    setSubmitError("");
+                                }}
+                                className="shrink-0 rounded-[0.8rem] border border-[var(--color-border)] bg-[var(--color-surface-floating)] px-[1.2rem] py-[1.2rem] text-[1.4rem] disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-4"
+                            >
+                                랜덤 변경
+                            </button>
+                        </div>
+                        <p
+                            id={`${formId}-author-length`}
+                            className="text-right text-[1.2rem] text-[var(--color-text-muted)]"
+                        >
+                            {getCommentAuthorLength(author)} / {COMMENT_AUTHOR_MAX_LENGTH}
+                        </p>
                     </div>
                     <div className="flex flex-col gap-[0.8rem]">
                         <label
