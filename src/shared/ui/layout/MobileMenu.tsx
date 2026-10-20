@@ -47,7 +47,7 @@ const MobileMenu = () => {
                 {isMobileMenuOpen ? (
                     <motion.article
                         data-page-transition-fixed="sidebar"
-                        className="mobile flex flex-col justify-center items-center gap-[1.6rem] fixed top-0 right-0 w-[50svw] h-[100svh] bg-[#232323] z-[100000000]"
+                        className="mobile flex flex-col justify-center items-center gap-[1.6rem] fixed top-0 right-0 w-[50svw] h-[100svh] bg-[var(--color-surface-floating)] z-[100000000]"
                         // className="mobile flex flex-col justify-center items-center gap-[1.6rem] fixed top-0 left-0 w-full h-full bg-[#232323] z-10000"
                         initial={{ clipPath: CLIP_MENU.hidden }}
                         animate={{ clipPath: CLIP_MENU.visible }}
@@ -75,7 +75,7 @@ const MobileMenu = () => {
                                 width={32}
                                 height={32}
                             />
-                            <p className="text-white text-[2.4rem]">Close.</p>
+                            <p className="text-[var(--color-text-primary)] text-[2.4rem]">Close.</p>
                         </UI.Button>
                         {/* 목록 */}
                         <section className="mobile-inner px-[2.4rem] py-[2.4rem] w-full h-full flex flex-col items-start justify-between">
@@ -139,7 +139,7 @@ const MobileMenu = () => {
                                         {session ? (
                                             <UI.Button
                                                 onClick={() => logout()}
-                                                className="flex justify-center text-center gap-[0.4rem] w-full items-center text-[2.4rem] font-semibold whitespace-nowrap py-[1.2rem] text-[#ffffff]"
+                                                className="flex justify-center text-center gap-[0.4rem] w-full items-center text-[2.4rem] font-semibold whitespace-nowrap py-[1.2rem] text-[var(--color-text-primary)]"
                                             >
                                                 로그아웃
                                             </UI.Button>
@@ -175,7 +175,7 @@ const MobileMenu = () => {
                                         className="h-[2rem] text-white text-[1.6rem] leading-[1.7]"
                                     >
                                     </TextShimmer> */}
-                                    <p className="text-white">© kimsangjunv1. All rights reserved.</p>
+                                    <p className="text-[var(--color-text-primary)]">© kimsangjunv1. All rights reserved.</p>
                                 </section>
 
                                 <UI.Button
@@ -217,7 +217,7 @@ const Item = ({ title, href }: { title: string; href: string }) => {
     return (
         <UI.Button
             type="button"
-            className="flex justify-center text-center gap-[0.4rem] w-full items-center text-[2.4rem] whitespace-nowrap py-[1.2rem] text-[#ffffff]"
+            className="flex justify-center text-center gap-[0.4rem] w-full items-center text-[2.4rem] whitespace-nowrap py-[1.2rem] text-[var(--color-text-primary)]"
             onClick={() => pushToUrl(href)}
         >
             {title}

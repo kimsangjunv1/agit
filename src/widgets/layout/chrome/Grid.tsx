@@ -32,8 +32,8 @@ const Ruller = ({ direction }: { direction: "top left" | "top right" | "bottom l
             data-page-transition-fixed="grid"
             className={`${getDegree()} w-[1.6rem] h-[1.6rem] bg-red fixed`}
         >
-            <div className="w-full h-[0.1rem] bg-[#00000050]" />
-            <div className="w-[0.1rem] h-full bg-[#00000050]" />
+            <div className="w-full h-[0.1rem] bg-[var(--color-border)]" />
+            <div className="w-[0.1rem] h-full bg-[var(--color-border)]" />
         </div>
     );
 };

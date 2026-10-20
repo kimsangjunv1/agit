@@ -35,7 +35,7 @@ const ResumeRenewalTocNav = () => {
     return (
         <nav
             aria-label="페이지 목차"
-            className={`${R.root} hidden pc:block fixed top-[12rem] right-[0] z-40 bg-black p-[2.4rem]`}
+            className={`${R.root} hidden pc:block fixed top-[12rem] right-[0] z-40 bg-[var(--color-surface-floating)] p-[2.4rem]`}
         >
             <ul className="flex flex-col gap-[0.4rem]">
                 {renewalTocItems.map((item) => {
@@ -46,7 +46,7 @@ const ResumeRenewalTocNav = () => {
                             <button
                                 type="button"
                                 onClick={() => handleClick(item.id)}
-                                className={`w-full font-bold uppercase text-left text-[2rem] py-[0.4rem] transition-colors ${isActive ? "text-[#ffffff] font-medium" : "text-[#ffffff]/40 hover:text-[#000000]/70"}`}
+                                className={`w-full font-bold uppercase text-left text-[2rem] py-[0.4rem] transition-colors ${isActive ? "text-[var(--color-text-primary)] font-medium" : "text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"}`}
                             >
                                 {item.label}
                             </button>

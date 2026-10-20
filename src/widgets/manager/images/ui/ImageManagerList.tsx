@@ -40,7 +40,7 @@ const ImageManagerList = () => {
                         type="button"
                         disabled={!summary || summary.unusedCount === 0 || isPending}
                         onClick={openOptimizeModal}
-                        className="shrink-0 rounded-[0.8rem] bg-[var(--color-brand-500)] px-[1.2rem] py-[0.8rem] text-[1.2rem] font-semibold text-white disabled:opacity-50"
+                        className="shrink-0 rounded-[0.8rem] bg-[var(--color-brand-500)] px-[1.2rem] py-[0.8rem] text-[1.2rem] font-semibold text-[var(--color-text-primary)] disabled:opacity-50"
                     >
                         {isPending ? "정리 중..." : "최적화"}
                     </UI.Button>
@@ -73,7 +73,7 @@ const ImageManagerList = () => {
                                     type="button"
                                     onClick={() => setFilter(option.value)}
                                     className={`rounded-full px-[1.2rem] py-[0.4rem] text-[1.2rem] font-semibold transition-colors ${
-                                        filter === option.value ? "bg-[var(--color-gray-900)] text-white" : "border border-[var(--color-gray-300)] bg-white text-[var(--color-gray-600)]"
+                                        filter === option.value ? "bg-[var(--color-surface-floating)] text-[var(--color-text-primary)]" : "border border-[var(--color-gray-300)] bg-[var(--color-surface)] text-[var(--color-gray-600)]"
                                     }`}
                                 >
                                     {option.label}

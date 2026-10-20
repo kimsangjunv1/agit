@@ -91,12 +91,12 @@ export const iconButtonClass = (active: boolean, disabled = false, compact = fal
 
     if (variant === "glass") {
         return `shrink-0 flex items-center justify-center rounded-[1.2rem] transition-colors ${size} ${
-            disabled ? "cursor-not-allowed text-white/40" : active ? "bg-white/25 text-white" : "text-white hover:bg-white/15"
+            disabled ? "cursor-not-allowed text-[var(--color-text-subtle)]" : active ? "bg-white/25 text-[var(--color-text-primary)]" : "text-[var(--color-text-primary)] hover:bg-white/15"
         }`;
     }
 
     return `shrink-0 flex items-center justify-center rounded-[1.2rem] font-semibold transition-colors ${size} ${
-        disabled ? "opacity-40 cursor-not-allowed text-[var(--color-gray-500)]" : active ? "bg-[var(--color-blue-500)] text-white" : "text-[var(--color-gray-1000)] hover:bg-[var(--color-gray-200)]"
+        disabled ? "opacity-40 cursor-not-allowed text-[var(--color-gray-500)]" : active ? "bg-[var(--color-blue-500)] text-[var(--color-on-accent)]" : "text-[var(--color-gray-1000)] hover:bg-[var(--color-gray-200)]"
     }`;
 };
 
@@ -175,7 +175,7 @@ export const ToolbarSelect = ({
             onChange={(e) => onChange(e.target.value)}
             className={`relative z-20 h-[2.4rem] pl-[1.2rem] pr-[2.4rem] rounded-[1.2rem] text-[1.2rem] font-semibold outline-none cursor-pointer appearance-none ${
                 variant === "glass"
-                    ? "text-white bg-white/10 hover:bg-white/15 border border-white/20"
+                    ? "text-[var(--color-text-primary)] bg-white/10 hover:bg-white/15 border border-white/20"
                     : "text-[var(--color-gray-1000)] bg-[var(--color-gray-100)] hover:bg-[var(--color-gray-200)] border border-[var(--color-gray-200)]"
             }`}
         >
@@ -188,7 +188,7 @@ export const ToolbarSelect = ({
                 </option>
             ))}
         </select>
-        <span className={`pointer-events-none absolute right-[0.8rem] text-[1.2rem] ${variant === "glass" ? "text-white/70" : "text-[var(--color-gray-500)]"}`}>▾</span>
+        <span className={`pointer-events-none absolute right-[0.8rem] text-[1.2rem] ${variant === "glass" ? "text-[var(--color-text-muted)]" : "text-[var(--color-gray-500)]"}`}>▾</span>
     </label>
 );
 

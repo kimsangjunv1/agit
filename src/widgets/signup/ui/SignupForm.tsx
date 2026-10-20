@@ -146,7 +146,7 @@ const SignupCredentialsForm = () => {
             >
                 <motion.form
                     onSubmit={handleSubmit}
-                    className="bg-white p-[2.4rem] rounded-[2.4rem] flex items-center flex-col gap-[2.4rem] max-w-[var(--size-mobile)] w-full shadow-[var(--shadow-normal)]"
+                    className="bg-[var(--color-surface)] p-[2.4rem] rounded-[2.4rem] flex items-center flex-col gap-[2.4rem] max-w-[var(--size-mobile)] w-full shadow-[var(--shadow-normal)]"
                     initial={{ opacity: 0, scale: 0.8, filter: "blur(20px)" }}
                     animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }}
                     exit={{ opacity: 0, scale: 0.8, filter: "blur(20px)" }}
@@ -260,14 +260,14 @@ const SignupCredentialsForm = () => {
                     <section className="flex flex-col gap-[0.8rem] justify-center w-full">
                         <UI.Button
                             type="submit"
-                            className={`bg-[var(--color-gray-1000)] text-white py-[1.6rem] rounded-[1.6rem] shadow-[var(--shadow-normal)] flex-1 ${getInvitationCodeCheckData?.result ? "" : "pointer-events-none opacity-50"}`}
+                            className={`bg-[var(--color-surface-floating)] text-[var(--color-text-primary)] py-[1.6rem] rounded-[1.6rem] shadow-[var(--shadow-normal)] flex-1 ${getInvitationCodeCheckData?.result ? "" : "pointer-events-none opacity-50"}`}
                         >
                             등록하기
                         </UI.Button>
 
                         <UI.Button
                             onClick={() => replaceToUrl("/login")}
-                            className="bg-white text-black py-[1.6rem] rounded-[1.6rem] shadow-[var(--shadow-normal)] flex-1"
+                            className="bg-[var(--color-surface)] text-[var(--color-text-primary)] py-[1.6rem] rounded-[1.6rem] shadow-[var(--shadow-normal)] flex-1"
                         >
                             이전으로
                         </UI.Button>

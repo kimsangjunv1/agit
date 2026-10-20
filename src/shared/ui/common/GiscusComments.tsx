@@ -27,8 +27,7 @@ const GiscusComments = ({ term, className }: GiscusCommentsProps) => {
                 reactionsEnabled="0"
                 emitMetadata="0"
                 inputPosition="bottom"
-                // theme="preferred_color_scheme"
-                theme="light_tritanopia"
+                theme="transparent_dark"
                 lang="ko"
                 loading="lazy"
             />

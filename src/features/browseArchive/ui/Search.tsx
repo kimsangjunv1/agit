@@ -119,7 +119,7 @@ const Search = () => {
                         role="dialog"
                         aria-modal="true"
                         aria-label="통합 검색"
-                        className="flex max-h-[50svh] max-w-[var(--size-tablet)] w-full flex-col overflow-hidden bg-[#232323] text-white"
+                        className="flex max-h-[50svh] max-w-[var(--size-tablet)] w-full flex-col overflow-hidden bg-[var(--color-surface-floating)] text-[var(--color-text-primary)]"
                         initial={{ clipPath: CLIP_SEARCH.hidden }}
                         animate={{ clipPath: CLIP_SEARCH.visible }}
                         exit={{
@@ -143,14 +143,14 @@ const Search = () => {
                                 onChange={(event: ChangeEvent<HTMLInputElement>) => setKeyword(event.target.value)}
                                 placeholder="검색어를 입력해주세요"
                                 aria-label="검색어"
-                                className="h-full min-w-0 flex-1 text-[1.6rem] text-white outline-none placeholder:text-white/50"
+                                className="h-full min-w-0 flex-1 text-[1.6rem] text-[var(--color-text-primary)] outline-none placeholder:text-[var(--color-text-muted)]"
                                 autoComplete="off"
                             />
                             <button
                                 type="button"
                                 onClick={closeSearch}
                                 aria-label="검색 닫기"
-                                className="h-[2.8rem] w-[2.8rem] shrink-0 text-[2.4rem] leading-none text-white/60 hover:text-white"
+                                className="h-[2.8rem] w-[2.8rem] shrink-0 text-[2.4rem] leading-none text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
                             >
                                 ×
                             </button>
@@ -159,7 +159,7 @@ const Search = () => {
                         <section className="min-h-0 overflow-y-auto overscroll-contain">
                             {!shouldSearch ? (
                                 <>
-                                    <p className="p-[2.0rem] text-[1.6rem] text-white/60">Quick Actions</p>
+                                    <p className="p-[2.0rem] text-[1.6rem] text-[var(--color-text-muted)]">Quick Actions</p>
                                     <section className="flex flex-col">
                                         {quickActions.map((action, index) => (
                                             <button
@@ -167,11 +167,11 @@ const Search = () => {
                                                 type="button"
                                                 onClick={() => moveToUrl(action.url)}
                                                 onMouseEnter={() => setSelectedIndex(index)}
-                                                className={`flex justify-between items-center p-[2rem] text-left text-[1.6rem] text-white transition-colors ${selectedIndex === index ? "bg-white/10" : "hover:bg-white/10"}`}
+                                                className={`flex justify-between items-center p-[2rem] text-left text-[1.6rem] text-[var(--color-text-primary)] transition-colors ${selectedIndex === index ? "bg-white/10" : "hover:bg-white/10"}`}
                                             >
                                                 <section>
                                                     <span>{action.title}</span>
-                                                    {action.badge && <span className="ml-[1.2rem] bg-[#000000] px-[0.8rem] py-[0.4rem] text-[1.2rem] font-bold text-[#77ff00]">{action.badge}</span>}
+                                                    {action.badge && <span className="ml-[1.2rem] bg-[var(--color-surface-floating)] px-[0.8rem] py-[0.4rem] text-[1.2rem] font-bold text-[#77ff00]">{action.badge}</span>}
                                                 </section>
 
                                                 <IconComponent
@@ -207,17 +207,17 @@ const Search = () => {
                                 </>
                             ) : (
                                 <>
-                                    <p className="mb-[2rem] text-[1.6rem] text-white/60">Search Results</p>
-                                    {isLoading && <p className="px-[1.2rem] text-[1.6rem] text-white/60">검색 중...</p>}
+                                    <p className="mb-[2rem] text-[1.6rem] text-[var(--color-text-muted)]">Search Results</p>
+                                    {isLoading && <p className="px-[1.2rem] text-[1.6rem] text-[var(--color-text-muted)]">검색 중...</p>}
                                     {errorMessage && <p className="px-[1.2rem] text-[1.6rem] text-[#ff3d00]">{errorMessage}</p>}
-                                    {!isLoading && !errorMessage && results.length === 0 && <p className="px-[1.2rem] text-[1.6rem] text-white/60">검색 결과가 없습니다</p>}
+                                    {!isLoading && !errorMessage && results.length === 0 && <p className="px-[1.2rem] text-[1.6rem] text-[var(--color-text-muted)]">검색 결과가 없습니다</p>}
                                     {!isLoading &&
                                         Object.entries(groupedResults).map(([group, items]) => (
                                             <section
                                                 key={group}
                                                 className="mb-[1.6rem]"
                                             >
-                                                <p className="mb-[0.8rem] text-[1.6rem] text-white/60">{group}</p>
+                                                <p className="mb-[0.8rem] text-[1.6rem] text-[var(--color-text-muted)]">{group}</p>
                                                 {items.map((item) => {
                                                     const resultIndex = results.findIndex((result) => result.id === item.id);
 
@@ -229,8 +229,8 @@ const Search = () => {
                                                             onMouseEnter={() => setSelectedIndex(resultIndex)}
                                                             className={`flex min-h-[5.6rem] w-full flex-col justify-center rounded-[1.2rem] px-[1.2rem] text-left transition-colors ${selectedIndex === resultIndex ? "bg-white/10" : "hover:bg-white/10"}`}
                                                         >
-                                                            <span className="line-clamp-1 text-[1.6rem] text-white">{item.title}</span>
-                                                            {item.description && <span className="mt-[0.4rem] line-clamp-1 text-[1.2rem] text-white/60">{item.description}</span>}
+                                                            <span className="line-clamp-1 text-[1.6rem] text-[var(--color-text-primary)]">{item.title}</span>
+                                                            {item.description && <span className="mt-[0.4rem] line-clamp-1 text-[1.2rem] text-[var(--color-text-muted)]">{item.description}</span>}
                                                         </button>
                                                     );
                                                 })}
@@ -240,14 +240,14 @@ const Search = () => {
                             )}
                         </section>
 
-                        <section className="flex h-[6.4rem] shrink-0 items-center gap-[0.4rem] border-t border-white/10 px-[1.6rem] text-[1.2rem] text-white/60 tablet:gap-[0.8rem] tablet:px-[2.4rem] tablet:text-[1.6rem]">
-                            <kbd className="rounded-[0.8rem] bg-white/10 px-[0.8rem] py-[0.4rem] text-white/80">↑</kbd>
-                            <kbd className="rounded-[0.8rem] bg-white/10 px-[0.8rem] py-[0.4rem] text-white/80">↓</kbd>
+                        <section className="flex h-[6.4rem] shrink-0 items-center gap-[0.4rem] border-t border-white/10 px-[1.6rem] text-[1.2rem] text-[var(--color-text-muted)] tablet:gap-[0.8rem] tablet:px-[2.4rem] tablet:text-[1.6rem]">
+                            <kbd className="rounded-[0.8rem] bg-white/10 px-[0.8rem] py-[0.4rem] text-[var(--color-text-primary)]">↑</kbd>
+                            <kbd className="rounded-[0.8rem] bg-white/10 px-[0.8rem] py-[0.4rem] text-[var(--color-text-primary)]">↓</kbd>
                             <span className="mr-[1.2rem]">이동</span>
-                            <kbd className="rounded-[0.8rem] bg-white/10 px-[0.8rem] py-[0.4rem] text-white/80">↵</kbd>
+                            <kbd className="rounded-[0.8rem] bg-white/10 px-[0.8rem] py-[0.4rem] text-[var(--color-text-primary)]">↵</kbd>
                             <span>선택</span>
                             <span className="ml-auto">닫기</span>
-                            <kbd className="rounded-[0.8rem] bg-white/10 px-[0.8rem] py-[0.4rem] text-white/80 text-[1.2rem]">ESC</kbd>
+                            <kbd className="rounded-[0.8rem] bg-white/10 px-[0.8rem] py-[0.4rem] text-[var(--color-text-primary)] text-[1.2rem]">ESC</kbd>
                         </section>
                     </motion.div>
                 </motion.section>

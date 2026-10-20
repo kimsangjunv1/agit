@@ -41,7 +41,7 @@ const TipTapImageBubbleMenu = ({ editor }: TipTapImageBubbleMenuProps) => {
             shouldShow={({ editor: currentEditor }) => getSelectedImagePosition(currentEditor) !== null}
         >
             <div
-                className="flex items-center gap-[0.4rem] p-[0.4rem] bg-white rounded-full shadow-[var(--shadow-normal)] border border-[var(--color-gray-200)]"
+                className="flex items-center gap-[0.4rem] p-[0.4rem] bg-[var(--color-surface)] rounded-full shadow-[var(--shadow-normal)] border border-[var(--color-gray-200)]"
                 onMouseDown={preventEditorBlur}
             >
                 {ALIGN_OPTIONS.map((option) => (

@@ -37,7 +37,7 @@ const ManagerSidebar = ({ profile }: ManagerSidebarProps) => {
                     href="/manager"
                     className="mb-[3.2rem] flex items-center gap-[1.2rem] text-[1.6rem] font-bold tracking-[0.08em]"
                 >
-                    <span className="flex size-[2.8rem] items-center justify-center rounded-[0.8rem] bg-[var(--color-gray-1000)] text-[1.2rem] text-white">A</span>
+                    <span className="flex size-[2.8rem] items-center justify-center rounded-[0.8rem] bg-[var(--color-surface-floating)] text-[1.2rem] text-[var(--color-text-primary)]">A</span>
                     AGIT ADMIN
                 </TransitionLink>
 
@@ -56,8 +56,8 @@ const ManagerSidebar = ({ profile }: ManagerSidebarProps) => {
                                 aria-current={isActive ? "page" : undefined}
                                 className={`flex items-center gap-[1.2rem] rounded-[0.8rem] px-[1.2rem] py-[1.2rem] text-[1.6rem] font-medium transition-colors ${
                                     isActive
-                                        ? "bg-white text-[var(--color-gray-1000)] shadow-[var(--shadow-normal)]"
-                                        : "text-[var(--color-gray-600)] hover:bg-white/70 hover:text-[var(--color-gray-900)]"
+                                        ? "bg-[var(--color-surface)] text-[var(--color-gray-1000)] shadow-[var(--shadow-normal)]"
+                                        : "text-[var(--color-gray-600)] hover:bg-[var(--color-surface-hover)] hover:text-[var(--color-gray-900)]"
                                 }`}
                             >
                                 <MaterialIcon
@@ -71,7 +71,7 @@ const ManagerSidebar = ({ profile }: ManagerSidebarProps) => {
                 </nav>
 
                 <div className="mt-auto flex items-center gap-[1.2rem] border-t border-[var(--color-gray-300)] pt-[1.6rem]">
-                    <span className="flex size-[3.6rem] shrink-0 items-center justify-center rounded-full bg-[var(--color-gray-800)] text-[1.2rem] font-bold text-white">{profileInitial}</span>
+                    <span className="flex size-[3.6rem] shrink-0 items-center justify-center rounded-full bg-[var(--color-surface-floating)] text-[1.2rem] font-bold text-[var(--color-text-primary)]">{profileInitial}</span>
                     <div className="min-w-0">
                         <p className="truncate text-[1.2rem] font-semibold text-[var(--color-gray-900)]">{profileName}</p>
                         <p className="truncate text-[1.2rem] text-[var(--color-gray-500)]">{profile.email}</p>
@@ -94,7 +94,7 @@ const ManagerSidebar = ({ profile }: ManagerSidebarProps) => {
                         <TransitionLink
                             key={menu.url}
                             href={menu.url}
-                            className={`rounded-[0.8rem] px-[1.2rem] py-[0.8rem] text-[1.2rem] ${pathname === menu.url ? "bg-white font-semibold" : "text-[var(--color-gray-600)]"}`}
+                            className={`rounded-[0.8rem] px-[1.2rem] py-[0.8rem] text-[1.2rem] ${pathname === menu.url ? "bg-[var(--color-surface)] font-semibold" : "text-[var(--color-gray-600)]"}`}
                         >
                             {menu.title}
                         </TransitionLink>

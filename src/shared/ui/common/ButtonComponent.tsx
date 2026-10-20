@@ -127,7 +127,7 @@ const ButtonComponent = ({
                         </motion.div>
                     </Fragment>
                 ) : (
-                    <AnimationDotted className="bg-white" />
+                    <AnimationDotted className="bg-[var(--color-surface)]" />
                 )}
             </motion.button>
         </AnimatePresence>

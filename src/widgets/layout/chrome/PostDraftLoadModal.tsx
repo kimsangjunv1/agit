@@ -57,7 +57,7 @@ const PostDraftLoadModal = ({ onClose, onLoad, onMarkdownClick }: Props) => {
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="post-draft-title"
-                className="w-full max-w-[48rem] max-h-[80vh] overflow-y-auto rounded-[1.6rem] bg-white p-[2.4rem] shadow-xl"
+                className="w-full max-w-[48rem] max-h-[80vh] overflow-y-auto rounded-[1.6rem] bg-[var(--color-surface)] p-[2.4rem] shadow-xl"
                 onClick={(event) => event.stopPropagation()}
                 onKeyDown={(event) => {
                     if (event.key === "Escape") onClose();

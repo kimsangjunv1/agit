@@ -29,7 +29,7 @@ const MenuCard = ({ menu, index }: { menu: ManagerMenuItem; index: number }) => 
         <motion.button
             type="button"
             onClick={() => replaceToUrl(menu.url)}
-            className="relative text-left bg-white p-[2rem] rounded-[1.6rem] flex flex-col gap-[1.2rem] w-full shadow-[var(--shadow-normal)] border border-transparent transition-colors hover:border-[var(--color-brand-200)]"
+            className="relative text-left bg-[var(--color-surface)] p-[2rem] rounded-[1.6rem] flex flex-col gap-[1.2rem] w-full shadow-[var(--shadow-normal)] border border-transparent transition-colors hover:border-[var(--color-brand-200)]"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{

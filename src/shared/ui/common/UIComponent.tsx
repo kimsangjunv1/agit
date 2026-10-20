@@ -55,7 +55,7 @@ const CheckBox = ({ defaultState = false, className, checked, guide, desc_no, pr
                     data-description={desc_no}
                 >
                     <p
-                        className={`absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] font-bold text-[1.6rem] pointer-events-none ${currentState ? "text-white" : "hidden"}`}
+                        className={`absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] font-bold text-[1.6rem] pointer-events-none ${currentState ? "text-[var(--color-text-primary)]" : "hidden"}`}
                     >
                         ✓
                     </p>
@@ -98,7 +98,7 @@ const Radio = ({ list, defaultValue = 0, className, desc_no, onChange }: RadioPr
                 >
                     <div className={`w-[2rem] h-[2rem] relative rounded-full ${currentSelected === e.value ? "bg-[var(--color-blue-1000)]" : "border border-[var(--color-gray-400)]"}`}>
                         <div
-                            className={`absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] rounded-full w-[0.8rem] h-[0.8rem] ${currentSelected === e.value ? "bg-white" : "bg-transparent"}`}
+                            className={`absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] rounded-full w-[0.8rem] h-[0.8rem] ${currentSelected === e.value ? "bg-[var(--color-surface)]" : "bg-transparent"}`}
                         />
                     </div>
                     <p className="font-medium pointer-events-none">{e.title}</p>
@@ -120,7 +120,7 @@ const Switch = ({ states, onChange, desc_no }: SwitchProps) => {
         >
             <motion.div
                 layout
-                className="w-[1.6rem] h-[1.6rem] bg-white rounded-full"
+                className="w-[1.6rem] h-[1.6rem] bg-[var(--color-surface)] rounded-full"
                 transition={{
                     duration: 0.5,
                     ease: [0, 0.9, 0.95, 1],
@@ -195,7 +195,7 @@ const Input = forwardRef<{ reset: () => void }, InputProps & { phoneNumber?: boo
 
         return (
             <section
-                className={`flex items-center gap-[0.8rem] max-h-[var(--input-height)] h-full transition-colors bg-[#ffffff28] border border-[var(--color-gray-200)] hover:border-[var(--color-brand-500)] relative ${className?.container ? className?.container : "px-[1.2rem] border border-[var(--color-gray-200)] hover:border-[var(--color-gray-500)] focus:border-[var(--color-gray-500)]"}`}
+                className={`flex items-center gap-[0.8rem] max-h-[var(--input-height)] h-full transition-colors bg-[var(--color-surface)] border border-[var(--color-gray-200)] hover:border-[var(--color-brand-500)] relative ${className?.container ? className?.container : "px-[1.2rem] border border-[var(--color-gray-200)] hover:border-[var(--color-gray-500)] focus:border-[var(--color-gray-500)]"}`}
                 data-description={desc_no}
             >
                 {guide && <p className="absolute top-[50%] right-[1.6rem] transform -translate-y-1/2">{guide}</p>}
@@ -522,7 +522,7 @@ const Select = ({ list = [], trackingData, defaultValue, className, desc_no, onC
             <AnimatePresence>
                 {showMenu && (
                     <motion.section
-                        className="absolute bg-[#ffffff90] backdrop-blur-sm max-h-[23.2rem] min-w-[calc(1.6rem*5)] overflow-y-auto flex flex-col gap-[0.4rem] shadow-[var(--shadow-normal)] p-[0.4rem] rounded-[1.2rem] z-1 overflow-hidden"
+                        className="absolute bg-[var(--color-surface)] backdrop-blur-sm max-h-[23.2rem] min-w-[calc(1.6rem*5)] overflow-y-auto flex flex-col gap-[0.4rem] shadow-[var(--shadow-normal)] p-[0.4rem] rounded-[1.2rem] z-1 overflow-hidden"
                         style={{
                             width: buttonRef.current?.offsetWidth,
                             ...positionStyle,
@@ -543,9 +543,9 @@ const Select = ({ list = [], trackingData, defaultValue, className, desc_no, onC
                                 <motion.button
                                     key={`${e}-${i}`}
                                     type="button"
-                                    className={`text-left hover:bg-[#ffffff90] text-[var(--color-gray-700)] rounded-[1.2rem] p-[1.2rem] transition-colors ${
+                                    className={`text-left hover:bg-[var(--color-surface)] text-[var(--color-gray-700)] rounded-[1.2rem] p-[1.2rem] transition-colors ${
                                         // e.value === defaultValue
-                                        e.value === currentValue ? "bg-white shadow-[var(--shadow-normal)]" : "bg-transparent"
+                                        e.value === currentValue ? "bg-[var(--color-surface)] shadow-[var(--shadow-normal)]" : "bg-transparent"
                                     }`}
                                     onClick={() => {
                                         console.log("click 발생");
@@ -740,7 +740,7 @@ const Filter = forwardRef<{ reset: () => void }, FilterProps>(({ list = [], defa
                     <motion.section
                         key={"as"}
                         ref={filterContainerRef}
-                        className={`absolute bg-white overflow-y-auto scrollbar-hide top-[calc(4.4rem+0.8rem)] flex flex-col gap-[0.4rem] shadow-[var(--shadow-normal)] p-[0.4rem] rounded-[1.2rem] min-w-[26rem] z-1 ${className?.container ?? ""}`}
+                        className={`absolute bg-[var(--color-surface)] overflow-y-auto scrollbar-hide top-[calc(4.4rem+0.8rem)] flex flex-col gap-[0.4rem] shadow-[var(--shadow-normal)] p-[0.4rem] rounded-[1.2rem] min-w-[26rem] z-1 ${className?.container ?? ""}`}
                         style={{
                             width: buttonRef.current?.offsetWidth,
                             ...style,
@@ -865,7 +865,7 @@ const Filter = forwardRef<{ reset: () => void }, FilterProps>(({ list = [], defa
                             </UI.Button>
 
                             <UI.Button
-                                className={`text-white bg-[var(--color-blue-1000)] font-medium whitespace-nowrap rounded-[0.8rem] w-[12.8rem] h-[4.4rem]`}
+                                className={`text-[var(--color-text-primary)] bg-[var(--color-blue-1000)] font-medium whitespace-nowrap rounded-[0.8rem] w-[12.8rem] h-[4.4rem]`}
                                 onClick={(e) => {
                                     setShowMenu(false);
 
@@ -963,7 +963,7 @@ const MiniModal = ({ element, className, defaultValue, desc_no, onConfirm, onCan
             <AnimatePresence>
                 {showMenu && (
                     <motion.section
-                        className={`absolute bg-white flex flex-col gap-[0.4rem] border border-[var(--color-gray-200)] rounded-[1.2rem] z-1 w-[26rem] ${className?.container ? className.container : ""}`}
+                        className={`absolute bg-[var(--color-surface)] flex flex-col gap-[0.4rem] border border-[var(--color-gray-200)] rounded-[1.2rem] z-1 w-[26rem] ${className?.container ? className.container : ""}`}
                         style={{
                             // width: buttonRef.current?.offsetWidth,
                             ...positionStyle,
@@ -1038,7 +1038,7 @@ const MiniModal = ({ element, className, defaultValue, desc_no, onConfirm, onCan
                                 </UI.Button>
 
                                 <UI.Button
-                                    className={`text-white bg-[var(--color-blue-1000)] font-medium whitespace-nowrap rounded-[0.8rem] w-[12.8rem] h-[4.4rem]`}
+                                    className={`text-[var(--color-text-primary)] bg-[var(--color-blue-1000)] font-medium whitespace-nowrap rounded-[0.8rem] w-[12.8rem] h-[4.4rem]`}
                                     onClick={(e) => {
                                         onConfirm(e);
                                     }}
@@ -1124,7 +1124,7 @@ const DropDown = ({ children, className, list, height = "var(--input-height)", d
                     <motion.section
                         ref={floatingRef}
                         // className={`${className?.inner ?? ""} absolute z-[100] flex flex-col cursor-pointer whitespace-nowrap bg-[#000000]`}
-                        className={`${className?.inner ?? ""} absolute z-[100] grid grid-cols-1 cursor-pointer whitespace-nowrap bg-[#000000]`}
+                        className={`${className?.inner ?? ""} absolute z-[100] grid grid-cols-1 cursor-pointer whitespace-nowrap bg-[var(--color-surface-floating)]`}
                         initial={{ opacity: 0, transform: "scale(0.99)", height: "0px" }}
                         animate={{
                             opacity: 1,
@@ -1346,7 +1346,7 @@ const Calendar = ({
             <AnimatePresence>
                 {modalOpen && (
                     <motion.section
-                        className={`${center ? "fixed top-[50%!important] left-[50%!important] transform translate-x-[-50%!important] translate-y-[-50%!important]" : "absolute"} flex items-center justify-center z-[1000] bg-white rounded-[1.2rem] shadow-[var(--shadow-normal)] overflow-hidden`}
+                        className={`${center ? "fixed top-[50%!important] left-[50%!important] transform translate-x-[-50%!important] translate-y-[-50%!important]" : "absolute"} flex items-center justify-center z-[1000] bg-[var(--color-surface)] rounded-[1.2rem] shadow-[var(--shadow-normal)] overflow-hidden`}
                         style={{
                             top: (calendarRef.current?.offsetHeight ?? 0) + 4,
                             ...positionStyle,
@@ -1430,7 +1430,7 @@ const Calendar = ({
                                                     type="button"
                                                     onClick={() => handleDateClick(day)}
                                                     className={`text-center py-1 hover:bg-[var(--color-gray-200)] transition-colors w-[2.8rem] h-[2.8rem] rounded-full
-                                                    ${isSelected ? "bg-[var(--color-blue-1000)] text-white" : isToday ? "bg-[var(--color-gray-100)] text-[var(--color-gray-700)]" : ""}`}
+                                                    ${isSelected ? "bg-[var(--color-blue-1000)] text-[var(--color-text-primary)]" : isToday ? "bg-[var(--color-gray-100)] text-[var(--color-gray-700)]" : ""}`}
                                                 >
                                                     {day}
                                                 </motion.button>
@@ -1458,7 +1458,7 @@ const MultiSelect = ({ data, onChange }: MultiSelectProps) => {
             {list.map((e: any, i: number) => (
                 <motion.button
                     key={i}
-                    className={`p-[1.6rem] rounded-[0.8rem] ${e.state ? "bg-[var(--color-blue-100)] text-[var(--color-blue-1000)]" : "bg-[var(--color-gray-100)]"}`}
+                    className={`p-[1.6rem] rounded-[0.8rem] ${e.state ? "bg-[var(--color-blue-100)] text-[var(--color-text-primary)]" : "bg-[var(--color-gray-100)]"}`}
                     onClick={() => {
                         setList((prev) => prev.map((item) => (item.id === e.id ? { ...item, state: !item.state } : item)));
                     }}
@@ -1511,7 +1511,7 @@ const FileUpload = ({ placeholder = "파일을 여기에 드래그하거나", bu
 
     return (
         <section
-            className={`relative w-full h-64 border rounded-lg flex items-center justify-center ${isDragging ? "border-blue-400 bg-blue-50" : "border-[var(--color-gray-200)] bg-white"}`}
+            className={`relative w-full h-64 border rounded-lg flex items-center justify-center ${isDragging ? "border-blue-400 bg-blue-50" : "border-[var(--color-gray-200)] bg-[var(--color-surface)]"}`}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
@@ -1527,7 +1527,7 @@ const FileUpload = ({ placeholder = "파일을 여기에 드래그하거나", bu
                     <p className="text-gray-500">{placeholder}</p>
                     <button
                         type="button"
-                        className="h-[4.4rem] px-[1.2rem] text-black bg-[var(--color-gray-200)] rounded-[0.8rem]"
+                        className="h-[4.4rem] px-[1.2rem] text-[var(--color-text-primary)] bg-[var(--color-gray-200)] rounded-[0.8rem]"
                         onClick={() => inputRef.current?.click()}
                     >
                         {buttonText}
@@ -1621,7 +1621,7 @@ const Tab = ({ list, type = "button", className, preventTargetIdx = 999, prevent
                                 key={"tab"}
                                 id="underline"
                                 layoutId="underline"
-                                className="h-[0.4rem] w-full bg-black"
+                                className="h-[0.4rem] w-full bg-[var(--color-surface-floating)]"
                             />
                         ) : (
                             ""
@@ -1732,7 +1732,7 @@ const Pagination = ({ totalCount, pageSize, currentPage, desc_no, onPageChange }
                     key={page}
                     onClick={() => onPageChange(page)}
                     className={`rounded-full w-[3.2rem] h-[3.2rem] text-[var(--color-gray-1000)] transition-colors ${
-                        page === currentPage ? "bg-[var(--color-gray-100)] hover:bg-[var(--color-gray-700)] hover:text-white" : "hover:bg-[var(--color-gray-200)]"
+                        page === currentPage ? "bg-[var(--color-gray-100)] hover:bg-[var(--color-surface-floating)] hover:text-[var(--color-text-primary)]" : "hover:bg-[var(--color-gray-200)]"
                     }`}
                 >
                     {page}
@@ -2041,7 +2041,7 @@ const ColorPicker = ({ defaultValue, onChange }: { defaultValue?: string; onChan
             {/* 세부 색상 선택 */}
             {isColorPickerOpen && (
                 <section
-                    className={`absolute z-[100] flex flex-col cursor-pointer whitespace-nowrap rounded-2xl p-[0.4rem] bg-white shadow-[var(--shadow-normal)]`}
+                    className={`absolute z-[100] flex flex-col cursor-pointer whitespace-nowrap rounded-2xl p-[0.4rem] bg-[var(--color-surface)] shadow-[var(--shadow-normal)]`}
                     // className={`absolute left-0 z-[100] top-[calc(3.8rem+0.8rem)] backdrop-blur-[20px] bg-white shadow-[var(--shadow-popup)] rounded-[1.6rem] flex flex-col overflow-hidden detect`}
                     style={{
                         ...positionStyle,
@@ -2055,13 +2055,13 @@ const ColorPicker = ({ defaultValue, onChange }: { defaultValue?: string; onChan
                         <section className="function">
                             <section className="backdrop-blur-[20px] bg-gray-100 rounded-[0.8rem] gap-[0.4rem] p-[0.4rem] flex">
                                 <button
-                                    className={`text-[#9198a0] rounded-[0.4rem] p-[0.4rem] text-[1.2rem] font-semibold transition-colors duration-250 ease-[cubic-bezier(.075,.82,.165,1)] ${colorMode === 0 ? "text-gray-700 bg-white shadow-[var(--shadow-normal)]" : ""} detect`}
+                                    className={`text-[#9198a0] rounded-[0.4rem] p-[0.4rem] text-[1.2rem] font-semibold transition-colors duration-250 ease-[cubic-bezier(.075,.82,.165,1)] ${colorMode === 0 ? "text-gray-700 bg-[var(--color-surface)] shadow-[var(--shadow-normal)]" : ""} detect`}
                                     onClick={() => setColorMode(0)}
                                 >
                                     일반
                                 </button>
                                 <button
-                                    className={`text-[#9198a0] rounded-[0.4rem] p-[0.4rem] text-[1.2rem] font-semibold transition-colors duration-250 ease-[cubic-bezier(.075,.82,.165,1)] ${colorMode === 1 ? "text-gray-700 bg-white shadow-[var(--shadow-normal)]" : ""} detect`}
+                                    className={`text-[#9198a0] rounded-[0.4rem] p-[0.4rem] text-[1.2rem] font-semibold transition-colors duration-250 ease-[cubic-bezier(.075,.82,.165,1)] ${colorMode === 1 ? "text-gray-700 bg-[var(--color-surface)] shadow-[var(--shadow-normal)]" : ""} detect`}
                                     onClick={() => setColorMode(1)}
                                 >
                                     특별
@@ -2153,7 +2153,7 @@ const Empty = ({ title = "결과가 없습니다", desc_no, className }: { title
                 width={52}
                 height={52}
             />
-            <p className="text-center text-black pointer-events-none">{title}</p>
+            <p className="text-center text-[var(--color-text-primary)] pointer-events-none">{title}</p>
         </div>
     );
 };
@@ -2171,7 +2171,7 @@ const ErrorRetry = ({ onRetry }: { onRetry?: () => void }) => (
         role="alert"
         className="h-[100svh!important] w-[100dvw!important] flex flex-col items-center justify-center gap-[1.6rem]"
     >
-        <div className="alert-inner flex flex-col gap-[1.6rem] shadow-[var(--shadow-normal)] rounded-[1.6rem] bg-white p-[0.4rem]">
+        <div className="alert-inner flex flex-col gap-[1.6rem] shadow-[var(--shadow-normal)] rounded-[1.6rem] bg-[var(--color-surface)] p-[0.4rem]">
             <section className="flex flex-col gap-[1.6rem] px-[1.6rem] py-[0.8rem]">
                 <p>에러 발생!</p>
             </section>
@@ -2194,7 +2194,7 @@ const Error = ({ error, resetErrorBoundary }: FallbackProps) => {
             role="alert"
             className="h-[100svh!important] w-[100dvw!important] flex flex-col items-center justify-center gap-[1.6rem]"
         >
-            <div className="alert-inner flex flex-col gap-[1.6rem] shadow-[var(--shadow-normal)] rounded-[1.6rem] bg-white p-[0.4rem]">
+            <div className="alert-inner flex flex-col gap-[1.6rem] shadow-[var(--shadow-normal)] rounded-[1.6rem] bg-[var(--color-surface)] p-[0.4rem]">
                 <section className="flex flex-col gap-[1.6rem] px-[1.6rem] py-[0.8rem]">
                     <p>에러 발생!</p>
                     <pre>{message}</pre>

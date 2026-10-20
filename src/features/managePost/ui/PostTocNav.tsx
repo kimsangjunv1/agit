@@ -69,7 +69,7 @@ const PostTocNav = ({ items }: PostTocNavProps) => {
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             className={`fixed top-[50%] right-[2.0rem] transform translate-y-[-50%] z-40 ${
-                isHovered ? "w-[28rem] rounded-[1.2rem] border border-[var(--color-gray-200)] bg-white p-[2.4rem] shadow-[var(--shadow-normal)]" : "w-[3.2rem] bg-transparent p-0"
+                isHovered ? "w-[28rem] rounded-[1.2rem] border border-[var(--color-gray-200)] bg-[var(--color-surface)] p-[2.4rem] shadow-[var(--shadow-normal)]" : "w-[3.2rem] bg-transparent p-0"
             }`}
         >
             <ul className={`flex flex-col ${isHovered ? "gap-[0.4rem]" : "items-end gap-[0.8rem]"}`}>
@@ -87,7 +87,7 @@ const PostTocNav = ({ items }: PostTocNavProps) => {
                                     type="button"
                                     aria-label={item.label}
                                     onClick={() => handleClick(item.id)}
-                                    className={`block h-[0.2rem] shrink-0 transition-opacity ${isMain ? "w-[2.4rem]" : "w-[1.2rem]"} ${isActive ? "bg-[#ff4321]" : "bg-[var(--color-gray-1000)]"}`}
+                                    className={`block h-[0.2rem] shrink-0 transition-opacity ${isMain ? "w-[2.4rem]" : "w-[1.2rem]"} ${isActive ? "bg-[#ff4321]" : "bg-[var(--color-border)]"}`}
                                 />
                             </li>
                         );

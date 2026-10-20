@@ -72,14 +72,14 @@ const ReadingSettingControl = ({
     increaseDisabled: boolean;
 }) => (
     <div className="flex min-w-0 flex-1 items-center justify-center px-[0.4rem]">
-        <p className="sr-only pc:not-sr-only whitespace-nowrap text-[1.2rem] text-white/60">{label}</p>
+        <p className="sr-only pc:not-sr-only whitespace-nowrap text-[1.2rem] text-[var(--color-text-muted)]">{label}</p>
 
         <section className="flex items-center">
             <button
                 type="button"
                 aria-label={`${label} 줄이기`}
                 disabled={decreaseDisabled}
-                className="flex h-[3.2rem] w-[3.2rem] shrink-0 items-center justify-center rounded-full text-[2rem] text-white transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-current disabled:opacity-30"
+                className="flex h-[3.2rem] w-[3.2rem] shrink-0 items-center justify-center rounded-full text-[2rem] text-[var(--color-text-primary)] transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-current disabled:opacity-30"
                 onClick={onDecrease}
             >
                 <span className="sr-only">{label} 줄이기</span>
@@ -88,12 +88,12 @@ const ReadingSettingControl = ({
                     size={20}
                 />
             </button>
-            <strong className="min-w-[3.6rem] text-center text-[1.6rem] text-white">{value}</strong>
+            <strong className="min-w-[3.6rem] text-center text-[1.6rem] text-[var(--color-text-primary)]">{value}</strong>
             <button
                 type="button"
                 aria-label={`${label} 늘리기`}
                 disabled={increaseDisabled}
-                className="flex h-[3.2rem] w-[3.2rem] shrink-0 items-center justify-center rounded-full text-[2rem] text-white transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-current disabled:opacity-30"
+                className="flex h-[3.2rem] w-[3.2rem] shrink-0 items-center justify-center rounded-full text-[2rem] text-[var(--color-text-primary)] transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-current disabled:opacity-30"
                 onClick={onIncrease}
             >
                 <span className="sr-only">{label} 늘리기</span>
@@ -207,7 +207,7 @@ const PostNavigationActions = ({ showShare, showLike, showComments, showToc, sho
                             <UI.DropDown
                                 className={{
                                     container: "shrink-0",
-                                    inner: "max-h-[50svh] w-[min(28rem,calc(100vw-2.4rem))] overflow-y-auto text-white",
+                                    inner: "max-h-[50svh] w-[min(28rem,calc(100vw-2.4rem))] overflow-y-auto text-[var(--color-text-primary)]",
                                 }}
                                 list={tocItems.map((item) => ({
                                     title: item.label,
@@ -231,7 +231,7 @@ const PostNavigationActions = ({ showShare, showLike, showComments, showToc, sho
                         ) : null}
                     </div>
 
-                    <div className="pointer-events-none w-[12.8rem] bg-[#00000090] h-[0.2rem]">
+                    <div className="pointer-events-none w-[12.8rem] bg-[var(--color-border-strong)] h-[0.2rem]">
                         <div
                             ref={progressBarRef}
                             className="h-full w-0 will-change-[width]"
@@ -240,7 +240,7 @@ const PostNavigationActions = ({ showShare, showLike, showComments, showToc, sho
                 </Fragment>
             )}
 
-            <section className="flex items-center gap-[0.4rem] text-black">
+            <section className="flex items-center gap-[0.4rem] text-[var(--color-text-primary)]">
                 {showEdit ? (
                     <NavButton
                         title="수정하기"
@@ -260,7 +260,7 @@ const PostNavigationActions = ({ showShare, showLike, showComments, showToc, sho
                     <NavButton
                         title="게시물 삭제하기"
                         disabled={isDeletePending}
-                        className="bg-[var(--color-pink-500)] hover:bg-[var(--color-pink-500)]"
+                        className="bg-[var(--color-danger-surface)] hover:bg-[var(--color-danger-surface)]"
                         icon={
                             <MaterialIcon
                                 name="delete"
@@ -351,7 +351,7 @@ const PostNavigationActions = ({ showShare, showLike, showComments, showToc, sho
                                         <NavButton
                                             title={likeLabel}
                                             pressed={isLiked}
-                                            className={isLiked ? "bg-[#00ff61] text-black" : ""}
+                                            className={isLiked ? "bg-[#00ff61] text-[var(--color-on-accent)]" : ""}
                                             icon={
                                                 <MaterialIcon
                                                     name="thumb_up"

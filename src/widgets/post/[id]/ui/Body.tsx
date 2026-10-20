@@ -22,7 +22,7 @@ const ContentColumn = memo(({ col, rowLength, onCopySentence }: { col: SectionCo
     return (
         <section
             id={col.type === 0 ? getPostTocAnchorId(col.id) : undefined}
-            className={`${columnClassName} ${col.type === 0 ? "scroll-mt-[18rem] tablet:scroll-mt-[12rem]" : ""}`}
+            className={`${columnClassName} !border-transparent ${col.type === 0 ? "scroll-mt-[18rem] tablet:scroll-mt-[12rem]" : ""}`}
         >
             {col.type === 0 ? (
                 <Fragment>
@@ -59,7 +59,7 @@ const ContentColumn = memo(({ col, rowLength, onCopySentence }: { col: SectionCo
                                             textAlign: itemInfo.style?.textAlign as React.CSSProperties["textAlign"],
                                             background: `${itemInfo.style?.backgroundColor}`,
                                         }}
-                                        className="whitespace-break-spaces transition-colors border border-transparent cursor-pointer hover:bg-black hover:text-white rounded-[0.8rem]"
+                                        className="whitespace-break-spaces transition-colors border border-transparent cursor-pointer hover:bg-[var(--color-surface-floating)] hover:text-[var(--color-text-primary)] rounded-[0.8rem]"
                                         onClick={() => onCopySentence(itemInfo.value)}
                                     >
                                         {itemInfo.value}

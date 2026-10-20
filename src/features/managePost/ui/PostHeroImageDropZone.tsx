@@ -48,7 +48,7 @@ const PostHeroImageDropZone = ({ onImageSelected, isDragging = false }: PostHero
 
             <label
                 htmlFor={inputId}
-                className="absolute top-[2.4rem] right-[2.4rem] z-[6] cursor-pointer px-[1.2rem] py-[0.8rem] bg-[#00000060] hover:bg-[var(--color-brand-500)] backdrop-blur-sm rounded-[1.6rem] text-white text-[1.2rem] font-semibold transition-colors"
+                className="absolute top-[2.4rem] right-[2.4rem] z-[6] cursor-pointer px-[1.2rem] py-[0.8rem] bg-[#00000060] hover:bg-[var(--color-brand-500)] backdrop-blur-sm rounded-[1.6rem] text-[var(--color-text-primary)] text-[1.2rem] font-semibold transition-colors"
             >
                 클릭 또는 드래그로 썸네일 추가
             </label>

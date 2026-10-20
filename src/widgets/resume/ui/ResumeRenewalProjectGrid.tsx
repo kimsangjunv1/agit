@@ -24,7 +24,7 @@ const ProjectTile = ({ project, index, onSelect }: { project: ResumeProjectDetai
         <motion.button
             type="button"
             // className="group aspect-square overflow-hidden bg-white p-0 text-left transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-black"
-            className="group h-[28.125vw] max-h-[54rem] overflow-hidden bg-white p-0 text-left transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-black"
+            className="group h-[28.125vw] max-h-[54rem] overflow-hidden bg-[var(--color-surface)] p-0 text-left transition-colors hover:text-[var(--color-text-primary)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-black"
             // className="h-full w-full overflow-hidden bg-white p-0 text-left transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-black"
             aria-label={`${project.title} 상세 보기`}
             initial={reducedMotion ? false : "hidden"}
@@ -43,17 +43,17 @@ const ProjectTile = ({ project, index, onSelect }: { project: ResumeProjectDetai
             >
                 <div
                     aria-hidden="true"
-                    className="absolute inset-0 bg-[#ededed] transition-colors duration-300 group-hover:bg-black"
+                    className="absolute inset-0 bg-[var(--color-background-light)] transition-colors duration-300 group-hover:bg-[var(--color-surface-floating)]"
                 />
 
                 <div className="relative z-10 flex w-full items-start justify-between gap-[1.6rem]">
-                    <span className="text-[1.6rem] font-semibold text-black group-hover:text-white/55">{String(index + 1).padStart(2, "0")}</span>
+                    <span className="text-[1.6rem] font-semibold text-[var(--color-text-primary)] group-hover:text-[var(--color-text-muted)]">{String(index + 1).padStart(2, "0")}</span>
                     <ArrowUpRight size={20} />
                 </div>
 
                 <div className="relative z-10">
                     <section>
-                        <p className="text-[2rem] leading-[1.5] text-black group-hover:text-white/55">{project.category}</p>
+                        <p className="text-[2rem] leading-[1.5] text-[var(--color-text-primary)] group-hover:text-[var(--color-text-muted)]">{project.category}</p>
                         <h3 className="text-[2rem] font-bold leading-[1.5]">{project.title}</h3>
                     </section>
 
@@ -132,11 +132,11 @@ const ProjectDetailModal = ({ project, onClose }: { project: ResumeProjectDetail
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby={titleId}
-                className="relative flex max-h-[100svh] h-full w-full max-w-[var(--size-tablet)] shadow-[0_0_120px_220px_#00000020] flex-col overflow-hidden bg-white shadow-2xl"
+                className="relative flex max-h-[100svh] h-full w-full max-w-[var(--size-tablet)] shadow-[0_0_120px_220px_#00000020] flex-col overflow-hidden bg-[var(--color-surface)] shadow-2xl"
             >
-                <header className="sticky top-0 z-10 flex items-start justify-between border-b border-black/15 bg-white/95 p-[2.4rem]">
+                <header className="sticky top-0 z-10 flex items-start justify-between border-b border-[var(--color-border)] bg-[var(--color-surface)]/95 p-[2.4rem]">
                     <section className="flex min-w-0 flex-col gap-[0.8rem]">
-                        <p className="text-[1.6rem] font-semibold uppercase text-black">{project.category}</p>
+                        <p className="text-[1.6rem] font-semibold uppercase text-[var(--color-text-primary)]">{project.category}</p>
                         <h2
                             id={titleId}
                             className="text-[2.4rem] font-bold"
@@ -148,7 +148,7 @@ const ProjectDetailModal = ({ project, onClose }: { project: ResumeProjectDetail
                     <section className="flex shrink-0 items-center gap-[0.8rem]">
                         <button
                             type="button"
-                            className="flex h-[4rem] w-[4rem] items-center justify-center border border-black/20 transition-colors hover:bg-black hover:text-white"
+                            className="flex h-[4rem] w-[4rem] items-center justify-center border border-[var(--color-border)] transition-colors hover:bg-[var(--color-surface-floating)] hover:text-[var(--color-text-primary)]"
                             aria-label="닫기"
                             autoFocus
                             onClick={onClose}
@@ -162,23 +162,23 @@ const ProjectDetailModal = ({ project, onClose }: { project: ResumeProjectDetail
                     className="flex-1 overflow-y-auto"
                     data-lenis-prevent="true"
                 >
-                    <section className="p-[2.4rem] flex flex-col gap-[1.6rem] border-b border-black/15">
+                    <section className="p-[2.4rem] flex flex-col gap-[1.6rem] border-b border-[var(--color-border)]">
                         <p className={PROJECT_DETAIL_TITLE_CLASS_NAME}>한줄 요약</p>
                         <p className={PROJECT_DETAIL_CONTENT_CLASS_NAME}>{project.summary}</p>
                     </section>
 
-                    <section className="p-[2.4rem] flex flex-col gap-[1.6rem] border-b border-black/15">
+                    <section className="p-[2.4rem] flex flex-col gap-[1.6rem] border-b border-[var(--color-border)]">
                         <p className={PROJECT_DETAIL_TITLE_CLASS_NAME}>설명</p>
                         <p className={PROJECT_DETAIL_CONTENT_CLASS_NAME}>{project.overview}</p>
                     </section>
 
-                    <section className="grid grid-cols-[1fr_auto_1fr] border-b border-black/15">
+                    <section className="grid grid-cols-[1fr_auto_1fr] border-b border-[var(--color-border)]">
                         <div className="p-[2.4rem] flex flex-col gap-[1.6rem]">
                             <p className={PROJECT_DETAIL_TITLE_CLASS_NAME}>담당</p>
                             <p className={PROJECT_DETAIL_CONTENT_CLASS_NAME}>{project.role}</p>
                         </div>
 
-                        <div className="h-full w-[0.4rem] bg-black/15" />
+                        <div className="h-full w-[0.4rem] bg-[var(--color-border)]" />
 
                         <div className="p-[2.4rem] flex flex-col gap-[1.6rem]">
                             <p className={PROJECT_DETAIL_TITLE_CLASS_NAME}>구성 인원</p>
@@ -186,7 +186,7 @@ const ProjectDetailModal = ({ project, onClose }: { project: ResumeProjectDetail
                         </div>
                     </section>
 
-                    <section className="flex flex-col gap-[1.6rem] border-b border-black/15 p-[2.4rem]">
+                    <section className="flex flex-col gap-[1.6rem] border-b border-[var(--color-border)] p-[2.4rem]">
                         <h3 className={PROJECT_DETAIL_TITLE_CLASS_NAME}>기술 스택과 활용</h3>
                         <div className="flex flex-col gap-[1.2rem]">
                             {project.technologies.map((technology) => (

@@ -20,6 +20,7 @@ interface IconComponentProps {
 }
 
 const IconComponent = ({ isLottie = false, type, alt, className, width = 24, height = 24, isLottieLoop = true }: IconComponentProps) => {
+    const isMonochrome = type.startsWith("outlined-") || ["graphic-logo-horizontal", "graphic-logo-vertical", "graphic-logo-github", "graphic-arrow-up"].includes(type);
     const setTypeOfIcon = () => {
         const PATH_DEFAULT = "/images/icon";
         const PATH_GRAPHIC = "/graphic/ico-graphic-";
@@ -116,6 +117,7 @@ const IconComponent = ({ isLottie = false, type, alt, className, width = 24, hei
                 <Image
                     src={setTypeOfIcon()}
                     className={className}
+                    style={isMonochrome ? { filter: "var(--filter-icon)" } : undefined}
                     width={width}
                     height={height}
                     alt={alt}

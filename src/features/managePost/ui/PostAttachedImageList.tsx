@@ -51,7 +51,7 @@ const PostAttachedImageList = () => {
                                     className="object-cover w-full h-full pointer-events-none"
                                 />
                                 {isThumbnail ? (
-                                    <span className="absolute bottom-[0.8rem] left-[0.8rem] px-[0.8rem] py-[0.4rem] rounded-full bg-[var(--color-blue-500)] text-white text-[1.2rem] font-semibold">
+                                    <span className="absolute bottom-[0.8rem] left-[0.8rem] px-[0.8rem] py-[0.4rem] rounded-full bg-[var(--color-blue-500)] text-[var(--color-text-primary)] text-[1.2rem] font-semibold">
                                         썸네일
                                     </span>
                                 ) : null}

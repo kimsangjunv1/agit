@@ -40,8 +40,8 @@ const SettingOptionGroup = ({
                         type="button"
                         className={`rounded-[0.8rem] border px-[1.2rem] py-[0.8rem] text-[1.6rem] transition-colors ${
                             isActive
-                                ? "border-[var(--color-blue-500)] bg-[var(--color-blue-500)] text-white"
-                                : "border-[var(--color-gray-300)] bg-white text-[var(--color-gray-700)] hover:border-[var(--color-gray-500)]"
+                                ? "border-[var(--color-blue-500)] bg-[var(--color-blue-500)] text-[var(--color-on-accent)]"
+                                : "border-[var(--color-gray-300)] bg-[var(--color-surface)] text-[var(--color-gray-700)] hover:border-[var(--color-gray-500)]"
                         }`}
                         onClick={() => onSelect(option.value)}
                     >

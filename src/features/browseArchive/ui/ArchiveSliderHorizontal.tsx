@@ -81,7 +81,7 @@ const ArchiveSliderHorizontalCard = ({ post, index, containerRef, shouldBlockCli
             />
 
             <div className="absolute top-0 left-0 w-full flex flex-col justify-start items-start">
-                <p className="bg-[var(--color-background-light)] p-[0.4rem] text-black font-mono">{util.string.getCurrentFullTime(post.created_at)}</p>
+                <p className="bg-[var(--color-background-light)] p-[0.4rem] text-[var(--color-text-primary)] font-mono">{util.string.getCurrentFullTime(post.created_at)}</p>
 
                 <Marquee
                     content="NEW"

@@ -27,7 +27,7 @@ const CategoryManagerList = () => {
                 description="게시판에 노출되는 카테고리를 관리합니다."
                 action={
                     <UI.Button
-                        className="rounded-[0.8rem] bg-[var(--color-brand-500)] px-[1.2rem] py-[0.8rem] text-[1.2rem] font-semibold text-white"
+                        className="rounded-[0.8rem] bg-[var(--color-brand-500)] px-[1.2rem] py-[0.8rem] text-[1.2rem] font-semibold text-[var(--color-text-primary)]"
                         onClick={createCategoryModal}
                     >
                         + 생성

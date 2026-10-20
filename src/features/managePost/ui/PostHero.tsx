@@ -205,7 +205,7 @@ const PostHeroEditableField = ({
             role="textbox"
             aria-label={placeholder}
             data-placeholder={placeholder}
-            className={`${className} outline-none focus:ring-2 focus:ring-black/10 rounded-[0.8rem] empty:before:content-[attr(data-placeholder)] empty:before:text-[var(--color-gray-400)] empty:before:pointer-events-none`}
+            className={`${className} outline-none focus:ring-2 focus:ring-[var(--color-border-strong)] rounded-[0.8rem] empty:before:content-[attr(data-placeholder)] empty:before:text-[var(--color-text-muted)] empty:before:pointer-events-none`}
             onInput={(e) => {
                 const text = e.currentTarget.textContent ?? "";
                 onChange(text);

@@ -31,7 +31,7 @@ const TipTapBubbleMenu = ({ editor }: TipTapBubbleMenuProps) => {
             }}
         >
             <div
-                className="flex items-center gap-[0.4rem] p-[0.4rem] bg-white rounded-full shadow-[var(--shadow-normal)] border border-[var(--color-gray-200)]"
+                className="flex items-center gap-[0.4rem] p-[0.4rem] bg-[var(--color-surface)] rounded-full shadow-[var(--shadow-normal)] border border-[var(--color-gray-200)]"
                 onMouseDown={preventEditorBlur}
             >
                 <ToolbarIconButton
@@ -94,7 +94,7 @@ const TipTapBubbleMenu = ({ editor }: TipTapBubbleMenuProps) => {
                     active={state.isHighlight}
                     onClick={() => editor.chain().focus().toggleHighlight().run()}
                 >
-                    <span className="bg-[#fff59d] text-[var(--color-gray-1000)] px-[0.4rem] rounded-[0.4rem]">H</span>
+                    <span className="bg-[#fff59d] text-[var(--color-on-accent)] px-[0.4rem] rounded-[0.4rem]">H</span>
                 </ToolbarIconButton>
             </div>
         </BubbleMenu>

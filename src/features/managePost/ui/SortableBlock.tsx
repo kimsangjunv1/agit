@@ -143,7 +143,7 @@ const Item = ({ row, rowIndex }: { row: Row; rowIndex: number }) => {
                 layout="position"
                 className="absolute top-0 right-0 tablet:right-[max(-4.8rem,calc((var(--size-tablet)-100svw)/2))] flex flex-col items-center gap-[1.2rem]"
             >
-                <section className="shadow-[var(--shadow-normal)] bg-white rounded-full py-[0.8rem]">
+                <section className="shadow-[var(--shadow-normal)] bg-[var(--color-surface)] rounded-full py-[0.8rem]">
                     <UI.Button
                         onClick={() => addBlock(rowIndex, "down")}
                         className={GROUP_ACTION_BUTTON_CLASS}
@@ -177,7 +177,7 @@ const Item = ({ row, rowIndex }: { row: Row; rowIndex: number }) => {
                         />
                     </UI.Button>
 
-                    <section className="flex max-w-full flex-wrap items-center justify-center bg-[#ededed] rounded-full">
+                    <section className="flex max-w-full flex-wrap items-center justify-center bg-[var(--color-background-light)] rounded-full">
                         {!isSingleGroup ? (
                             <UI.Button
                                 onClick={() => {
@@ -196,7 +196,7 @@ const Item = ({ row, rowIndex }: { row: Row; rowIndex: number }) => {
                 </section>
 
                 <section
-                    className={`flex justify-center items-center gap-[0.8rem] w-full shadow-[var(--shadow-normal)] h-[3.6rem] bg-white rounded-full ${isGrabbing ? "cursor-grabbing" : "cursor-grab"}`}
+                    className={`flex justify-center items-center gap-[0.8rem] w-full shadow-[var(--shadow-normal)] h-[3.6rem] bg-[var(--color-surface)] rounded-full ${isGrabbing ? "cursor-grabbing" : "cursor-grab"}`}
                     onPointerDown={(e) => {
                         e.preventDefault();
                         setIsGrabbing(true);
@@ -355,7 +355,7 @@ const Block = ({ block, rowIndex, blockIndex, last, blockCount }: { block: Secti
         >
             {block.type === 0 || last ? (
                 <section
-                    className={`${test === getPostTocAnchorId(block.id) ? "" : "opacity-30 pointer-events-none"} absolute bottom-[4.8rem] right-[1.2rem] z-10 flex items-center rounded-full overflow-hidden p-[0.4rem] ${block.blockMode === "code" ? "bg-[#2d2d2d]" : "bg-white"}`}
+                    className={`${test === getPostTocAnchorId(block.id) ? "" : "opacity-30 pointer-events-none"} absolute bottom-[4.8rem] right-[1.2rem] z-10 flex items-center rounded-full overflow-hidden p-[0.4rem] ${block.blockMode === "code" ? "bg-[var(--color-surface)]" : "bg-[var(--color-surface)]"}`}
                     // className={`absolute top-[calc((2.8rem/1)*-1)] left-[50%] transform translate-x-[-50%] z-10 flex items-center rounded-full overflow-hidden p-[0.4rem] ${block.blockMode === "code" ? "bg-[#2d2d2d]" : "bg-white"}`}
                     onClick={(event) => event.stopPropagation()}
                 >
@@ -387,7 +387,7 @@ const Block = ({ block, rowIndex, blockIndex, last, blockCount }: { block: Secti
                                 blockMode === "main"
                                     ? "bg-[var(--color-blue-100)] text-[var(--color-blue-600)]"
                                     : blockMode === "code"
-                                      ? "bg-[#131313] text-[#ffffff]"
+                                      ? "bg-[var(--color-surface-floating)] text-[var(--color-text-primary)]"
                                       : "bg-[var(--color-gray-200)] text-[var(--color-gray-900)]"
                             }`}
                         >

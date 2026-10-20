@@ -24,8 +24,8 @@ const HomeViewModeNav = ({ variant }: HomeViewModeNavProps) => {
     const { data: getCategoryListData } = useGetCategoryListQuery();
 
     const isFloating = variant === "floating";
-    const activeTextClass = isFloating ? "text-white" : "text-black";
-    const inactiveTextClass = isFloating ? "text-white/50" : "text-[#00000050]";
+    const activeTextClass = isFloating ? "text-[var(--color-text-primary)]" : "text-[var(--color-text-primary)]";
+    const inactiveTextClass = isFloating ? "text-[var(--color-text-muted)]" : "text-[var(--color-text-muted)]";
     const dividerClass = isFloating ? "h-[1.6rem] w-[0.4rem] bg-white/30 shrink-0" : "h-[1.6rem] w-[0.1rem] bg-[var(--color-gray-400)] shrink-0";
     const buttonTextClass = isFloating ? "text-[2rem]" : "text-[2.0rem] whitespace-nowrap";
 
@@ -36,7 +36,7 @@ const HomeViewModeNav = ({ variant }: HomeViewModeNavProps) => {
                     <UI.Button
                         key="search"
                         onClick={() => setIsSearchOpen(true)}
-                        className={isFloating ? "bg-black w-[6.4rem] h-[5.2rem] text-white rounded-full" : `${activeTextClass} ${buttonTextClass}`}
+                        className={isFloating ? "bg-[var(--color-surface-floating)] w-[6.4rem] h-[5.2rem] text-[var(--color-text-primary)] rounded-full" : `${activeTextClass} ${buttonTextClass}`}
                     >
                         search
                         {/* <span className="sr-only">검색</span>
@@ -46,7 +46,7 @@ const HomeViewModeNav = ({ variant }: HomeViewModeNavProps) => {
                         /> */}
                     </UI.Button>
 
-                    <section className={`${isFloating ? "bg-black rounded-full h-[5.2rem] px-[2rem]" : ""} flex items-center gap-[1.6rem]`}>
+                    <section className={`${isFloating ? "bg-[var(--color-surface-floating)] rounded-full h-[5.2rem] px-[2rem]" : ""} flex items-center gap-[1.6rem]`}>
                         <UI.Button
                             key="latest"
                             onClick={() => {

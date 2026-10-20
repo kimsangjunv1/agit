@@ -24,7 +24,7 @@ export function Toast() {
                 {toastList.map((toast) => (
                     <motion.div
                         // className={`flex items-start gap-3 rounded-lg border bg-slate-950/95 px-4 py-3 text-sm font-bold text-white shadow-xl backdrop-blur`}
-                        className={`flex items-center gap-[1.2rem] bg-black px-[2.4rem_1.2rem] py-[1.2rem] shadow-[0_0_200px_0_#000000]`}
+                        className={`flex items-center gap-[1.2rem] bg-[var(--color-surface-floating)] px-[2.4rem_1.2rem] py-[1.2rem] shadow-[0_0_200px_0_#000000]`}
                         key={toast.id}
                         role="status"
                         initial={{ opacity: 0, scale: 0.5, translateY: -100 }}
@@ -42,7 +42,7 @@ export function Toast() {
                             className={`${toast.type === "success" ? "bg-emerald-500" : toast.type === "fail" ? "bg-rose-500" : toast.type === "warning" ? "bg-amber-500" : "bg-slate-700"} w-[0.8rem] h-[0.8rem]`}
                         /> */}
                         <div className="min-w-0 flex-1">
-                            <p className="text-[2rem] text-white break-words font-semibold">{toast.msg}</p>
+                            <p className="text-[2rem] text-[var(--color-text-primary)] break-words font-semibold">{toast.msg}</p>
                         </div>
 
                         <button
@@ -54,7 +54,7 @@ export function Toast() {
                             <MaterialIcon
                                 name="close"
                                 size={24}
-                                className="text-white"
+                                className="text-[var(--color-text-primary)]"
                             />
                         </button>
                     </motion.div>

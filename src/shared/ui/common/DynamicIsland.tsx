@@ -40,7 +40,7 @@ const DynamicIsland = ({ children, ariaLabel, className = "" }: DynamicIslandPro
         <motion.div
             role="group"
             aria-label={ariaLabel}
-            className={`overflow-hidden rounded-full bg-[#232323] text-white shadow-[0_0.8rem_3.2rem_#00000026] ${className}`}
+            className={`overflow-hidden rounded-full bg-[var(--color-surface-floating)] text-[var(--color-text-primary)] shadow-[0_0.8rem_3.2rem_#00000026] ${className}`}
             initial={{ y: -80, opacity: 0, width: CIRCLE_SIZE, height: CIRCLE_SIZE }}
             animate={{ y: 0, opacity: 1, width: isExpanded ? size.width : CIRCLE_SIZE, height: isExpanded ? size.height : CIRCLE_SIZE }}
             transition={reducedMotion ? { duration: 0 } : springTransition}
