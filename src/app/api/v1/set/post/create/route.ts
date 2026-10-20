@@ -3,6 +3,8 @@ import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
 import { apiError, apiSuccess } from "@/shared/lib/apiResponse";
 import { revalidatePostPages } from "@/shared/lib/revalidatePost";
 import { sanitizePostContents } from "@/entities/post/lib/sanitizePostContents";
+import { parsePostPayload } from "@/entities/post/lib/parsePostPayload";
+import { assertPostImagesReadable } from "@/entities/post/api/postAccess.server";
 
 const TABLE_NAME = "posts";
 
@@ -10,16 +12,18 @@ export async function POST(req: Request) {
     const auth = await requireSession();
     if (!auth.authorized) return auth.response;
 
-    const payload = await req.json();
-
     try {
+        const body = await req.json();
+        const postPayload = parsePostPayload(body);
+        if (!postPayload) return apiError("게시글 정보를 확인해주세요.", { status: 400 });
         const supabase = supabaseAdmin();
-        const { draftId, ...postPayload } = payload;
+        const { draftId } = body;
         const sanitizedPayload = {
             ...postPayload,
             user_id: auth.session.user.id,
-            contents: sanitizePostContents(payload.contents),
+            contents: sanitizePostContents(postPayload.contents),
         };
+        await assertPostImagesReadable(sanitizedPayload, auth.session.user.id);
 
         const query = supabase.from(TABLE_NAME).insert(sanitizedPayload).select("idx").single();
 

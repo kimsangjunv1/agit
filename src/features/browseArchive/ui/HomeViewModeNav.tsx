@@ -7,6 +7,8 @@ import TextShimmer from "@/shared/ui/common/TextShimmerComponent";
 import { useGetCategoryListQuery } from "@/entities/category/api/category.query";
 import { useLayoutStore } from "@/shared/stores/useLayoutStore";
 import { MaterialIcon } from "@/shared/ui/common/MaterialIcon";
+import { POST_TYPE_OPTIONS } from "@/entities/post/model/postSettings";
+import { usePostTypeFilter } from "@/entities/post/model/usePostTypeFilter";
 
 const springTransition = {
     type: "spring" as const,
@@ -22,6 +24,7 @@ type HomeViewModeNavProps = {
 const HomeViewModeNav = ({ variant }: HomeViewModeNavProps) => {
     const { mainViewMode, setMainViewMode, categoryFilter, setCategoryFilter, setIsSearchOpen } = useLayoutStore();
     const { data: getCategoryListData } = useGetCategoryListQuery();
+    const { postType, setPostType } = usePostTypeFilter();
 
     const isFloating = variant === "floating";
     const activeTextClass = isFloating ? "text-[var(--color-text-primary)]" : "text-[var(--color-text-primary)]";
@@ -31,7 +34,7 @@ const HomeViewModeNav = ({ variant }: HomeViewModeNavProps) => {
 
     return (
         <section className={isFloating ? "fixed z-100 left-1/2 -translate-x-1/2 bottom-[calc(1.6rem+env(safe-area-inset-bottom))] w-full" : "flex items-center"}>
-            <section className={`${isFloating ? "gap-[0.4rem] max-w-[var(--size-pc)] px-[2rem] mx-auto pt-[var(--header-height)]" : "gap-[2.4rem]"} flex items-center justify-center`}>
+            <section className={`${isFloating ? "gap-[0.8rem] max-w-[var(--size-pc)] px-[2rem] mx-auto pt-[var(--header-height)]" : "gap-[2.4rem]"} flex flex-wrap items-center justify-center`}>
                 <AnimatePresence mode="popLayout">
                     <UI.Button
                         key="search"
@@ -46,7 +49,7 @@ const HomeViewModeNav = ({ variant }: HomeViewModeNavProps) => {
                         /> */}
                     </UI.Button>
 
-                    <section className={`${isFloating ? "bg-[var(--color-surface-floating)] rounded-full h-[5.2rem] px-[2rem]" : ""} flex items-center gap-[1.6rem]`}>
+                    <section className={`${isFloating ? "bg-[var(--color-surface-floating)] rounded-full h-[5.2rem] px-[2rem] max-w-[calc(100%-7.2rem)]" : ""} min-w-0 flex items-center gap-[1.6rem]`}>
                         <UI.Button
                             key="latest"
                             onClick={() => {
@@ -54,7 +57,8 @@ const HomeViewModeNav = ({ variant }: HomeViewModeNavProps) => {
                                 document.querySelector<HTMLDivElement>("main [data-scrollbar-viewport]")?.scrollTo({ top: 0, left: 0 });
                                 setMainViewMode(1);
                             }}
-                            className={`${activeTextClass} text-[2rem] shrink-0`}
+                            aria-pressed={mainViewMode === 1}
+                            className={`${mainViewMode === 1 ? activeTextClass : inactiveTextClass} text-[2rem] shrink-0`}
                         >
                             <span className={buttonTextClass}>New</span>
                             {/* {isFloating ? (
@@ -108,7 +112,7 @@ const HomeViewModeNav = ({ variant }: HomeViewModeNavProps) => {
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
                                 transition={springTransition}
-                                className={`${isFloating ? "overflow-x-auto max-w-full scrollbar-hide flex gap-[0.8rem]" : "flex gap-[1.6rem] justify-center"}`}
+                                className={`${isFloating ? "overflow-x-auto min-w-0 max-w-full scrollbar-hide flex gap-[0.8rem]" : "flex gap-[1.6rem] justify-center"}`}
                             >
                                 <motion.section
                                     key="category-all"
@@ -141,6 +145,26 @@ const HomeViewModeNav = ({ variant }: HomeViewModeNavProps) => {
                                     ))}
                             </motion.section>
                         )}
+                    </section>
+
+                    <section
+                        key="post-types"
+                        aria-label="글 종류"
+                        className={`${isFloating ? "w-full rounded-full bg-[var(--color-surface-floating)] px-[1.6rem] py-[0.8rem]" : "border-l border-[var(--color-border)] pl-[2.4rem]"} flex items-center justify-center gap-[1.6rem]`}
+                    >
+                        {[{ value: "all" as const, title: "전체" }, ...POST_TYPE_OPTIONS].map((option) => (
+                            <UI.Button
+                                key={option.value}
+                                aria-pressed={postType === option.value}
+                                className={`${postType === option.value ? activeTextClass : inactiveTextClass} ${isFloating ? "text-[1.6rem]" : buttonTextClass} whitespace-nowrap`}
+                                onClick={() => {
+                                    setCategoryFilter(999);
+                                    setPostType(option.value);
+                                }}
+                            >
+                                {option.title}
+                            </UI.Button>
+                        ))}
                     </section>
                 </AnimatePresence>
             </section>

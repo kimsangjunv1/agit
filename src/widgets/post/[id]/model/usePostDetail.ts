@@ -1,9 +1,7 @@
 "use client";
 import { useEffect, useCallback, useRef } from "react";
-import { useQueryClient } from "@tanstack/react-query";
 import type { GetPostDetailResponse } from "@/entities/post/model/post.type";
 import { useGetPostDetailQuery, useIncrementPostViewOnVisit } from "@/entities/post/api/post.query";
-import { AgitRoutes } from "@/shared/constants/entityKeys";
 import useNavigate from "@/shared/hooks/useNavigate";
 import usePageTransitionReady from "@/shared/hooks/usePageTransitionReady";
 import { useCreatePostStore } from "@/shared/stores/useCreatePostStore";
@@ -11,8 +9,7 @@ import { useToastStore } from "@/shared/stores/useToastStore";
 import { util } from "@/shared/lib/util";
 export default function usePostDetail(id: string, initialData: GetPostDetailResponse) {
     const scrollViewportRef = useRef<HTMLDivElement | null>(null);
-    const postIdx = Number(id),
-        queryClient = useQueryClient();
+    const postIdx = Number(id);
     const { setPostIdx } = useCreatePostStore();
     const { setToast } = useToastStore();
     const { pushToUrl } = useNavigate();
@@ -20,9 +17,6 @@ export default function usePostDetail(id: string, initialData: GetPostDetailResp
     useEffect(() => {
         setPostIdx(postIdx);
     }, [postIdx, setPostIdx]);
-    useEffect(() => {
-        if (initialData.resultCode === "SUCCESS" && Number.isFinite(postIdx)) queryClient.setQueryData([AgitRoutes.KEY_POST, "detail", postIdx], initialData);
-    }, [queryClient, initialData, postIdx]);
     const query = useGetPostDetailQuery(postIdx, initialData);
     const post = query.data?.result;
     const hasContent = Boolean(post?.title);

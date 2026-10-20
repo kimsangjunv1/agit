@@ -1,6 +1,8 @@
 import { requireSession } from "@/shared/lib/auth/requireSession";
 import { apiError, apiSuccess, resolveRouteError } from "@/shared/lib/apiResponse";
 import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
+import { resolvePostImages } from "@/entities/post/lib/collectPostImageUrls";
+import { privatePostResponse } from "@/entities/post/api/postAccess.server";
 
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
     const auth = await requireSession();
@@ -13,7 +15,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
         if (error) throw error;
         if (!data) return apiError("임시저장 글을 찾을 수 없습니다.", { status: 404 });
 
-        return apiSuccess(data);
+        return privatePostResponse(apiSuccess(resolvePostImages({ ...data, payload: { post_type: "article", visibility: "public", ...data.payload } })));
     } catch (error) {
         const { message, status } = resolveRouteError(error);
         return apiError(message, { status });

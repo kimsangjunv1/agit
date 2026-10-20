@@ -8,7 +8,7 @@ export type PostSitemapEntry = {
 export async function getPostSitemapEntries(): Promise<PostSitemapEntry[]> {
     const supabase = await supabaseServer();
 
-    const { data, error } = await supabase.from("posts").select("idx, created_at").order("idx", { ascending: true });
+    const { data, error } = await supabase.from("posts").select("idx, created_at").eq("visibility", "public").order("idx", { ascending: true });
 
     if (error) {
         console.error("sitemap post fetch error:", error);

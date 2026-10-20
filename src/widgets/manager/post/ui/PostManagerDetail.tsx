@@ -7,6 +7,7 @@ import ManagerDetailMetaGrid from "@/widgets/manager/shared/ui/ManagerDetailMeta
 import ManagerDetailPane from "@/widgets/manager/shared/ui/ManagerDetailPane";
 import ManagerDetailPaneHeader from "@/widgets/manager/shared/ui/ManagerDetailPaneHeader";
 import ManagerEmptyState from "@/widgets/manager/shared/ui/ManagerEmptyState";
+import { POST_TYPE_OPTIONS, POST_VISIBILITY_OPTIONS } from "@/entities/post/model/postSettings";
 
 const PostManagerDetail = () => {
     const { pushToUrl, selectedPost, deletePostModal } = usePostManagerProvider();
@@ -32,6 +33,8 @@ const PostManagerDetail = () => {
                         </div>
                         <ManagerDetailMetaGrid
                             items={[
+                                { label: "글 종류", value: POST_TYPE_OPTIONS.find((option) => option.value === selectedPost.post_type)?.title ?? "일반 글" },
+                                { label: "공개 설정", value: POST_VISIBILITY_OPTIONS.find((option) => option.value === selectedPost.visibility)?.title ?? "전체공개" },
                                 {
                                     label: "Category",
                                     value: selectedPost.category?.title ?? "미분류",

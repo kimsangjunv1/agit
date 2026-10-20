@@ -21,6 +21,7 @@ const ImageListItem = ({ item, isSelected, onClick }: ImageListItemProps) => {
             <div className="flex items-center gap-[1.2rem]">
                 <div className="relative size-[4.8rem] shrink-0 overflow-hidden rounded-[0.8rem] bg-[var(--color-gray-100)]">
                     <Image
+                        unoptimized
                         src={item.url}
                         alt=""
                         fill

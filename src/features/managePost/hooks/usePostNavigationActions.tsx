@@ -31,7 +31,7 @@ export const usePostNavigationActions = ({ postIdx, isView, isCreate, isEdit, pu
     const { data: session } = useSession();
     const { setToast } = useToastStore();
     const { setModal } = useModalStore();
-    const { title, summary, thumbnail, category_idx, post_idx, draft_id, setDraftId } = useCreatePostStore();
+    const { title, summary, thumbnail, category_idx, post_type, visibility, post_idx, draft_id, setDraftId } = useCreatePostStore();
     const [isDraftPending, setIsDraftPending] = useState(false);
 
     const { data: postDetailData } = useGetPostDetailQuery(postIdx, undefined, {
@@ -87,6 +87,8 @@ export const usePostNavigationActions = ({ postIdx, isView, isCreate, isEdit, pu
                 summary,
                 thumbnail,
                 category_idx,
+                post_type,
+                visibility,
                 contents,
             });
 
@@ -111,6 +113,8 @@ export const usePostNavigationActions = ({ postIdx, isView, isCreate, isEdit, pu
                 summary,
                 thumbnail,
                 category_idx,
+                post_type,
+                visibility,
                 contents,
             });
             const response = await setPostDraftFetch({

@@ -42,6 +42,7 @@ const ImageDetail = ({ item }: ImageDetailProps) => {
             <div className="flex flex-col gap-[3.2rem] p-[2.4rem]">
                 <div className="relative min-h-[28rem] w-full overflow-hidden rounded-[0.8rem] border border-[var(--color-gray-300)] bg-[var(--color-gray-100)]">
                     <Image
+                        unoptimized
                         src={item.url}
                         alt={fileName}
                         fill

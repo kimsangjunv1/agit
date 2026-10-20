@@ -12,6 +12,7 @@ import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
 import { util } from "@/shared/lib/util";
 import { useGetCategoryListQuery } from "@/entities/category/api/category.query";
 import PostThumbnailPlaceholder from "@/shared/ui/common/PostThumbnailPlaceholder";
+import PostPublicationSettings from "./PostPublicationSettings";
 import { POST_CONTENT_WIDTH_CLASS, POST_HERO_META_CLASS, POST_HERO_SUMMARY_CLASS, POST_HERO_TITLE_CLASS } from "@/shared/lib/richText/styles";
 
 type PostHeroSharedProps = {
@@ -222,6 +223,7 @@ const PostHeroEditContent = ({ title, summary, categoryIdx, onTitleChange, onSum
     return (
         <>
             <section className="flex flex-col items-start w-full pointer-events-auto">
+                <PostPublicationSettings />
                 <UI.Select
                     trackingData={selectedCategory?.title ?? ""}
                     defaultValue={selectedCategory?.idx}

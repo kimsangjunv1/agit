@@ -1,19 +1,26 @@
-import { supabaseAdmin, supabaseServer } from "@/shared/lib/supabase/supabaseServer";
+import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
 import { apiError, apiSuccess, resolveRouteError, singleItemPagination } from "@/shared/lib/apiResponse";
+import { getPostReader, postNotFound, privatePostResponse } from "@/entities/post/api/postAccess.server";
+import { resolvePostImages } from "@/entities/post/lib/collectPostImageUrls";
+
+export const dynamic = "force-dynamic";
 
 export async function GET(req: Request) {
     try {
-        const supabase = await supabaseServer();
+        const { supabase, userId, visibilityFilter } = await getPostReader();
         const url = new URL(req.url);
         const segments = url.pathname.split("/");
         const idx = segments[segments.length - 1];
+        if (!Number.isSafeInteger(Number(idx)) || Number(idx) <= 0) return postNotFound();
+        const { data: currentData, error: currentError } = await supabase.from("posts").select("*").eq("idx", idx).or(visibilityFilter).maybeSingle();
+        if (currentError) throw currentError;
+        if (!currentData) return postNotFound();
 
         const skipTracking = req.headers.get("x-internal-fetch") === "isr" || req.headers.get("x-skip-tracking") === "true";
         const ip = req.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
 
         let alreadyViewed = false;
         let alreadyLiked = false;
-        const userId = req.headers.get("x-user-id") || undefined;
 
         if (!skipTracking) {
             const filters: string[] = [];
@@ -34,24 +41,12 @@ export async function GET(req: Request) {
             }
         }
 
-        const [currentResult, postsResult] = await Promise.all([
-            supabase.from("posts").select("*").eq("idx", idx).single(),
-            supabase.from("posts").select("idx, title, summary, thumbnail").or(`idx.lt.${idx},idx.gt.${idx}`),
+        const [prevResult, nextResult] = await Promise.all([
+            supabase.from("posts").select("idx, title, summary, thumbnail").or(visibilityFilter).eq("post_type", currentData.post_type).lt("idx", idx).order("idx", { ascending: false }).limit(1).maybeSingle(),
+            supabase.from("posts").select("idx, title, summary, thumbnail").or(visibilityFilter).eq("post_type", currentData.post_type).gt("idx", idx).order("idx", { ascending: true }).limit(1).maybeSingle(),
         ]);
-
-        const currentData = currentResult.data;
-        const postsData = postsResult.data;
-
-        if (!currentData) {
-            return apiError("글을 찾을 수 없습니다.", {
-                resultCode: "NOT_FOUND",
-                status: 404,
-                result: null,
-            });
-        }
-
-        const prevData = postsData?.filter((p) => p.idx < Number(idx)).sort((a, b) => b.idx - a.idx)[0] ?? null;
-        const nextData = postsData?.filter((p) => p.idx > Number(idx)).sort((a, b) => a.idx - b.idx)[0] ?? null;
+        if (prevResult.error) throw prevResult.error;
+        if (nextResult.error) throw nextResult.error;
 
         if (!skipTracking && !alreadyViewed && currentData) {
             const admin = supabaseAdmin();
@@ -66,20 +61,20 @@ export async function GET(req: Request) {
             currentData.views = newViews;
         }
 
-        return apiSuccess(
-            {
+        return privatePostResponse(apiSuccess(
+            resolvePostImages({
                 ...currentData,
-                prev: prevData,
-                next: nextData,
+                prev: prevResult.data,
+                next: nextResult.data,
                 viewsIncremented: !alreadyViewed,
                 alreadyViewed,
                 alreadyLiked,
-            },
+            }),
             {
                 resultMessage: "조회수 처리 및 포스트 정보 조회 완료",
                 pagination: singleItemPagination(),
             },
-        );
+        ));
     } catch (err: unknown) {
         const { message, status } = resolveRouteError(err, "조회수 처리 중 문제가 발생했습니다.");
         return apiError(message, {

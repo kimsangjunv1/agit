@@ -3,6 +3,7 @@ import type { SectionContent } from "@/entities/post/model/post.type";
 import { normalizeBlocksForSave } from "@/features/managePost/lib/normalizePostBlocks";
 import { collectPostImageUrls } from "@/entities/post/lib/collectPostImageUrls";
 import { usePostDraftImageStore } from "@/shared/stores/usePostDraftImageStore";
+import type { PostType, PostVisibility } from "@/entities/post/model/postSettings";
 
 type PostContentRow = SectionContent[];
 
@@ -38,12 +39,16 @@ export const preparePostPayloadForSave = async ({
     summary,
     thumbnail,
     category_idx,
+    post_type,
+    visibility,
     contents,
 }: {
     title: string;
     summary: string;
     thumbnail: string;
     category_idx: number;
+    post_type: PostType;
+    visibility: PostVisibility;
     contents: PostContentRow[];
 }) => {
     const { images } = usePostDraftImageStore.getState();
@@ -61,6 +66,8 @@ export const preparePostPayloadForSave = async ({
         summary,
         thumbnail: replaceMap.get(thumbnail) ?? thumbnail,
         category_idx,
+        post_type,
+        visibility,
         contents: normalizeBlocksForSave(replaceRowUrls(contents, replaceMap)),
     };
 };

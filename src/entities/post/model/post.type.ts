@@ -1,4 +1,5 @@
 import { ApiResponse } from "@/shared/model/common.type";
+import type { PostType, PostTypeFilter, PostVisibility } from "./postSettings";
 
 export interface TextStyle {
     lineHeight: number;
@@ -63,6 +64,8 @@ export interface PostPrevNextInfo {
 }
 
 export interface PostItem {
+    post_type: PostType;
+    visibility: PostVisibility;
     id: string;
     idx: number;
     user_id: string | null;
@@ -85,6 +88,8 @@ export interface PostItem {
 }
 
 export interface PostLatestItem {
+    post_type: PostType;
+    visibility: PostVisibility;
     idx: number;
     title: string;
     thumbnail: string;
@@ -111,9 +116,9 @@ export interface PostLikeItem {
 
 export type SetIncrementPostLikeResponse = ApiResponse<PostLikeItem>;
 export type SetIncrementPostViewResponse = ApiResponse<PostViewItem>;
-export type GetPostLatestListResponse = ApiResponse<PostLatestItem[]>;
+export type GetPostLatestListResponse = ApiResponse<PostLatestItem[]> & { postTypeFilter?: PostTypeFilter; viewerId?: string | null };
 export type GetPostListResponse = ApiResponse<PostItem[]>;
-export type GetPostDetailResponse = ApiResponse<PostItem>;
+export type GetPostDetailResponse = ApiResponse<PostItem> & { viewerId?: string | null };
 
 export type PatchPostResponse = ApiResponse<{
     statusCode: number;
@@ -126,6 +131,8 @@ export type SetPostResponse = ApiResponse<{
 }>;
 
 export interface PostDraftPayload {
+    post_type: PostType;
+    visibility: PostVisibility;
     title: string;
     summary: string;
     thumbnail: string;
@@ -144,6 +151,8 @@ export interface PostDraftDetail extends PostDraftListItem {
 }
 
 export interface PostManagerItem {
+    post_type: PostType;
+    visibility: PostVisibility;
     idx: number;
     title: string;
     thumbnail: string;

@@ -2,6 +2,8 @@ import { requireSession } from "@/shared/lib/auth/requireSession";
 import { apiError, apiSuccess, resolveRouteError } from "@/shared/lib/apiResponse";
 import { sanitizePostContents } from "@/entities/post/lib/sanitizePostContents";
 import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
+import { parsePostPayload } from "@/entities/post/lib/parsePostPayload";
+import { assertPostImagesReadable, privatePostResponse } from "@/entities/post/api/postAccess.server";
 
 const TABLE_NAME = "post_drafts";
 
@@ -13,7 +15,7 @@ export async function GET() {
         const { data, error } = await supabaseAdmin().from(TABLE_NAME).select("id, title, updated_at").eq("user_id", auth.session.user.id).order("updated_at", { ascending: false });
 
         if (error) throw error;
-        return apiSuccess(data ?? []);
+        return privatePostResponse(apiSuccess(data ?? []));
     } catch (error) {
         const { message, status } = resolveRouteError(error);
         return apiError(message, { status });
@@ -26,27 +28,24 @@ export async function POST(req: Request) {
 
     try {
         const body = await req.json();
-        const { id, title, summary, thumbnail, category_idx, contents } = body;
+        const { id } = body;
+        const parsed = parsePostPayload(body, true);
 
         if (
             (id !== undefined && (typeof id !== "string" || !/^[0-9a-f-]{36}$/i.test(id))) ||
-            typeof title !== "string" ||
-            typeof summary !== "string" ||
-            typeof thumbnail !== "string" ||
-            !Number.isInteger(category_idx) ||
-            !Array.isArray(contents) ||
-            !contents.every((row: unknown) => Array.isArray(row) && row.every((block) => block && typeof block === "object"))
+            !parsed
         ) {
             return apiError("임시저장 데이터가 올바르지 않습니다.", { status: 400 });
         }
 
         const payload = {
-            title,
-            summary,
-            thumbnail,
-            category_idx,
-            contents: sanitizePostContents(contents),
+            ...parsed,
+            post_type: parsed.post_type ?? "article",
+            visibility: parsed.visibility ?? "public",
+            contents: sanitizePostContents(parsed.contents),
         };
+        const { title } = payload;
+        await assertPostImagesReadable(payload, auth.session.user.id);
         const supabase = supabaseAdmin();
         const query = id
             ? supabase.from(TABLE_NAME).update({ title, payload, updated_at: new Date().toISOString() }).eq("id", id).eq("user_id", auth.session.user.id).select("id").maybeSingle()

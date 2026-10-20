@@ -46,9 +46,9 @@ type PostAccessResult =
     | {
           authorized: true;
           session: Session;
-          post: { idx: number; user_id: string | null };
+          post: { idx: number; user_id: string | null; visibility: string };
       }
-    | AuthGuardResult;
+    | Extract<AuthGuardResult, { authorized: false }>;
 
 export async function requirePostOwnerOrAdmin(postIdx: number | string): Promise<PostAccessResult> {
     const auth = await requireSession();
@@ -58,7 +58,7 @@ export async function requirePostOwnerOrAdmin(postIdx: number | string): Promise
     }
 
     const supabase = supabaseAdmin();
-    const { data: post, error } = await supabase.from("posts").select("idx, user_id").eq("idx", postIdx).single();
+    const { data: post, error } = await supabase.from("posts").select("idx, user_id, visibility").eq("idx", postIdx).single();
 
     if (error || !post) {
         return {
@@ -73,7 +73,7 @@ export async function requirePostOwnerOrAdmin(postIdx: number | string): Promise
     const isAdmin = auth.session.user.role === "admin";
     const isOwner = !!post.user_id && post.user_id === auth.session.user.id;
 
-    if (!isAdmin && !isOwner) {
+    if ((!isAdmin && !isOwner) || (post.visibility !== "public" && !isOwner)) {
         return {
             authorized: false,
             response: apiError("권한이 없습니다.", {

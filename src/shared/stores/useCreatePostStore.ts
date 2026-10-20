@@ -1,7 +1,10 @@
 import { create } from "zustand";
+import type { PostType, PostVisibility } from "@/shared/model/post.type";
 
 // ✅ 1️⃣ 타입 정의
 interface CreatePostState {
+    post_type: PostType;
+    visibility: PostVisibility;
     title: string;
     thumbnail: string;
     summary: string;
@@ -12,6 +15,8 @@ interface CreatePostState {
 }
 
 interface CreatePostActions {
+    setPostType: (post_type: PostType) => void;
+    setVisibility: (visibility: PostVisibility) => void;
     setTitle: (title: string) => void;
     setThumbnail: (thumbnail: string) => void;
     setSummary: (summary: string) => void;
@@ -25,6 +30,8 @@ interface CreatePostActions {
 
 // ✅ 2️⃣ Zustand store 생성
 export const useCreatePostStore = create<CreatePostState & CreatePostActions>((set) => ({
+    post_type: "article",
+    visibility: "public",
     title: "",
     thumbnail: "",
     summary: "",
@@ -33,6 +40,8 @@ export const useCreatePostStore = create<CreatePostState & CreatePostActions>((s
     draft_id: null,
     contents: [],
 
+    setPostType: (post_type) => set({ post_type }),
+    setVisibility: (visibility) => set({ visibility }),
     setTitle: (title) => set({ title }),
     setThumbnail: (thumbnail) => set({ thumbnail }),
     setSummary: (summary) => set({ summary }),
@@ -46,6 +55,8 @@ export const useCreatePostStore = create<CreatePostState & CreatePostActions>((s
 
     reset: () =>
         set({
+            post_type: "article",
+            visibility: "public",
             title: "",
             thumbnail: "",
             summary: "",

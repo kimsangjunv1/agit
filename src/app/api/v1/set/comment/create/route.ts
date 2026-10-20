@@ -6,6 +6,7 @@ import { validateCommentContent } from "@/entities/comment/lib/validateCommentCo
 import { authOptions } from "@/shared/lib/authOptions";
 import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
 import { apiError, apiSuccess, resolveRouteError, singleItemPagination } from "@/shared/lib/apiResponse";
+import { findReadablePost, postNotFound } from "@/entities/post/api/postAccess.server";
 
 const TABLE_NAME = "comments";
 
@@ -39,6 +40,7 @@ export async function POST(req: Request) {
         if (contentError) {
             return apiError(contentError, { status: 400, resultCode: "BAD_REQUEST" });
         }
+        if (!(await findReadablePost(post_id, session?.user?.id ?? null))) return postNotFound();
 
         const supabase = supabaseAdmin();
 

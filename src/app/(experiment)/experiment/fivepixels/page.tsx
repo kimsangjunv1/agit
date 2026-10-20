@@ -13,7 +13,7 @@ export const metadata: Metadata = buildPageMetadata({
     path: "/",
 });
 
-export const revalidate = 300;
+export const dynamic = "force-dynamic";
 
 const createFallbackData = (): GetPostLatestListResponse => ({
     result: [],

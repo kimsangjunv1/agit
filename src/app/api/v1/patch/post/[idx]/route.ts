@@ -1,8 +1,10 @@
-import { requirePostOwnerOrAdmin, requireSession } from "@/shared/lib/auth/requireSession";
+import { requirePostOwnerOrAdmin } from "@/shared/lib/auth/requireSession";
 import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
 import { apiError, apiSuccess } from "@/shared/lib/apiResponse";
 import { revalidatePostPages } from "@/shared/lib/revalidatePost";
 import { sanitizePostContents } from "@/entities/post/lib/sanitizePostContents";
+import { parsePostPayload } from "@/entities/post/lib/parsePostPayload";
+import { assertPostImagesReadable } from "@/entities/post/api/postAccess.server";
 
 const TABLE_NAME = "posts";
 
@@ -14,15 +16,16 @@ export async function PATCH(req: Request) {
     const auth = await requirePostOwnerOrAdmin(idx);
     if (!auth.authorized) return auth.response;
 
-    const payload = await req.json();
-
     try {
+        const payload = parsePostPayload(await req.json());
+        if (!payload) return apiError("게시글 정보를 확인해주세요.", { status: 400 });
         const supabase = supabaseAdmin();
-        const { user_id: _userId, idx: _idx, ...rest } = payload;
         const sanitizedPayload = {
-            ...rest,
+            ...payload,
+            user_id: auth.post.user_id ?? auth.session.user.id,
             contents: sanitizePostContents(payload.contents),
         };
+        await assertPostImagesReadable(sanitizedPayload, auth.session.user.id);
 
         const query = supabase.from(TABLE_NAME).update(sanitizedPayload).eq("idx", idx).select().single();
 

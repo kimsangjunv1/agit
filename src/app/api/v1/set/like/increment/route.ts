@@ -1,6 +1,7 @@
 import { requireSession } from "@/shared/lib/auth/requireSession";
-import { supabaseAdmin, supabaseServer } from "@/shared/lib/supabase/supabaseServer";
+import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
 import { apiError, apiSuccess } from "@/shared/lib/apiResponse";
+import { findReadablePost, postNotFound } from "@/entities/post/api/postAccess.server";
 
 export async function POST(req: Request) {
     const auth = await requireSession();
@@ -9,6 +10,7 @@ export async function POST(req: Request) {
     try {
         const { postId } = await req.json();
         const userId = auth.session.user.id;
+        if (!Number.isSafeInteger(postId) || postId <= 0) return apiError("게시물 번호를 확인해주세요.", { status: 400 });
 
         if (!postId) {
             return apiError("postId가 필요합니다.", {
@@ -17,10 +19,11 @@ export async function POST(req: Request) {
                 result: null,
             });
         }
+        if (!(await findReadablePost(postId, userId))) return postNotFound();
 
         const ip = req.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
 
-        const supabase = await supabaseServer();
+        const supabase = supabaseAdmin();
 
         const { data, error } = await supabase.from("likes").select("id").eq("post_id", postId).or(`user_id.eq.${userId},ip.eq.${ip}`).limit(1).single();
 

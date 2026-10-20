@@ -49,6 +49,7 @@ export interface TabComponentProps {
 }
 
 export interface ButtonProps {
+    "aria-pressed"?: boolean;
     children: ReactNode | string;
     className?: string;
     type?: "button" | "reset" | "submit";

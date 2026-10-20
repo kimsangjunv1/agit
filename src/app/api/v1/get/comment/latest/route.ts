@@ -9,7 +9,8 @@ export async function GET() {
 
         const { data: currentData, error: currentError } = await supabase
             .from(TABLE_NAME_POST)
-            .select("msg, author, created_at, idx")
+            .select("msg, author, created_at, idx, posts!inner(idx)")
+            .eq("posts.visibility", "public")
             .or("is_secret.is.null,is_secret.eq.false")
             .order("created_at", { ascending: false })
             .limit(10);
@@ -18,7 +19,7 @@ export async function GET() {
 
         const totalCount = currentData?.length ?? 0;
 
-        return apiSuccess(currentData ?? [], {
+        return apiSuccess(currentData?.map(({ posts: _posts, ...comment }) => comment) ?? [], {
             resultMessage: "조회성공",
             pagination: buildPagination({
                 page: 1,

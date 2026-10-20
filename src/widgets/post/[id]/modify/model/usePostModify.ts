@@ -12,7 +12,7 @@ const usePostModify = (id: string) => {
     }, [id, setPostIdx]);
     const { data: getPostListData } = useGetPostDetailQuery(parseInt(id));
     const data = getPostListData?.result;
-    const { title, summary, thumbnail, category_idx, setTitle, setSummary, setCategoryIdx, setThumbnail } = useCreatePostStore();
+    const { title, summary, thumbnail, category_idx, setTitle, setSummary, setCategoryIdx, setThumbnail, setPostType, setVisibility } = useCreatePostStore();
     const { reset: resetDraftImages, addFromUrl } = usePostDraftImageStore();
     const initializedRef = useRef(false);
     useEffect(() => {
@@ -24,8 +24,10 @@ const usePostModify = (id: string) => {
             setSummary(data.summary);
             setCategoryIdx(data.category_idx);
             setThumbnail(data.thumbnail ?? "");
+            setPostType(data.post_type ?? "article");
+            setVisibility(data.visibility ?? "public");
         }
-    }, [data, setTitle, setSummary, setCategoryIdx, setThumbnail]);
+    }, [data, setTitle, setSummary, setCategoryIdx, setThumbnail, setPostType, setVisibility]);
     useEffect(() => {
         if (!data || initializedRef.current) return;
 

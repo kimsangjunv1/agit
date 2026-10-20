@@ -1,9 +1,12 @@
-import { supabaseAdmin, supabaseServer } from "@/shared/lib/supabase/supabaseServer";
+import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
 import { apiError, apiSuccess, resolveRouteError } from "@/shared/lib/apiResponse";
+import { findReadablePost, getPostReader, postNotFound } from "@/entities/post/api/postAccess.server";
 
 export async function POST(req: Request) {
     try {
-        const { postId, userId } = await req.json();
+        const { postId } = await req.json();
+        if (!Number.isSafeInteger(postId) || postId <= 0) return apiError("게시물 번호를 확인해주세요.", { status: 400 });
+        const { userId, supabase } = await getPostReader();
         if (!postId) {
             return apiError("postId가 필요합니다.", {
                 resultCode: "BAD_REQUEST",
@@ -11,10 +14,9 @@ export async function POST(req: Request) {
                 result: null,
             });
         }
+        if (!(await findReadablePost(postId, userId))) return postNotFound();
 
         const ip = req.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
-
-        const supabase = await supabaseServer();
 
         const filters: string[] = [];
         if (userId) filters.push(`user_id.eq.${userId}`);

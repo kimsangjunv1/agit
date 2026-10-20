@@ -1632,13 +1632,14 @@ const Tab = ({ list, type = "button", className, preventTargetIdx = 999, prevent
     );
 };
 
-const Button = ({ children, className, type = "button", disabled = false, rippleColor = "#ffffff", ref, test, desc_no, onClick, onPointerDown }: ButtonProps) => {
+const Button = ({ children, className, type = "button", disabled = false, rippleColor = "#ffffff", ref, test, desc_no, onClick, onPointerDown, "aria-pressed": ariaPressed }: ButtonProps) => {
     const [ripples, setRipples] = useState<{ x: number; y: number; id: number }[]>([]);
 
     return (
         <motion.button
             type={type}
             ref={ref}
+            aria-pressed={ariaPressed}
             onClick={(e) => {
                 const rect = e.currentTarget.getBoundingClientRect();
                 const x = e.clientX - rect.left;

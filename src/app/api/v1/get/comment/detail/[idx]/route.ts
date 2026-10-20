@@ -1,5 +1,8 @@
 import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
 import { apiError, apiSuccess, resolveRouteError, buildPagination } from "@/shared/lib/apiResponse";
+import { findReadablePost, postNotFound, privatePostResponse } from "@/entities/post/api/postAccess.server";
+
+export const dynamic = "force-dynamic";
 
 const TABLE_NAME_POST = "comments";
 
@@ -13,6 +16,7 @@ export async function GET(req: Request) {
         if (!Number.isSafeInteger(post_id) || post_id <= 0) {
             return apiError("게시물 번호를 확인해주세요.", { status: 400, resultCode: "BAD_REQUEST" });
         }
+        if (!(await findReadablePost(post_id))) return postNotFound();
 
         const supabase = supabaseAdmin();
         const { data: currentData, error: currentError } = await supabase
@@ -26,14 +30,14 @@ export async function GET(req: Request) {
 
         const totalCount = currentData?.length ?? 0;
 
-        return apiSuccess(currentData ?? [], {
+        return privatePostResponse(apiSuccess(currentData ?? [], {
             resultMessage: "조회성공",
             pagination: buildPagination({
                 page: 1,
                 pageSize: Math.max(totalCount, 1),
                 totalCount,
             }),
-        });
+        }));
     } catch (error: unknown) {
         const { message, status } = resolveRouteError(error);
         return apiError(message, { status });

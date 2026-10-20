@@ -9,6 +9,12 @@ import { POST } from "./set/comment/create/route";
 import { GET as getDetail } from "./get/comment/detail/[idx]/route";
 import { GET as getLatest } from "./get/comment/latest/route";
 import { GET as getManager } from "./get/comment/manager/route";
+import { findReadablePost } from "@/entities/post/api/postAccess.server";
+
+vi.mock("@/entities/post/api/postAccess.server", async (importOriginal) => ({
+    ...await importOriginal<typeof import("@/entities/post/api/postAccess.server")>(),
+    findReadablePost: vi.fn(),
+}));
 
 vi.mock("next-auth", () => ({ getServerSession: vi.fn() }));
 vi.mock("server-only", () => ({}));
@@ -46,6 +52,7 @@ beforeEach(() => {
     vi.clearAllMocks();
     queryResult = { data: null, error: null, count: 0 };
     vi.mocked(getServerSession).mockResolvedValue(null);
+    vi.mocked(findReadablePost).mockResolvedValue({ idx: 1, user_id: null, visibility: "public", post_type: "article" });
     vi.mocked(supabaseAdmin).mockReturnValue(database as unknown as ReturnType<typeof supabaseAdmin>);
 });
 
@@ -178,6 +185,19 @@ describe("댓글 등록", () => {
 });
 
 describe("공개 댓글 조회", () => {
+    it("접근할 수 없는 비공개 글의 댓글은 조회하지 않는다", async () => {
+        vi.mocked(findReadablePost).mockResolvedValue(null);
+        const response = await getDetail(new Request("http://localhost/api/v1/get/comment/detail/1"));
+        expect(response.status).toBe(404);
+        expect(supabaseAdmin).not.toHaveBeenCalled();
+    });
+
+    it("비공개 글에 직접 댓글을 등록하는 요청도 차단한다", async () => {
+        vi.mocked(findReadablePost).mockResolvedValue(null);
+        const response = await POST(createRequest(validPayload));
+        expect(response.status).toBe(404);
+        expect(query.insert).not.toHaveBeenCalled();
+    });
     it.each(["0", "-1", "1abc", "1.5"])("잘못된 게시물 번호 %s를 거부한다", async (idx) => {
         const response = await getDetail(new Request(`http://localhost/api/v1/get/comment/detail/${idx}`));
 
@@ -206,7 +226,8 @@ describe("공개 댓글 조회", () => {
 
         const response = await getLatest();
 
-        expect(query.select).toHaveBeenCalledWith("msg, author, created_at, idx");
+        expect(query.select).toHaveBeenCalledWith("msg, author, created_at, idx, posts!inner(idx)");
+        expect(query.eq).toHaveBeenCalledWith("posts.visibility", "public");
         expect(query.or).toHaveBeenCalledWith("is_secret.is.null,is_secret.eq.false");
         expect(query.limit).toHaveBeenCalledWith(10);
         expect(response.status).toBe(200);
@@ -230,7 +251,7 @@ describe("관리자 댓글 조회", () => {
         const response = await getManager(new Request("http://localhost/api/v1/get/comment/manager"));
 
         expect(supabaseAdmin).toHaveBeenCalledOnce();
-        expect(query.or).not.toHaveBeenCalled();
+        expect(query.or).toHaveBeenCalledWith("visibility.eq.public,and(visibility.eq.private,user_id.eq.admin-1)", { referencedTable: "posts" });
         expect(query.range).toHaveBeenCalledWith(0, 19);
         expect(response.status).toBe(200);
     });

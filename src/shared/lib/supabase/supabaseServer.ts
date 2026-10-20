@@ -9,7 +9,7 @@ export async function supabaseServer() {
 
 /**
  * 서버 API 전용 — RLS 우회 service role (클라이언트 노출 금지).
- * write, users/invite_codes 접근, storage 업로드 등에만 사용한다.
+ * write, 권한을 확인한 비공개 조회, users/invite_codes 접근, storage 처리에 사용한다.
  */
 export function supabaseAdmin() {
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;

@@ -1,4 +1,6 @@
 import { useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { usePostTypeFilter } from "@/entities/post/model/usePostTypeFilter";
 import { useQuery, useMutation, useQueryClient, type QueryClient } from "@tanstack/react-query";
 
 import { AgitRoutes } from "@/shared/constants/entityKeys";
@@ -16,8 +18,14 @@ import {
 } from "@/entities/post/api/post.api";
 import { DeletePostManagerPayload, GetPostDetailResponse, GetPostLatestListResponse, GetPostListResponse, GetPostManagerListResponse } from "@/entities/post/model/post.type";
 
+const usePostViewer = () => {
+    const { data: session, status } = useSession();
+    const userId = session?.user?.id ?? null;
+    return { userId, viewerKey: status === "loading" ? "loading" : userId, ready: status !== "loading" };
+};
+
 const removePostFromListCaches = (queryClient: QueryClient, deletedIdx: number) => {
-    queryClient.setQueryData<GetPostListResponse>([AgitRoutes.KEY_POST, "list"], (old) => {
+    queryClient.setQueriesData<GetPostListResponse>({ queryKey: [AgitRoutes.KEY_POST, "list"] }, (old) => {
         if (!old?.result) return old;
 
         return {
@@ -26,7 +34,7 @@ const removePostFromListCaches = (queryClient: QueryClient, deletedIdx: number) 
         };
     });
 
-    queryClient.setQueryData<GetPostLatestListResponse>([AgitRoutes.KEY_POST, "latest"], (old) => {
+    queryClient.setQueriesData<GetPostLatestListResponse>({ queryKey: [AgitRoutes.KEY_POST, "latest"] }, (old) => {
         if (!old?.result) return old;
 
         return {
@@ -35,7 +43,7 @@ const removePostFromListCaches = (queryClient: QueryClient, deletedIdx: number) 
         };
     });
 
-    queryClient.setQueryData<GetPostManagerListResponse>([AgitRoutes.KEY_POST, "manager", "list"], (old) => {
+    queryClient.setQueriesData<GetPostManagerListResponse>({ queryKey: [AgitRoutes.KEY_POST, "manager", "list"] }, (old) => {
         if (!old?.result) return old;
 
         return {
@@ -50,9 +58,12 @@ const removePostFromListCaches = (queryClient: QueryClient, deletedIdx: number) 
 };
 
 export const useGetPostListQuery = () => {
+    const { postType } = usePostTypeFilter();
+    const { viewerKey, ready } = usePostViewer();
     const { data, isLoading, isError, error, isFetching, refetch } = useQuery<GetPostListResponse>({
-        queryKey: [AgitRoutes.KEY_POST, "list"],
-        queryFn: () => getPostListFetch(),
+        queryKey: [AgitRoutes.KEY_POST, "list", postType, viewerKey],
+        queryFn: () => getPostListFetch(postType),
+        enabled: ready,
         staleTime: POST_DETAIL_STALE_TIME_MS,
         throwOnError: false,
     });
@@ -61,11 +72,14 @@ export const useGetPostListQuery = () => {
 };
 
 export const useGetPostLatestListQuery = (initialData?: GetPostLatestListResponse) => {
-    const hasValidInitialData = initialData?.resultCode === "SUCCESS";
+    const { postType } = usePostTypeFilter();
+    const { viewerKey, ready, userId } = usePostViewer();
+    const hasValidInitialData = ready && initialData?.resultCode === "SUCCESS" && initialData.postTypeFilter === postType && initialData.viewerId === userId;
 
     const { data, isLoading, isError, error, isFetching, refetch } = useQuery<GetPostLatestListResponse>({
-        queryKey: [AgitRoutes.KEY_POST, "latest"],
-        queryFn: () => getPostLatestListFetch(),
+        queryKey: [AgitRoutes.KEY_POST, "latest", postType, viewerKey],
+        queryFn: () => getPostLatestListFetch(postType),
+        enabled: ready,
         staleTime: hasValidInitialData ? POST_DETAIL_STALE_TIME_MS : 0,
         refetchOnMount: hasValidInitialData ? false : true,
         initialData: hasValidInitialData ? initialData : undefined,
@@ -80,14 +94,15 @@ type UseGetPostDetailQueryOptions = {
 };
 
 export const useGetPostDetailQuery = (postIdx?: number, initialData?: GetPostDetailResponse, options?: UseGetPostDetailQueryOptions) => {
-    const hasValidInitialData = initialData?.resultCode === "SUCCESS";
+    const { viewerKey, ready, userId } = usePostViewer();
+    const hasValidInitialData = ready && initialData?.resultCode === "SUCCESS" && initialData.viewerId === userId;
 
     const { data, isLoading, isError, error, isFetching, refetch } = useQuery<GetPostDetailResponse>({
-        queryKey: [AgitRoutes.KEY_POST, "detail", postIdx],
+        queryKey: [AgitRoutes.KEY_POST, "detail", postIdx, viewerKey],
         queryFn: () => getPostDetailFetch(postIdx!),
         staleTime: hasValidInitialData ? POST_DETAIL_STALE_TIME_MS : 0,
         refetchOnMount: hasValidInitialData ? false : true,
-        enabled: options?.enabled ?? !!postIdx,
+        enabled: ready && (options?.enabled ?? !!postIdx),
         initialData: hasValidInitialData ? initialData : undefined,
     });
 
@@ -96,9 +111,10 @@ export const useGetPostDetailQuery = (postIdx?: number, initialData?: GetPostDet
 
 export const useIncrementPostViewOnVisit = (postIdx?: number) => {
     const queryClient = useQueryClient();
+    const { viewerKey, ready } = usePostViewer();
 
     useEffect(() => {
-        if (!postIdx) return;
+        if (!postIdx || !ready) return;
 
         let cancelled = false;
 
@@ -106,7 +122,7 @@ export const useIncrementPostViewOnVisit = (postIdx?: number) => {
             .then((response) => {
                 if (cancelled || !response?.result?.viewsIncremented) return;
 
-                queryClient.setQueryData<GetPostDetailResponse>([AgitRoutes.KEY_POST, "detail", postIdx], (old) => {
+                queryClient.setQueryData<GetPostDetailResponse>([AgitRoutes.KEY_POST, "detail", postIdx, viewerKey], (old) => {
                     if (!old?.result) return old;
 
                     return {
@@ -125,7 +141,7 @@ export const useIncrementPostViewOnVisit = (postIdx?: number) => {
         return () => {
             cancelled = true;
         };
-    }, [postIdx, queryClient]);
+    }, [postIdx, queryClient, viewerKey, ready]);
 };
 
 export const useSetPostQuery = () => {
@@ -136,6 +152,7 @@ export const useSetPostQuery = () => {
         mutationFn: (payload: unknown) => setPostFetch(payload),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [AgitRoutes.KEY_POST] });
+            queryClient.invalidateQueries({ queryKey: [AgitRoutes.KEY_SEARCH] });
         },
     });
 
@@ -161,6 +178,7 @@ export const usePatchPostQuery = () => {
         mutationFn: (payload: { data: unknown; idx: number }) => patchPostFetch(payload),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [AgitRoutes.KEY_POST] });
+            queryClient.invalidateQueries({ queryKey: [AgitRoutes.KEY_SEARCH] });
         },
     });
 
@@ -204,8 +222,10 @@ export const useSetLikeIncrementQuery = () => {
 };
 
 export const useGetPostManagerListQuery = () => {
+    const { viewerKey, ready } = usePostViewer();
     const { data, isLoading, isError, error, isFetching, refetch } = useQuery<GetPostManagerListResponse>({
-        queryKey: [AgitRoutes.KEY_POST, "manager", "list"],
+        queryKey: [AgitRoutes.KEY_POST, "manager", "list", viewerKey],
+        enabled: ready,
         queryFn: () => getPostManagerListFetch(),
         staleTime: 0,
     });
@@ -222,6 +242,7 @@ export const useDeletePostManagerQuery = () => {
         onSuccess: async (_, variables) => {
             removePostFromListCaches(queryClient, variables.idx);
             await queryClient.invalidateQueries({ queryKey: [AgitRoutes.KEY_POST] });
+            await queryClient.invalidateQueries({ queryKey: [AgitRoutes.KEY_SEARCH] });
         },
     });
 

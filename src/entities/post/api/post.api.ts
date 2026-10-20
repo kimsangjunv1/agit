@@ -14,12 +14,15 @@ import {
     PostDraftDetail,
 } from "@/entities/post/model/post.type";
 import type { ApiResponse } from "@/shared/model/common.type";
+import type { PostTypeFilter } from "@/entities/post/model/postSettings";
 
 /**
  * 포스트 - 목록 조회
  */
-export const getPostListFetch = () => {
-    const url = `/api/v1/get/post`;
+export const getPostListFetch = (type: PostTypeFilter = "all") => {
+    const params = new URLSearchParams({ pageSize: "0" });
+    if (type !== "all") params.set("type", type);
+    const url = `/api/v1/get/post?${params}`;
     return clientApi.get<GetPostListResponse>(url);
 };
 
@@ -36,8 +39,8 @@ export const getPostDetailFetch = (idx: number) => {
 /**
  * 포스트 - 최근 생성한 목록 조회 (10개)
  */
-export const getPostLatestListFetch = () => {
-    const url = `/api/v1/get/post/latest`;
+export const getPostLatestListFetch = (type: PostTypeFilter = "all") => {
+    const url = `/api/v1/get/post/latest${type === "all" ? "" : `?type=${type}`}`;
     return clientApi.get<GetPostLatestListResponse>(url);
 };
 

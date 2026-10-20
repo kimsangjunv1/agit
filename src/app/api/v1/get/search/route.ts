@@ -2,19 +2,17 @@ import { SupabaseClient } from "@supabase/supabase-js";
 
 import { SearchResultItem } from "@/entities/search/model/search.type";
 import { apiError, apiSuccess, resolveRouteError } from "@/shared/lib/apiResponse";
-import { supabaseServer } from "@/shared/lib/supabase/supabaseServer";
+import { getPostReader, privatePostResponse } from "@/entities/post/api/postAccess.server";
 
 const DEFAULT_LIMIT = 8;
 const MAX_KEYWORD_LENGTH = 50;
-const SEARCH_CACHE_TTL = 1000 * 60;
+export const dynamic = "force-dynamic";
 
 type SearchSource = {
     type: SearchResultItem["type"];
     group: string;
-    search: (supabase: SupabaseClient, keyword: string, limit: number) => Promise<SearchResultItem[]>;
+    search: (supabase: SupabaseClient, keyword: string, limit: number, visibilityFilter: string) => Promise<SearchResultItem[]>;
 };
-
-const searchCache = new Map<string, { data: SearchResultItem[]; expiredAt: number }>();
 
 const normalizeKeyword = (keyword: string) =>
     keyword
@@ -27,11 +25,11 @@ const searchSources: SearchSource[] = [
     {
         type: "post",
         group: "Posts",
-        search: async (supabase, keyword, limit) => {
+        search: async (supabase, keyword, limit, visibilityFilter) => {
             const { data, error } = await supabase
                 .from("posts")
                 .select("idx, title, summary, created_at")
-                .or(`title.ilike.%${keyword}%,summary.ilike.%${keyword}%`)
+                .or(`and(or(${visibilityFilter}),or(title.ilike.%${keyword}%,summary.ilike.%${keyword}%))`)
                 .order("created_at", { ascending: false })
                 .limit(limit);
 
@@ -52,7 +50,7 @@ const searchSources: SearchSource[] = [
 
 export async function GET(req: Request) {
     try {
-        const supabase = await supabaseServer();
+        const { supabase, visibilityFilter } = await getPostReader();
         const { searchParams } = new URL(req.url);
         const keyword = normalizeKeyword(searchParams.get("keyword") ?? "");
         const limit = Math.max(1, Math.min(Number(searchParams.get("limit")) || DEFAULT_LIMIT, 20));
@@ -63,22 +61,10 @@ export async function GET(req: Request) {
             });
         }
 
-        const cacheKey = `${keyword}:${limit}`;
-        const cached = searchCache.get(cacheKey);
-
-        if (cached && cached.expiredAt > Date.now()) {
-            return apiSuccess(cached.data, { resultMessage: "조회성공" });
-        }
-
-        const results = await Promise.all(searchSources.map((source) => source.search(supabase, keyword, limit)));
+        const results = await Promise.all(searchSources.map((source) => source.search(supabase, keyword, limit, visibilityFilter)));
         const data = results.flat();
 
-        searchCache.set(cacheKey, {
-            data,
-            expiredAt: Date.now() + SEARCH_CACHE_TTL,
-        });
-
-        return apiSuccess(data, { resultMessage: "조회성공" });
+        return privatePostResponse(apiSuccess(data, { resultMessage: "조회성공" }));
     } catch (error: unknown) {
         const { message, status } = resolveRouteError(error);
         return apiError(message, { status });

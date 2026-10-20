@@ -7,13 +7,14 @@ import { GetPostLatestListResponse } from "@/entities/post/model/post.type";
 import { buildPageMetadata, buildWebsiteJsonLd } from "@/shared/lib/seo/metadata";
 import JsonLd from "@/shared/ui/seo/JsonLd";
 import { buildPagination } from "@/shared/lib/utils/apiResponse";
+import { getPostTypeFilter } from "@/entities/post/model/postSettings";
 
 export const metadata: Metadata = buildPageMetadata({
     title: "ARCHIVE",
     path: "/",
 });
 
-export const revalidate = 300;
+export const dynamic = "force-dynamic";
 
 const createFallbackData = (): GetPostLatestListResponse => ({
     result: [],
@@ -22,11 +23,12 @@ const createFallbackData = (): GetPostLatestListResponse => ({
     resultMessage: "조회실패",
 });
 
-const Page = async () => {
+const Page = async ({ searchParams }: { searchParams: Promise<{ type?: string }> }) => {
     let initialData = createFallbackData();
+    const type = getPostTypeFilter((await searchParams).type);
 
     try {
-        initialData = await getPostLatestListServerFetch();
+        initialData = await getPostLatestListServerFetch(type);
     } catch (err: unknown) {
         console.error("SSR fetch error:", err);
     }

@@ -3,6 +3,7 @@ import { optimizePostImage } from "@/shared/lib/image/optimizePostImage";
 import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
 import { ensurePostImagesBucket, POST_IMAGES_BUCKET } from "@/shared/lib/supabase/postImagesBucket";
 import { apiError, apiSuccess } from "@/shared/lib/apiResponse";
+import { POST_IMAGE_API_PREFIX } from "@/entities/post/lib/collectPostImageUrls";
 
 export async function POST(req: Request) {
     const auth = await requireSession();
@@ -30,10 +31,10 @@ export async function POST(req: Request) {
         await ensurePostImagesBucket(supabase);
 
         const optimized = await optimizePostImage(file);
-        const filePath = `posts/${Date.now()}-${crypto.randomUUID()}.${optimized.extension}`;
+        const filePath = `posts/${auth.session.user.id}/${Date.now()}-${crypto.randomUUID()}.${optimized.extension}`;
 
         const { error } = await supabase.storage.from(POST_IMAGES_BUCKET).upload(filePath, optimized.buffer, {
-            cacheControl: "3600",
+            cacheControl: "0",
             upsert: false,
             contentType: optimized.contentType,
         });
@@ -42,12 +43,10 @@ export async function POST(req: Request) {
             throw error;
         }
 
-        const { data } = supabase.storage.from(POST_IMAGES_BUCKET).getPublicUrl(filePath);
-
         return apiSuccess(
             {
                 statusCode: 1,
-                url: data.publicUrl,
+                url: `${POST_IMAGE_API_PREFIX}${filePath}`,
             },
             { resultMessage: "업로드성공", pagination: null },
         );

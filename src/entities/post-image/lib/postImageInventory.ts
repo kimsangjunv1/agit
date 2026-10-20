@@ -1,7 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import type { SectionContent } from "@/entities/post/model/post.type";
-import { collectPostImageUrls, toPostImageStoragePath } from "@/entities/post/lib/collectPostImageUrls";
+import { collectPostImageUrls, toPostImageStoragePath, POST_IMAGE_API_PREFIX } from "@/entities/post/lib/collectPostImageUrls";
 import { POST_IMAGES_BUCKET } from "@/shared/lib/supabase/postImagesBucket";
 
 const STORAGE_LIST_LIMIT = 1000;
@@ -54,12 +54,12 @@ export const formatBytes = (bytes: number) => {
     return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
 };
 
-const listPostImageStorageFiles = async (supabase: SupabaseClient): Promise<StorageFile[]> => {
+const listPostImageStorageFiles = async (supabase: SupabaseClient, prefix = "posts"): Promise<StorageFile[]> => {
     const files: StorageFile[] = [];
     let offset = 0;
 
     while (true) {
-        const { data, error } = await supabase.storage.from(POST_IMAGES_BUCKET).list("posts", {
+        const { data, error } = await supabase.storage.from(POST_IMAGES_BUCKET).list(prefix, {
             limit: STORAGE_LIST_LIMIT,
             offset,
             sortBy: { column: "created_at", order: "desc" },
@@ -69,10 +69,13 @@ const listPostImageStorageFiles = async (supabase: SupabaseClient): Promise<Stor
         if (!data?.length) break;
 
         for (const file of data) {
-            if (!file.id) continue;
+            if (!file.id) {
+                files.push(...await listPostImageStorageFiles(supabase, `${prefix}/${file.name}`));
+                continue;
+            }
 
             files.push({
-                path: `posts/${file.name}`,
+                path: `${prefix}/${file.name}`,
                 sizeBytes: typeof file.metadata?.size === "number" ? file.metadata.size : 0,
             });
         }
@@ -106,20 +109,26 @@ const collectReferencedImagePaths = (posts: PostImageReference[]) => {
 };
 
 export const buildPostImageInventory = async (supabase: SupabaseClient): Promise<PostImageInventory> => {
-    const [{ data: posts, error: postsError }, storageFiles] = await Promise.all([supabase.from("posts").select("idx, thumbnail, contents"), listPostImageStorageFiles(supabase)]);
+    const [{ data: posts, error: postsError }, { data: drafts, error: draftsError }, storageFiles] = await Promise.all([
+        supabase.from("posts").select("idx, thumbnail, contents"),
+        supabase.from("post_drafts").select("payload"),
+        listPostImageStorageFiles(supabase),
+    ]);
 
     if (postsError) throw postsError;
+    if (draftsError) throw draftsError;
 
     const pathToPostIds = collectReferencedImagePaths((posts ?? []) as PostImageReference[]);
+    const draftPaths = new Set((drafts ?? []).flatMap((draft) => collectPostImageUrls(draft.payload?.thumbnail ?? "", draft.payload?.contents ?? []).map(toPostImageStoragePath).filter(Boolean)));
 
     const items: PostImageInventoryItem[] = storageFiles.map((file) => {
         const referencedBy = pathToPostIds.get(file.path) ?? [];
 
         return {
             path: file.path,
-            url: supabase.storage.from(POST_IMAGES_BUCKET).getPublicUrl(file.path).data.publicUrl,
+            url: `${POST_IMAGE_API_PREFIX}${file.path}`,
             sizeBytes: file.sizeBytes,
-            isUsed: referencedBy.length > 0,
+            isUsed: referencedBy.length > 0 || draftPaths.has(file.path),
             referencedBy,
         };
     });
