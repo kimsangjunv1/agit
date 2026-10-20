@@ -5,23 +5,33 @@ import { AnimatePresence, motion } from "motion/react";
 
 import { useGetIntegratedSearchQuery } from "@/entities/search/api/search.query";
 import { SearchResultItem } from "@/entities/search/model/search.type";
+import { PAGE_REVEAL_COVER_DURATION, PAGE_REVEAL_COVER_EASE, PAGE_REVEAL_UNCOVER_DURATION, PAGE_REVEAL_UNCOVER_EASE } from "@/shared/constants/pageTransition";
 import useNavigate from "@/shared/hooks/useNavigate";
+import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
 import { useLayoutStore } from "@/shared/stores/useLayoutStore";
+import IconComponent from "@/shared/ui/common/IconComponent";
 
 const EMPTY_RESULTS: SearchResultItem[] = [];
+const CLIP_SEARCH = {
+    hidden: "inset(0 0 100% 0)",
+    visible: "inset(0 0 0 0)",
+    exit: "inset(0 0 100% 0)",
+} as const;
 
-const quickActions = [
+const quickActions: { title: string; url: string; badge?: string }[] = [
     { title: "이력서", url: "/resume" },
     { title: "메인", url: "/" },
-    { title: "포스트 관리", url: "/manager/post", badge: "ADMIN" },
-    { title: "카테고리 관리", url: "/manager/category", badge: "ADMIN", active: true },
-    { title: "어드민", url: "/manager", badge: "ADMIN" },
+    // { title: "포스트 관리", url: "/manager/post", badge: "ADMIN" },
+    // { title: "카테고리 관리", url: "/manager/category", badge: "ADMIN", active: true },
+    // { title: "어드민", url: "/manager", badge: "ADMIN" },
 ];
 
 const Search = () => {
     const inputRef = useRef<HTMLInputElement>(null);
     const { pushToUrl } = useNavigate();
-    const { isSearchOpen, setIsSearchOpen } = useLayoutStore();
+    const reducedMotion = useReducedMotion();
+    const isSearchOpen = useLayoutStore((state) => state.isSearchOpen);
+    const setIsSearchOpen = useLayoutStore((state) => state.setIsSearchOpen);
     const [keyword, setKeyword] = useState("");
     const [debouncedKeyword, setDebouncedKeyword] = useState("");
     const [selectedIndex, setSelectedIndex] = useState(0);
@@ -98,13 +108,10 @@ const Search = () => {
     }, [keyword, results.length]);
 
     return (
-        <AnimatePresence>
+        <AnimatePresence mode="wait">
             {isSearchOpen && (
                 <motion.section
-                    className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/20 px-[1.6rem] backdrop-blur-[0.4rem]"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
+                    className="fixed inset-0 z-[100000000] flex items-start justify-center"
                     onClick={closeSearch}
                     onKeyDown={handleKeyDown}
                 >
@@ -112,37 +119,47 @@ const Search = () => {
                         role="dialog"
                         aria-modal="true"
                         aria-label="통합 검색"
-                        className="w-full max-w-[53.6rem] overflow-hidden border border-[#e9e9e9] bg-white shadow-[0_2.4rem_6.4rem_rgba(0,0,0,0.22)]"
-                        initial={{ opacity: 0, scale: 0.96, y: 10 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.96, y: 10 }}
-                        transition={{ type: "spring", mass: 0.2, stiffness: 180, damping: 18 }}
+                        className="flex max-h-[50svh] max-w-[var(--size-tablet)] w-full flex-col overflow-hidden bg-[var(--color-surface-floating)] text-[var(--color-text-primary)]"
+                        initial={{ clipPath: CLIP_SEARCH.hidden }}
+                        animate={{ clipPath: CLIP_SEARCH.visible }}
+                        exit={{
+                            clipPath: CLIP_SEARCH.exit,
+                            transition: {
+                                duration: reducedMotion ? 0 : PAGE_REVEAL_UNCOVER_DURATION,
+                                ease: PAGE_REVEAL_UNCOVER_EASE,
+                            },
+                        }}
+                        transition={{
+                            duration: reducedMotion ? 0 : PAGE_REVEAL_COVER_DURATION,
+                            ease: PAGE_REVEAL_COVER_EASE,
+                        }}
                         onClick={(event) => event.stopPropagation()}
                     >
-                        <section className="flex h-[6.4rem] items-center gap-[1.6rem] border-b border-[#eeeeee] px-[2.4rem]">
-                            <span className="relative h-[2rem] w-[2rem] shrink-0 rounded-full border-[0.4rem] border-[#676767] after:absolute after:right-[-0.4rem] after:bottom-[-0.4rem] after:h-[0.8rem] after:w-[0.4rem] after:rotate-[-45deg] after:rounded-full after:bg-[#676767]" />
+                        <section className="flex h-[6.4rem] shrink-0 items-center gap-[1.6rem] border-b border-white/10 px-[1.6rem] tablet:px-[2.4rem]">
+                            <span className="relative h-[2rem] w-[2rem] shrink-0 rounded-full border-[0.4rem] border-white/60 after:absolute after:right-[-0.4rem] after:bottom-[-0.4rem] after:h-[0.8rem] after:w-[0.4rem] after:rotate-[-45deg] after:rounded-full after:bg-white/60" />
                             <input
                                 ref={inputRef}
                                 value={keyword}
                                 onChange={(event: ChangeEvent<HTMLInputElement>) => setKeyword(event.target.value)}
-                                placeholder="Type a command or search..."
-                                className="h-full min-w-0 flex-1 text-[1.6rem] text-[#2f2f2f] outline-none placeholder:text-[#5f5f5f]"
+                                placeholder="검색어를 입력해주세요"
+                                aria-label="검색어"
+                                className="h-full min-w-0 flex-1 text-[1.6rem] text-[var(--color-text-primary)] outline-none placeholder:text-[var(--color-text-muted)]"
                                 autoComplete="off"
                             />
                             <button
                                 type="button"
                                 onClick={closeSearch}
                                 aria-label="검색 닫기"
-                                className="h-[2.8rem] w-[2.8rem] shrink-0 text-[2.4rem] leading-none text-[#7a7a7a]"
+                                className="h-[2.8rem] w-[2.8rem] shrink-0 text-[2.4rem] leading-none text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
                             >
                                 ×
                             </button>
                         </section>
 
-                        <section className="max-h-[49.2rem] min-h-[45.2rem] overflow-y-auto px-[2.4rem] py-[2rem]">
+                        <section className="min-h-0 overflow-y-auto overscroll-contain">
                             {!shouldSearch ? (
                                 <>
-                                    <p className="mb-[2rem] text-[1.6rem] text-[#777777]">Quick Actions</p>
+                                    <p className="p-[2.0rem] text-[1.6rem] text-[var(--color-text-muted)]">Quick Actions</p>
                                     <section className="flex flex-col">
                                         {quickActions.map((action, index) => (
                                             <button
@@ -150,11 +167,20 @@ const Search = () => {
                                                 type="button"
                                                 onClick={() => moveToUrl(action.url)}
                                                 onMouseEnter={() => setSelectedIndex(index)}
-                                                className={`flex h-[4.8rem] items-center rounded-[1.2rem] px-[1.2rem] text-left text-[1.6rem] text-[#171717] transition-colors ${selectedIndex === index ? "bg-[#f5f5f5]" : "hover:bg-[#f5f5f5]"}`}
+                                                className={`flex justify-between items-center p-[2rem] text-left text-[1.6rem] text-[var(--color-text-primary)] transition-colors ${selectedIndex === index ? "bg-white/10" : "hover:bg-white/10"}`}
                                             >
-                                                <span>{action.title}</span>
-                                                {action.badge && <span className="ml-[1.2rem] bg-[#000000] px-[0.8rem] py-[0.4rem] text-[1.2rem] font-bold text-[#77ff00]">{action.badge}</span>}
-                                                {selectedIndex === index && <span className="ml-auto text-[2rem] text-[#787878]">›</span>}
+                                                <section>
+                                                    <span>{action.title}</span>
+                                                    {action.badge && <span className="ml-[1.2rem] bg-[var(--color-surface-floating)] px-[0.8rem] py-[0.4rem] text-[1.2rem] font-bold text-[#77ff00]">{action.badge}</span>}
+                                                </section>
+
+                                                <IconComponent
+                                                    type="colored-arrow-below"
+                                                    alt="더보기"
+                                                    width={24}
+                                                    height={24}
+                                                    className={`${selectedIndex === index ? "opacity-100" : "opacity-30"} invert rotate-270`}
+                                                />
                                             </button>
                                         ))}
                                     </section>
@@ -181,17 +207,17 @@ const Search = () => {
                                 </>
                             ) : (
                                 <>
-                                    <p className="mb-[2rem] text-[1.6rem] text-[#777777]">Search Results</p>
-                                    {isLoading && <p className="px-[1.2rem] text-[1.6rem] text-[#777777]">검색 중...</p>}
+                                    <p className="mb-[2rem] text-[1.6rem] text-[var(--color-text-muted)]">Search Results</p>
+                                    {isLoading && <p className="px-[1.2rem] text-[1.6rem] text-[var(--color-text-muted)]">검색 중...</p>}
                                     {errorMessage && <p className="px-[1.2rem] text-[1.6rem] text-[#ff3d00]">{errorMessage}</p>}
-                                    {!isLoading && !errorMessage && results.length === 0 && <p className="px-[1.2rem] text-[1.6rem] text-[#777777]">검색 결과가 없습니다</p>}
+                                    {!isLoading && !errorMessage && results.length === 0 && <p className="px-[1.2rem] text-[1.6rem] text-[var(--color-text-muted)]">검색 결과가 없습니다</p>}
                                     {!isLoading &&
                                         Object.entries(groupedResults).map(([group, items]) => (
                                             <section
                                                 key={group}
                                                 className="mb-[1.6rem]"
                                             >
-                                                <p className="mb-[0.8rem] text-[1.6rem] text-[#777777]">{group}</p>
+                                                <p className="mb-[0.8rem] text-[1.6rem] text-[var(--color-text-muted)]">{group}</p>
                                                 {items.map((item) => {
                                                     const resultIndex = results.findIndex((result) => result.id === item.id);
 
@@ -201,10 +227,10 @@ const Search = () => {
                                                             type="button"
                                                             onClick={() => moveToUrl(item.url)}
                                                             onMouseEnter={() => setSelectedIndex(resultIndex)}
-                                                            className={`flex min-h-[5.6rem] w-full flex-col justify-center rounded-[1.2rem] px-[1.2rem] text-left transition-colors ${selectedIndex === resultIndex ? "bg-[#f5f5f5]" : "hover:bg-[#f5f5f5]"}`}
+                                                            className={`flex min-h-[5.6rem] w-full flex-col justify-center rounded-[1.2rem] px-[1.2rem] text-left transition-colors ${selectedIndex === resultIndex ? "bg-white/10" : "hover:bg-white/10"}`}
                                                         >
-                                                            <span className="line-clamp-1 text-[1.6rem] text-[#171717]">{item.title}</span>
-                                                            {item.description && <span className="mt-[0.4rem] line-clamp-1 text-[1.2rem] text-[#777777]">{item.description}</span>}
+                                                            <span className="line-clamp-1 text-[1.6rem] text-[var(--color-text-primary)]">{item.title}</span>
+                                                            {item.description && <span className="mt-[0.4rem] line-clamp-1 text-[1.2rem] text-[var(--color-text-muted)]">{item.description}</span>}
                                                         </button>
                                                     );
                                                 })}
@@ -214,14 +240,14 @@ const Search = () => {
                             )}
                         </section>
 
-                        <section className="flex h-[6.4rem] items-center gap-[0.8rem] border-t border-[#eeeeee] bg-[#f6f6f6] px-[2.4rem] text-[1.6rem] text-[#5d5d5d]">
-                            <kbd className="rounded-[0.8rem] bg-[#e9e9e9] px-[0.8rem] py-[0.4rem] text-[#4e4e4e]">↑</kbd>
-                            <kbd className="rounded-[0.8rem] bg-[#e9e9e9] px-[0.8rem] py-[0.4rem] text-[#4e4e4e]">↓</kbd>
-                            <span className="mr-[1.2rem]">Navigate</span>
-                            <kbd className="rounded-[0.8rem] bg-[#e9e9e9] px-[0.8rem] py-[0.4rem] text-[#4e4e4e]">↵</kbd>
-                            <span>Select</span>
-                            <span className="ml-auto">Close</span>
-                            <kbd className="rounded-[0.8rem] bg-[#e9e9e9] px-[0.8rem] py-[0.4rem] text-[#4e4e4e]">ESC</kbd>
+                        <section className="flex h-[6.4rem] shrink-0 items-center gap-[0.4rem] border-t border-white/10 px-[1.6rem] text-[1.2rem] text-[var(--color-text-muted)] tablet:gap-[0.8rem] tablet:px-[2.4rem] tablet:text-[1.6rem]">
+                            <kbd className="rounded-[0.8rem] bg-white/10 px-[0.8rem] py-[0.4rem] text-[var(--color-text-primary)]">↑</kbd>
+                            <kbd className="rounded-[0.8rem] bg-white/10 px-[0.8rem] py-[0.4rem] text-[var(--color-text-primary)]">↓</kbd>
+                            <span className="mr-[1.2rem]">이동</span>
+                            <kbd className="rounded-[0.8rem] bg-white/10 px-[0.8rem] py-[0.4rem] text-[var(--color-text-primary)]">↵</kbd>
+                            <span>선택</span>
+                            <span className="ml-auto">닫기</span>
+                            <kbd className="rounded-[0.8rem] bg-white/10 px-[0.8rem] py-[0.4rem] text-[var(--color-text-primary)] text-[1.2rem]">ESC</kbd>
                         </section>
                     </motion.div>
                 </motion.section>

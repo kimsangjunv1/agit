@@ -41,7 +41,7 @@ const ActionFloatingButtons = () => {
                 <UI.Button
                     type="button"
                     onClick={() => pushToUrl("/manager")}
-                    className="flex items-center justify-center w-[4.8rem] h-[4.8rem] rounded-full bg-[#ffffffd1] backdrop-blur-md shadow-[var(--shadow-normal)] transition-colors hover:bg-white"
+                    className="flex items-center justify-center w-[4.8rem] h-[4.8rem] rounded-full bg-[var(--color-surface)] backdrop-blur-md shadow-[var(--shadow-normal)] transition-colors hover:bg-[var(--color-surface-hover)]"
                 >
                     <span className="sr-only">관리자 페이지 이동</span>
                     <IconComponent
@@ -56,7 +56,7 @@ const ActionFloatingButtons = () => {
             <UI.Button
                 type="button"
                 onClick={() => pushToUrl("/post/create")}
-                className="flex items-center justify-center w-[4.8rem] h-[4.8rem] rounded-full bg-[#ffffffd1] backdrop-blur-md shadow-[var(--shadow-normal)] transition-colors hover:bg-white"
+                className="flex items-center justify-center w-[4.8rem] h-[4.8rem] rounded-full bg-[var(--color-surface)] backdrop-blur-md shadow-[var(--shadow-normal)] transition-colors hover:bg-[var(--color-surface-hover)]"
             >
                 <span className="sr-only">새로운 아티클 생성하기</span>
                 <IconComponent

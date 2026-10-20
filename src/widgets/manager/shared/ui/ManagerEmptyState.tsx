@@ -31,7 +31,7 @@ const ManagerEmptyState = ({ variant, title, description }: ManagerEmptyStatePro
 
     return (
         <div className="flex h-full min-h-[32rem] flex-col items-center justify-center px-[3.2rem] text-center">
-            <span className="mb-[1.6rem] flex size-[4.8rem] items-center justify-center rounded-full border border-[var(--color-gray-300)] bg-white text-[var(--color-gray-500)]">
+            <span className="mb-[1.6rem] flex size-[4.8rem] items-center justify-center rounded-full border border-[var(--color-gray-300)] bg-[var(--color-surface)] text-[var(--color-gray-500)]">
                 <MaterialIcon
                     name={content.icon}
                     size={24}

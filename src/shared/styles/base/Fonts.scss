@@ -1,4 +1,12 @@
 @font-face {
+    font-family: "Noto Sans KR";
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+    src: url("/fonts/noto-sans-kr/woff2/NotoSansKR-Variable.woff2") format("woff2");
+}
+
+@font-face {
     font-family: "SUIT";
     font-weight: 100;
     font-style: normal;

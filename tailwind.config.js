@@ -15,8 +15,8 @@ module.exports = {
     extend: {
       fontFamily: {
         sans: [
-          '"Helvetica Neue"',
           '"Noto Sans KR"',
+          '"Helvetica Neue"',
           '"Segoe UI"',
           "Arial",
           "sans-serif",

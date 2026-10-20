@@ -109,7 +109,7 @@ export function StudioSlider({ items, touch = false, embedded = false, fullWidth
                     </div>
                 ) : (
                     <article
-                        className={`${R.root} relative shrink-0 overflow-hidden bg-white`}
+                        className={`${R.root} relative shrink-0 overflow-hidden bg-[var(--color-surface)]`}
                         key={`${item.title}-${index}`}
                     >
                         <img
@@ -118,8 +118,8 @@ export function StudioSlider({ items, touch = false, embedded = false, fullWidth
                             src={item.image}
                         />
 
-                        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-white/95 to-transparent mobile:p-[2rem] pc:p-[3.2rem] h-[50%] flex items-end">
-                            <h6 className="text-[#000000] font-[700] mobile:text-[2.4rem] pc:text-[3.2rem]">{item.title}</h6>
+                        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[var(--color-surface-floating)]/95 to-transparent mobile:p-[2rem] pc:p-[3.2rem] h-[50%] flex items-end">
+                            <h6 className="text-[var(--color-text-primary)] font-[700] mobile:text-[2.4rem] pc:text-[3.2rem]">{item.title}</h6>
                         </div>
                     </article>
                 ),

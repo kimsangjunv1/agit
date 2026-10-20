@@ -6,7 +6,6 @@ export default function Panel() {
         <PostManagerPageProvider>
             <Layer.PostManagerList />
             <Layer.PostManagerDetail />
-            <Layer.Modal />
         </PostManagerPageProvider>
     );
 }

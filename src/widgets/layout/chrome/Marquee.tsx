@@ -17,8 +17,8 @@ const Marquee = () => {
                     key={e.idx}
                     className="flex gap-[0.8rem] px-4"
                 >
-                    <p className="whitespace-nowrap text-white">{util.string.getCurrentDate(e.created_at)}</p>
-                    <p className="font-bold text-white whitespace-nowrap">{e.author}</p>
+                    <p className="whitespace-nowrap text-[var(--color-text-primary)]">{util.string.getCurrentDate(e.created_at)}</p>
+                    <p className="font-bold text-[var(--color-text-primary)] whitespace-nowrap">{e.author}</p>
                     <p className="font-bold whitespace-nowrap text-[var(--color-brand-500)]">{e.msg}</p>
                 </div>
             )),
@@ -32,7 +32,7 @@ const Marquee = () => {
             {RENDERING ? (
                 <motion.div
                     key={"marquee"}
-                    className="fixed bottom-0 left-0 w-full overflow-hidden py-[1.2rem] z-10 bg-black"
+                    className="fixed bottom-0 left-0 w-full overflow-hidden py-[1.2rem] z-10 bg-[var(--color-surface-floating)]"
                     // initial={{ y: 100 }}
                     // exit={{ y: 100 }}
                     // animate={{ y: 0 }}

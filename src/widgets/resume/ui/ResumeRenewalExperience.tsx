@@ -25,7 +25,7 @@ const ResumeRenewalExperience = ({ experience, anchorId }: ResumeRenewalExperien
                     <div>
                         <h2 className={R.keyline}>{experience.title}</h2>
                         <p className={`${R.body} mt-[0.8rem] font-normal`}>{experience.subtitle}</p>
-                        <p className="mt-[0.4rem] text-[2rem] leading-[1.75] text-[#000000]/50">{experience.period}</p>
+                        <p className="mt-[0.4rem] text-[2rem] leading-[1.75] text-[var(--color-text-muted)]">{experience.period}</p>
                     </div>
                 }
                 details={

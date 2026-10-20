@@ -16,7 +16,7 @@ const ManagerDetailPane = ({ children, className = "" }: ManagerDetailPaneProps)
         <section
             aria-label="선택 항목 상세정보"
             data-manager-pane="detail"
-            className={`min-h-0 min-w-0 overflow-y-auto bg-white ${selectedItem ? "block" : "hidden pc:block"} ${className}`}
+            className={`min-h-0 min-w-0 overflow-y-auto bg-[var(--color-surface)] ${selectedItem ? "block" : "hidden pc:block"} ${className}`}
         >
             {selectedItem && (
                 <button

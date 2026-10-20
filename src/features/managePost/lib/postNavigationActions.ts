@@ -10,7 +10,7 @@ export const POST_NAV_ACTIONS = [
         action: "delete" as const,
     },
     {
-        title: "좋아요",
+        title: "Cheer Up",
         icon: "outlined-like",
         action: "like" as const,
     },

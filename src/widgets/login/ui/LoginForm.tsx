@@ -66,23 +66,23 @@ const CredentialsForm = () => {
         <Fragment>
             <article
                 id="list"
-                className="px-[2rem] bg-[linear-gradient(90deg,_#ffffff_10%,_var(--color-gray-100),_#ffffff_90%)] h-[100svh] w-full flex items-center justify-center overflow-hidden"
+                className="px-[2rem] bg-[linear-gradient(90deg,_var(--color-background-light)_10%,_var(--color-surface),_var(--color-background-light)_90%)] h-[100svh] w-full flex items-center justify-center overflow-hidden"
             >
                 <motion.form
                     onSubmit={handleSubmit}
-                    className="flex items-center flex-col gap-[2.4rem] max-w-[var(--size-mobile)] w-full"
+                    className="flex items-start justify-start flex-col gap-[2.4rem] max-w-[var(--size-mobile)] w-full"
                     initial={{ opacity: 0, scale: 0.8, filter: "blur(20px)" }}
                     animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }}
                     exit={{ opacity: 0, scale: 0.8, filter: "blur(20px)" }}
                     transition={{ type: "spring", stiffness: 100, damping: 20 }}
                 >
                     {/* 헤더 */}
-                    <section className="flex justify-center w-full">
+                    <section className="flex justify-start w-full">
                         <IconComponent
-                            type="graphic-logo-vertical"
+                            type="graphic-logo-horizontal"
                             alt="아지트"
-                            width={100}
-                            height={108}
+                            width={52}
+                            height={52}
                         />
                     </section>
                     {/* 헤더 END */}
@@ -119,7 +119,7 @@ const CredentialsForm = () => {
                     <section className="flex flex-col gap-[0.8rem] justify-center w-full">
                         <UI.Button
                             type="submit"
-                            className="bg-[var(--color-gray-1000)] text-white py-[1.6rem] rounded-[1.6rem] shadow-[var(--shadow-normal)] flex-1"
+                            className="bg-[var(--color-surface-floating)] text-[var(--color-text-primary)] py-[1.6rem] flex-1"
                         >
                             로그인
                         </UI.Button>
@@ -144,9 +144,9 @@ const CredentialsForm = () => {
 
 const Item = ({ type, title, description, placeholder, onChange }: { type: string; title: string; description?: string; placeholder: string; onChange: (e: any) => void }) => {
     return (
-        <section className="flex flex-col gap-[0.8rem]">
+        <section className="flex flex-col gap-[0.4rem]">
             <div className="flex items-center gap-[0.8rem]">
-                <p>{title}</p>
+                <p className="text-[1.4rem]">{title}</p>
                 {description && <p className="text-[1.2rem] text-[var(--color-gray-500)]">{description}</p>}
             </div>
             <UI.Input

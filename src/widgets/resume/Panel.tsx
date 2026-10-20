@@ -7,7 +7,7 @@ import { R } from "./ui/renewalStyles";
 
 export default function Panel() {
     return (
-        <article className={`relative w-full overflow-x-hidden bg-white ${R.root}`}>
+        <article className={`relative w-full overflow-x-hidden ${R.root}`}>
             {/* <Layer.TocNav /> */}
             <Layer.Hero />
             <Layer.Worklog entries={renewalExperiences} />
@@ -17,7 +17,6 @@ export default function Panel() {
             <Layer.Awwwards />
             <Layer.Footer />
             <Layer.EmailBannerSection />
-            <Layer.Modal />
         </article>
     );
 }

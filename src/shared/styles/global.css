@@ -1,6 +1,126 @@
 @import "tailwindcss";
 
+:where(button, a[href], [role="button"]) {
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow;
+    transition-duration: var(--interaction-duration);
+    transition-timing-function: var(--interaction-easing);
+}
+
+@media (hover: hover) {
+    :where(button, a[href], [role="button"]):not(:disabled):not([aria-disabled="true"]):hover {
+        color: var(--color-interaction-hover);
+    }
+}
+
+:root[data-page-transition="slide"] {
+    overflow: hidden;
+}
+
+:root[data-page-transition-preparing] main:not([data-page-transition-copy]),
+:root[data-page-transition-preparing] main:not([data-page-transition-copy]) * {
+    visibility: hidden !important;
+}
+
+:root[data-page-transition="slide"] [data-page-transition-fixed="header"] {
+    view-transition-name: page-header;
+}
+
+:root[data-page-transition="slide"] [data-page-transition-fixed="navigation"] {
+    view-transition-name: page-navigation;
+}
+
+:root[data-page-transition="slide"] [data-page-transition-fixed="sidebar"] {
+    view-transition-name: page-sidebar;
+}
+
+:root[data-page-transition="slide"] [data-page-transition-fixed="progress"] {
+    view-transition-name: page-progress;
+}
+
+:root[data-page-transition="slide"]::view-transition-group(page-progress) {
+    z-index: 4;
+    animation: none;
+}
+
+:root[data-page-transition="slide"]::view-transition-group(page-sidebar) {
+    z-index: 3;
+    animation: none;
+}
+
+:root[data-page-transition="slide"]::view-transition-group(page-header) {
+    z-index: 2;
+    animation: none;
+}
+
+:root[data-page-transition="slide"]::view-transition-group(page-navigation) {
+    z-index: 1;
+    animation: none;
+}
+
+:root[data-page-transition="slide"]::view-transition-old(page-header),
+:root[data-page-transition="slide"]::view-transition-old(page-navigation),
+:root[data-page-transition="slide"]::view-transition-old(page-sidebar),
+:root[data-page-transition="slide"]::view-transition-old(page-progress) {
+    display: none;
+}
+
+:root[data-page-transition="slide"]::view-transition-new(page-header),
+:root[data-page-transition="slide"]::view-transition-new(page-navigation),
+:root[data-page-transition="slide"]::view-transition-new(page-sidebar),
+:root[data-page-transition="slide"]::view-transition-new(page-progress) {
+    mix-blend-mode: normal;
+    animation: none;
+}
+
+:root[data-page-transition="slide"]::view-transition-group(root) {
+    animation: none;
+}
+
+:root[data-page-transition="slide"]::view-transition-old(root),
+:root[data-page-transition="slide"]::view-transition-new(root) {
+    height: 100%;
+    mix-blend-mode: normal;
+    animation-duration: var(--page-slide-duration);
+    animation-timing-function: cubic-bezier(0.77, 0, 0.175, 1);
+    animation-fill-mode: both;
+}
+
+:root[data-page-transition="slide"]::view-transition-old(root) {
+    animation-name: page-slide-out;
+}
+
+:root[data-page-transition="slide"]::view-transition-new(root) {
+    animation-name: page-slide-in;
+}
+
+@keyframes page-slide-out {
+    from {
+        transform: translateY(0);
+    }
+    to {
+        transform: translateY(-100%);
+    }
+}
+
+@keyframes page-slide-in {
+    from {
+        transform: translateY(100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    :root[data-page-transition="slide"]::view-transition-old(root),
+    :root[data-page-transition="slide"]::view-transition-new(root) {
+        animation: none;
+    }
+}
+
 @theme static {
+    --font-sans: var(--custom-font), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
     --breakpoint-*: initial;
     --breakpoint-mobile: 21.5rem;
     --breakpoint-tablet: 48rem;

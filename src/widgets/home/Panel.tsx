@@ -15,7 +15,6 @@ export default function Panel({ initialData }: HomePanelProps) {
             <HomeLayer.ArchiveFeed initialData={initialData} />
             <HomeLayer.Search />
             <HomeLayer.HomeViewModeFloatingMenu />
-            <HomeLayer.Modal />
         </HomePageProvider>
     );
 }

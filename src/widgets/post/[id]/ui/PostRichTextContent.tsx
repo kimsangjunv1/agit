@@ -6,6 +6,7 @@ import { extractCodeFromContent, highlightCodeWithHljs } from "@/shared/lib/code
 import { sanitizeHtml, styleRichTextHtml } from "@/shared/lib/sanitizeHtml";
 import CodeBlockPanel from "@/shared/ui/common/CodeBlockPanel";
 import { SNIPPET_CODE_BLOCK_TAG } from "@/shared/ui/common/richText/extensions/snippetCodeBlock";
+import { POST_SNIPPET_BODY_CLASS } from "@/shared/lib/richText/styles";
 
 type RichTextPart = { type: "html"; content: string } | { type: "snippet"; content: string; language: string };
 
@@ -63,7 +64,7 @@ const SnippetBlockView = ({ content, language }: { content: string; language: st
             content={panelContent}
             variant="compact"
             showFormat={false}
-            bodyClassName="py-[0.8rem]"
+            bodyClassName={POST_SNIPPET_BODY_CLASS}
         >
             <div
                 className="code-block-view select-text"

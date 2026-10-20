@@ -1,14 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type RefObject } from "react";
 
 import type { PostTocItem } from "@/entities/post/lib/postToc";
 
 type PostTocNavProps = {
     items: PostTocItem[];
+    scrollViewportRef?: RefObject<HTMLDivElement | null>;
 };
 
-const PostTocNav = ({ items }: PostTocNavProps) => {
+const PostTocNav = ({ items, scrollViewportRef }: PostTocNavProps) => {
     const [activeId, setActiveId] = useState(items[0]?.id ?? "");
     const [isHovered, setIsHovered] = useState(false);
 
@@ -26,35 +27,44 @@ const PostTocNav = ({ items }: PostTocNavProps) => {
 
         const flushActiveId = () => {
             rafId = 0;
-
-            if (pendingId) {
-                setActiveId((prev) => (prev === pendingId ? prev : pendingId!));
-                pendingId = null;
-            }
+            const nextId = pendingId;
+            pendingId = null;
+            if (nextId) setActiveId((prev) => (prev === nextId ? prev : nextId));
         };
 
-        const observer = new IntersectionObserver(
-            (entries) => {
-                const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+        const root = scrollViewportRef?.current ?? null;
+        const handleIntersections: IntersectionObserverCallback = (entries) => {
+            const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio);
 
-                if (visible[0]?.target.id) {
-                    pendingId = visible[0].target.id;
+            if (visible[0]?.target.id) {
+                pendingId = visible[0].target.id;
 
-                    if (!rafId) {
-                        rafId = requestAnimationFrame(flushActiveId);
-                    }
+                if (!rafId) {
+                    rafId = requestAnimationFrame(flushActiveId);
                 }
-            },
-            { rootMargin: "-35% 0px -45% 0px", threshold: [0, 1] },
-        );
+            }
+        };
+        let observer: IntersectionObserver;
+        const observeSections = () => {
+            observer?.disconnect();
+            const height = root?.clientHeight ?? window.innerHeight;
+            observer = new IntersectionObserver(handleIntersections, {
+                root,
+                rootMargin: `-${height * 0.35}px 0px -${height * 0.45}px 0px`,
+                threshold: [0, 1],
+            });
+            sections.forEach((section) => observer.observe(section));
+        };
 
-        sections.forEach((section) => observer.observe(section));
+        observeSections();
+        window.addEventListener("resize", observeSections);
 
         return () => {
             cancelAnimationFrame(rafId);
             observer.disconnect();
+            window.removeEventListener("resize", observeSections);
         };
-    }, [items]);
+    }, [items, scrollViewportRef]);
 
     const handleClick = (id: string) => {
         document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -68,8 +78,8 @@ const PostTocNav = ({ items }: PostTocNavProps) => {
             aria-label="글 목차"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className={`hidden pc:block fixed top-[50%] right-0 transform translate-y-[-50%] z-40 ${
-                isHovered ? "w-[28rem] rounded-[1.2rem] border border-[var(--color-gray-200)] bg-white p-[2.4rem] shadow-[var(--shadow-normal)]" : "w-[3.2rem] bg-transparent p-0"
+            className={`fixed top-[50%] right-[2.0rem] transform translate-y-[-50%] z-[110] ${
+                isHovered ? "w-[28rem] rounded-[1.2rem] border border-[var(--color-gray-200)] bg-[var(--color-surface)] p-[2.4rem] shadow-[var(--shadow-normal)]" : "w-[3.2rem] bg-transparent p-0"
             }`}
         >
             <ul className={`flex flex-col ${isHovered ? "gap-[0.4rem]" : "items-end gap-[0.8rem]"}`}>
@@ -87,7 +97,7 @@ const PostTocNav = ({ items }: PostTocNavProps) => {
                                     type="button"
                                     aria-label={item.label}
                                     onClick={() => handleClick(item.id)}
-                                    className={`block h-[0.4rem] shrink-0 rounded-full bg-[var(--color-gray-1000)] transition-opacity ${isMain ? "w-[2.4rem]" : "w-[1.2rem]"} ${isActive ? "opacity-100" : "opacity-50"}`}
+                                    className={`block h-[0.2rem] shrink-0 transition-opacity ${isMain ? "w-[2.4rem]" : "w-[1.2rem]"} ${isActive ? "bg-[#ff4321]" : "bg-[var(--color-border)]"}`}
                                 />
                             </li>
                         );

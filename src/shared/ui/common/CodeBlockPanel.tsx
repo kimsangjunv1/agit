@@ -79,7 +79,7 @@ const CodeBlockPanel = ({
         <button
             type="button"
             onClick={handleCopy}
-            className="flex h-[3.2rem] w-[3.2rem] items-center justify-center rounded-[0.8rem] text-slate-400 transition-colors hover:bg-slate-800 hover:text-slate-200"
+            className="flex h-[3.2rem] w-[3.2rem] items-center justify-center rounded-[0.8rem] text-[var(--color-text-muted)] transition-colors hover:bg-[var(--color-surface-hover)] hover:text-[var(--color-text-primary)]"
             aria-label="코드 복사"
         >
             {copied ? (
@@ -105,7 +105,7 @@ const CodeBlockPanel = ({
                         type="button"
                         onClick={handleFormat}
                         disabled={isFormatting}
-                        className="flex h-[3.2rem] w-[3.2rem] items-center justify-center rounded-[0.8rem] text-slate-400 transition-colors hover:bg-slate-800 hover:text-slate-200 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="flex h-[3.2rem] w-[3.2rem] items-center justify-center rounded-[0.8rem] text-[var(--color-text-muted)] transition-colors hover:bg-[var(--color-surface-hover)] hover:text-[var(--color-text-primary)] disabled:cursor-not-allowed disabled:opacity-50"
                         aria-label="코드 정렬"
                     >
                         <MaterialIcon
@@ -120,9 +120,9 @@ const CodeBlockPanel = ({
 
     if (isCompact) {
         return (
-            <section className={`code-block-panel overflow-hidden rounded-[1.2rem] border border-slate-700/60 bg-[#13171F] my-[1.2rem] ${className}`}>
+            <section className={`code-block-panel overflow-hidden rounded-[1.2rem] border border-[var(--color-border)] bg-[var(--color-surface-inset)] my-[1.2rem] ${className}`}>
                 <div
-                    className={`code-block-panel__body flex items-center gap-[0.8rem] bg-[#1F232A] border border-[#2B2E36] overflow-x-auto font-mono text-[1.6rem] leading-1 text-slate-50 px-[1.2rem] ${bodyClassName}`}
+                    className={`code-block-panel__body flex items-center gap-[0.8rem] bg-[var(--color-surface-inset)] border border-[var(--color-border)] overflow-x-auto font-mono text-[1.6rem] leading-1 text-[var(--color-text-primary)] px-[1.2rem] ${bodyClassName}`}
                 >
                     <div className="min-w-0 flex-1">{children}</div>
                     {showCopy ? <div className="flex h-[calc(1.2rem*1.7)] shrink-0 items-center">{copyButton}</div> : null}
@@ -132,7 +132,7 @@ const CodeBlockPanel = ({
     }
 
     return (
-        <section className={`code-block-panel overflow-hidden rounded-[2.4rem] border border-slate-700/60 bg-[#13171F] p-[0.4rem] ${className}`}>
+        <section className={`code-block-panel overflow-hidden border border-[var(--color-border)] bg-[var(--color-surface-inset)] p-[0.4rem] ${className}`}>
             <header className="flex items-center justify-between gap-[1.2rem] px-[1.6rem]">
                 {editableFileName ? (
                     <label className="flex min-w-0 items-center gap-0 font-mono text-[1.2rem] tracking-[0.02em]">
@@ -143,19 +143,19 @@ const CodeBlockPanel = ({
                             onChange={(event) => handleFileNameChange(event.target.value)}
                             onClick={(event) => event.stopPropagation()}
                             placeholder={baseName}
-                            className="min-w-0 border border-[#2B2E36] text-slate-200 outline-none placeholder:text-slate-500 h-[2.4rem] bg-[#1F232A] rounded-[0.8rem] px-[0.8rem]"
+                            className="min-w-0 border border-[var(--color-border)] text-[var(--color-text-primary)] outline-none placeholder:text-[var(--color-text-muted)] h-[2.4rem] bg-[var(--color-surface-inset)] rounded-[0.8rem] px-[0.8rem]"
                         />
-                        {extension ? <span className="shrink-0 text-slate-400">{extension}</span> : null}
+                        {extension ? <span className="shrink-0 text-[var(--color-text-muted)]">{extension}</span> : null}
                     </label>
                 ) : (
-                    <p className="font-mono text-[1.2rem] font-medium tracking-[0.02em] text-slate-400">{label}</p>
+                    <p className="font-mono text-[1.2rem] font-medium tracking-[0.02em] text-[var(--color-text-muted)]">{label}</p>
                 )}
 
                 {actionButtons}
             </header>
 
             <div
-                className={`code-block-panel__body bg-[#1F232A] rounded-[2.4rem] border border-[#2B2E36] overflow-x-auto px-[1.6rem] py-[1.6rem] font-mono text-[1.2rem] leading-[1.7] text-slate-50 ${bodyClassName}`}
+                className={`code-block-panel__body bg-[var(--color-surface-inset)] rounded-[2.4rem] border border-[var(--color-border)] overflow-x-auto px-[1.6rem] py-[1.6rem] font-mono text-[1.2rem] leading-[1.7] text-[var(--color-text-primary)] ${bodyClassName}`}
             >
                 {children}
             </div>

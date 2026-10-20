@@ -13,7 +13,7 @@ const RelatedPosts = () => {
 
             <section className="flex mobile:flex-col tablet:flex-row flex-wrap">
                 <UI.Button
-                    className={`hover:brightness-50 flex-1 flex items-center justify-start gap-[0.8rem]  ${prev ? "" : "pointer-events-none"}`}
+                    className={`flex-1 flex items-center justify-start gap-[0.8rem]  ${prev ? "" : "pointer-events-none"}`}
                     onClick={() => {
                         if (prev) {
                             pushToUrl(`/post/${prev?.idx}`);
@@ -34,27 +34,27 @@ const RelatedPosts = () => {
                             />
 
                             <div className="absolute left-[1.6rem] top-[50%] transform translate-y-[-50%] flex min-w-0 w-[calc(100%-(1.6rem*2))] leading-[1.5] flex-col items-start">
-                                <p className="bg-black text-[#ff4321] text-left text-[2rem] font-semibold p-[0.8rem_0.8rem]">PREV</p>
-                                <p className="bg-black text-white text-left mobile:text-[2.4rem] pc:text-[3.2rem] font-semibold p-[0.8rem_0.8rem] leading-[1.5] line-clamp-2">{prev.title}</p>
+                                <p className="bg-[var(--color-surface-floating)] text-[#ff4321] text-left text-[2rem] font-semibold p-[0.8rem_0.8rem]">PREV</p>
+                                <p className="bg-[var(--color-surface-floating)] text-inherit text-left mobile:text-[2.4rem] pc:text-[3.2rem] font-semibold p-[0.8rem_0.8rem] leading-[1.5] line-clamp-2">{prev.title}</p>
                                 <MaterialIcon
                                     name={"arrow_back"}
                                     size={24}
-                                    className="bg-black  text-white p-[0.8rem_0.8rem]"
+                                    className="bg-[var(--color-surface-floating)] text-inherit p-[0.8rem_0.8rem]"
                                 />
                             </div>
                         </div>
                     ) : (
-                        <div className="relative h-[50svh] w-full shrink-0 overflow-hidden bg-black">
+                        <div className="relative h-[50svh] w-full shrink-0 overflow-hidden bg-[var(--color-surface-floating)]">
                             <div className="absolute left-[1.6rem] top-[50%] transform translate-y-[-50%] flex min-w-0 w-[calc(100%-(1.6rem*2))] leading-[1.5] flex-col items-start">
-                                <p className="bg-black text-[#ff4321] text-left text-[2rem] font-semibold p-[0.8rem_0.8rem]">PREV</p>
-                                <p className="bg-black text-white text-left mobile:text-[2.4rem] pc:text-[3.2rem] font-semibold p-[0.8rem_0.8rem] leading-[1.5] line-clamp-2">이전글이 없어요</p>
+                                <p className="bg-[var(--color-surface-floating)] text-[#ff4321] text-left text-[2rem] font-semibold p-[0.8rem_0.8rem]">PREV</p>
+                                <p className="bg-[var(--color-surface-floating)] text-[var(--color-text-primary)] text-left mobile:text-[2.4rem] pc:text-[3.2rem] font-semibold p-[0.8rem_0.8rem] leading-[1.5] line-clamp-2">이전글이 없어요</p>
                             </div>
                         </div>
                     )}
                 </UI.Button>
 
                 <UI.Button
-                    className={`hover:brightness-50 flex-1 flex items-center justify-end gap-[0.8rem]  ${next ? "" : "pointer-events-none"}`}
+                    className={`flex-1 flex items-center justify-end gap-[0.8rem]  ${next ? "" : "pointer-events-none"}`}
                     onClick={() => {
                         if (next) {
                             pushToUrl(`/post/${next?.idx}`);
@@ -76,21 +76,21 @@ const RelatedPosts = () => {
                                 />
 
                                 <div className="absolute right-[1.6rem] top-[50%] transform translate-y-[-50%] flex min-w-0 w-[calc(100%-(1.6rem*2))] leading-[1.5] flex-col items-end">
-                                    <p className="bg-black text-[#ff4321] text-right text-[2rem] font-semibold p-[0.8rem_0.8rem]">NEXT</p>
-                                    <p className="bg-black text-white text-right mobile:text-[2.4rem] pc:text-[3.2rem] font-semibold p-[0.8rem_0.8rem] leading-[1.5] line-clamp-2">{next.title}</p>
+                                    <p className="bg-[var(--color-surface-floating)] text-[#ff4321] text-right text-[2rem] font-semibold p-[0.8rem_0.8rem]">NEXT</p>
+                                    <p className="bg-[var(--color-surface-floating)] text-inherit text-right mobile:text-[2.4rem] pc:text-[3.2rem] font-semibold p-[0.8rem_0.8rem] leading-[1.5] line-clamp-2">{next.title}</p>
                                     <MaterialIcon
                                         name={"arrow_back"}
                                         size={20}
-                                        className="bg-black text-white p-[0.8rem_0.8rem] rotate-180"
+                                        className="bg-[var(--color-surface-floating)] text-[var(--color-text-primary)] p-[0.8rem_0.8rem] rotate-180"
                                     />
                                 </div>
                             </div>
                         </Fragment>
                     ) : (
-                        <div className="relative h-[50svh] w-full shrink-0 overflow-hidden bg-black">
+                        <div className="relative h-[50svh] w-full shrink-0 overflow-hidden bg-[var(--color-surface-floating)]">
                             <div className="absolute right-[1.6rem] top-[50%] transform translate-y-[-50%] flex min-w-0 w-[calc(100%-(1.6rem*2))] leading-[1.5] flex-col">
-                                <p className="bg-black text-[#ff4321] text-right text-[2rem] font-semibold p-[0.8rem_0.8rem]">NEXT</p>
-                                <p className="bg-black text-white text-right mobile:text-[2.4rem] pc:text-[3.2rem] font-semibold p-[0.8rem_0.8rem] leading-[1.5] line-clamp-2">다음글이 없어요</p>
+                                <p className="bg-[var(--color-surface-floating)] text-[#ff4321] text-right text-[2rem] font-semibold p-[0.8rem_0.8rem]">NEXT</p>
+                                <p className="bg-[var(--color-surface-floating)] text-[var(--color-text-primary)] text-right mobile:text-[2.4rem] pc:text-[3.2rem] font-semibold p-[0.8rem_0.8rem] leading-[1.5] line-clamp-2">다음글이 없어요</p>
                             </div>
                         </div>
                     )}

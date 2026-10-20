@@ -19,8 +19,8 @@
         -moz-osx-font-smoothing: grayscale;
 
         background: var(--color-background-light);
-
-        color: var(--color-gray-1000);
+        color: var(--color-text-primary);
+        color-scheme: dark;
     }
 
     html {
@@ -33,12 +33,13 @@
 
     ::selection {
         background: var(--color-brand-100);
-        color: var(--color-brand-700);
+        color: var(--color-text-primary);
     }
 
     * {
         scrollbar-width: thin;
         box-sizing: border-box;
+        border-color: var(--color-border);
     }
 
     body {
@@ -56,7 +57,7 @@
     }
 
     main {
-        scrollbar-color: rgba(0, 29, 58, 0.18) transparent;
+        scrollbar-color: var(--color-border-strong) transparent;
         scrollbar-width: thin;
     }
 

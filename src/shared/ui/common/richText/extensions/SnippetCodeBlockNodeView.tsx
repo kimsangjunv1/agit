@@ -5,6 +5,7 @@ import { useMemo } from "react";
 
 import { DEFAULT_CODE_LANGUAGE, highlightCodeWithHljs } from "@/shared/lib/codeHighlight";
 import CodeBlockPanel from "@/shared/ui/common/CodeBlockPanel";
+import { CODE_PRE_CLASS, CODE_TEXT_CLASS, POST_SNIPPET_BODY_CLASS } from "@/shared/lib/richText/styles";
 
 export function SnippetCodeBlockNodeView({ node, selected }: NodeViewProps) {
     const language = (node.attrs.language as string | undefined) ?? DEFAULT_CODE_LANGUAGE;
@@ -17,7 +18,7 @@ export function SnippetCodeBlockNodeView({ node, selected }: NodeViewProps) {
     return (
         <NodeViewWrapper
             as="div"
-            className={`post-snippet-code-block my-[1.6rem] ${selected ? "ring-2 ring-[#3b82f6] rounded-[2.4rem]" : ""}`}
+            className={`post-snippet-code-block ${selected ? "ring-2 ring-[#3b82f6] rounded-[2.4rem]" : ""}`}
             data-snippet-code-block=""
             data-language={language}
         >
@@ -25,21 +26,21 @@ export function SnippetCodeBlockNodeView({ node, selected }: NodeViewProps) {
                 content={content}
                 variant="compact"
                 showFormat={false}
-                bodyClassName="py-[1.2rem]"
+                bodyClassName={POST_SNIPPET_BODY_CLASS}
             >
                 <div className="snippet-code-block-editor relative min-w-0">
                     <pre
                         aria-hidden
-                        className="code-block hljs pointer-events-none absolute inset-0 m-0 overflow-hidden whitespace-pre-wrap break-words bg-transparent font-mono text-[1.2rem] leading-[1.7]"
+                        className={`code-block hljs pointer-events-none absolute inset-0 overflow-hidden ${CODE_PRE_CLASS}`}
                     >
                         <code
                             className={`language-${language}`}
                             dangerouslySetInnerHTML={{ __html: highlightedHtml }}
                         />
                     </pre>
-                    <pre className="relative m-0 bg-transparent">
+                    <pre className={`relative ${CODE_PRE_CLASS}`}>
                         <NodeViewContent
-                            className={`snippet-code-block-editor__input text-transparent caret-slate-200 selection:bg-blue-500/35 language-${language} block whitespace-pre-wrap break-words bg-transparent font-mono text-[1.2rem] leading-[1.7] outline-none`}
+                            className={`snippet-code-block-editor__input text-transparent caret-slate-200 selection:bg-blue-500/35 language-${language} ${CODE_TEXT_CLASS} outline-none`}
                         />
                     </pre>
                 </div>

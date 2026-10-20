@@ -6,7 +6,6 @@ export default function Panel() {
         <ImageManagerPageProvider>
             <Layer.ImageManagerList />
             <Layer.ImageManagerDetail />
-            <Layer.Modal />
         </ImageManagerPageProvider>
     );
 }

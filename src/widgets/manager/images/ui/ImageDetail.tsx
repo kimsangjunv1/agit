@@ -32,7 +32,7 @@ const ImageDetail = ({ item }: ImageDetailProps) => {
                     <UI.Button
                         type="button"
                         onClick={copyUrl}
-                        className="rounded-[0.8rem] border border-[var(--color-gray-300)] bg-white px-[1.2rem] py-[0.8rem] text-[1.2rem] font-semibold text-[var(--color-gray-700)]"
+                        className="rounded-[0.8rem] border border-[var(--color-gray-300)] bg-[var(--color-surface)] px-[1.2rem] py-[0.8rem] text-[1.2rem] font-semibold text-[var(--color-gray-700)]"
                     >
                         URL 복사
                     </UI.Button>

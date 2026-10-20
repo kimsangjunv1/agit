@@ -6,7 +6,6 @@ export default function Panel() {
         <CommentManagerPageProvider>
             <Layer.CommentManagerList />
             <Layer.CommentManagerDetail />
-            <Layer.Modal />
         </CommentManagerPageProvider>
     );
 }

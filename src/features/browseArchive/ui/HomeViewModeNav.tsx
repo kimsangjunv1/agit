@@ -24,10 +24,10 @@ const HomeViewModeNav = ({ variant }: HomeViewModeNavProps) => {
     const { data: getCategoryListData } = useGetCategoryListQuery();
 
     const isFloating = variant === "floating";
-    const activeTextClass = isFloating ? "text-white" : "text-black";
-    const inactiveTextClass = isFloating ? "text-white/50" : "text-[#00000050]";
+    const activeTextClass = isFloating ? "text-[var(--color-text-primary)]" : "text-[var(--color-text-primary)]";
+    const inactiveTextClass = isFloating ? "text-[var(--color-text-muted)]" : "text-[var(--color-text-muted)]";
     const dividerClass = isFloating ? "h-[1.6rem] w-[0.4rem] bg-white/30 shrink-0" : "h-[1.6rem] w-[0.1rem] bg-[var(--color-gray-400)] shrink-0";
-    const buttonTextClass = isFloating ? "font-extrabold text-[2rem]" : "font-extrabold text-[2.4rem] whitespace-nowrap";
+    const buttonTextClass = isFloating ? "text-[2rem]" : "text-[2.0rem] whitespace-nowrap";
 
     return (
         <section className={isFloating ? "fixed z-100 left-1/2 -translate-x-1/2 bottom-[calc(1.6rem+env(safe-area-inset-bottom))] w-full" : "flex items-center"}>
@@ -36,25 +36,27 @@ const HomeViewModeNav = ({ variant }: HomeViewModeNavProps) => {
                     <UI.Button
                         key="search"
                         onClick={() => setIsSearchOpen(true)}
-                        className={isFloating ? "bg-black w-[6.4rem] h-[5.2rem] text-white rounded-full" : `${activeTextClass} ${buttonTextClass}`}
+                        className={isFloating ? "bg-[var(--color-surface-floating)] w-[6.4rem] h-[5.2rem] text-[var(--color-text-primary)] rounded-full" : `${activeTextClass} ${buttonTextClass}`}
                     >
-                        <span className="sr-only">검색</span>
+                        search
+                        {/* <span className="sr-only">검색</span>
                         <MaterialIcon
                             name="search"
                             size={24}
-                        />
+                        /> */}
                     </UI.Button>
 
-                    <section className={`${isFloating ? "bg-black rounded-full h-[5.2rem] px-[2rem]" : ""} flex items-center gap-[1.6rem]`}>
+                    <section className={`${isFloating ? "bg-[var(--color-surface-floating)] rounded-full h-[5.2rem] px-[2rem]" : ""} flex items-center gap-[1.6rem]`}>
                         <UI.Button
                             key="latest"
                             onClick={() => {
                                 window.scrollTo({ top: 0, left: 0 });
+                                document.querySelector<HTMLDivElement>("main [data-scrollbar-viewport]")?.scrollTo({ top: 0, left: 0 });
                                 setMainViewMode(1);
                             }}
-                            className={`${activeTextClass} text-[2rem] font-bold shrink-0`}
+                            className={`${activeTextClass} text-[2rem] shrink-0`}
                         >
-                            <span className={buttonTextClass}>최신글</span>
+                            <span className={buttonTextClass}>New</span>
                             {/* {isFloating ? (
                                 <span className={buttonTextClass}>최신글</span>
                             ) : (
@@ -94,7 +96,7 @@ const HomeViewModeNav = ({ variant }: HomeViewModeNavProps) => {
                                     onClick={() => setMainViewMode(2)}
                                     className={`${inactiveTextClass} ${buttonTextClass}`}
                                 >
-                                    카테고리
+                                    Category
                                 </UI.Button>
                             </motion.section>
                         )}

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion, useScroll, useTransform } from "motion/react";
-import { useRef } from "react";
+import { useRef, type RefObject } from "react";
 
 import { PostLatestItem } from "@/entities/post/model/post.type";
 import PostThumbnail from "@/shared/ui/common/PostThumbnail";
@@ -14,13 +14,15 @@ const MotionLink = motion.create(Link);
 
 type ArchiveSliderVerticalCardProps = {
     post: PostLatestItem;
+    containerRef: RefObject<HTMLDivElement | null>;
 };
 
-const ArchiveSliderVerticalCard = ({ post }: ArchiveSliderVerticalCardProps) => {
+const ArchiveSliderVerticalCard = ({ post, containerRef }: ArchiveSliderVerticalCardProps) => {
     const cardRef = useRef<HTMLButtonElement | null>(null);
     const postHref = `/post/${post.idx}`;
     const { pushToUrl } = useNavigate();
     const { scrollYProgress } = useScroll({
+        container: containerRef,
         target: cardRef,
         offset: ["start end", "center center", "end start"],
     });
@@ -48,20 +50,20 @@ const ArchiveSliderVerticalCard = ({ post }: ArchiveSliderVerticalCardProps) => 
             />
 
             <div className="absolute top-0 left-0 w-full flex flex-col justify-start items-start">
-                <p className="bg-white p-[0.4rem] text-black font-mono">{util.string.getCurrentFullTime(post.created_at)}</p>
+                <p className="bg-[var(--color-background-light)] p-[0.4rem] text-[var(--color-text-primary)] font-mono">{util.string.getCurrentFullTime(post.created_at)}</p>
 
                 <Marquee
                     content="NEW"
                     className={{
-                        container: "bg-white gap-[1.2rem] p-[0.4rem]",
-                        marquee: "text-black gap-[1.2rem] font-mono",
+                        container: "bg-[var(--color-background-light)] gap-[1.2rem] p-[0.4rem]",
+                        marquee: "text-[#ff4321] gap-[1.2rem] font-mono",
                     }}
                 />
             </div>
 
             <div className="absolute bottom-[1.6rem] left-[1.6rem] w-full flex flex-col justify-start items-start">
-                <h5 className="bg-[#000000] text-[#ff4321] text-left mobile:text-[1.6rem] pc:text-[2rem] font-semibold p-[0.4rem_0.4rem_0_0.4rem] leading-[1.5]">{post.title}</h5>
-                <p className="bg-[#000000] text-[#ffffff] text-left font-bold leading-[1.5] line-clamp-2 mobile:text-[1.6rem] tablet:text-[2rem] p-[0.8rem_0.4rem_0.4rem_0.4rem]">
+                <h5 className="bg-[var(--color-surface-floating)] text-[#ff4321] text-left mobile:text-[1.6rem] pc:text-[2rem] font-semibold p-[0.4rem_0.4rem_0_0.4rem] leading-[1.5]">{post.title}</h5>
+                <p className="bg-[var(--color-surface-floating)] text-[var(--color-text-primary)] text-left font-bold leading-[1.5] line-clamp-2 mobile:text-[1.6rem] tablet:text-[2rem] p-[0.8rem_0.4rem_0.4rem_0.4rem]">
                     &quot;{post.summary}&quot;
                 </p>
             </div>

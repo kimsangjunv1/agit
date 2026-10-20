@@ -6,7 +6,6 @@ export default function Panel() {
         <InvitationManagerPageProvider>
             <Layer.InvitationManagerList />
             <Layer.InvitationManagerDetail />
-            <Layer.Modal />
         </InvitationManagerPageProvider>
     );
 }

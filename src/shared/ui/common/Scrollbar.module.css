@@ -1,0 +1,7 @@
+.viewport {
+    scrollbar-width: none;
+}
+
+.viewport::-webkit-scrollbar {
+    display: none;
+}

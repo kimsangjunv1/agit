@@ -2,7 +2,7 @@
 
 import React, { Fragment, useEffect } from "react";
 import { signOut, useSession } from "next-auth/react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion, usePresence } from "motion/react";
 
 import { PAGE_REVEAL_COVER_DURATION, PAGE_REVEAL_COVER_EASE, PAGE_REVEAL_UNCOVER_DURATION, PAGE_REVEAL_UNCOVER_EASE } from "@/shared/constants/pageTransition";
 import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
@@ -17,7 +17,7 @@ import useNavigate from "@/shared/hooks/useNavigate";
 import { headerMenuList } from "@/shared/constants/lists/configServiceList";
 
 const CLIP_MENU = {
-    hidden: "inset(0 100% 0 0)",
+    hidden: "inset(0 0 0 100%)",
     visible: "inset(0 0 0 0)",
     exit: "inset(0 0 0 100%)",
 } as const;
@@ -46,7 +46,9 @@ const MobileMenu = () => {
             <AnimatePresence mode="wait">
                 {isMobileMenuOpen ? (
                     <motion.article
-                        className="mobile flex flex-col justify-center items-center gap-[1.6rem] fixed top-0 left-0 w-full h-full bg-[#232323] z-10000"
+                        data-page-transition-fixed="sidebar"
+                        className="mobile flex flex-col justify-center items-center gap-[1.6rem] fixed top-0 right-0 w-[50svw] h-[100svh] bg-[var(--color-surface-floating)] z-[100000000]"
+                        // className="mobile flex flex-col justify-center items-center gap-[1.6rem] fixed top-0 left-0 w-full h-full bg-[#232323] z-10000"
                         initial={{ clipPath: CLIP_MENU.hidden }}
                         animate={{ clipPath: CLIP_MENU.visible }}
                         exit={{
@@ -61,35 +63,27 @@ const MobileMenu = () => {
                             ease: PAGE_REVEAL_COVER_EASE,
                         }}
                     >
+                        <SidebarTransitionPresence />
                         <UI.Button
-                            className="hamburger absolute top-[3.2rem] right-[3.2rem] z-[10000]"
+                            className="hamburger w-full p-[2.0rem] flex items-center z-[10000]"
                             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                         >
-                            {/* <div
-                                className={`w-[2.4rem] h-[0.3rem] bg-[var(--color-gray-1000)] absolute left-[50%] transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ${
-                                    isMobileMenuOpen ? "top-[calc(50%-0rem)] rotate-[225deg]" : "top-[calc(50%-0.8rem)] rotate-0"
-                                }`}
-                            />
-                            <div
-                                className={`w-[2.4rem] h-[0.3rem] bg-[var(--color-gray-1000)] absolute left-[50%] transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ${
-                                    isMobileMenuOpen ? "top-[calc(50%+0rem)] rotate-[135deg]" : "top-[calc(50%+0.8rem)] rotate-0"
-                                }`}
-                            /> */}
                             <IconComponent
                                 type="graphic-arrow-up"
                                 alt="나가기"
                                 className="rotate-270 invert"
-                                width={44}
-                                height={44}
+                                width={32}
+                                height={32}
                             />
+                            <p className="text-inherit text-[2.4rem]">Close.</p>
                         </UI.Button>
                         {/* 목록 */}
-                        <section className="mobile-inner max-w-[calc(var(--size-tablet)/2)] px-[2.4rem] py-[2.4rem] w-full h-full flex flex-col items-start justify-between">
+                        <section className="mobile-inner px-[2.4rem] py-[2.4rem] w-full h-full flex flex-col items-start justify-between">
                             <section className="flex flex-col items-start">
-                                <div className="w-full overflow-hidden mb-[2.4rem]">
+                                {/* <div className="w-full overflow-hidden mb-[2.4rem]">
                                     <p className="text-[5.2rem] font-bold leading-[1.5] text-[#ffffff]">Hej!</p>
                                     <p className="text-[2.4rem] font-semibold leading-[1.5] text-[#ffffff]">아래에서 메뉴를 선택해주세요.</p>
-                                </div>
+                                </div> */}
 
                                 {headerMenuList.map((e, i) => (
                                     <div
@@ -118,7 +112,7 @@ const MobileMenu = () => {
                                     className="w-full h-auto overflow-hidden"
                                 >
                                     <motion.div
-                                        className="w-full bg-[#ffffff]/30 my-[1.6rem] h-[0.4rem]"
+                                        className="w-full bg-[#ffffff]/30 my-[1.6rem] h-[0.1rem]"
                                         initial={{ y: "4.8rem" }}
                                         animate={{ y: "0rem" }}
                                         transition={{
@@ -145,14 +139,14 @@ const MobileMenu = () => {
                                         {session ? (
                                             <UI.Button
                                                 onClick={() => logout()}
-                                                className="flex justify-center text-center gap-[0.4rem] w-full items-center text-[2.4rem] font-semibold whitespace-nowrap py-[1.2rem] text-[#ffffff]"
+                                                className="flex justify-center text-center gap-[0.4rem] w-full items-center text-[2.4rem] font-semibold whitespace-nowrap py-[1.2rem] text-[var(--color-text-primary)]"
                                             >
                                                 로그아웃
                                             </UI.Button>
                                         ) : (
                                             <UI.Button
                                                 onClick={() => pushToUrl("/login")}
-                                                className="flex justify-center text-center gap-[0.4rem] w-full items-center text-[2.4rem] font-semibold whitespace-nowrap py-[1.2rem] text-[#ffffff]"
+                                                className="flex justify-center text-center gap-[0.4rem] w-full items-center text-[2.4rem] font-semibold whitespace-nowrap py-[1.2rem] text-[#ff4321]"
                                             >
                                                 로그인
                                             </UI.Button>
@@ -166,12 +160,12 @@ const MobileMenu = () => {
                                     <IconComponent
                                         type="graphic-logo-horizontal"
                                         alt="로고"
-                                        height={132}
-                                        width={152}
+                                        height={72}
+                                        width={72}
                                         className="invert"
                                     />
 
-                                    <TextShimmer
+                                    {/* <TextShimmer
                                         as="p"
                                         duration={3}
                                         color={{
@@ -180,8 +174,8 @@ const MobileMenu = () => {
                                         }}
                                         className="h-[2rem] text-white text-[1.6rem] leading-[1.7]"
                                     >
-                                        © kimsangjunv1. All rights reserved.
-                                    </TextShimmer>
+                                    </TextShimmer> */}
+                                    <p className="text-[var(--color-text-primary)]">© kimsangjunv1. All rights reserved.</p>
                                 </section>
 
                                 <UI.Button
@@ -206,12 +200,24 @@ const MobileMenu = () => {
     );
 };
 
+const SidebarTransitionPresence = () => {
+    const [isPresent, safeToRemove] = usePresence();
+    const transitionPhase = useLayoutStore((state) => state.transitionPhase);
+
+    useEffect(() => {
+        // 전환 중 요소를 제거하면 브라우저가 본문 애니메이션도 중단해요.
+        if (!isPresent && transitionPhase === "idle") safeToRemove?.();
+    }, [isPresent, transitionPhase, safeToRemove]);
+
+    return null;
+};
+
 const Item = ({ title, href }: { title: string; href: string }) => {
     const { pushToUrl } = useNavigate();
     return (
         <UI.Button
             type="button"
-            className="flex justify-center text-center gap-[0.4rem] w-full items-center text-[2.4rem] font-semibold whitespace-nowrap py-[1.2rem] text-[#ffffff]"
+            className="flex justify-center text-center gap-[0.4rem] w-full items-center text-[2.4rem] whitespace-nowrap py-[1.2rem] text-[var(--color-text-primary)]"
             onClick={() => pushToUrl(href)}
         >
             {title}

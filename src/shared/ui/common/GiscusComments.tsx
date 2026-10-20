@@ -14,9 +14,11 @@ const GiscusComments = ({ term, className }: GiscusCommentsProps) => {
     if (!isGiscusConfigured()) return null;
 
     return (
-        <section className={className}>
+        <section
+            id="comments"
+            className={`scroll-mt-[18rem] tablet:scroll-mt-[12rem] ${className ?? ""}`}
+        >
             <Giscus
-                id="comments"
                 repo={process.env.NEXT_PUBLIC_GISCUS_REPO as `${string}/${string}`}
                 repoId={process.env.NEXT_PUBLIC_GISCUS_REPO_ID!}
                 category={process.env.NEXT_PUBLIC_GISCUS_CATEGORY}
@@ -27,8 +29,7 @@ const GiscusComments = ({ term, className }: GiscusCommentsProps) => {
                 reactionsEnabled="0"
                 emitMetadata="0"
                 inputPosition="bottom"
-                // theme="preferred_color_scheme"
-                theme="light_tritanopia"
+                theme="transparent_dark"
                 lang="ko"
                 loading="lazy"
             />
