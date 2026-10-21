@@ -25,6 +25,7 @@ import {
 import useNavigate from "@/shared/hooks/useNavigate";
 import { useToastStore } from "@/shared/stores/useToastStore";
 import IconComponent from "@/shared/ui/common/IconComponent";
+import Window from "@/shared/ui/common/Window";
 import { util } from "@/shared/lib/util";
 import { useDirtyStore } from "@/shared/stores/useDirtyStore";
 import { useModalStore } from "@/shared/stores/useModalStore";
@@ -2251,6 +2252,7 @@ const UI = {
     ErrorRetry,
     Loading,
     ErrorBoundaryWrapper,
+    Window,
     Table: Object.assign(Table, {
         Header: TableHeader,
         Body: TableBody,

@@ -5,6 +5,7 @@ import { useMemo } from "react";
 import { extractCodeFromContent, highlightCodeWithHljs } from "@/shared/lib/codeHighlight";
 import { sanitizeHtml, styleRichTextHtml } from "@/shared/lib/sanitizeHtml";
 import CodeBlockPanel from "@/shared/ui/common/CodeBlockPanel";
+import UI from "@/shared/ui/common/UIComponent";
 import { SNIPPET_CODE_BLOCK_TAG } from "@/shared/ui/common/richText/extensions/snippetCodeBlock";
 import { POST_SNIPPET_BODY_CLASS } from "@/shared/lib/richText/styles";
 
@@ -55,6 +56,70 @@ type PostRichTextContentProps = {
     onParagraphClick?: (event: React.MouseEvent<HTMLElement>) => void;
 };
 
+type HtmlPart = { type: "html"; html: string } | { type: "img"; html: string };
+
+const readTagAttr = (tag: string, name: string) => {
+    const match = tag.match(new RegExp(`\\b${name}\\s*=\\s*(?:"([^"]*)"|'([^']*)')`, "i"));
+    return match?.[1] ?? match?.[2] ?? "";
+};
+
+const splitHtmlByImages = (html: string): HtmlPart[] => {
+    const parts: HtmlPart[] = [];
+    const pattern = /<img\b[^>]*>/gi;
+    let lastIndex = 0;
+
+    for (const match of html.matchAll(pattern)) {
+        const index = match.index ?? 0;
+        if (index > lastIndex) parts.push({ type: "html", html: html.slice(lastIndex, index) });
+        parts.push({ type: "img", html: match[0] });
+        lastIndex = index + match[0].length;
+    }
+
+    if (lastIndex < html.length) parts.push({ type: "html", html: html.slice(lastIndex) });
+    return parts;
+};
+
+const RichTextHtml = ({ html }: { html: string }) => {
+    const parts = useMemo(() => splitHtmlByImages(html), [html]);
+
+    return parts.map((part, index) => {
+        if (part.type === "img") {
+            const src = readTagAttr(part.html, "src");
+            if (!src) return null;
+
+            const width = readTagAttr(part.html, "style").match(/(?:^|;)\s*width\s*:\s*([^;]+)/i)?.[1]?.trim();
+            const align = readTagAttr(part.html, "data-align");
+            const imageWidth = readTagAttr(part.html, "data-image-width");
+
+            return (
+                <UI.Window
+                    key={`img-${index}`}
+                    openOnContentClick
+                >
+                    <img
+                        src={src}
+                        alt={readTagAttr(part.html, "alt")}
+                        className={readTagAttr(part.html, "class") || undefined}
+                        style={width ? { width } : undefined}
+                        data-align={align || undefined}
+                        data-image-width={imageWidth || undefined}
+                        draggable={false}
+                    />
+                </UI.Window>
+            );
+        }
+
+        if (!part.html.trim()) return null;
+
+        return (
+            <div
+                key={`html-${index}`}
+                dangerouslySetInnerHTML={{ __html: part.html }}
+            />
+        );
+    });
+};
+
 const SnippetBlockView = ({ content, language }: { content: string; language: string }) => {
     const panelContent = useMemo(() => `<pre class="code-block hljs"><code class="language-${language}">${content}</code></pre>`, [content, language]);
     const highlightedHtml = useMemo(() => styleRichTextHtml(`<pre class="code-block hljs"><code>${highlightCodeWithHljs(content, language)}</code></pre>`), [content, language]);
@@ -94,9 +159,9 @@ const PostRichTextContent = ({ html, className, onParagraphClick }: PostRichText
                 }
 
                 return (
-                    <div
+                    <RichTextHtml
                         key={`html-${index}`}
-                        dangerouslySetInnerHTML={{ __html: part.content }}
+                        html={part.content}
                     />
                 );
             })}

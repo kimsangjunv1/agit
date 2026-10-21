@@ -5,6 +5,7 @@ import { Block, SectionContent } from "@/entities/post/model/post.type";
 import { highlightCodeWithHljs } from "@/shared/lib/codeHighlight";
 import { sanitizeHtml, styleRichTextHtml } from "@/shared/lib/sanitizeHtml";
 import CodeBlockPanel from "@/shared/ui/common/CodeBlockPanel";
+import UI from "@/shared/ui/common/UIComponent";
 import { BLOCK_COLUMN_CLASS, BLOCK_ROW_CLASS, POST_BLOCK_HEADING_CLASS, POST_BLOCK_IMAGE_CLASS, POST_BLOCK_LIST_CLASS, POST_BLOCK_SUBTITLE_CLASS, POST_BLOCK_TITLE_CLASS, POST_CODE_BODY_CLASS, POST_CONTENT_WIDTH_CLASS, POST_TIPTAP_CONTENT_CLASS } from "@/shared/lib/richText/styles";
 import PostRichTextContent from "@/widgets/post/[id]/ui/PostRichTextContent";
 import { isMainBlock } from "@/entities/post/lib/blockMode";
@@ -72,11 +73,14 @@ const ContentColumn = memo(({ col, rowLength, onCopySentence }: { col: SectionCo
             ) : null}
 
             {col.type === 1 && col.imageUrl ? (
-                <img
-                    src={col.imageUrl}
-                    alt=""
-                    className={POST_BLOCK_IMAGE_CLASS}
-                />
+                <UI.Window openOnContentClick>
+                    <img
+                        src={col.imageUrl}
+                        alt=""
+                        draggable={false}
+                        className={POST_BLOCK_IMAGE_CLASS}
+                    />
+                </UI.Window>
             ) : null}
 
             {col.type === 2 ? (
