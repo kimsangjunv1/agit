@@ -15,7 +15,7 @@ type PostThumbnailPlaceholderProps = {
 const PostThumbnailPlaceholder = ({ seed, className = "", fill = false, readinessKey }: PostThumbnailPlaceholderProps) => {
     const meshStyle = useMemo(() => generateMeshGradientStyle(seed), [seed]);
 
-    usePageTransitionReady(readinessKey ?? `post-thumbnail-placeholder-${seed}`, true);
+    usePageTransitionReady(readinessKey ?? `post-thumbnail-placeholder-${seed}`, true, "image");
 
     return (
         <div

@@ -24,7 +24,7 @@ const TransitionAwareImage = ({ readinessKey, onLoad, onError, src, alt = "", ..
         }
     }, [src]);
 
-    usePageTransitionReady(readinessKey, isLoaded);
+    usePageTransitionReady(readinessKey, isLoaded, "image");
 
     return (
         <img

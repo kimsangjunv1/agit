@@ -2,6 +2,7 @@ import { create } from "zustand";
 
 export type RouteTransitionPhase = "idle" | "covering" | "navigating" | "waiting" | "revealing";
 export type RouteTransitionDirection = "forward" | "back";
+export type PageReadinessKind = "data" | "image";
 
 export type PendingNavigation = {
     type: "push" | "replace" | "back";
@@ -19,6 +20,9 @@ interface LayoutStoreType {
     pendingNavigation: PendingNavigation | null;
     isPageContentVisible: boolean;
     pageReadinessBlockers: Record<string, true>;
+    pageReadinessTasks: Record<string, { ready: boolean; kind: PageReadinessKind }>;
+    pageReadinessId: number;
+    isPageReadinessComplete: boolean;
     isNeedBackdrop: boolean;
     isNeedNavigation: boolean;
     isMobileMenuOpen: boolean;
@@ -40,8 +44,9 @@ interface LayoutStoreType {
     beginRouteTransition: (args: { direction: RouteTransitionDirection; navigation: PendingNavigation }) => void;
     beginInitialReveal: () => void;
     setIsPageContentVisible: (args: boolean) => void;
-    registerPageBlocker: (key: string) => void;
+    registerPageBlocker: (key: string, ready?: boolean, kind?: PageReadinessKind) => void;
     releasePageBlocker: (key: string) => void;
+    completePageReadiness: () => void;
     resetPageReadiness: () => void;
     completeRouteTransition: () => void;
     setIsNeedBackdrop: (args: boolean) => void;
@@ -64,6 +69,9 @@ export const useLayoutStore = create<LayoutStoreType>()((set) => ({
     pendingNavigation: null,
     isPageContentVisible: false,
     pageReadinessBlockers: {},
+    pageReadinessTasks: {},
+    pageReadinessId: 0,
+    isPageReadinessComplete: false,
     isNeedBackdrop: false,
     isNeedNavigation: false,
     isMobileMenuOpen: false,
@@ -110,12 +118,16 @@ export const useLayoutStore = create<LayoutStoreType>()((set) => ({
         }));
     },
     beginRouteTransition: ({ direction, navigation }) => {
-        set(() => ({
+        set((state) => ({
             transitionPhase: "covering",
             transitionDirection: direction,
             pendingNavigation: navigation,
             isRouteChange: direction === "forward" ? 1 : 99,
             isRouteChangeType: direction === "forward" ? 1 : 2,
+            pageReadinessId: state.pageReadinessId + 1,
+            pageReadinessBlockers: {},
+            pageReadinessTasks: {},
+            isPageReadinessComplete: false,
         }));
     },
     beginInitialReveal: () => {
@@ -133,22 +145,41 @@ export const useLayoutStore = create<LayoutStoreType>()((set) => ({
             isPageContentVisible: args,
         }));
     },
-    registerPageBlocker: (key: string) => {
-        set((state) => ({
-            pageReadinessBlockers: { ...state.pageReadinessBlockers, [key]: true },
-        }));
+    registerPageBlocker: (key, ready = false, kind = "data") => {
+        set((state) => {
+            const existing = state.pageReadinessTasks[key];
+            if (existing?.ready === ready && existing.kind === kind) return state;
+
+            const blockers = { ...state.pageReadinessBlockers };
+            if (ready) delete blockers[key];
+            else blockers[key] = true;
+
+            return {
+                pageReadinessBlockers: blockers,
+                pageReadinessTasks: { ...state.pageReadinessTasks, [key]: { ready, kind } },
+            };
+        });
     },
     releasePageBlocker: (key: string) => {
         set((state) => {
             const next = { ...state.pageReadinessBlockers };
+            const tasks = { ...state.pageReadinessTasks };
             delete next[key];
+            delete tasks[key];
 
-            return { pageReadinessBlockers: next };
+            return { pageReadinessBlockers: next, pageReadinessTasks: tasks };
         });
+    },
+    completePageReadiness: () => {
+        set((state) => state.transitionPhase === "waiting" && Object.keys(state.pageReadinessBlockers).length === 0
+            ? { isPageReadinessComplete: true }
+            : state);
     },
     resetPageReadiness: () => {
         set(() => ({
             pageReadinessBlockers: {},
+            pageReadinessTasks: {},
+            isPageReadinessComplete: false,
         }));
     },
     completeRouteTransition: () => {
@@ -159,6 +190,7 @@ export const useLayoutStore = create<LayoutStoreType>()((set) => ({
             isRouteChangeType: 0,
             isPageContentVisible: true,
             pageReadinessBlockers: {},
+            pageReadinessTasks: {},
         }));
     },
     setIsNeedBackdrop: (args: boolean) => {
@@ -197,3 +229,16 @@ export const useLayoutStore = create<LayoutStoreType>()((set) => ({
         }));
     },
 }));
+
+// 이동·데이터·이미지 각 단계의 완료 비율을 같은 비중으로 합산해요.
+export const getPageReadinessProgress = ({ transitionPhase, pageReadinessTasks }: Pick<LayoutStoreType, "transitionPhase" | "pageReadinessTasks">) => {
+    if (transitionPhase !== "waiting") return 0;
+
+    const tasks = Object.values(pageReadinessTasks);
+    const data = tasks.filter((task) => task.kind === "data");
+    const images = tasks.filter((task) => task.kind === "image");
+    const dataProgress = data.length > 0 ? data.filter((task) => task.ready).length / data.length : 1;
+    const imageProgress = images.length > 0 ? images.filter((task) => task.ready).length / images.length : dataProgress < 1 ? 0 : 1;
+
+    return (1 + dataProgress + imageProgress) / 3;
+};

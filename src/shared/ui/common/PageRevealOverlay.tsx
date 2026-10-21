@@ -6,10 +6,18 @@ import { AnimatePresence, motion } from "motion/react";
 import { useLenis } from "lenis/react";
 
 import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
-import { PAGE_REVEAL_COVER_DURATION, PAGE_REVEAL_COVER_EASE, PAGE_REVEAL_READY_TIMEOUT, PAGE_REVEAL_UNCOVER_DURATION, PAGE_REVEAL_UNCOVER_EASE, PAGE_SLIDE_DURATION } from "@/shared/constants/pageTransition";
+import {
+    PAGE_REVEAL_COVER_DURATION,
+    PAGE_REVEAL_COVER_EASE,
+    PAGE_REVEAL_READY_TIMEOUT,
+    PAGE_REVEAL_UNCOVER_DURATION,
+    PAGE_REVEAL_UNCOVER_EASE,
+    PAGE_SLIDE_DURATION,
+} from "@/shared/constants/pageTransition";
 import { useLayoutStore } from "@/shared/stores/useLayoutStore";
 import { capturePageTransitionSnapshot } from "@/shared/lib/pageTransitionSnapshot";
 import IconComponent from "./IconComponent";
+import PageLoadProgress from "./PageLoadProgress";
 
 const CLIP_FORWARD = {
     hidden: "inset(0 100% 0 0)",
@@ -33,11 +41,14 @@ const PageRevealOverlay = () => {
         pendingNavigation,
         isPageContentVisible,
         pageReadinessBlockers,
+        pageReadinessId,
+        isPageReadinessComplete,
         setTransitionPhase,
         setIsPageContentVisible,
         beginInitialReveal,
         completeRouteTransition,
         resetPageReadiness,
+        completePageReadiness,
     } = useLayoutStore();
 
     const hasPageReadinessBlockers = Object.keys(pageReadinessBlockers).length > 0;
@@ -67,6 +78,8 @@ const PageRevealOverlay = () => {
     }, [completeRouteTransition]);
 
     const revealPage = useCallback(() => {
+        completePageReadiness();
+
         if (!outgoingSnapshot.current || reducedMotion || !document.startViewTransition) {
             finishTransition();
             return;
@@ -83,7 +96,7 @@ const PageRevealOverlay = () => {
         activeViewTransition.current = transition;
         void transition.ready.catch(() => {});
         void transition.finished.then(finishTransition, finishTransition);
-    }, [reducedMotion, setTransitionPhase, finishTransition]);
+    }, [reducedMotion, setTransitionPhase, finishTransition, completePageReadiness]);
 
     const executeNavigation = () => {
         if (!pendingNavigation) return;
@@ -206,30 +219,17 @@ const PageRevealOverlay = () => {
             {/* 전환 도중 고정 레이어를 제거하면 본문 애니메이션도 중단돼요. */}
             <div
                 data-page-transition-fixed="progress"
-                className="fixed inset-x-0 top-0 z-[1000000002] h-[3px] overflow-hidden pointer-events-none"
+                className="fixed inset-x-0 top-0 z-[1000000002] h-[0.4rem] overflow-hidden pointer-events-none"
             >
-                <AnimatePresence initial={false}>
+                <AnimatePresence
+                    initial={false}
+                    custom={isPageReadinessComplete}
+                >
                     {isRoutePreparing ? (
-                        <motion.div
-                            key="page-progress"
-                            role="progressbar"
-                            aria-label="다음 페이지 준비 중"
-                            className="h-full w-full"
-                            exit={{ opacity: 0 }}
-                            transition={{ delay: reducedMotion ? 0 : 0.15, duration: reducedMotion ? 0 : 0.15 }}
-                        >
-                            <motion.div
-                                className="h-full w-full origin-left bg-[var(--color-brand-500)]"
-                                initial={{ scaleX: 0.3, x: "0%" }}
-                                animate={{ scaleX: 0.3, x: reducedMotion ? "0%" : ["0%", "100%"] }}
-                                transition={{ x: { duration: 1.2, repeat: Infinity, ease: "linear" } }}
-                                exit={{
-                                    scaleX: 1,
-                                    x: "0%",
-                                    transition: { duration: reducedMotion ? 0 : 0.15, repeat: 0, ease: "easeOut" },
-                                }}
-                            />
-                        </motion.div>
+                        <PageLoadProgress
+                            key={pageReadinessId}
+                            reducedMotion={reducedMotion}
+                        />
                     ) : null}
                 </AnimatePresence>
             </div>
