@@ -129,6 +129,7 @@ const SnippetBlockView = ({ content, language }: { content: string; language: st
             content={panelContent}
             variant="compact"
             showFormat={false}
+            className="!mb-0"
             bodyClassName={POST_SNIPPET_BODY_CLASS}
         >
             <div

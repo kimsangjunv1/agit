@@ -2,7 +2,7 @@
 
 import { motion, Reorder, useDragControls } from "motion/react";
 import type { Editor } from "@tiptap/react";
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 import TipTap from "@/shared/ui/layout/Tiptap";
 import TipTapToolbar from "@/shared/ui/layout/TipTapToolbar";
@@ -10,7 +10,7 @@ import UI from "@/shared/ui/common/UIComponent";
 import IconComponent from "@/shared/ui/common/IconComponent";
 import { MaterialIcon } from "@/shared/ui/common/MaterialIcon";
 import { blockContentToHtml } from "@/entities/post/lib/blockContent";
-import { type BlockMode, isCodeBlock, isMainBlock, resolveBlockMode } from "@/entities/post/lib/blockMode";
+import { type BlockMode, getSectionEndRowIndexes, isCodeBlock, isMainBlock, resolveBlockMode } from "@/entities/post/lib/blockMode";
 import { getPostTocAnchorId } from "@/entities/post/lib/postToc";
 import { confirmAction } from "@/shared/lib/confirmAction";
 
@@ -26,6 +26,7 @@ import {
     POST_BLOCK_HEADING_CLASS,
     POST_BLOCK_IMAGE_CLASS,
     POST_BLOCK_LIST_CLASS,
+    POST_BLOCK_SECTION_END_CLASS,
     POST_BLOCK_SUBTITLE_CLASS,
     POST_BLOCK_TITLE_CLASS,
     POST_CODE_BODY_CLASS,
@@ -35,6 +36,18 @@ import { formatCodeContent } from "@/shared/lib/formatCodeContent";
 import CodeBlockPanel from "@/shared/ui/common/CodeBlockPanel";
 
 import type { SectionContent } from "@/entities/post/model/post.type";
+
+const blockKeepsEditorMinHeight = (block: SectionContent) => {
+    if (isCodeBlock(block) || block.type === 1) return false;
+    if (block.type !== 0 || typeof block.content !== "string") return true;
+
+    const text = block.content
+        .replace(/<[^>]*>/g, "")
+        .replace(/&nbsp;/g, " ")
+        .trim();
+
+    return !(/<img\b/i.test(block.content) && text.length === 0);
+};
 
 const REORDER_TRANSITION = {
     type: "spring" as const,
@@ -100,6 +113,8 @@ const SortableBlock = ({ contents }: { contents?: Row[] }) => {
         }
     }, [contents, setRows]);
 
+    const sectionEndRows = useMemo(() => getSectionEndRowIndexes(rows), [rows]);
+
     return (
         <Reorder.Group
             axis="y"
@@ -113,16 +128,20 @@ const SortableBlock = ({ contents }: { contents?: Row[] }) => {
                     key={getRowKey(row)}
                     row={row}
                     rowIndex={rowIndex}
+                    isSectionEnd={sectionEndRows.has(rowIndex)}
                 />
             ))}
         </Reorder.Group>
     );
 };
 
-const Item = ({ row, rowIndex }: { row: Row; rowIndex: number }) => {
+const Item = ({ row, rowIndex, isSectionEnd }: { row: Row; rowIndex: number; isSectionEnd: boolean }) => {
     const dragControls = useDragControls();
+    const rowRef = useRef<HTMLDivElement>(null);
+    const focusedBlockIndexRef = useRef<number | null>(null);
 
     const [isGrabbing, setIsGrabbing] = useState(false);
+    const [focusedEditor, setFocusedEditor] = useState<Editor | null>(null);
 
     const { setToast } = useToastStore();
     const { rows, addBlock, deleteRow, updateBlock, selectedPosition } = useBlockStore();
@@ -150,12 +169,28 @@ const Item = ({ row, rowIndex }: { row: Row; rowIndex: number }) => {
         updateBlock(rowIndex, activeBlockIndex, patch);
     };
 
+    const handleEditorFocus = useCallback((blockIndex: number, editor: Editor) => {
+        focusedBlockIndexRef.current = blockIndex;
+        setFocusedEditor(editor);
+    }, []);
+
+    const handleEditorBlur = useCallback((blockIndex: number) => {
+        requestAnimationFrame(() => {
+            if (focusedBlockIndexRef.current !== blockIndex) return;
+            if (rowRef.current?.contains(document.activeElement)) return;
+
+            focusedBlockIndexRef.current = null;
+            setFocusedEditor(null);
+        });
+    }, []);
+
     return (
         <Reorder.Item
+            ref={rowRef}
             value={row}
             layout
             transition={REORDER_TRANSITION}
-            className="group/row relative flex flex-col gap-[0.8rem]"
+            className={`group/row relative flex flex-col gap-[0.8rem] ${isSectionEnd ? POST_BLOCK_SECTION_END_CLASS : ""}`}
             as="div"
             dragControls={dragControls}
             dragListener={false}
@@ -171,7 +206,7 @@ const Item = ({ row, rowIndex }: { row: Row; rowIndex: number }) => {
 
             <motion.section
                 layout="position"
-                className="absolute top-0 right-0 tablet:right-[max(-4.8rem,calc((var(--size-tablet)-100svw)/2))] z-10 flex flex-col items-center gap-[1.2rem]"
+                className="absolute top-0 right-0 tablet:right-[max(-4.8rem,calc((var(--size-tablet)-100svw)/2))] z-10 flex flex-col items-center gap-[1.2rem] opacity-0 transition-opacity pointer-events-none group-hover/row:pointer-events-auto group-hover/row:opacity-100 hover:pointer-events-auto hover:opacity-100 tablet:pointer-events-auto tablet:before:absolute tablet:before:inset-y-0 tablet:before:right-full tablet:before:w-[1.6rem] tablet:before:content-['']"
             >
                 <section className="shadow-[var(--shadow-normal)] bg-[var(--color-surface)] rounded-full py-[0.8rem]">
                     <UI.Button
@@ -278,12 +313,12 @@ const Item = ({ row, rowIndex }: { row: Row; rowIndex: number }) => {
                 ) : null}
             </motion.section>
 
-            <section className={BLOCK_ROW_CLASS}>
+            <section className={`${BLOCK_ROW_CLASS} items-start`}>
                 {row.map((block, blockIndex) => (
                     <motion.section
                         key={block.id}
                         layout="position"
-                        className={`${BLOCK_COLUMN_CLASS} ${isCodeBlock(block) ? "" : BLOCK_MIN_HEIGHT_CLASS}`}
+                        className={`${BLOCK_COLUMN_CLASS} items-start ${blockKeepsEditorMinHeight(block) ? BLOCK_MIN_HEIGHT_CLASS : "!min-h-0 h-auto"}`}
                     >
                         <Block
                             block={block}
@@ -291,41 +326,49 @@ const Item = ({ row, rowIndex }: { row: Row; rowIndex: number }) => {
                             blockIndex={blockIndex}
                             last={row.length !== 1}
                             blockCount={row.length}
+                            onEditorFocus={(editor) => handleEditorFocus(blockIndex, editor)}
+                            onEditorBlur={() => handleEditorBlur(blockIndex)}
                         />
                     </motion.section>
                 ))}
             </section>
+
+            {focusedEditor && !focusedEditor.isDestroyed ? (
+                <div
+                    className="pointer-events-auto absolute bottom-[-12px] left-1/2 z-20 w-full -translate-x-1/2"
+                    onPointerDown={(event) => event.stopPropagation()}
+                >
+                    <TipTapToolbar editor={focusedEditor} />
+                </div>
+            ) : null}
         </Reorder.Item>
     );
 };
 
-const Block = ({ block, rowIndex, blockIndex, last, blockCount }: { block: SectionContent; rowIndex: number; blockIndex: number; last: boolean; blockCount: number }) => {
+const Block = ({
+    block,
+    rowIndex,
+    blockIndex,
+    last,
+    blockCount,
+    onEditorFocus,
+    onEditorBlur,
+}: {
+    block: SectionContent;
+    rowIndex: number;
+    blockIndex: number;
+    last: boolean;
+    blockCount: number;
+    onEditorFocus: (editor: Editor) => void;
+    onEditorBlur: () => void;
+}) => {
     const { updateBlock, deleteBlock, copyBlock, pasteBlock, selectBlock, unSelectBlock } = useBlockStore();
     const { setToast } = useToastStore();
     const addFromFile = usePostDraftImageStore((state) => state.addFromFile);
 
-    const blockRef = useRef<HTMLDivElement>(null);
     const imageInputRef = useRef<HTMLInputElement>(null);
     const [currentImageUrl, setCurrentImageUrl] = useState<string>(block.imageUrl ?? "/");
-    const [focusedEditor, setFocusedEditor] = useState<Editor | null>(null);
     const textContent = blockContentToHtml(block.content);
-
-    const handleEditorFocus = useCallback((editor: Editor) => {
-        setFocusedEditor(editor);
-    }, []);
-
-    const handleEditorBlur = useCallback(() => {
-        requestAnimationFrame(() => {
-            const activeElement = document.activeElement;
-
-            if (blockRef.current?.contains(activeElement)) {
-                return;
-            }
-
-            setFocusedEditor(null);
-        });
-    }, []);
-
     const codeBlockMode = isCodeBlock(block);
     const showHeadingFields = block.type === 0 && isMainBlock(block) && !codeBlockMode;
 
@@ -345,13 +388,8 @@ const Block = ({ block, rowIndex, blockIndex, last, blockCount }: { block: Secti
         setToast({ msg: "코드를 정렬했어요", time: 2 });
     }, [blockIndex, rowIndex, setToast, textContent, updateBlock]);
 
-    useEffect(() => {
-        if (codeBlockMode) {
-            setFocusedEditor(null);
-        }
-    }, [codeBlockMode]);
-
-    const columnClassName = "w-full min-w-0 flex flex-col h-full group/block";
+    const keepMinHeight = blockKeepsEditorMinHeight(block);
+    const columnClassName = `w-full min-w-0 flex flex-col group/block ${keepMinHeight ? "h-full" : "h-auto"}`;
     // const columnClassName = `w-full min-w-0 flex flex-col gap-[1.6rem] h-full group/block ${!codeBlockMode && block.type !== 0 ? "rounded-[2.4rem]" : ""} ${blockCount === 1 && !codeBlockMode && block.type !== 0 ? "tablet:col-span-2" : blockCount > 1 && !codeBlockMode && block.type !== 0 ? "tablet:min-h-[36.0rem]" : ""} ${codeBlockMode ? "rounded-[2.4rem] overflow-hidden" : ""}`;
 
     const handleImageFile = (file: File) => {
@@ -377,7 +415,6 @@ const Block = ({ block, rowIndex, blockIndex, last, blockCount }: { block: Secti
 
     return (
         <div
-            ref={blockRef}
             id={block.type === 0 ? getPostTocAnchorId(block.id) : undefined}
             tabIndex={0}
             className={`${columnClassName} relative ${block.type === 0 ? "scroll-mt-[12rem]" : ""}`}
@@ -439,7 +476,7 @@ const Block = ({ block, rowIndex, blockIndex, last, blockCount }: { block: Secti
                 </section>
             ) : null}
 
-            <section className={`relative ${POST_BLOCK_CONTENT_CLASS} h-full`}>
+            <section className={`relative ${POST_BLOCK_CONTENT_CLASS} ${keepMinHeight ? "h-full" : "h-auto"}`}>
                 {block.type === 0 && !codeBlockMode ? (
                     <>
                         {showHeadingFields ? (
@@ -460,14 +497,14 @@ const Block = ({ block, rowIndex, blockIndex, last, blockCount }: { block: Secti
                                 />
                             </section>
                         ) : null}
-                        <section className="w-full flex-1">
+                        <section className={`w-full ${keepMinHeight ? "flex-1" : ""}`}>
                             <TipTap.Normal
                                 key={block.id}
                                 content={textContent}
                                 showToolbar={false}
                                 onChange={(html) => updateBlock(rowIndex, blockIndex, { content: html })}
-                                onEditorFocus={handleEditorFocus}
-                                onEditorBlur={handleEditorBlur}
+                                onEditorFocus={onEditorFocus}
+                                onEditorBlur={onEditorBlur}
                             />
                         </section>
                     </>
@@ -518,16 +555,6 @@ const Block = ({ block, rowIndex, blockIndex, last, blockCount }: { block: Secti
                     </div>
                 ) : null}
             </section>
-
-            {focusedEditor && !codeBlockMode && !focusedEditor.isDestroyed ? (
-                <div
-                    className="pointer-events-auto absolute bottom-[0] left-[50%] transform translate-x-[-50%] mobile:w-[80%] pc:w-full"
-                    // className="pointer-events-auto absolute bottom-[calc((2.8rem/1)*-1)] left-[50%] transform translate-x-[-50%] mobile:w-[80%] pc:w-[50%]"
-                    onPointerDown={(event) => event.stopPropagation()}
-                >
-                    <TipTapToolbar editor={focusedEditor} />
-                </div>
-            ) : null}
         </div>
     );
 };

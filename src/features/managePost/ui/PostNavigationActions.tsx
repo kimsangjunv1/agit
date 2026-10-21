@@ -1,17 +1,13 @@
 "use client";
 
-import { Fragment, useEffect, useRef, useState, type ReactNode, type Ref, type RefObject } from "react";
+import { useEffect, useRef, useState, type ReactNode, type Ref } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 
 import type { PostNavAction } from "@/features/managePost/lib/postNavigationActions";
 import type { PostNavVisibility } from "@/features/managePost/lib/postPermissions";
-import UI from "@/shared/ui/common/UIComponent";
 import { MaterialIcon } from "@/shared/ui/common/MaterialIcon";
 import { getPostRouteFlags } from "../lib/postRoute";
 import useNavigate from "@/shared/hooks/useNavigate";
-import { usePostNavigationActions } from "../hooks/usePostNavigationActions";
-import { useParams } from "next/navigation";
-import { useScrollProgressBar } from "@/shared/hooks/useScrollProgress";
 import { usePostReadingSettingsStore } from "@/shared/stores/usePostReadingSettingsStore";
 import { useLayoutStore } from "@/shared/stores/useLayoutStore";
 import DynamicIsland from "@/shared/ui/common/DynamicIsland";
@@ -21,7 +17,6 @@ type PostNavigationActionsProps = PostNavVisibility & {
     alreadyLiked?: boolean;
     isDeletePending: boolean;
     onAction: (action: PostNavAction) => void;
-    scrollViewportRef?: RefObject<HTMLDivElement | null>;
 };
 
 type NavButtonProps = {
@@ -111,7 +106,6 @@ const PostNavigationActions = ({
     showShare,
     showLike,
     showComments,
-    showToc,
     showReading,
     showEdit,
     showDelete,
@@ -119,28 +113,15 @@ const PostNavigationActions = ({
     alreadyLiked,
     isDeletePending,
     onAction,
-    scrollViewportRef,
 }: PostNavigationActionsProps) => {
     const reducedMotion = useReducedMotion();
     const shouldShowIsland = useLayoutStore((state) => state.isPageContentVisible && state.transitionPhase === "idle");
-    const params = useParams();
-    const postIdx = parseInt(params?.id as string);
-    const progressBarRef = useRef<HTMLDivElement>(null);
-    useScrollProgressBar(progressBarRef, scrollViewportRef);
 
-    const { currentPathName, pushToUrl } = useNavigate();
+    const { currentPathName } = useNavigate();
     const isLiked = alreadyLiked ?? false;
     const likeLabel = likeCount > 0 ? `Cheer Up ${likeCount}` : "Cheer Up";
 
-    const { IS_ROUTE_POST_VIEW, IS_ROUTE_POST_EDIT, IS_ROUTE_POST_CREATE } = getPostRouteFlags(currentPathName);
-    const { postTitle, tocItems } = usePostNavigationActions({
-        postIdx,
-        isView: IS_ROUTE_POST_VIEW,
-        isCreate: IS_ROUTE_POST_CREATE,
-        isEdit: IS_ROUTE_POST_EDIT,
-        pushToUrl,
-    });
-    const [activeTocLabel, setActiveTocLabel] = useState("");
+    const { IS_ROUTE_POST_VIEW } = getPostRouteFlags(currentPathName);
     const [isReadingSettingsOpen, setIsReadingSettingsOpen] = useState(false);
     const readingButtonRef = useRef<HTMLButtonElement>(null);
     const readingSettingsRef = useRef<HTMLDivElement>(null);
@@ -161,55 +142,6 @@ const PostNavigationActions = ({
         setIsReadingSettingsOpen(false);
     };
 
-    useEffect(() => {
-        if (!IS_ROUTE_POST_VIEW || tocItems.length === 0) {
-            setActiveTocLabel("");
-            return;
-        }
-
-        let rafId = 0;
-        const scrollElement = scrollViewportRef?.current;
-        const scrollTarget = scrollElement ?? window;
-
-        const updateActiveToc = () => {
-            rafId = 0;
-            const threshold = scrollElement ? scrollElement.getBoundingClientRect().top + scrollElement.clientHeight * 0.35 : window.innerHeight * 0.35;
-            const activeItem =
-                [...tocItems].reverse().find((item) => {
-                    const section = document.getElementById(item.id);
-                    return section && section.getBoundingClientRect().top <= threshold;
-                }) ?? tocItems[0];
-
-            setActiveTocLabel((prev) => (prev === activeItem.label ? prev : activeItem.label));
-        };
-
-        const handleScroll = () => {
-            if (!rafId) {
-                rafId = requestAnimationFrame(updateActiveToc);
-            }
-        };
-
-        updateActiveToc();
-        scrollTarget.addEventListener("scroll", handleScroll, { passive: true });
-        window.addEventListener("resize", handleScroll);
-        const observer = new ResizeObserver(handleScroll);
-        if (scrollElement) {
-            observer.observe(scrollElement);
-            if (scrollElement.firstElementChild) observer.observe(scrollElement.firstElementChild);
-        }
-
-        return () => {
-            cancelAnimationFrame(rafId);
-            scrollTarget.removeEventListener("scroll", handleScroll);
-            window.removeEventListener("resize", handleScroll);
-            observer.disconnect();
-        };
-    }, [IS_ROUTE_POST_VIEW, tocItems, scrollViewportRef]);
-
-    const scrollToTocSection = (id: string) => {
-        document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
-    };
-
     const updateSetting = (options: readonly number[], currentValue: number, direction: -1 | 1, setter: (value: number) => void) => {
         const currentIndex = options.indexOf(currentValue);
         const nextIndex = Math.min(Math.max(currentIndex + direction, 0), options.length - 1);
@@ -218,82 +150,6 @@ const PostNavigationActions = ({
 
     return (
         <section className="relative flex min-w-0 flex-1 flex-col">
-            {IS_ROUTE_POST_VIEW && (
-                <Fragment>
-                    <h2 className="truncate text-[1.4rem] leading-[1.5]">{postTitle}</h2>
-
-                    <div className="flex min-w-0 items-center">
-                        {activeTocLabel ? <p className="truncate mobile:text-[1.6rem] pc:text-[1.8rem] leading-[1.5] font-semibold">{activeTocLabel} 보는 중</p> : null}
-
-                        {showToc ? (
-                            <UI.DropDown
-                                className={{
-                                    container: "shrink-0",
-                                    inner: "max-h-[50svh] w-[min(28rem,calc(100vw-2.4rem))] overflow-y-auto text-[var(--color-text-primary)]",
-                                }}
-                                list={tocItems.map((item) => ({
-                                    title: item.label,
-                                    value: item.id,
-                                    className: `w-full text-left ${item.level === 1 ? "font-bold" : "pl-[2.4rem]"}`,
-                                    onClick: () => scrollToTocSection(item.id),
-                                }))}
-                            >
-                                <UI.Button
-                                    type="button"
-                                    aria-label="목차 열기"
-                                    className="flex h-[3.2rem] w-[3.2rem] items-center justify-center"
-                                >
-                                    <span className="sr-only">목차 열기</span>
-                                    <MaterialIcon
-                                        name="keyboard_arrow_down"
-                                        size={20}
-                                    />
-                                </UI.Button>
-                            </UI.DropDown>
-                        ) : null}
-                    </div>
-
-                    <div className="pointer-events-none w-[12.8rem] bg-[var(--color-border-strong)] h-[0.2rem]">
-                        <div
-                            ref={progressBarRef}
-                            className="h-full w-0 will-change-[width]"
-                        />
-                    </div>
-                </Fragment>
-            )}
-
-            <section className="flex items-center gap-[0.4rem] text-[var(--color-text-primary)]">
-                {showEdit ? (
-                    <NavButton
-                        title="수정하기"
-                        icon={
-                            <MaterialIcon
-                                name="edit"
-                                size={20}
-                            />
-                        }
-                        onClick={() => onAction("edit")}
-                    />
-                ) : null}
-
-                {showEdit && showDelete ? <NavDivider /> : null}
-
-                {showDelete ? (
-                    <NavButton
-                        title="게시물 삭제하기"
-                        disabled={isDeletePending}
-                        className="bg-[var(--color-danger-surface)] hover:bg-[var(--color-danger-surface)]"
-                        icon={
-                            <MaterialIcon
-                                name="delete"
-                                size={20}
-                            />
-                        }
-                        onClick={() => onAction("delete")}
-                    />
-                ) : null}
-            </section>
-
             <div className="fixed left-1/2 top-[0.4rem] z-[1] -translate-x-1/2">
                 {IS_ROUTE_POST_VIEW && shouldShowIsland ? (
                     <DynamicIsland ariaLabel="글 도구">
@@ -413,6 +269,32 @@ const PostNavigationActions = ({
                                                 />
                                             }
                                             onClick={() => setIsReadingSettingsOpen(true)}
+                                        />
+                                    ) : null}
+                                    {showEdit ? (
+                                        <NavButton
+                                            title="수정하기"
+                                            icon={
+                                                <MaterialIcon
+                                                    name="edit"
+                                                    size={20}
+                                                />
+                                            }
+                                            onClick={() => onAction("edit")}
+                                        />
+                                    ) : null}
+                                    {showDelete ? (
+                                        <NavButton
+                                            title="게시물 삭제하기"
+                                            disabled={isDeletePending}
+                                            className="bg-[var(--color-danger-surface)] hover:bg-[var(--color-danger-surface)]"
+                                            icon={
+                                                <MaterialIcon
+                                                    name="delete"
+                                                    size={20}
+                                                />
+                                            }
+                                            onClick={() => onAction("delete")}
                                         />
                                     ) : null}
                                 </motion.div>

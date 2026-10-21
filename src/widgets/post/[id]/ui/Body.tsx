@@ -6,9 +6,9 @@ import { highlightCodeWithHljs } from "@/shared/lib/codeHighlight";
 import { sanitizeHtml, styleRichTextHtml } from "@/shared/lib/sanitizeHtml";
 import CodeBlockPanel from "@/shared/ui/common/CodeBlockPanel";
 import UI from "@/shared/ui/common/UIComponent";
-import { BLOCK_COLUMN_CLASS, BLOCK_ROW_CLASS, POST_BLOCK_HEADING_CLASS, POST_BLOCK_IMAGE_CLASS, POST_BLOCK_LIST_CLASS, POST_BLOCK_SUBTITLE_CLASS, POST_BLOCK_TITLE_CLASS, POST_CODE_BODY_CLASS, POST_CONTENT_WIDTH_CLASS, POST_TIPTAP_CONTENT_CLASS } from "@/shared/lib/richText/styles";
+import { BLOCK_COLUMN_CLASS, BLOCK_ROW_CLASS, POST_BLOCK_HEADING_CLASS, POST_BLOCK_IMAGE_CLASS, POST_BLOCK_LIST_CLASS, POST_BLOCK_SECTION_END_CLASS, POST_BLOCK_SUBTITLE_CLASS, POST_BLOCK_TITLE_CLASS, POST_CODE_BODY_CLASS, POST_CONTENT_WIDTH_CLASS, POST_TIPTAP_CONTENT_CLASS } from "@/shared/lib/richText/styles";
 import PostRichTextContent from "@/widgets/post/[id]/ui/PostRichTextContent";
-import { isMainBlock } from "@/entities/post/lib/blockMode";
+import { getSectionEndRowIndexes, isMainBlock } from "@/entities/post/lib/blockMode";
 import { getPostTocAnchorId } from "@/entities/post/lib/postToc";
 
 const ContentColumn = memo(({ col, rowLength, onCopySentence }: { col: SectionContent; rowLength: number; onCopySentence: (text: string) => void }) => {
@@ -16,7 +16,7 @@ const ContentColumn = memo(({ col, rowLength, onCopySentence }: { col: SectionCo
     const subtitle = col.subtitle?.trim() ?? "";
     const title = col.title?.trim() ?? "";
     const showHeading = isMainBlock(col) && Boolean(subtitle || title);
-    const columnClassName = `${BLOCK_COLUMN_CLASS} ${rowLength !== 0 ? "" : ""} ${rowLength === 1 ? "tablet:col-span-2" : ""} ${col.type === 0 ? "" : ""} ${col.type === 1 || col.type === 2 ? "rounded-[2.4rem] overflow-hidden" : ""} ${col.type === 2 ? "flex-col" : ""}`;
+    const columnClassName = `${BLOCK_COLUMN_CLASS} !min-h-0 h-auto self-start ${rowLength === 1 ? "tablet:col-span-2" : ""} ${col.type === 1 || col.type === 2 ? "rounded-[2.4rem] overflow-hidden" : ""} ${col.type === 2 ? "flex-col" : ""}`;
     // const columnClassName = `${BLOCK_COLUMN_CLASS} ${rowLength !== 0 ? "" : ""} ${rowLength === 1 ? "tablet:col-span-2" : ""} ${col.type === 0 ? "flex flex-col gap-[1.6rem]" : ""} ${col.type === 1 || col.type === 2 ? "rounded-[2.4rem] overflow-hidden" : ""} ${col.type === 2 ? "flex-col" : ""}`;
     // const columnClassName = `${BLOCK_COLUMN_CLASS} ${rowLength !== 0 ? "flex gap-[2.4rem]" : ""} ${rowLength === 1 ? "tablet:col-span-2" : "tablet:min-h-[36.0rem]"} ${col.type === 0 ? "flex flex-col gap-[1.6rem]" : ""} ${col.type === 1 || col.type === 2 ? "rounded-[2.4rem] overflow-hidden" : ""} ${col.type === 2 ? "flex-col" : ""}`;
 
@@ -112,13 +112,14 @@ const CodeBlockContent = memo(({ content, fileName }: { content: string; fileNam
 
 const Body = () => {
     const { contents, prev, next, postId, imageUrl, title, summary, createDate, viewCount, likeCount, thumbnailAlt, pushToUrl, setToast, handleCopySentence } = usePostDetailProvider();
+    const sectionEndRows = useMemo(() => getSectionEndRowIndexes(contents ?? []), [contents]);
     return (
         <section className={POST_CONTENT_WIDTH_CLASS}>
             <div className={POST_BLOCK_LIST_CLASS}>
                 {contents?.map((row, rowIdx) => (
                     <section
                         key={rowIdx}
-                        className={BLOCK_ROW_CLASS}
+                        className={`${BLOCK_ROW_CLASS} items-start ${sectionEndRows.has(rowIdx) ? POST_BLOCK_SECTION_END_CLASS : ""}`}
                     >
                         {row.map((col) => (
                             <ContentColumn

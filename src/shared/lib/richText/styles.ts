@@ -12,9 +12,12 @@ export const BLOCK_MENU_ITEM_CLASS =
 
 export const TIPTAP_PROSE_CLASS = "text-[2rem] leading-[1.5]";
 export const POST_TIPTAP_CONTENT_CLASS = `post-tiptap-content w-full ${TIPTAP_PROSE_CLASS}`;
-export const RICH_TEXT_PARAGRAPH_CLASS = "break-words !text-[length:calc(2rem*var(--post-read-scale,1))] !leading-[var(--post-read-line-height,1.5)] mb-[0.8rem] min-h-[3.2rem] last:mb-0";
+const RICH_TEXT_PARAGRAPH_LAYOUT_CLASS = "break-words !text-[length:calc(2rem*var(--post-read-scale,1))] !leading-[var(--post-read-line-height,1.5)] mb-[0.8rem] last:mb-0";
+export const RICH_TEXT_PARAGRAPH_CLASS = `${RICH_TEXT_PARAGRAPH_LAYOUT_CLASS} min-h-[3.2rem]`;
+export const POST_VIEW_PARAGRAPH_CLASS = RICH_TEXT_PARAGRAPH_LAYOUT_CLASS;
 export const RICH_TEXT_SPAN_CLASS = "!text-[inherit] !leading-[inherit]";
-export const RICH_TEXT_IMAGE_CLASS = "my-[1.6rem] block h-auto max-w-full data-[align=center]:mx-auto data-[align=right]:ml-auto data-[align=right]:mr-0";
+export const POST_VIEW_IMAGE_CLASS = "block h-auto max-w-full data-[align=center]:mx-auto data-[align=right]:ml-auto data-[align=right]:mr-0";
+export const RICH_TEXT_IMAGE_CLASS = `my-[1.6rem] ${POST_VIEW_IMAGE_CLASS}`;
 export const RICH_TEXT_BLOCKQUOTE_CLASS = "border-l-[0.4rem] border-[var(--color-gray-300)] pl-[1.2rem] text-[var(--color-gray-600)] my-[0.8rem]";
 export const CODE_PRE_CLASS = "m-0 rounded-none bg-transparent p-0 font-mono text-[1.6rem] leading-[1.7] text-[var(--color-text-primary)] overflow-x-auto whitespace-pre-wrap break-words [tab-size:4]";
 // 편집기가 표시하는 코드 끝의 빈 줄을 보기 화면에서도 같은 높이로 유지해요.
@@ -24,7 +27,9 @@ export const POST_INNER_CLASS = "mx-auto post-inner flex flex-col w-full items-c
 export const POST_HERO_SECTION_CLASS = "flex flex-col justify-center items-center gap-[3.2rem] w-full mt-[calc(5.2rem+4.0rem+2.4rem)]";
 export const POST_BODY_CLASS = "post-reading-root z-[100] pt-[4.2rem] flex w-full gap-[0.4rem]";
 export const POST_CONTENT_WIDTH_CLASS = "w-full min-w-0 max-w-[var(--post-content-max-width,var(--size-tablet))] px-[2.0rem] mx-auto";
-export const POST_BLOCK_LIST_CLASS = "flex flex-col mobile:gap-[5.2rem] pc:gap-[2.4rem]";
+export const POST_BLOCK_LIST_CLASS = "flex flex-col gap-[2.4rem]";
+// 행 간격 2.4rem에 더해져 소절이 끝나는 곳의 간격이 5.2rem이 된다.
+export const POST_BLOCK_SECTION_END_CLASS = "mb-[2.8rem]";
 export const POST_HERO_META_CLASS = "mobile:text-[1.6rem] tablet:text-[1.4rem] text-[var(--color-text-muted)] leading-[1.5]";
 export const POST_HERO_TITLE_CLASS = "mobile:text-[1.6rem] tablet:text-[2.0rem] text-[var(--color-text-primary)] leading-[1.5]";
 export const POST_HERO_SUMMARY_CLASS = "font-semibold mobile:text-[1.8rem] tablet:text-[2.4rem] leading-[1.5] whitespace-break-spaces";

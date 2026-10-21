@@ -19,6 +19,54 @@ export const isMainBlock = (block: SectionContent) => resolveBlockMode(block) ==
 
 export const isCodeBlock = (block: SectionContent) => resolveBlockMode(block) === "code";
 
+const isContentBlock = (block: SectionContent) => !isMainBlock(block) && !isCodeBlock(block);
+
+/** 다음 행과 사이가 5.2rem이 되어야 하는 행. 목록의 마지막 행은 제외한다. */
+export const getSectionEndRowIndexes = (rows: SectionContent[][]) => {
+    const sections: Array<{ mainRow: number; lastContentRow: number | null }> = [];
+    let sectionMainRow: number | null = null;
+    let lastContentRow: number | null = null;
+
+    const closeSection = () => {
+        if (sectionMainRow === null) return;
+
+        sections.push({ mainRow: sectionMainRow, lastContentRow });
+        sectionMainRow = null;
+        lastContentRow = null;
+    };
+
+    rows.forEach((row, rowIndex) => {
+        row.forEach((block) => {
+            if (isCodeBlock(block)) return;
+
+            if (isMainBlock(block)) {
+                closeSection();
+                sectionMainRow = rowIndex;
+                return;
+            }
+
+            if (isContentBlock(block) && sectionMainRow !== null) {
+                lastContentRow = rowIndex;
+            }
+        });
+    });
+
+    closeSection();
+
+    const rowsWithFollowingContent = new Set(sections.filter((section) => section.lastContentRow !== null && section.lastContentRow !== section.mainRow).map((section) => section.mainRow));
+    const endRows = new Set<number>();
+
+    sections.forEach((section) => {
+        const endRow = section.lastContentRow ?? section.mainRow;
+        if (endRow >= rows.length - 1) return;
+        if (section.lastContentRow === null && rowsWithFollowingContent.has(endRow)) return;
+
+        endRows.add(endRow);
+    });
+
+    return endRows;
+};
+
 export const getBlockModeLabel = (block: SectionContent) => {
     const mode = resolveBlockMode(block);
 

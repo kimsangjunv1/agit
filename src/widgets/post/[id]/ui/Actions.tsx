@@ -1,10 +1,9 @@
 "use client";
 import { usePostDetailProvider } from "../model/PostDetailContext";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import useNavigate from "@/shared/hooks/useNavigate";
 import { PostNavigationActions, usePostNavigationActions } from "@/features/managePost";
-import { useScrollProgressBar } from "@/shared/hooks/useScrollProgress";
 
 const Actions = () => {
     const [headerContainer, setHeaderContainer] = useState<HTMLElement | null>(null);
@@ -17,7 +16,7 @@ const Actions = () => {
 };
 
 const PostActions = () => {
-    const { postIdx, scrollViewportRef } = usePostDetailProvider();
+    const { postIdx } = usePostDetailProvider();
     const { pushToUrl } = useNavigate();
 
     const { alreadyLiked, likeCount, navVisibility, hasNavActions, isDeletePending, handleNavAction } = usePostNavigationActions({
@@ -39,7 +38,6 @@ const PostActions = () => {
         >
             <PostNavigationActions
                 {...navVisibility}
-                scrollViewportRef={scrollViewportRef}
                 likeCount={likeCount}
                 alreadyLiked={alreadyLiked}
                 isDeletePending={isDeletePending}

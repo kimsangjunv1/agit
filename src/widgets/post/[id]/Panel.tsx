@@ -47,6 +47,7 @@ export default function Panel({ id, initialData }: { id: string; initialData: Ge
             {page.isReady ? (
                 <>
                     <Layer.Toc />
+                    <Layer.DynamicPostController key={page.postId} />
                     <WidthControl value={contentWidth} onChange={setContentWidth} />
                 </>
             ) : null}
