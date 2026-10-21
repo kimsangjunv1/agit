@@ -10,8 +10,9 @@ import UI from "@/shared/ui/common/UIComponent";
 import IconComponent from "@/shared/ui/common/IconComponent";
 import { MaterialIcon } from "@/shared/ui/common/MaterialIcon";
 import { blockContentToHtml } from "@/entities/post/lib/blockContent";
-import { getBlockModeLabel, getNextBlockModePatch, isCodeBlock, isMainBlock } from "@/entities/post/lib/blockMode";
+import { type BlockMode, isCodeBlock, isMainBlock, resolveBlockMode } from "@/entities/post/lib/blockMode";
 import { getPostTocAnchorId } from "@/entities/post/lib/postToc";
+import { confirmAction } from "@/shared/lib/confirmAction";
 
 import { usePostDraftImageStore } from "@/shared/stores/usePostDraftImageStore";
 import { useToastStore } from "@/shared/stores/useToastStore";
@@ -19,6 +20,7 @@ import { Row, useBlockStore } from "@/features/managePost/model/useEditorBlockSt
 import { normalizeBlocksForEditor } from "@/features/managePost/lib/normalizePostBlocks";
 import {
     BLOCK_COLUMN_CLASS,
+    BLOCK_MIN_HEIGHT_CLASS,
     BLOCK_ROW_CLASS,
     POST_BLOCK_CONTENT_CLASS,
     POST_BLOCK_HEADING_CLASS,
@@ -41,6 +43,12 @@ const REORDER_TRANSITION = {
 };
 
 const GROUP_ACTION_BUTTON_CLASS = "flex h-[2.4rem] w-[3.6rem] items-center justify-center rounded-[1.2rem] text-[var(--color-gray-900)] transition-colors hover:bg-[var(--color-gray-100)]";
+
+const BLOCK_MODE_OPTIONS = [
+    { mode: "sub", label: "서브", icon: "notes" },
+    { mode: "code", label: "코드", icon: "code" },
+    { mode: "main", label: "메인", icon: "title" },
+] as const;
 
 const getRowKey = (row: Row) => row.map((b) => b.id).join("-");
 
@@ -117,8 +125,30 @@ const Item = ({ row, rowIndex }: { row: Row; rowIndex: number }) => {
     const [isGrabbing, setIsGrabbing] = useState(false);
 
     const { setToast } = useToastStore();
-    const { rows, addBlock, deleteRow } = useBlockStore();
+    const { rows, addBlock, deleteRow, updateBlock, selectedPosition } = useBlockStore();
     const isSingleGroup = rows.length === 1;
+    const activeBlockIndex = selectedPosition?.rowIndex === rowIndex && row[selectedPosition.blockIndex] ? selectedPosition.blockIndex : 0;
+    const activeBlock = row[activeBlockIndex];
+    const activeBlockMode = resolveBlockMode(activeBlock);
+
+    const handleBlockModeChange = (mode: BlockMode) => {
+        if (mode === activeBlockMode) return;
+
+        const patch: Partial<SectionContent> = { blockMode: mode, type: 0 };
+
+        if (mode === "code") {
+            const { code } = extractCodeFromContent(blockContentToHtml(activeBlock.content));
+            const language = detectCodeLanguage(code);
+            patch.title = activeBlock.title?.trim() || getDefaultCodeFileBaseName(language);
+            patch.subtitle = "";
+            patch.content = toCodeBlockHtml(code, language);
+        } else if (activeBlockMode === "code") {
+            patch.title = "";
+            patch.subtitle = "";
+        }
+
+        updateBlock(rowIndex, activeBlockIndex, patch);
+    };
 
     return (
         <Reorder.Item
@@ -141,7 +171,7 @@ const Item = ({ row, rowIndex }: { row: Row; rowIndex: number }) => {
 
             <motion.section
                 layout="position"
-                className="absolute top-0 right-0 tablet:right-[max(-4.8rem,calc((var(--size-tablet)-100svw)/2))] flex flex-col items-center gap-[1.2rem]"
+                className="absolute top-0 right-0 tablet:right-[max(-4.8rem,calc((var(--size-tablet)-100svw)/2))] z-10 flex flex-col items-center gap-[1.2rem]"
             >
                 <section className="shadow-[var(--shadow-normal)] bg-[var(--color-surface)] rounded-full py-[0.8rem]">
                     <UI.Button
@@ -170,26 +200,39 @@ const Item = ({ row, rowIndex }: { row: Row; rowIndex: number }) => {
                         className={GROUP_ACTION_BUTTON_CLASS}
                     >
                         <span className="sr-only">{row.length === 1 ? "블록 추가" : "좌우 전환"}</span>
-                        <MaterialIcon
-                            name={row.length === 1 ? "view_column" : "swap_horiz"}
-                            size={20}
-                            className="mobile:rotate-90 pc:rotate-0"
-                        />
+                        {row.length === 1 ? (
+                            <svg aria-hidden="true" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor">
+                                <path d="M160-760v560h240v-560H160ZM80-120v-720h720v160h-80v-80H480v560h240v-80h80v160H80Zm400-360Zm-80 0h80-80Zm0 0Zm320 120v-80h-80v-80h80v-80h80v80h80v80h-80v80h-80Z" />
+                            </svg>
+                        ) : (
+                            <MaterialIcon
+                                name="swap_horiz"
+                                size={20}
+                                className="mobile:rotate-90 pc:rotate-0"
+                            />
+                        )}
                     </UI.Button>
 
                     <section className="flex max-w-full flex-wrap items-center justify-center bg-[var(--color-background-light)] rounded-full">
                         {!isSingleGroup ? (
                             <UI.Button
                                 onClick={() => {
-                                    setToast({ msg: "그룹을 제거했어요", time: 2 });
-                                    deleteRow(rowIndex);
+                                    void confirmAction({
+                                        title: "그룹을 삭제할까요?",
+                                        description: `${rowIndex + 1}번째 그룹의 블록 ${row.length}개가 함께 삭제됩니다.`,
+                                        confirmText: "삭제하기",
+                                        onConfirm: () => {
+                                            deleteRow(rowIndex);
+                                            setToast({ msg: "그룹을 제거했어요", time: 2 });
+                                        },
+                                    });
                                 }}
                                 className={`${GROUP_ACTION_BUTTON_CLASS}`}
                             >
-                                <IconComponent
-                                    type="outlined-cross"
-                                    alt="블록 지우기"
-                                />
+                                <span className="sr-only">그룹 삭제</span>
+                                <svg aria-hidden="true" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor">
+                                    <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
+                                </svg>
                             </UI.Button>
                         ) : null}
                     </section>
@@ -210,6 +253,29 @@ const Item = ({ row, rowIndex }: { row: Row; rowIndex: number }) => {
                         className="select-none"
                     />
                 </section>
+
+                {activeBlock.type === 0 ? (
+                    <section
+                        role="group"
+                        aria-label="블록 형식"
+                        className="flex flex-col shadow-[var(--shadow-normal)] bg-[var(--color-surface)] rounded-full py-[0.8rem]"
+                    >
+                        {BLOCK_MODE_OPTIONS.map(({ mode, label, icon }) => (
+                            <motion.button
+                                key={mode}
+                                type="button"
+                                title={label}
+                                aria-label={`${label} 블록으로 전환`}
+                                aria-pressed={activeBlockMode === mode}
+                                onClick={() => handleBlockModeChange(mode)}
+                                whileTap={{ scale: 0.95 }}
+                                className={`${GROUP_ACTION_BUTTON_CLASS} aria-pressed:bg-[var(--color-surface-hover)] aria-pressed:text-[var(--color-interaction-hover)] focus-visible:outline-2 focus-visible:outline-[var(--color-interaction-hover)]`}
+                            >
+                                <MaterialIcon name={icon} size={20} />
+                            </motion.button>
+                        ))}
+                    </section>
+                ) : null}
             </motion.section>
 
             <section className={BLOCK_ROW_CLASS}>
@@ -217,7 +283,7 @@ const Item = ({ row, rowIndex }: { row: Row; rowIndex: number }) => {
                     <motion.section
                         key={block.id}
                         layout="position"
-                        className={BLOCK_COLUMN_CLASS}
+                        className={`${BLOCK_COLUMN_CLASS} ${isCodeBlock(block) ? "" : BLOCK_MIN_HEIGHT_CLASS}`}
                     >
                         <Block
                             block={block}
@@ -237,7 +303,6 @@ const Block = ({ block, rowIndex, blockIndex, last, blockCount }: { block: Secti
     const { updateBlock, deleteBlock, copyBlock, pasteBlock, selectBlock, unSelectBlock } = useBlockStore();
     const { setToast } = useToastStore();
     const addFromFile = usePostDraftImageStore((state) => state.addFromFile);
-    const [test, setTest] = useState("");
 
     const blockRef = useRef<HTMLDivElement>(null);
     const imageInputRef = useRef<HTMLInputElement>(null);
@@ -263,8 +328,6 @@ const Block = ({ block, rowIndex, blockIndex, last, blockCount }: { block: Secti
 
     const codeBlockMode = isCodeBlock(block);
     const showHeadingFields = block.type === 0 && isMainBlock(block) && !codeBlockMode;
-    const blockModeLabel = getBlockModeLabel(block);
-    const blockMode = codeBlockMode ? "code" : isMainBlock(block) ? "main" : "sub";
 
     const handleFormatCode = useCallback(async () => {
         const { code } = extractCodeFromContent(textContent);
@@ -321,12 +384,7 @@ const Block = ({ block, rowIndex, blockIndex, last, blockCount }: { block: Secti
             onClick={() => {
                 selectBlock(rowIndex, blockIndex);
             }}
-            onMouseEnter={() => {
-                setTest(getPostTocAnchorId(block.id));
-            }}
-            onMouseLeave={() => {
-                setTest("");
-            }}
+            onFocusCapture={() => selectBlock(rowIndex, blockIndex)}
             onKeyDown={(e: React.KeyboardEvent) => {
                 const target = e.target as HTMLElement;
 
@@ -353,56 +411,23 @@ const Block = ({ block, rowIndex, blockIndex, last, blockCount }: { block: Secti
                 }
             }}
         >
-            {block.type === 0 || last ? (
+            {last ? (
                 <section
-                    className={`${test === getPostTocAnchorId(block.id) ? "" : "opacity-30 pointer-events-none"} absolute bottom-[4.8rem] right-[1.2rem] z-10 flex items-center rounded-full overflow-hidden p-[0.4rem] ${block.blockMode === "code" ? "bg-[var(--color-surface)]" : "bg-[var(--color-surface)]"}`}
+                    className="absolute bottom-[4px] right-[4px] z-10 flex items-center rounded-full overflow-hidden bg-[var(--color-surface)] opacity-30 pointer-events-none group-hover/block:opacity-100 group-hover/block:pointer-events-auto group-focus-within/block:opacity-100 group-focus-within/block:pointer-events-auto"
                     // className={`absolute top-[calc((2.8rem/1)*-1)] left-[50%] transform translate-x-[-50%] z-10 flex items-center rounded-full overflow-hidden p-[0.4rem] ${block.blockMode === "code" ? "bg-[#2d2d2d]" : "bg-white"}`}
                     onClick={(event) => event.stopPropagation()}
                 >
-                    {block.type === 0 ? (
-                        <UI.Button
-                            onClick={() => {
-                                const patch = getNextBlockModePatch(block);
-
-                                if (patch.blockMode === "code") {
-                                    setFocusedEditor(null);
-                                    const { code } = extractCodeFromContent(textContent);
-                                    const language = detectCodeLanguage(code);
-                                    const defaultFileName = getDefaultCodeFileBaseName(language);
-                                    updateBlock(rowIndex, blockIndex, {
-                                        ...patch,
-                                        title: block.title?.trim() || defaultFileName,
-                                        content: toCodeBlockHtml(code, language),
-                                    });
-                                    return;
-                                }
-
-                                if (codeBlockMode) {
-                                    setFocusedEditor(null);
-                                }
-
-                                updateBlock(rowIndex, blockIndex, patch);
-                            }}
-                            className={`flex px-[0.8rem] py-[0.4rem] gap-[0.4rem] items-center justify-center rounded-full transition-colors ${
-                                blockMode === "main"
-                                    ? "bg-[var(--color-blue-100)] text-[var(--color-blue-600)]"
-                                    : blockMode === "code"
-                                      ? "bg-[var(--color-surface-floating)] text-[var(--color-text-primary)]"
-                                      : "bg-[var(--color-gray-200)] text-[var(--color-gray-900)]"
-                            }`}
-                        >
-                            <MaterialIcon
-                                name={"refresh"}
-                                size={16}
-                            />
-                            <p>{blockModeLabel}</p>
-                        </UI.Button>
-                    ) : null}
-
                     {last ? (
                         <UI.Button
-                            onClick={() => deleteBlock(rowIndex, blockIndex)}
-                            className="cursor-pointer rounded-full"
+                            onClick={() => {
+                                void confirmAction({
+                                    title: "블록을 삭제할까요?",
+                                    description: `${rowIndex + 1}번째 그룹의 ${blockIndex + 1}번째 블록을 삭제합니다.`,
+                                    confirmText: "삭제하기",
+                                    onConfirm: () => deleteBlock(rowIndex, blockIndex),
+                                });
+                            }}
+                            className="cursor-pointer rounded-full p-[0.4rem]"
                         >
                             <IconComponent
                                 type="outlined-cross"

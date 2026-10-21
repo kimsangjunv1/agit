@@ -1,7 +1,7 @@
 export const POST_BLOCK_CONTENT_CLASS = "flex flex-col gap-[2.4rem]";
-export const BLOCK_MIN_HEIGHT_CLASS = "min-h-[18rem]";
-export const BLOCK_ROW_CLASS = "flex flex-col tablet:flex-row tablet:flex-wrap gap-[0.4rem] w-full min-w-0";
-export const BLOCK_COLUMN_CLASS = `w-full min-w-0 tablet:flex-1 tablet:min-w-[calc((var(--size-tablet)-(1.6rem*10))/2)] min-h-[25.6rem] border border-[var(--color-border)] focus:border-[var(--color-border-strong)] hover:bg-[var(--color-surface-hover)] ${POST_BLOCK_CONTENT_CLASS}`;
+export const BLOCK_MIN_HEIGHT_CLASS = "min-h-[25.6rem]";
+export const BLOCK_ROW_CLASS = "flex flex-col tablet:flex-row tablet:flex-wrap gap-[2.4rem] w-full min-w-0";
+export const BLOCK_COLUMN_CLASS = `w-full min-w-0 tablet:flex-1 tablet:min-w-[calc((var(--size-tablet)-(1.6rem*10))/2)] border border-[var(--color-border)] focus:border-[var(--color-border-strong)] hover:bg-[var(--color-surface-hover)] ${POST_BLOCK_CONTENT_CLASS}`;
 export const CODE_BLOCK_COLUMN_CLASS = "w-full min-w-0 tablet:flex-1 tablet:min-w-[calc((var(--size-tablet)-(1.6rem*10))/2)] bg-[var(--color-surface)] rounded-[2.4rem] flex flex-col gap-[2.4rem]";
 // "w-full min-w-0 tablet:flex-1 tablet:min-w-[calc((var(--size-tablet)-(1.6rem*10))/2)] p-[1.6rem] bg-[#ffffff] rounded-[2.4rem] flex flex-col gap-[2.4rem]";
 export const BLOCK_DETAIL_COLUMN_CLASS = "w-full min-w-0 tablet:min-w-[calc((var(--size-tablet)-(1.6rem*10))/2)] p-[1.6rem] bg-[var(--color-surface)] rounded-[2.4rem]";
