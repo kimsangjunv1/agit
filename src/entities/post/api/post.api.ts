@@ -19,8 +19,9 @@ import type { PostTypeFilter } from "@/entities/post/model/postSettings";
 /**
  * 포스트 - 목록 조회
  */
-export const getPostListFetch = (type: PostTypeFilter = "all") => {
-    const params = new URLSearchParams({ pageSize: "0" });
+export const getPostListFetch = (type: PostTypeFilter = "all", page?: number) => {
+    const params = new URLSearchParams({ pageSize: page === undefined ? "0" : "10" });
+    if (page !== undefined) params.set("page", String(page));
     if (type !== "all") params.set("type", type);
     const url = `/api/v1/get/post?${params}`;
     return clientApi.get<GetPostListResponse>(url);

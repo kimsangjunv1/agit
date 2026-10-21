@@ -1,22 +1,23 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 
 import { AgitRoutes } from "@/shared/constants/entityKeys";
 import { deleteCommentManagerFetch, getCommentLatestListFetch, getCommentListFetch, getCommentManagerListFetch, setCommentFetch } from "@/entities/comment/api/comment.api";
-import type { DeleteCommentManagerPayload, GetCommentDetailResponse, GetCommentLatestListResponse, GetCommentManagerListResponse, SetCommentPayload } from "@/entities/comment/model/comment.type";
+import type { DeleteCommentManagerPayload, GetCommentLatestListResponse, GetCommentManagerListResponse, SetCommentPayload } from "@/entities/comment/model/comment.type";
 
-export const useGetCommentDetailQuery = (postIdx?: number) => {
+export const useGetCommentDetailQuery = (postIdx: number, { enabled = true }: { enabled?: boolean } = {}) => {
     const { data: session, status } = useSession();
-    const { data, isLoading, isError, error, isFetching, refetch } = useQuery<GetCommentDetailResponse>({
-        queryKey: [AgitRoutes.KEY_COMMENT, "detail", postIdx, session?.user?.id ?? null],
-        queryFn: () => getCommentListFetch(postIdx!),
+
+    return useInfiniteQuery({
+        queryKey: [AgitRoutes.KEY_COMMENT, "detail", postIdx, status === "loading" ? "loading" : session?.user?.id ?? null, "infinite"],
+        queryFn: ({ pageParam }) => getCommentListFetch(postIdx, pageParam),
+        initialPageParam: 1,
+        getNextPageParam: (lastPage) => lastPage.pagination?.hasNext ? lastPage.pagination.page + 1 : undefined,
         staleTime: 0,
         refetchOnMount: true,
-        enabled: status !== "loading" && !!postIdx,
+        enabled: status !== "loading" && !!postIdx && enabled,
         throwOnError: false,
     });
-
-    return { data, isLoading, isError, error, isFetching, refetch };
 };
 
 export const useGetCommentLatestListQuery = () => {

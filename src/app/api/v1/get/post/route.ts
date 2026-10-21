@@ -15,6 +15,11 @@ export async function GET(req: Request) {
         if (type && !isPostType(type)) return apiError("글 종류를 확인해주세요.", { status: 400 });
 
         const idx = searchParams.get("idx");
+        const { page, pageSize } = getPageParams(searchParams, DEFAULT_PAGE_SIZE);
+
+        if (!idx && (!Number.isSafeInteger(page) || page < 1 || !Number.isSafeInteger(pageSize) || pageSize < 0 || !Number.isSafeInteger(page * pageSize))) {
+            return apiError("페이지 정보를 확인해주세요.", { status: 400 });
+        }
 
         let query;
 
@@ -24,10 +29,8 @@ export async function GET(req: Request) {
         } else {
             query = supabase
                 .from(TABLE_NAME_POST)
-                .select("idx, title, thumbnail, summary, created_at, category_idx, post_type, visibility, views, likes, category!left(title)", { count: "estimated" })
+                .select("idx, title, thumbnail, summary, created_at, category_idx, post_type, visibility, views, likes, category!left(title)", { count: pageSize > 0 ? "exact" : "estimated" })
                 .order("idx", { ascending: true });
-
-            const { page, pageSize } = getPageParams(searchParams, DEFAULT_PAGE_SIZE);
 
             if (pageSize > 0) {
                 const from = (page - 1) * pageSize;

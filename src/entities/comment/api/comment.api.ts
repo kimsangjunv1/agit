@@ -11,8 +11,9 @@ import type {
 /**
  * 댓글 - 게시물에 해당하는 댓글 목록 불러오기
  */
-export const getCommentListFetch = (idx: number) => {
-    const url = `/api/v1/get/comment/detail/${idx}`;
+export const getCommentListFetch = (idx: number, page: number) => {
+    const params = new URLSearchParams({ page: String(page), pageSize: "10" });
+    const url = `/api/v1/get/comment/detail/${idx}?${params}`;
     return clientApi.get<GetCommentDetailResponse>(url);
 };
 

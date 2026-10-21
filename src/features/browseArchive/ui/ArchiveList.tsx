@@ -2,12 +2,13 @@
 
 import { useLayoutEffect, useRef } from "react";
 
-import { useGetPostListQuery } from "@/entities/post/api/post.query";
+import { useGetPostInfiniteListQuery, useGetPostListQuery } from "@/entities/post/api/post.query";
 import { usePostTypeFilter } from "@/entities/post/model/usePostTypeFilter";
 import { useGetPostTypesQuery } from "@/entities/postType/api/postType.query";
 import usePageTransitionReady from "@/shared/hooks/usePageTransitionReady";
 import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
 import { useLayoutStore } from "@/shared/stores/useLayoutStore";
+import InfiniteScrollTrigger from "@/shared/ui/common/InfiniteScrollTrigger";
 import { clampPageScroll } from "@/features/browseArchive/lib/clampPageScroll";
 
 import ArchiveListDefaultItem from "./ArchiveListDefaultItem";
@@ -16,17 +17,20 @@ import { FeedEmpty, FeedError, FeedLoading } from "./FeedStatus";
 import { AnimatePresence, motion } from "motion/react";
 
 const ArchiveList = () => {
-    const { data, isLoading, isError, error, refetch } = useGetPostListQuery();
+    const { postType, categoryFilter } = usePostTypeFilter();
+    const isTextList = postType === "til" || postType === "diary";
+    const listQuery = useGetPostListQuery({ enabled: !isTextList });
+    const infiniteQuery = useGetPostInfiniteListQuery({ enabled: isTextList });
+    const { isLoading, isError, error, refetch } = isTextList ? infiniteQuery : listQuery;
+    const data = isTextList ? infiniteQuery.data?.pages[0] : listQuery.data;
     const listViewMode = useLayoutStore((state) => state.listViewMode);
     const isPageReady = useLayoutStore((state) => state.transitionPhase === "idle");
-    const { postType, categoryFilter } = usePostTypeFilter();
     const { data: postTypes } = useGetPostTypesQuery();
     const reducedMotion = useReducedMotion();
     const listRef = useRef<HTMLElement | null>(null);
-    const isTextList = postType === "til" || postType === "diary";
     const typeTitle = postTypes?.result.find((type) => type.code === postType)?.title ?? postType;
 
-    const posts = data?.result ?? [];
+    const posts = isTextList ? (infiniteQuery.data?.pages.flatMap((page) => page.result) ?? []) : (data?.result ?? []);
     const filtered = categoryFilter !== null ? posts.filter((item) => item.category_idx === categoryFilter) : posts;
     const isDataReady = !isLoading || posts.length > 0 || isError || data?.resultCode === "ERROR";
 
@@ -50,7 +54,7 @@ const ArchiveList = () => {
         return <FeedLoading />;
     }
 
-    if (isError) {
+    if (isError && posts.length === 0) {
         return (
             <FeedError
                 message={error?.message}
@@ -84,16 +88,16 @@ const ArchiveList = () => {
                     aria-label={`${typeTitle} 글 목록`}
                     initial="hidden"
                     animate={reducedMotion || isPageReady ? "visible" : "hidden"}
-                    variants={{ visible: { transition: { staggerChildren: reducedMotion ? 0 : 0.1 } } }}
                     className="relative mx-auto w-full max-w-[96rem] pb-[4rem] pl-[2rem] pr-[5.6rem] pt-[20rem] tablet:pl-[3.2rem] pc:pr-[3.2rem]"
                 >
                     <AnimatePresence mode="popLayout">
-                        {filtered.map((post) => (
+                        {filtered.map((post, index) => (
                             <ArchiveTextListItem
                                 key={post.idx}
                                 post={post}
                                 typeTitle={typeTitle}
                                 reducedMotion={reducedMotion}
+                                revealIndex={index % 10}
                             />
                         ))}
                     </AnimatePresence>
@@ -110,6 +114,15 @@ const ArchiveList = () => {
                     </AnimatePresence>
                 </div>
             )}
+            {isTextList && infiniteQuery.hasNextPage ? (
+                <InfiniteScrollTrigger
+                    isFetching={infiniteQuery.isFetching}
+                    isError={infiniteQuery.isError}
+                    onLoadMore={() => {
+                        void infiniteQuery.fetchNextPage({ cancelRefetch: false });
+                    }}
+                />
+            ) : null}
         </article>
     );
 };

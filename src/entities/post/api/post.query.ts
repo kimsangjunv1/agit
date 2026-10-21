@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { usePostTypeFilter } from "@/entities/post/model/usePostTypeFilter";
-import { useQuery, useMutation, useQueryClient, type QueryClient } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery, useMutation, useQueryClient, type QueryClient } from "@tanstack/react-query";
 
 import { AgitRoutes } from "@/shared/constants/entityKeys";
 import { POST_DETAIL_STALE_TIME_MS } from "@/shared/constants/postDetail";
@@ -57,18 +57,33 @@ const removePostFromListCaches = (queryClient: QueryClient, deletedIdx: number) 
     });
 };
 
-export const useGetPostListQuery = () => {
+export const useGetPostListQuery = ({ enabled = true }: { enabled?: boolean } = {}) => {
     const { postType } = usePostTypeFilter();
     const { viewerKey, ready } = usePostViewer();
     const { data, isLoading, isError, error, isFetching, refetch } = useQuery<GetPostListResponse>({
         queryKey: [AgitRoutes.KEY_POST, "list", postType, viewerKey],
         queryFn: () => getPostListFetch(postType),
-        enabled: ready,
+        enabled: ready && enabled,
         staleTime: POST_DETAIL_STALE_TIME_MS,
         throwOnError: false,
     });
 
     return { data, isLoading, isError, error, isFetching, refetch };
+};
+
+export const useGetPostInfiniteListQuery = ({ enabled = true }: { enabled?: boolean } = {}) => {
+    const { postType } = usePostTypeFilter();
+    const { viewerKey, ready } = usePostViewer();
+
+    return useInfiniteQuery({
+        queryKey: [AgitRoutes.KEY_POST, "infinite", postType, viewerKey],
+        queryFn: ({ pageParam }) => getPostListFetch(postType, pageParam),
+        initialPageParam: 1,
+        getNextPageParam: (lastPage) => lastPage.pagination?.hasNext ? lastPage.pagination.page + 1 : undefined,
+        enabled: ready && enabled,
+        staleTime: POST_DETAIL_STALE_TIME_MS,
+        throwOnError: false,
+    });
 };
 
 export const useGetPostLatestListQuery = (initialData?: GetPostLatestListResponse) => {

@@ -30,9 +30,10 @@ const posts = [
 
 // 쿼리에 접근 조건을 빠뜨리면 모든 fixture가 반환되므로 비공개 글 유출을 잡는다.
 const createQuery = (table: string) => {
-    let rows = table === "posts" ? [...posts] : [];
+    let rows = table === "posts" ? [...posts, ...database.extraPosts] : [];
     let single = false;
     let writing = false;
+    let range: [number, number] | undefined;
     const query: any = {
         select: () => query,
         insert: (payload: unknown) => {
@@ -73,7 +74,7 @@ const createQuery = (table: string) => {
             return query;
         },
         range: (from: number, to: number) => {
-            rows = rows.slice(from, to + 1);
+            range = [from, to];
             return query;
         },
         single: () => {
@@ -84,13 +85,17 @@ const createQuery = (table: string) => {
             single = true;
             return query;
         },
-        then: (resolve: (value: unknown) => unknown) => Promise.resolve({ data: single ? (rows[0] ?? null) : rows, count: rows.length, error: writing ? database.writeError : null }).then(resolve),
+        then: (resolve: (value: unknown) => unknown) => {
+            const data = range ? rows.slice(range[0], range[1] + 1) : rows;
+            return Promise.resolve({ data: single ? (data[0] ?? null) : data, count: rows.length, error: writing ? database.writeError : null }).then(resolve);
+        },
     };
     return query;
 };
 
 const database = {
     from: vi.fn(createQuery),
+    extraPosts: [] as typeof posts,
     inserted: [] as unknown[],
     updated: [] as unknown[],
     writeError: null as { code: string } | null,
@@ -109,6 +114,7 @@ const request = (path: string, headers?: HeadersInit) => new Request(`http://loc
 beforeEach(() => {
     vi.clearAllMocks();
     database.inserted = [];
+    database.extraPosts = [];
     database.updated = [];
     database.writeError = null;
     vi.mocked(getServerSession).mockResolvedValue(null);
@@ -152,6 +158,28 @@ describe("게시글 공개 범위", () => {
         login(ownerId);
         const response = await getLatest(request("get/post/latest?type=til"));
         expect((await response.json()).result.map((post: { idx: number }) => post.idx)).toEqual([4]);
+    });
+
+    it.each(["til", "diary"])("%s 목록을 페이지별 10개씩 조회해도 비공개 글과 다른 종류가 섞이지 않는다", async (type) => {
+        database.extraPosts = [
+            ...Array.from({ length: 22 }, (_, index) => ({ ...posts[3], idx: 100 + index, post_type: type })),
+            { ...posts[2], idx: 200, post_type: type },
+        ];
+        const ids: number[] = [];
+
+        for (const [page, length] of [[1, 10], [2, 10], [3, 3], [4, 0]]) {
+            const response = await getList(request(`get/post?type=${type}&page=${page}&pageSize=10`));
+            const body = await response.json();
+
+            expect(body.result).toHaveLength(length);
+            expect(body.result.every((post: { post_type: string; visibility: string }) => post.post_type === type && post.visibility === "public")).toBe(true);
+            expect(body.pagination).toMatchObject({ page, pageSize: 10, totalCount: 23, totalPages: 3, hasNext: page < 3 });
+            expect(response.headers.get("Cache-Control")).toContain("private, no-store");
+            ids.push(...body.result.map((post: { idx: number }) => post.idx));
+        }
+
+        expect(new Set(ids).size).toBe(23);
+        expect(ids).not.toContain(200);
     });
 
     it("어드민에서 추가한 종류로도 필터링할 수 있다", async () => {

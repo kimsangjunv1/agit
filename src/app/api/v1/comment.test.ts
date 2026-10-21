@@ -36,7 +36,11 @@ const query = {
     order: vi.fn().mockReturnThis(),
     limit: vi.fn().mockReturnThis(),
     range: vi.fn().mockReturnThis(),
-    then: (resolve: (value: typeof queryResult) => unknown) => Promise.resolve(queryResult).then(resolve),
+    then: (resolve: (value: typeof queryResult) => unknown) => {
+        const range = query.range.mock.lastCall;
+        const data = range && Array.isArray(queryResult.data) ? queryResult.data.slice(range[0], range[1] + 1) : queryResult.data;
+        return Promise.resolve({ ...queryResult, data }).then(resolve);
+    },
 };
 const database = { from: vi.fn(() => query) };
 
@@ -207,6 +211,7 @@ describe("공개 댓글 조회", () => {
 
     it("해당 게시물의 공개 댓글만 조회하고 비밀번호 컬럼은 요청하지 않는다", async () => {
         queryResult.data = [{ idx: 2, ...validPayload }];
+        queryResult.count = 1;
 
         const response = await getDetail(new Request("http://localhost/api/v1/get/comment/detail/1"));
         const columns = (query.select.mock.calls[0][0] as string).split(",").map((column) => column.trim());
@@ -217,8 +222,43 @@ describe("공개 댓글 조회", () => {
         expect(columns).not.toContain("password");
         expect(query.eq).toHaveBeenCalledWith("post_id", 1);
         expect(query.or).toHaveBeenCalledWith("is_secret.is.null,is_secret.eq.false");
+        expect(query.range).toHaveBeenCalledWith(0, 9);
         expect(response.status).toBe(200);
         expect(await response.json()).toMatchObject({ result: queryResult.data, pagination: { totalCount: 1 } });
+    });
+
+    it.each([
+        { page: 1, start: 1, length: 10, hasNext: true },
+        { page: 2, start: 11, length: 10, hasNext: true },
+        { page: 3, start: 21, length: 3, hasNext: false },
+        { page: 4, start: 24, length: 0, hasNext: false },
+    ])("댓글 $page 페이지는 10개 이하로 반환하고 전체 개수를 유지한다", async ({ page, start, length, hasNext }) => {
+        queryResult.data = Array.from({ length: 23 }, (_, index) => ({ idx: index + 1, ...validPayload }));
+        queryResult.count = 23;
+
+        const response = await getDetail(new Request(`http://localhost/api/v1/get/comment/detail/1?page=${page}&pageSize=100`));
+        const body = await response.json();
+
+        expect(response.status).toBe(200);
+        expect(body.result.map((comment: { idx: number }) => comment.idx)).toEqual(Array.from({ length }, (_, index) => start + index));
+        expect(body.pagination).toMatchObject({ page, pageSize: 10, totalCount: 23, totalPages: 3, hasNext });
+        expect(query.or).toHaveBeenCalledWith("is_secret.is.null,is_secret.eq.false");
+        expect(response.headers.get("Cache-Control")).toContain("private, no-store");
+    });
+
+    it.each(["0", "-1", "1.5", "1abc", "NaN", "9007199254740991"])("잘못된 댓글 페이지 %s는 조회 전에 거부한다", async (page) => {
+        const response = await getDetail(new Request(`http://localhost/api/v1/get/comment/detail/1?page=${page}`));
+
+        expect(response.status).toBe(400);
+        expect(supabaseAdmin).not.toHaveBeenCalled();
+    });
+
+    it("댓글이 없으면 다음 페이지를 요청하지 않게 한다", async () => {
+        queryResult.data = [];
+
+        const response = await getDetail(new Request("http://localhost/api/v1/get/comment/detail/1"));
+
+        expect(await response.json()).toMatchObject({ result: [], pagination: { page: 1, pageSize: 10, totalCount: 0, hasNext: false } });
     });
 
     it("최신 댓글에서도 비밀댓글을 제외한다", async () => {

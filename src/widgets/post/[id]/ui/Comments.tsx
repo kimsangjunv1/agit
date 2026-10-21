@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useRef, useState, type FormEvent } from "react";
+import { useInView } from "motion/react";
 
 import { useGetCommentDetailQuery, useSetCommentQuery } from "@/entities/comment/api/comment.query";
 import { COMMENT_AUTHOR_MAX_CODE_UNITS, COMMENT_AUTHOR_MAX_LENGTH, COMMENT_MESSAGE_MAX_LENGTH } from "@/entities/comment/model/comment.constants";
@@ -8,18 +9,22 @@ import { getCommentAuthorLength, getRandomCommentNickname, limitCommentAuthor } 
 import { util } from "@/shared/lib/util";
 import { usePostDetailProvider } from "../model/PostDetailContext";
 import { POST_CONTENT_WIDTH_CLASS } from "@/shared/lib/richText/styles";
+import InfiniteScrollTrigger from "@/shared/ui/common/InfiniteScrollTrigger";
 
 const Comments = () => {
-    const { postIdx, setToast } = usePostDetailProvider();
-    const { data, isLoading, isError, error, isFetching, refetch } = useGetCommentDetailQuery(postIdx);
+    const { postIdx, setToast, scrollViewportRef } = usePostDetailProvider();
+    const sectionRef = useRef<HTMLElement>(null);
+    const hasBeenVisible = useInView(sectionRef, { root: scrollViewportRef, once: true });
+    const { data, isLoading, isError, error, isFetching, refetch, hasNextPage, fetchNextPage } = useGetCommentDetailQuery(postIdx, { enabled: hasBeenVisible });
     const { mutate, isPending } = useSetCommentQuery();
     const [author, setAuthor] = useState("");
     const [msg, setMsg] = useState("");
     const [submitError, setSubmitError] = useState("");
     const isAuthorComposing = useRef(false);
     const formId = useId();
-    const comments = data?.result ?? [];
-    const hasListError = isError || data?.resultCode === "ERROR";
+    const comments = data?.pages.flatMap((page) => page.result) ?? [];
+    const firstPage = data?.pages[0];
+    const hasListError = isError || firstPage?.resultCode === "ERROR";
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -50,6 +55,7 @@ const Comments = () => {
 
     return (
         <section
+            ref={sectionRef}
             id="comments"
             aria-labelledby={`${formId}-title`}
             className={`${POST_CONTENT_WIDTH_CLASS} my-[5.2rem] scroll-mt-[18rem] tablet:scroll-mt-[12rem]`}
@@ -58,7 +64,7 @@ const Comments = () => {
                 id={`${formId}-title`}
                 className="text-[2rem] font-semibold"
             >
-                댓글 <span className="text-[var(--color-text-muted)]">{comments.length}</span>
+                댓글 <span className="text-[var(--color-text-muted)]">{firstPage?.pagination?.totalCount ?? "…"}</span>
             </h2>
             <p className="mt-[0.8rem] text-[1.4rem] text-[var(--color-text-muted)]">로그인 없이 닉네임으로 댓글을 남길 수 있어요.</p>
 
@@ -73,9 +79,9 @@ const Comments = () => {
                     >
                         댓글을 불러오고 있어요.
                     </p>
-                ) : hasListError ? (
+                ) : hasListError && comments.length === 0 ? (
                     <div className="flex flex-wrap items-center gap-[1.2rem] py-[2.4rem] text-[1.4rem]">
-                        <p role="alert">{error?.message || data?.resultMessage || "댓글을 불러오지 못했어요."}</p>
+                        <p role="alert">{error?.message || firstPage?.resultMessage || "댓글을 불러오지 못했어요."}</p>
                         <button
                             type="button"
                             onClick={() => refetch()}
@@ -85,7 +91,7 @@ const Comments = () => {
                             다시 불러오기
                         </button>
                     </div>
-                ) : comments.length === 0 ? (
+                ) : firstPage && comments.length === 0 ? (
                     <p className="py-[2.4rem] text-[1.4rem] text-[var(--color-text-muted)]">아직 댓글이 없어요. 첫 댓글을 남겨주세요.</p>
                 ) : null}
 
@@ -112,6 +118,16 @@ const Comments = () => {
                         ))}
                     </ul>
                 )}
+                {hasNextPage ? (
+                    <InfiniteScrollTrigger
+                        root={scrollViewportRef}
+                        isFetching={isFetching}
+                        isError={isError}
+                        onLoadMore={() => {
+                            void fetchNextPage({ cancelRefetch: false });
+                        }}
+                    />
+                ) : null}
             </div>
 
             <form

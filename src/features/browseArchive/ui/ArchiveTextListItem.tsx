@@ -1,7 +1,7 @@
 "use client";
 
 import { forwardRef } from "react";
-import { motion } from "motion/react";
+import { motion, type Transition } from "motion/react";
 
 import type { PostItem } from "@/entities/post/model/post.type";
 import { util } from "@/shared/lib/util";
@@ -11,19 +11,22 @@ type Props = {
     post: PostItem;
     typeTitle: string;
     reducedMotion: boolean;
+    revealIndex: number;
 };
 
-const ArchiveTextListItem = forwardRef<HTMLLIElement, Props>(function ArchiveTextListItem({ post, typeTitle, reducedMotion }, ref) {
+const ArchiveTextListItem = forwardRef<HTMLLIElement, Props>(function ArchiveTextListItem({ post, typeTitle, reducedMotion, revealIndex }, ref) {
+    const transition = { duration: reducedMotion ? 0 : 0.45, ease: [0.22, 1, 0.36, 1] } satisfies Transition;
+
     return (
         <motion.li
             ref={ref}
             layout="position"
             variants={{
                 hidden: { opacity: reducedMotion ? 1 : 0, y: reducedMotion ? 0 : 24 },
-                visible: { opacity: 1, y: 0 },
+                visible: { opacity: 1, y: 0, transition: { ...transition, delay: reducedMotion ? 0 : revealIndex * 0.1 } },
             }}
             exit={{ opacity: 0, transition: { duration: reducedMotion ? 0 : 0.15 } }}
-            transition={{ duration: reducedMotion ? 0 : 0.45, ease: [0.22, 1, 0.36, 1] }}
+            transition={transition}
             className="border-b border-[var(--color-border)]"
         >
             <TransitionLink
