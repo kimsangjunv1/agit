@@ -2,12 +2,13 @@
 
 import { ReactNode } from "react";
 
+import Grid from "@/widgets/layout/chrome/Grid";
 import Footer from "@/widgets/layout/chrome/Footer";
 import Header from "@/widgets/layout/chrome/Header";
-import MobileMenu from "@/shared/ui/layout/MobileMenu";
 import Navigation from "@/widgets/layout/chrome/Navigation";
-import Grid from "@/widgets/layout/chrome/Grid";
-import RouteFunction from "./chrome/RouteFunction";
+import RouteFunction from "@/widgets/layout/chrome/RouteFunction";
+
+import MobileMenu from "@/shared/ui/layout/MobileMenu";
 
 type RootChromePanelProps = {
     children: ReactNode;

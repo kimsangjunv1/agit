@@ -27,6 +27,7 @@ const Ruller = ({ direction }: { direction: "top left" | "top right" | "bottom l
                 return "rotate-180 bottom-[20px] right-[20px]";
         }
     };
+
     return (
         <div
             data-page-transition-fixed="grid"

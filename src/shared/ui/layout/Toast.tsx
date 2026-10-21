@@ -24,7 +24,7 @@ export function Toast() {
                 {toastList.map((toast) => (
                     <motion.div
                         // className={`flex items-start gap-3 rounded-lg border bg-slate-950/95 px-4 py-3 text-sm font-bold text-white shadow-xl backdrop-blur`}
-                        className={`flex items-center gap-[1.2rem] bg-[var(--color-surface-floating)] px-[2.4rem_1.2rem] py-[1.2rem] shadow-[0_0_200px_0_#000000]`}
+                        className={`flex items-center gap-[1.2rem] bg-[var(--color-surface-floating)] backdrop-blur-[5px] px-[2.4rem_1.2rem] py-[1.2rem] shadow-[0_0_200px_0_#000000]`}
                         key={toast.id}
                         role="status"
                         initial={{ opacity: 0, scale: 0.5, translateY: -100 }}

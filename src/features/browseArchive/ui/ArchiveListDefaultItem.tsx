@@ -51,24 +51,29 @@ const ArchiveListDefaultItem = forwardRef<HTMLElement, ArchiveListDefaultItemPro
                     // className="w-[calc(1.6rem*6)] h-[calc(1.6rem*9)] object-cover rounded-[1.6rem] shadow-[var(--shadow-normal)]"
                 />
                 {/* <div className="pointer-events-none absolute h-[50%] mask-[linear-gradient(0deg,_#000,_#000_2.5%,_#000_50%,_#0000)] bottom-0 left-0 w-full bg-[#00000000] backdrop-blur-[30px]" /> */}
-                <div className="pointer-events-none flex flex-col items-start flex-1 w-full absolute top-0 p-[0.8rem]">
-                    {/* className="absolute bottom-0 left-[50%] bg-[linear-gradient(0deg,#00000000_0%,#00000000)] transform translate-x-[-50%] w-full flex flex-col justify-center items-center" */}
-                    <h5 className="bg-[var(--color-surface-floating)] text-inherit text-left text-[2rem] font-bold p-[0.4rem_0.4rem_0_0.4rem]">{post.title}</h5>
-                    <p className="bg-[var(--color-surface-floating)] text-left font-semibold leading-[1.5] text-[var(--color-text-muted)] line-clamp-2 mobile:text-[1.6rem] tablet:text-[1.6rem] p-[0.8rem_0.4rem_0.4rem_0.4rem]">
-                        &quot;{post.summary}&quot;
+                <div className="pointer-events-none flex flex-col items-start flex-1 w-full absolute top-0">
+                    <h5 className="bg-[#252525] max-w-[calc(100%-3.2rem)] text-inherit text-left leading-[1.5] text-[1.8rem] font-bold p-[0.4rem_0.4rem_0_0.4rem] line-clamp-2 overflow-hidden break-words">
+                        {post.title}
+                    </h5>
+
+                    <p className="bg-[#252525] text-left font-semibold flex items-center justify-center text-[var(--color-text-muted)] mobile:text-[1.6rem] tablet:text-[1.6rem] p-[0.8rem_0.4rem_0.4rem_0.4rem]">
+                        {util.string.getCurrentDate(post.created_at)}
                     </p>
-                    {/* <p className={`text-white text-left font-extrabold ${getCategoryClassName(post.category_idx)}`}>{post.category?.title}</p> */}
-                    {/* <h5 className="text-white text-left text-[1.4rem] font-bold text-[#00000090]">
-                        {post.category?.title} ・ {util.string.getCurrentDate(post.created_at)} ・ {post.likes ?? 0} likes
-                    </h5> */}
+                    {/* <p className="bg-[#252525] text-left font-semibold leading-[1.5] text-[var(--color-text-muted)] line-clamp-2 mobile:text-[1.6rem] tablet:text-[1.6rem] p-[0.8rem_0.4rem_0.4rem_0.4rem]">
+                        &quot;{post.summary}&quot;
+                    </p> */}
                 </div>
+                <div className="pointer-events-none flex flex-col items-start flex-1 w-full absolute bottom-0 right-0 p-[0.8rem]">
+                    {/* <h5 className="bg-[#252525] text-inherit text-left text-[2rem] font-bold p-[0.4rem_0.4rem_0_0.4rem]">{post.title}</h5> */}
+                    <p className="bg-[#252525] text-left font-semibold flex items-center justify-center text-[var(--color-text-muted)] mobile:text-[1.6rem] tablet:text-[1.6rem] p-[0.8rem_0.4rem_0.4rem_0.4rem]">
+                        {post.category?.title}
+                    </p>
+                    <p>{post.likes ?? 0}</p>
+                </div>
+                {/* <p className="[text-align-last:justify] bg-[var(--color-surface-floating)] font-bold p-[0.8rem] text-[var(--color-text-primary)]">
+                    {post.category?.title} ・ {util.string.getCurrentDate(post.created_at)} ・ {post.likes ?? 0} likes
+                </p> */}
             </TransitionLink>
-            {/* <p>
-                {post.category?.title} ・ {util.string.getCurrentDate(post.created_at)} ・ {post.likes ?? 0} likes
-            </p> */}
-            <p className="[text-align-last:justify] bg-[var(--color-surface-floating)] font-bold p-[0.8rem] text-[var(--color-text-primary)]">
-                {post.category?.title} ・ {util.string.getCurrentDate(post.created_at)} ・ {post.likes ?? 0} likes
-            </p>
         </motion.section>
     );
 });

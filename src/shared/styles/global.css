@@ -124,7 +124,8 @@
     --breakpoint-*: initial;
     --breakpoint-mobile: 21.5rem;
     --breakpoint-tablet: 48rem;
-    --breakpoint-pc: 90rem;
+    --breakpoint-pc: 64rem; /* 1024px = 64rem (1rem = 16px) */
+    --breakpoint-pc-wide: 90rem; /* 1440px = 90rem (1rem = 16px) */
 
     --spacing: 0.4rem;
     --text-xs: 1.2rem;

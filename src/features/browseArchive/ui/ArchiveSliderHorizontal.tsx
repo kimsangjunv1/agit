@@ -93,8 +93,9 @@ const ArchiveSliderHorizontalCard = ({ post, index, containerRef, shouldBlockCli
                 />
             </div>
 
-            <div className="bottom-[1.6rem] left-[1.6rem] w-full flex flex-col justify-start items-start">
-                <h5 className="text-left mobile:text-[1.6rem] pc:text-[2rem] p-[0.4rem_0.4rem_0_0.4rem] leading-[1.5]">{post.title}</h5>
+            <div className="absolute bottom-0 left-0 bg-[#252525] w-auto max-w-[calc(100%-3.2rem)] flex flex-col justify-start items-start">
+                <h5 className="text-left w-auto mobile:text-[1.6rem] pc:text-[2rem] p-[0.4rem_0.4rem_0_0.4rem] leading-[1.5] line-clamp-2 overflow-hidden break-words">{post.title}</h5>
+
                 {/* <p className="text-left leading-[1.5] line-clamp-2 mobile:text-[1.6rem] tablet:text-[2rem] p-[0.8rem_0.4rem_0.4rem_0.4rem]">&quot;{post.summary}&quot;</p> */}
             </div>
         </motion.button>

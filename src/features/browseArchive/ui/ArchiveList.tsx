@@ -103,7 +103,7 @@ const ArchiveList = () => {
                     </AnimatePresence>
                 </motion.ul>
             ) : (
-                <div className="relative w-full grid grid-cols-2 tablet:grid-cols-4 pc:grid-cols-7 gap-[2.4rem_0.4rem] mobile:px-[0.4rem] pc:px-[2rem]">
+                <div className="relative w-[calc(100%-5.2rem-1.2rem)] grid grid-cols-2 tablet:grid-cols-4 pc:grid-cols-4 pc-wide:grid-cols-6 gap-[2.4rem_2.4rem] mobile:px-[0.4rem] pc:px-[2rem] max-w-[var(--size-pc-full-hd)] mx-auto">
                     <AnimatePresence mode="popLayout">
                         {filtered.map((post) => (
                             <ArchiveListDefaultItem
