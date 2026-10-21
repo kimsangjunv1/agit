@@ -14,6 +14,7 @@ import { canManagePost, getPostNavVisibility, hasVisiblePostNavActions } from "@
 import PostTocModalContent from "@/features/managePost/ui/PostTocModalContent";
 import { buildPostToc } from "@/entities/post/lib/postToc";
 import { util } from "@/shared/lib/util";
+import { confirmAction } from "@/shared/lib/confirmAction";
 import { useCreatePostStore } from "@/shared/stores/useCreatePostStore";
 import { useModalStore } from "@/shared/stores/useModalStore";
 import { useToastStore } from "@/shared/stores/useToastStore";
@@ -84,56 +85,37 @@ export const usePostNavigationActions = ({ postIdx, isView, isCreate, isEdit, pu
             return;
         }
 
-        try {
-            const payload = await preparePostPayloadForSave({
-                title,
-                summary,
-                thumbnail,
-                category_idx,
-                post_type,
-                visibility,
-                contents,
-            });
-
-            if (isCreate) {
-                await setPostFetchAsync({ ...payload, draftId: draft_id });
-            } else if (isEdit) {
-                await patchPostFetchAsync({ data: payload, idx: post_idx });
-            }
-        } catch (error) {
-            const message = error instanceof Error ? error.message : "저장 중 오류가 발생했습니다.";
-            setToast({ msg: message, time: 2 });
-        }
+        void confirmAction({
+            title: isCreate ? "게시물을 생성할까요?" : "게시물을 수정할까요?",
+            description: `${title}\n공개 설정: ${visibility === "private" ? "비공개" : "전체공개"}`,
+            confirmText: isCreate ? "생성하기" : "수정하기",
+            onConfirm: async () => {
+                const payload = await preparePostPayloadForSave({ title, summary, thumbnail, category_idx, post_type, visibility, contents });
+                const response = isCreate ? await setPostFetchAsync({ ...payload, draftId: draft_id }) : await patchPostFetchAsync({ data: payload, idx: post_idx });
+                return Boolean(response?.result?.statusCode);
+            },
+        });
     };
 
     const saveDraft = async (contents: SectionContent[][]) => {
         if (isDraftPending) return;
 
-        setIsDraftPending(true);
-        try {
-            const payload = await preparePostPayloadForSave({
-                title,
-                summary,
-                thumbnail,
-                category_idx,
-                post_type,
-                visibility,
-                contents,
-            });
-            const response = await setPostDraftFetch({
-                ...payload,
-                id: draft_id ?? undefined,
-            });
-            setDraftId(response.result.id);
-            setToast({ msg: "임시저장했어요", type: "success" });
-        } catch (error) {
-            setToast({
-                msg: error instanceof Error ? error.message : "임시저장에 실패했어요",
-                type: "fail",
-            });
-        } finally {
-            setIsDraftPending(false);
-        }
+        void confirmAction({
+            title: "작성한 글을 임시저장할까요?",
+            description: title || "제목 없는 글",
+            confirmText: "임시저장",
+            onConfirm: async () => {
+                setIsDraftPending(true);
+                try {
+                    const payload = await preparePostPayloadForSave({ title, summary, thumbnail, category_idx, post_type, visibility, contents });
+                    const response = await setPostDraftFetch({ ...payload, id: draft_id ?? undefined });
+                    setDraftId(response.result.id);
+                    setToast({ msg: "임시저장했어요", type: "success" });
+                } finally {
+                    setIsDraftPending(false);
+                }
+            },
+        });
     };
 
     const openDeletePostModal = () => {

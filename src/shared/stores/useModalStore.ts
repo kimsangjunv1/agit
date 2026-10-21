@@ -13,7 +13,7 @@ interface Modal {
     };
     confirm?: {
         text?: string | null;
-        onClick?: () => void;
+        onClick?: () => unknown;
         loading?: boolean | null;
         className?: string;
     };
@@ -31,6 +31,7 @@ interface ModalStoreType {
     modal: Modal;
 
     setModal: (props: Partial<Modal>) => void;
+    closeModal: () => void;
     trackingModalConfirmLoading: (props: boolean) => void;
 }
 
@@ -89,10 +90,17 @@ export const useModalStore = create<ModalStoreType>((set, get) => ({
     setModal: (modal) =>
         set((state) => ({
             modal: {
-                ...state.modal, // 기존 modal 값들을 그대로 유지
+                ...(modal.isOpen ? state.initModal : state.modal),
                 ...modal, // 전달된 modal 값만 덮어씀
             },
         })),
+
+    closeModal: () => {
+        const { modal } = get();
+        if (!modal.isOpen || modal.confirm?.loading) return;
+        modal.cancel?.onClick?.();
+        set({ modal: { ...get().modal, isOpen: false } });
+    },
 
     trackingModalConfirmLoading: (isLoading) =>
         set((state) => ({

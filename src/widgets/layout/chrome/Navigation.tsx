@@ -7,6 +7,7 @@ import { createPortal } from "react-dom";
 import UI from "@/shared/ui/common/UIComponent";
 
 import useNavigate from "@/shared/hooks/useNavigate";
+import { confirmAction } from "@/shared/lib/confirmAction";
 import { getPostRouteFlags, usePostNavigationActions } from "@/features/managePost";
 import { useBlockStore } from "@/features/managePost/model/useEditorBlockStore";
 import { parsePostMarkdown } from "@/features/managePost/lib/parsePostMarkdown";
@@ -46,18 +47,27 @@ const Navigation = () => {
         rows.some((row) => row.some((block) => Boolean(block.title?.trim() || block.subtitle?.trim() || (typeof block.content === "string" && block.content.trim()) || block.imageUrl?.trim())));
 
     const handleLoadDraft = (draft: PostDraftDetail) => {
-        if (hasEditorContent() && !window.confirm("현재 작성 중인 내용을 임시저장된 글로 교체할까요?")) {
-            return;
-        }
+        const load = () => {
+            const payload = draft.payload;
+            setPost({ ...payload, category_idx: payload.category_idx ?? 0, draft_id: draft.id });
+            setRows(normalizeBlocksForEditor(payload.contents));
+            const images = usePostDraftImageStore.getState();
+            images.reset();
+            collectImagesFromPost(payload.thumbnail, payload.contents).forEach((url) => images.addFromUrl(url));
+            setShowDraftModal(false);
+            setToast({ msg: "임시저장 글을 불러왔어요", type: "success" });
+        };
 
-        const payload = draft.payload;
-        setPost({ ...payload, category_idx: payload.category_idx ?? 0, draft_id: draft.id });
-        setRows(normalizeBlocksForEditor(payload.contents));
-        const images = usePostDraftImageStore.getState();
-        images.reset();
-        collectImagesFromPost(payload.thumbnail, payload.contents).forEach((url) => images.addFromUrl(url));
-        setShowDraftModal(false);
-        setToast({ msg: "임시저장 글을 불러왔어요", type: "success" });
+        if (hasEditorContent()) {
+            void confirmAction({
+                title: "임시저장된 글을 불러올까요?",
+                description: `현재 작성 중인 내용을 '${draft.title || "제목 없는 글"}'로 교체합니다.`,
+                confirmText: "교체하기",
+                onConfirm: load,
+            });
+        } else {
+            load();
+        }
     };
 
     const handleMarkdownFile = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -73,10 +83,6 @@ const Navigation = () => {
             return;
         }
 
-        if (hasEditorContent() && !window.confirm("현재 작성 중인 제목, 요약, 블록을 불러온 Markdown 내용으로 교체할까요?")) {
-            return;
-        }
-
         try {
             const parsed = parsePostMarkdown(await file.text());
             if (!parsed.title || parsed.rows.length === 0) {
@@ -87,15 +93,25 @@ const Navigation = () => {
                 return;
             }
 
-            setTitle(parsed.title);
-            setSummary(parsed.summary);
-            setRows(parsed.rows);
-            setDraftId(null);
-            setShowDraftModal(false);
-            setToast({
-                msg: `${parsed.rows.length}개 그룹을 불러왔어요`,
-                type: "success",
-            });
+            const load = () => {
+                setTitle(parsed.title);
+                setSummary(parsed.summary);
+                setRows(parsed.rows);
+                setDraftId(null);
+                setShowDraftModal(false);
+                setToast({ msg: `${parsed.rows.length}개 그룹을 불러왔어요`, type: "success" });
+            };
+
+            if (hasEditorContent()) {
+                void confirmAction({
+                    title: "Markdown 내용을 불러올까요?",
+                    description: `현재 작성 중인 제목, 요약, 블록을 '${file.name}'의 내용으로 교체합니다.`,
+                    confirmText: "교체하기",
+                    onConfirm: load,
+                });
+            } else {
+                load();
+            }
         } catch {
             setToast({ msg: "Markdown 파일을 불러오지 못했어요", type: "fail" });
         }
@@ -147,12 +163,13 @@ const Navigation = () => {
                       ) : null}
                   </nav>
                   {markdownInput}
-                  {showDraftModal && IS_ROUTE_POST_CREATE ? (
+                  {showDraftModal && IS_ROUTE_POST_CREATE ? createPortal(
                       <PostDraftLoadModal
                           onClose={() => setShowDraftModal(false)}
                           onLoad={handleLoadDraft}
                           onMarkdownClick={() => markdownInputRef.current?.click()}
-                      />
+                      />,
+                      document.body,
                   ) : null}
               </>,
               headerContainer,

@@ -12,7 +12,8 @@ export const useSetCategoryWithToast = () => {
         mutation.mutate(payload, toastHandlers);
     };
 
-    return { ...mutation, mutate };
+    const mutateAsync = (payload: SetCategoryPayload) => mutation.mutateAsync(payload, { onSuccess: toastHandlers.onSuccess });
+    return { ...mutation, mutate, mutateAsync };
 };
 
 export const usePatchCategoryWithToast = () => {
@@ -23,7 +24,8 @@ export const usePatchCategoryWithToast = () => {
         mutation.mutate(payload, toastHandlers);
     };
 
-    return { ...mutation, mutate };
+    const mutateAsync = (payload: PatchCategoryPayload) => mutation.mutateAsync(payload, { onSuccess: toastHandlers.onSuccess });
+    return { ...mutation, mutate, mutateAsync };
 };
 
 export const useDeleteCategoryWithToast = () => {
@@ -34,5 +36,6 @@ export const useDeleteCategoryWithToast = () => {
         mutation.mutate(payload, toastHandlers);
     };
 
-    return { ...mutation, mutate };
+    const mutateAsync = (payload: DeleteCategoryPayload) => mutation.mutateAsync(payload, { onSuccess: toastHandlers.onSuccess });
+    return { ...mutation, mutate, mutateAsync };
 };

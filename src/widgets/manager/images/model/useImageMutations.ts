@@ -23,5 +23,6 @@ export const useDeleteUnusedPostImagesWithToast = () => {
         mutation.mutate(undefined, toastHandlers);
     };
 
-    return { ...mutation, mutate };
+    const mutateAsync = () => mutation.mutateAsync(undefined, { onSuccess: toastHandlers.onSuccess });
+    return { ...mutation, mutate, mutateAsync };
 };

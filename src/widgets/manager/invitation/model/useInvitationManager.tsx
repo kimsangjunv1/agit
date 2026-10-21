@@ -1,7 +1,8 @@
 "use client";
 import { useRef } from "react";
 import { useGetInvitationCodeListOnManagerQuery } from "@/entities/invitation/api/invitation.query";
-import type { InvitationCodeListItem, SetInvitationCodePayload } from "@/entities/invitation/model/invitation.type";
+import type { InvitationCodeListItem, PatchInvitationCodePayload, SetInvitationCodePayload } from "@/entities/invitation/model/invitation.type";
+import { confirmAction } from "@/shared/lib/confirmAction";
 import { useModalStore } from "@/shared/stores/useModalStore";
 import ModalContent from "@/widgets/manager/shared/ui/ModalContent";
 import { useDeleteInvitationCodeWithToast, usePatchInvitationCodeWithToast, useSetInvitationCodeWithToast } from "@/widgets/manager/invitation/model/useInvitationMutations";
@@ -13,13 +14,21 @@ const useInvitationManager = () => {
         expire_at: "",
     });
     const { data, isLoading, isError, error, refetch } = useGetInvitationCodeListOnManagerQuery();
-    const { mutate: createInvitation } = useSetInvitationCodeWithToast();
-    const { mutate: patchInvitation } = usePatchInvitationCodeWithToast();
-    const { mutate: deleteInvitation } = useDeleteInvitationCodeWithToast();
+    const { mutateAsync: createInvitation } = useSetInvitationCodeWithToast();
+    const { mutateAsync: patchInvitationFetch } = usePatchInvitationCodeWithToast();
+    const { mutateAsync: deleteInvitation } = useDeleteInvitationCodeWithToast();
     const { setModal } = useModalStore();
     const { selectedItem, setSelectedItem } = useManagerSelection();
     const list = data?.result ?? [];
     const selectedInvitation = list.find((item) => String(item.id) === selectedItem);
+    const patchInvitation = (payload: PatchInvitationCodePayload) => {
+        void confirmAction({
+            title: "초대코드 상태를 변경할까요?",
+            description: `${selectedInvitation?.code ?? "초대코드"} · ${payload.is_active ? "활성화" : "비활성화"}`,
+            confirmText: "변경하기",
+            onConfirm: () => patchInvitationFetch(payload),
+        });
+    };
     const createInvitationModal = () =>
         setModal({
             type: "CHECK",
@@ -28,8 +37,8 @@ const useInvitationManager = () => {
             cancel: { text: "닫기" },
             confirm: {
                 text: "확인",
-                onClick: () => {
-                    createInvitation(createValueRef.current);
+                onClick: async () => {
+                    await createInvitation(createValueRef.current);
                     createValueRef.current = { is_active: true, expire_at: "" };
                 },
             },

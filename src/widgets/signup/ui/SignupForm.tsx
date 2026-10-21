@@ -10,6 +10,7 @@ import { useToastStore } from "@/shared/stores/useToastStore";
 import IconComponent from "@/shared/ui/common/IconComponent";
 import { useSetUserWithToast } from "@/widgets/signup/model/useSignupMutations";
 import { useGetInvitationCodeCheckQuery } from "@/entities/invitation/api/invitation.query";
+import { confirmAction } from "@/shared/lib/confirmAction";
 
 const SignupForm = () => {
     const [selectedMenu, setSelectedMenu] = useState<number>(1);
@@ -29,7 +30,7 @@ const SignupForm = () => {
 const SignupCredentialsForm = () => {
     const { setToast } = useToastStore();
     const { replaceToUrl, backToUrl } = useNavigate();
-    const { data: setUserData, mutate: setUserFetch } = useSetUserWithToast();
+    const { data: setUserData, mutateAsync: setUserFetch } = useSetUserWithToast();
     const [currentCode, setCurrentCode] = useState("");
     const { data: getInvitationCodeCheckData, refetch: getInvitationCodeCheckFetch } = useGetInvitationCodeCheckQuery(currentCode);
 
@@ -104,11 +105,17 @@ const SignupCredentialsForm = () => {
         const validationResult = checkValidation();
         if (!validationResult) return;
 
-        setUserFetch({
+        const payload = {
             email: signUpValueRef.current.email,
             name: signUpValueRef.current.name,
             password: signUpValueRef.current.password,
             inviteCode: currentCode,
+        };
+        void confirmAction({
+            title: "계정을 생성할까요?",
+            description: `닉네임: ${payload.name}\n아이디: ${payload.email}`,
+            confirmText: "가입하기",
+            onConfirm: () => setUserFetch(payload),
         });
 
         // const DEFAULT_PATH = "/login"

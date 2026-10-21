@@ -10,7 +10,7 @@ const useCommentManager = () => {
     const { pushToUrl } = useNavigate();
     const { setModal } = useModalStore();
     const { data, isLoading, isError, error, refetch } = useGetCommentManagerListQuery();
-    const { mutate: deleteComment } = useDeleteCommentWithToast();
+    const { mutateAsync: deleteComment } = useDeleteCommentWithToast();
     const { selectedItem, setSelectedItem } = useManagerSelection();
     const list = data?.result ?? [];
     const selectedComment = list.find((item) => String(item.idx) === selectedItem);

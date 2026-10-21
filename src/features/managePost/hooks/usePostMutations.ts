@@ -64,7 +64,7 @@ export const useDeletePostWithFeedback = () => {
         mutation.mutate(payload, toastHandlers);
     };
 
-    const mutateAsync = (payload: DeletePostManagerPayload) => mutation.mutateAsync(payload, toastHandlers);
+    const mutateAsync = (payload: DeletePostManagerPayload) => mutation.mutateAsync(payload, { onSuccess: toastHandlers.onSuccess });
 
     return { ...mutation, mutate, mutateAsync };
 };

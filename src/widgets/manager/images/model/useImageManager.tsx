@@ -21,7 +21,7 @@ const useImageManager = () => {
     const [filter, setFilter] = useState<FilterType>("all");
     const { setModal } = useModalStore();
     const { data, isLoading, isError, error, refetch } = useGetPostImageInventoryOnManagerQuery();
-    const { mutate: optimizeImages, isPending } = useDeleteUnusedPostImagesWithToast();
+    const { mutateAsync: optimizeImages, isPending } = useDeleteUnusedPostImagesWithToast();
     const { selectedItem, setSelectedItem } = useManagerSelection();
     const inventory = data?.result;
     const summary = inventory?.summary;

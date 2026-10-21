@@ -7,6 +7,7 @@ import { useGetCommentDetailQuery, useSetCommentQuery } from "@/entities/comment
 import { COMMENT_AUTHOR_MAX_CODE_UNITS, COMMENT_AUTHOR_MAX_LENGTH, COMMENT_MESSAGE_MAX_LENGTH } from "@/entities/comment/model/comment.constants";
 import { getCommentAuthorLength, getRandomCommentNickname, limitCommentAuthor } from "@/entities/comment/lib/commentNickname";
 import { util } from "@/shared/lib/util";
+import { confirmAction } from "@/shared/lib/confirmAction";
 import { usePostDetailProvider } from "../model/PostDetailContext";
 import { POST_CONTENT_WIDTH_CLASS } from "@/shared/lib/richText/styles";
 import InfiniteScrollTrigger from "@/shared/ui/common/InfiniteScrollTrigger";
@@ -16,7 +17,7 @@ const Comments = () => {
     const sectionRef = useRef<HTMLElement>(null);
     const hasBeenVisible = useInView(sectionRef, { root: scrollViewportRef, once: true });
     const { data, isLoading, isError, error, isFetching, refetch, hasNextPage, fetchNextPage } = useGetCommentDetailQuery(postIdx, { enabled: hasBeenVisible });
-    const { mutate, isPending } = useSetCommentQuery();
+    const { mutateAsync, isPending } = useSetCommentQuery();
     const [author, setAuthor] = useState("");
     const [msg, setMsg] = useState("");
     const [submitError, setSubmitError] = useState("");
@@ -41,16 +42,22 @@ const Comments = () => {
         }
 
         setSubmitError("");
-        mutate(
-            { post_id: postIdx, author: author.trim(), msg: msg.trim() },
-            {
-                onSuccess: () => {
+        const payload = { post_id: postIdx, author: author.trim(), msg: msg.trim() };
+        void confirmAction({
+            title: "댓글을 등록할까요?",
+            description: `${payload.author}\n${payload.msg}`,
+            confirmText: "등록하기",
+            onConfirm: async () => {
+                try {
+                    await mutateAsync(payload);
                     setMsg("");
                     setToast({ msg: "댓글을 남겼어요.", time: 2 });
-                },
-                onError: (submitError) => setSubmitError(submitError.message || "댓글을 등록하지 못했어요. 다시 시도해주세요."),
+                } catch (cause) {
+                    setSubmitError(cause instanceof Error ? cause.message : "댓글을 등록하지 못했어요. 다시 시도해주세요.");
+                    throw cause;
+                }
             },
-        );
+        });
     };
 
     return (

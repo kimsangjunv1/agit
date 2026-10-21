@@ -1,11 +1,13 @@
 "use client";
 
 import ReactDOM from "react-dom";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
-import { Fragment, ReactNode, useEffect, useRef, useState } from "react";
+import { Fragment, ReactNode, useEffect, useId, useRef, useState } from "react";
 
 import { util } from "@/shared/lib/util";
 import { useModalStore } from "@/shared/stores/useModalStore";
+import { useToastStore } from "@/shared/stores/useToastStore";
 import { configAnimation } from "@/shared/constants/config/animationSettings";
 
 import ButtonComponent from "@/shared/ui/common/ButtonComponent";
@@ -23,7 +25,7 @@ interface ModalFooterProps {
     currentTime?: number;
     confirm?: {
         title: string;
-        onClick: () => void;
+        onClick: () => unknown;
         loading: null | boolean;
         className: string;
     };
@@ -46,13 +48,17 @@ const Modal = () => {
     const [isDocumentVisible, setIsDocumentVisible] = useState(false);
     const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
 
-    const { initModal, modal, setModal } = useModalStore();
+    const { initModal, modal, setModal, closeModal } = useModalStore();
+    const titleId = useId();
+    const pathname = usePathname();
+    const previousPath = useRef(pathname);
 
     const containerRef = useRef<HTMLElement>(null);
 
     // 함수: 모달 닫음
     const closeModalState = () => {
-        setModal({ ...modal, isOpen: false });
+        if (useModalStore.getState().modal.confirm?.loading) return;
+        closeModal();
         setCurrentTime(modal.delay ? modal.delay / 1000 : 0);
         setInitGlow(false);
 
@@ -62,7 +68,9 @@ const Modal = () => {
     };
 
     // 함수: 모달 상태 초기화
-    const resetModalState = () => setModal(initModal);
+    const resetModalState = () => {
+        if (!useModalStore.getState().modal.isOpen) setModal(initModal);
+    };
 
     // 함수: 타이머 시작
     const startTimer = () => {
@@ -93,10 +101,27 @@ const Modal = () => {
     const preventEnterKey = (event: KeyboardEvent) => {
         switch (event.key) {
             case "Escape":
+                event.preventDefault();
+                event.stopPropagation();
                 return closeModalState();
 
-            case "Enter":
-                return event.preventDefault();
+            case "Tab": {
+                const elements = containerRef.current?.querySelectorAll<HTMLElement>(
+                    'button:not(:disabled), input:not(:disabled), textarea:not(:disabled), select:not(:disabled), a[href], [tabindex="0"]',
+                );
+                const focusable = Array.from(elements ?? []).filter((element) => element.getClientRects().length > 0);
+                const first = focusable[0];
+                const last = focusable[focusable.length - 1];
+                if (!first) return event.preventDefault();
+                if (event.shiftKey && document.activeElement === first) {
+                    event.preventDefault();
+                    last.focus();
+                } else if (!event.shiftKey && document.activeElement === last) {
+                    event.preventDefault();
+                    first.focus();
+                }
+                break;
+            }
 
             default:
                 break;
@@ -111,30 +136,40 @@ const Modal = () => {
 
     useEffect(() => {
         if (modal) {
-            util.dom.setScrollDefence(modal.type ? true : false);
+            util.dom.setScrollDefence(modal.isOpen);
             setCurrentTime(modal.delay ? modal.delay / 1000 : 0);
 
-            if (modal.delay && modal.delay > 0) {
+            if (modal.isOpen && modal.delay && modal.delay > 0) {
                 startTimer();
             }
         }
-    }, [modal.type]);
+    }, [modal.type, modal.isOpen]);
 
     useEffect(() => {
+        const previousFocus = document.activeElement;
+        let focusFrame: number | undefined;
         if (modal.isOpen) {
             window.addEventListener("keydown", preventEnterKey);
             document.addEventListener("click", detectOutsideClick);
+            focusFrame = requestAnimationFrame(() => containerRef.current?.querySelector<HTMLElement>("input, textarea, select, button")?.focus());
         }
 
         return () => {
             window.removeEventListener("keydown", preventEnterKey);
             document.removeEventListener("click", detectOutsideClick);
+            if (focusFrame !== undefined) cancelAnimationFrame(focusFrame);
+            if (modal.isOpen && previousFocus instanceof HTMLElement && previousFocus.isConnected) previousFocus.focus();
         };
     }, [modal.isOpen]);
 
     useEffect(() => {
         setIsDocumentVisible(true);
     }, []);
+
+    useEffect(() => {
+        if (previousPath.current !== pathname) closeModalState();
+        previousPath.current = pathname;
+    }, [pathname]);
 
     if (!isDocumentVisible) {
         return null;
@@ -149,12 +184,14 @@ const Modal = () => {
                 <Fragment>
                     <section
                         ref={containerRef}
-                        className="fixed z-[100000] top-0 left-0 w-full h-full inset-0 flex items-center justify-center"
+                        className="fixed z-[2000000000] top-0 left-0 w-full h-full inset-0 flex items-center justify-center"
                         role="dialog"
                         aria-modal="true"
+                        aria-labelledby={titleId}
+                        aria-busy={Boolean(modal.confirm?.loading)}
                     >
                         <motion.div
-                            className={`relative flex flex-col w-full bg-[var(--color-surface)] p-[0.4rem] gap-[1.6rem] rounded-[3.2rem] mx-[1.6rem] z-10 max-h-[calc(100svh-(1.6rem*3))] shadow-[var(--shadow-normal)] ${modal.className?.container !== "" ? modal.className?.container : "max-w-[var(--modal-width)]"}`}
+                            className={`relative flex flex-col w-full bg-[var(--color-surface)] gap-[1.6rem] mx-[1.6rem] z-10 max-h-[calc(100svh-(1.6rem*3))] shadow-[var(--shadow-normal)] ${modal.className?.container !== "" ? modal.className?.container : "max-w-[var(--modal-width)]"}`}
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
@@ -166,8 +203,11 @@ const Modal = () => {
                                 damping: 10,
                             }}
                         >
-                            <Header title={modal.title} />
-                            <div className="bg-[linear-gradient(180deg,_var(--color-surface)_20%,_transparent)] absolute top-[0.4rem] left-[50%] transform translate-x-[-50%] w-[calc(100%-(0.4rem*2))] rounded-[2.8rem] z-[1000] h-[7.2rem] pointer-events-none" />
+                            <Header
+                                title={modal.title}
+                                id={titleId}
+                            />
+                            {/* <div className="bg-[linear-gradient(180deg,_var(--color-surface)_20%,_transparent)] absolute top-[0.4rem] left-[50%] transform translate-x-[-50%] w-[calc(100%-(0.4rem*2))] rounded-[2.8rem] z-[1000] h-[7.2rem] pointer-events-none" /> */}
 
                             <section
                                 data-lenis-prevent="true"
@@ -186,7 +226,7 @@ const Modal = () => {
                                 }}
                                 cancel={{
                                     title: modal.cancel?.text || "닫기",
-                                    onClick: modal.cancel?.onClick || (() => closeModalState()),
+                                    onClick: closeModalState,
                                     className: modal.cancel?.className || "",
                                 }}
                             />
@@ -222,10 +262,15 @@ const Modal = () => {
 };
 
 // 헤더
-const Header = ({ title }: { title: string }) => {
+const Header = ({ title, id }: { title: string; id: string }) => {
     return (
-        <section className="modal-header px-[1.6rem] py-[1.2rem] absolute top-[1.2rem] left-[1.2rem] bg-[var(--color-surface)] shadow-[var(--shadow-normal)] rounded-full z-[100000]">
-            <h2 className="text-left font-bold text-[1.6rem] text-[var(--color-gray-1000)] select-none pointer-events-none">{title}</h2>
+        <section className="modal-header p-[2.4rem] absolute top-0 left-0 z-[100000]">
+            <h2
+                id={id}
+                className="text-left font-bold text-[1.6rem] text-[var(--color-gray-1000)] select-none pointer-events-none"
+            >
+                {title}
+            </h2>
         </section>
     );
 };
@@ -255,25 +300,19 @@ const Body = ({ children, className }: ModalBodyProps) => {
 // 푸터
 const Footer = ({ className, confirm, cancel, currentTime }: ModalFooterProps) => {
     // 전역상태 : 모달
-    const { modal, setModal } = useModalStore();
+    const { modal, setModal, trackingModalConfirmLoading } = useModalStore();
+    const setToast = useToastStore((state) => state.setToast);
     const [isPrevent, setIsPrevent] = useState(false);
-
-    const setPreventAfterClick = () => {
-        setIsPrevent(true);
-
-        setTimeout(() => {
-            setIsPrevent(false);
-        }, 2000);
-    };
-
-    const closeModalState = () => setModal({ ...modal, isOpen: false });
+    const confirmingRef = useRef(false);
+    const isPending = isPrevent || Boolean(confirm?.loading);
 
     return (
-        <section className={`modal-footer w-[calc(100%-1.2rem*2)))] flex flex-wrap justify-between gap-[1.2rem] absolute bottom-[1.2rem] left-[1.2rem] z-[100000] ${className}`}>
+        <section className={`modal-footer w-full flex flex-wrap justify-between absolute bottom-0 left-0 z-[100000] ${className}`}>
             {cancel && cancel?.title !== " " && (
                 <UI.Button
-                    className={`${cancel?.className ? cancel?.className : "bg-[var(--color-surface)]"} flex-1 font-regular text-[1.6rem] whitespace-nowrap rounded-full shadow-[var(--shadow-normal)] px-[2rem] h-[4.4rem]`}
+                    className={`${cancel?.className ? cancel?.className : "hover:bg-[var(--color-surface-floating)]"} flex-1 font-regular text-[1.6rem] whitespace-nowrap px-[2rem] h-[4.4rem]`}
                     onClick={cancel.onClick}
+                    disabled={isPending}
                     rippleColor="#65778a"
                 >
                     {cancel.title}
@@ -282,20 +321,29 @@ const Footer = ({ className, confirm, cancel, currentTime }: ModalFooterProps) =
 
             {confirm && confirm?.title !== " " && (
                 <UI.Button
-                    className={`${confirm?.className ? confirm.className : "bg-[var(--color-surface-floating)] text-[var(--color-text-primary)]"} flex-1 font-regular text-[1.6rem] whitespace-nowrap rounded-full shadow-[var(--shadow-normal)] px-[2rem] h-[4.4rem]`}
-                    disabled={isPrevent} // 클릭 방지 시에는 비활성화
+                    className={`${confirm?.className ? confirm.className : "hover:bg-[var(--color-surface-floating)] text-[#ff4321]"} flex-1 font-regular text-[1.6rem] whitespace-nowrap px-[2rem] h-[4.4rem]`}
+                    disabled={isPending}
                     onClick={async () => {
-                        const result = await confirm.onClick();
-                        const IS_PASSED = result === undefined || result;
-
-                        setPreventAfterClick();
-
-                        if (!modal.isNeedNext && IS_PASSED) {
-                            closeModalState();
+                        const currentModal = useModalStore.getState().modal;
+                        if (confirmingRef.current || isPending || !currentModal.isOpen || currentModal.confirm?.onClick !== modal.confirm?.onClick) return;
+                        confirmingRef.current = true;
+                        setIsPrevent(true);
+                        trackingModalConfirmLoading(true);
+                        try {
+                            const result = await confirm.onClick();
+                            if (!modal.isNeedNext && result !== false && useModalStore.getState().modal.confirm?.onClick === modal.confirm?.onClick) {
+                                setModal({ isOpen: false });
+                            }
+                        } catch (cause) {
+                            setToast({ msg: cause instanceof Error ? cause.message : "처리하지 못했어요. 다시 시도해주세요.", type: "fail" });
+                        } finally {
+                            if (useModalStore.getState().modal.confirm?.onClick === modal.confirm?.onClick) trackingModalConfirmLoading(false);
+                            confirmingRef.current = false;
+                            setIsPrevent(false);
                         }
                     }}
                 >
-                    {confirm.title}
+                    {isPending ? "처리 중..." : confirm.title}
                 </UI.Button>
             )}
             {currentTime}

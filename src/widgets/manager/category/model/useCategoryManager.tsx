@@ -4,6 +4,7 @@ import { useGetCategoryListOnManagerQuery } from "@/entities/category/api/catego
 import type { CategoryItemManager, PatchCategoryPayload, SetCategoryPayload } from "@/entities/category/model/category.type";
 import { useModalStore } from "@/shared/stores/useModalStore";
 import { useToastStore } from "@/shared/stores/useToastStore";
+import { confirmAction } from "@/shared/lib/confirmAction";
 import ModalContent from "@/widgets/manager/shared/ui/ModalContent";
 import { useDeleteCategoryWithToast, usePatchCategoryWithToast, useSetCategoryWithToast } from "@/widgets/manager/category/model/useCategoryMutations";
 import useManagerSelection from "@/widgets/manager/shared/model/useManagerSelection";
@@ -20,14 +21,22 @@ const useCategoryManager = () => {
         description: "",
     });
     const { data, isLoading, isError, error, refetch } = useGetCategoryListOnManagerQuery();
-    const { mutate: createCategory } = useSetCategoryWithToast();
-    const { mutate: patchCategory } = usePatchCategoryWithToast();
-    const { mutate: deleteCategory } = useDeleteCategoryWithToast();
+    const { mutateAsync: createCategory } = useSetCategoryWithToast();
+    const { mutateAsync: patchCategoryFetch } = usePatchCategoryWithToast();
+    const { mutateAsync: deleteCategory } = useDeleteCategoryWithToast();
     const { setToast } = useToastStore();
     const { setModal } = useModalStore();
     const { selectedItem, setSelectedItem } = useManagerSelection();
     const list = data?.result ?? [];
     const selectedCategory = list.find((item) => String(item.idx) === selectedItem);
+    const patchCategory = (payload: PatchCategoryPayload) => {
+        void confirmAction({
+            title: "카테고리 상태를 변경할까요?",
+            description: `${selectedCategory?.title ?? "카테고리"} · ${payload.is_enabled ? "활성화" : "비활성화"}`,
+            confirmText: "변경하기",
+            onConfirm: () => patchCategoryFetch(payload),
+        });
+    };
     const createCategoryModal = () =>
         setModal({
             type: "CHECK",
@@ -36,12 +45,12 @@ const useCategoryManager = () => {
             cancel: { text: "닫기" },
             confirm: {
                 text: "확인",
-                onClick: () => {
+                onClick: async () => {
                     if (!categoryCreateValueRef.current.title || !categoryCreateValueRef.current.description) {
                         setToast({ msg: "카테고리 이름과 설명을 입력해주세요", time: 2 });
                         return false;
                     }
-                    createCategory(categoryCreateValueRef.current);
+                    await createCategory(categoryCreateValueRef.current);
                     categoryCreateValueRef.current = { title: "", description: "" };
                 },
             },
@@ -60,12 +69,12 @@ const useCategoryManager = () => {
             cancel: { text: "닫기" },
             confirm: {
                 text: "확인",
-                onClick: () => {
+                onClick: async () => {
                     if (!categoryPatchValueRef.current.title || !categoryPatchValueRef.current.description) {
                         setToast({ msg: "카테고리 이름과 설명을 입력해주세요", time: 2 });
                         return false;
                     }
-                    patchCategory(categoryPatchValueRef.current);
+                    await patchCategoryFetch(categoryPatchValueRef.current);
                 },
             },
             isOpen: true,

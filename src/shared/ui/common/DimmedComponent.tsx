@@ -7,7 +7,7 @@ import { useModalStore } from "@/shared/stores/useModalStore";
 import { useBottomSheetStore } from "@/shared/stores/useBottomSheetStore";
 
 const DimmedComponent = ({ isVisible }: { isVisible: boolean }) => {
-    const { modal, setModal } = useModalStore();
+    const { modal, closeModal } = useModalStore();
     const { bottomSheet, initBottomSheet, setBottomSheet } = useBottomSheetStore();
 
     const closeBottomSheetState = () => {
@@ -21,7 +21,7 @@ const DimmedComponent = ({ isVisible }: { isVisible: boolean }) => {
 
     const closeModalState = () => {
         if (modal) {
-            setModal({ ...modal, isOpen: false });
+            closeModal();
         }
     };
 
@@ -30,7 +30,7 @@ const DimmedComponent = ({ isVisible }: { isVisible: boolean }) => {
             <AnimatePresence>
                 {modal.isOpen || bottomSheet.isOpen ? (
                     <motion.div
-                        className="fixed top-0 left-0 w-full h-full bg-[#000000c1] z-[999]"
+                        className={`fixed top-0 left-0 w-full h-full bg-[#000000c1] ${modal.isOpen ? "z-[1999999999]" : "z-[999]"}`}
                         exit={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         initial={{ opacity: 0 }}

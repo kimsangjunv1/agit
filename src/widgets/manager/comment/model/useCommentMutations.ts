@@ -12,5 +12,6 @@ export const useDeleteCommentWithToast = () => {
         mutation.mutate(payload, toastHandlers);
     };
 
-    return { ...mutation, mutate };
+    const mutateAsync = (payload: DeleteCommentManagerPayload) => mutation.mutateAsync(payload, { onSuccess: toastHandlers.onSuccess });
+    return { ...mutation, mutate, mutateAsync };
 };

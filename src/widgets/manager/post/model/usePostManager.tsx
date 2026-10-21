@@ -10,7 +10,7 @@ const usePostManager = () => {
     const { pushToUrl } = useNavigate();
     const { setModal } = useModalStore();
     const { data, isLoading, isError, error, refetch } = useGetPostManagerListQuery();
-    const { mutate: deletePost } = useDeletePostManagerWithToast();
+    const { mutateAsync: deletePost } = useDeletePostManagerWithToast();
     const { selectedItem, setSelectedItem } = useManagerSelection();
     const list = data?.result ?? [];
     const selectedPost = list.find((item) => String(item.idx) === selectedItem);

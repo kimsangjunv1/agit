@@ -12,7 +12,8 @@ export const useSetInvitationCodeWithToast = () => {
         mutation.mutate(payload, toastHandlers);
     };
 
-    return { ...mutation, mutate };
+    const mutateAsync = (payload: SetInvitationCodePayload) => mutation.mutateAsync(payload, { onSuccess: toastHandlers.onSuccess });
+    return { ...mutation, mutate, mutateAsync };
 };
 
 export const usePatchInvitationCodeWithToast = () => {
@@ -23,7 +24,8 @@ export const usePatchInvitationCodeWithToast = () => {
         mutation.mutate(payload, toastHandlers);
     };
 
-    return { ...mutation, mutate };
+    const mutateAsync = (payload: PatchInvitationCodePayload) => mutation.mutateAsync(payload, { onSuccess: toastHandlers.onSuccess });
+    return { ...mutation, mutate, mutateAsync };
 };
 
 export const useDeleteInvitationCodeWithToast = () => {
@@ -34,5 +36,6 @@ export const useDeleteInvitationCodeWithToast = () => {
         mutation.mutate(payload, toastHandlers);
     };
 
-    return { ...mutation, mutate };
+    const mutateAsync = (payload: DeleteInvitationCodePayload) => mutation.mutateAsync(payload, { onSuccess: toastHandlers.onSuccess });
+    return { ...mutation, mutate, mutateAsync };
 };

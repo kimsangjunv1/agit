@@ -2,6 +2,7 @@
 
 import { useDeletePostTypeMutation, useGetPostTypesQuery, useSavePostTypeMutation } from "@/entities/postType/api/postType.query";
 import type { PostTypePayload } from "@/entities/postType/model/postType.type";
+import { confirmAction } from "@/shared/lib/confirmAction";
 import { useModalStore } from "@/shared/stores/useModalStore";
 import { useToastStore } from "@/shared/stores/useToastStore";
 import UI from "@/shared/ui/common/UIComponent";
@@ -31,13 +32,16 @@ export default function PostTypeManagerPanel() {
     const pending = saveMutation.isPending || deleteMutation.isPending;
 
     const save = async (payload: PostTypePayload) => {
-        try {
-            await saveMutation.mutateAsync({ payload, isNew });
-            setSelectedItem(payload.code);
-            setToast({ msg: isNew ? "글 종류를 추가했어요" : "글 종류를 수정했어요", type: "success" });
-        } catch (cause) {
-            setToast({ msg: cause instanceof Error ? cause.message : "저장하지 못했어요", type: "fail" });
-        }
+        void confirmAction({
+            title: isNew ? "글 종류를 추가할까요?" : "글 종류를 수정할까요?",
+            description: `${payload.title} (${payload.code})\n표시 순서: ${payload.sort_no}`,
+            confirmText: isNew ? "추가하기" : "수정하기",
+            onConfirm: async () => {
+                await saveMutation.mutateAsync({ payload, isNew });
+                setSelectedItem(payload.code);
+                setToast({ msg: isNew ? "글 종류를 추가했어요" : "글 종류를 수정했어요", type: "success" });
+            },
+        });
     };
 
     const remove = () => {
