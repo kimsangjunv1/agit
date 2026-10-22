@@ -6,7 +6,6 @@ import {
     GetPostListResponse,
     GetPostManagerListResponse,
     PatchPostResponse,
-    SetIncrementPostLikeResponse,
     SetIncrementPostViewResponse,
     SetPostResponse,
     PostDraftPayload,
@@ -72,5 +71,3 @@ export const deletePostManagerFetch = (data: { idx: number }) =>
  * 포스트 - 조회수 증가(사용안함)
  */
 export const setPostViewIncrementFetch = (data: { postId: number; userId?: string }) => clientApi.post<SetIncrementPostViewResponse>(`/api/v1/set/view/increment`, data);
-
-export const setPostLikeIncrementFetch = (data: { postId: number; userId?: string }) => clientApi.post<SetIncrementPostLikeResponse>(`/api/v1/set/like/increment`, data);

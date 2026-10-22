@@ -108,13 +108,6 @@ export interface PostViewItem {
     alreadyViewed: boolean;
 }
 
-export interface PostLikeItem {
-    success: boolean;
-    likesIncremented: boolean;
-    alreadyLiked: boolean;
-}
-
-export type SetIncrementPostLikeResponse = ApiResponse<PostLikeItem>;
 export type SetIncrementPostViewResponse = ApiResponse<PostViewItem>;
 export type GetPostLatestListResponse = ApiResponse<PostLatestItem[]> & { postTypeFilter?: PostTypeFilter; viewerId?: string | null };
 export type GetPostListResponse = ApiResponse<PostItem[]>;

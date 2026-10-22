@@ -7,8 +7,10 @@ import usePageTransitionReady from "@/shared/hooks/usePageTransitionReady";
 import { useCreatePostStore } from "@/shared/stores/useCreatePostStore";
 import { useToastStore } from "@/shared/stores/useToastStore";
 import { util } from "@/shared/lib/util";
+import { useCheerUp } from "@/features/managePost/hooks/useCheerUp";
 export default function usePostDetail(id: string, initialData: GetPostDetailResponse) {
     const scrollViewportRef = useRef<HTMLDivElement | null>(null);
+    const bodyEndRef = useRef<HTMLDivElement | null>(null);
     const postIdx = Number(id);
     const { setPostIdx } = useCreatePostStore();
     const { setToast } = useToastStore();
@@ -19,6 +21,7 @@ export default function usePostDetail(id: string, initialData: GetPostDetailResp
     }, [postIdx, setPostIdx]);
     const query = useGetPostDetailQuery(postIdx, initialData);
     const post = query.data?.result;
+    const cheerUp = useCheerUp(postIdx, post?.likes ?? 0);
     const hasContent = Boolean(post?.title);
     const isReady = hasContent && !query.isError && query.data?.resultCode !== "ERROR";
     usePageTransitionReady("post-detail-data", hasContent || query.isError || query.data?.resultCode === "ERROR");
@@ -32,6 +35,7 @@ export default function usePostDetail(id: string, initialData: GetPostDetailResp
     return {
         ...query,
         scrollViewportRef,
+        bodyEndRef,
         isReady,
         postIdx,
         postId: id,
@@ -43,7 +47,8 @@ export default function usePostDetail(id: string, initialData: GetPostDetailResp
         summary: post?.summary ?? "",
         createDate: post?.created_at ?? "",
         viewCount: post?.views ?? 0,
-        likeCount: post?.likes ?? 0,
+        likeCount: cheerUp.count,
+        cheer: cheerUp.cheer,
         thumbnailAlt: post?.title ?? "",
         pushToUrl,
         setToast,

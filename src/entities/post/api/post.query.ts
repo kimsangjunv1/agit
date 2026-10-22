@@ -13,7 +13,6 @@ import {
     getPostManagerListFetch,
     patchPostFetch,
     setPostFetch,
-    setPostLikeIncrementFetch,
     setPostViewIncrementFetch,
 } from "@/entities/post/api/post.api";
 import { DeletePostManagerPayload, GetPostDetailResponse, GetPostLatestListResponse, GetPostListResponse, GetPostManagerListResponse } from "@/entities/post/model/post.type";
@@ -194,31 +193,6 @@ export const usePatchPostQuery = () => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [AgitRoutes.KEY_POST] });
             queryClient.invalidateQueries({ queryKey: [AgitRoutes.KEY_SEARCH] });
-        },
-    });
-
-    return {
-        mutate,
-        mutateAsync,
-        isError,
-        isIdle,
-        isSuccess,
-        isPending,
-        isPaused,
-        data,
-        error,
-        reset,
-    };
-};
-
-export const useSetLikeIncrementQuery = () => {
-    const queryClient = useQueryClient();
-
-    const { data, mutate, mutateAsync, error, isError, isSuccess, isIdle, isPending, isPaused, reset } = useMutation({
-        mutationKey: [AgitRoutes.KEY_POST, "increment-like"],
-        mutationFn: (payload: { postId: number; userId?: string }) => setPostLikeIncrementFetch(payload),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [AgitRoutes.KEY_POST] });
         },
     });
 

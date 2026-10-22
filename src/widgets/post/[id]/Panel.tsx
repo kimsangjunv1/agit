@@ -9,6 +9,7 @@ import { canShowPostComments } from "@/features/managePost/lib/postPermissions";
 import { POST_INNER_CLASS, POST_PAGE_CLASS } from "@/shared/lib/richText/styles";
 import Scrollbar from "@/shared/ui/common/Scrollbar";
 import WidthControl, { type PostContentWidth } from "./ui/WidthControl";
+import CheerUpIsland from "./ui/CheerUpIsland";
 export default function Panel({ id, initialData }: { id: string; initialData: GetPostDetailResponse }) {
     const page = usePostDetail(id, initialData);
     const [contentWidth, setContentWidth] = useState<PostContentWidth>("tablet");
@@ -47,6 +48,7 @@ export default function Panel({ id, initialData }: { id: string; initialData: Ge
                 <>
                     <Layer.Toc />
                     <Layer.DynamicPostController key={page.postId} />
+                    <CheerUpIsland key={`cheer-${page.postId}`} />
                     <Layer.Actions />
                     <WidthControl value={contentWidth} onChange={setContentWidth} />
                 </>

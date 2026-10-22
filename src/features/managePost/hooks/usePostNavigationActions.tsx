@@ -7,7 +7,8 @@ import { useSession } from "next-auth/react";
 import { useGetPostDetailQuery } from "@/entities/post/api/post.query";
 import { setPostDraftFetch } from "@/entities/post/api/post.api";
 import type { SectionContent } from "@/entities/post/model/post.type";
-import { useDeletePostWithFeedback, useLikeIncrementWithFeedback, usePatchPostWithFeedback, useSetPostWithFeedback } from "@/features/managePost/hooks/usePostMutations";
+import { useDeletePostWithFeedback, usePatchPostWithFeedback, useSetPostWithFeedback } from "@/features/managePost/hooks/usePostMutations";
+import { useCheerUp } from "@/features/managePost/hooks/useCheerUp";
 import { preparePostPayloadForSave } from "@/features/managePost/lib/preparePostSave";
 import type { PostNavAction } from "@/features/managePost/lib/postNavigationActions";
 import { canManagePost, getPostNavVisibility, hasVisiblePostNavActions } from "@/features/managePost/lib/postPermissions";
@@ -41,7 +42,7 @@ export const usePostNavigationActions = ({ postIdx, isView, isCreate, isEdit, pu
 
     const { mutateAsync: patchPostFetchAsync, isPending: isPatchPending } = usePatchPostWithFeedback();
     const { mutateAsync: setPostFetchAsync, isPending: isSetPending } = useSetPostWithFeedback();
-    const { mutate: likeIncrementFetch } = useLikeIncrementWithFeedback();
+    const cheerUp = useCheerUp(postIdx, postDetailData?.result?.likes ?? 0);
     const { mutateAsync: deletePostFetchAsync, isPending: isDeletePending } = useDeletePostWithFeedback();
 
     const canManage = useMemo(
@@ -182,12 +183,7 @@ export const usePostNavigationActions = ({ postIdx, isView, isCreate, isEdit, pu
         }
 
         if (action === "like") {
-            if (!session?.user?.id) {
-                setToast({ msg: "로그인이 필요합니다", time: 2 });
-                return;
-            }
-
-            likeIncrementFetch({ postId: postIdx, userId: session.user.id });
+            cheerUp.cheer();
             return;
         }
 
@@ -214,8 +210,8 @@ export const usePostNavigationActions = ({ postIdx, isView, isCreate, isEdit, pu
     return {
         postTitle: postDetailData?.result?.title,
         tocItems,
-        alreadyLiked: postDetailData?.result?.alreadyLiked,
-        likeCount: postDetailData?.result?.likes ?? 0,
+        alreadyLiked: cheerUp.hasCheered || postDetailData?.result?.alreadyLiked,
+        likeCount: cheerUp.count,
         navVisibility,
         hasNavActions,
         isPatchPending,

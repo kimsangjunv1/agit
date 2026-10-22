@@ -111,7 +111,7 @@ const CodeBlockContent = memo(({ content, fileName }: { content: string; fileNam
 });
 
 const Body = () => {
-    const { contents, prev, next, postId, imageUrl, title, summary, createDate, viewCount, likeCount, thumbnailAlt, pushToUrl, setToast, handleCopySentence } = usePostDetailProvider();
+    const { contents, bodyEndRef, handleCopySentence } = usePostDetailProvider();
     const sectionEndRows = useMemo(() => getSectionEndRowIndexes(contents ?? []), [contents]);
     return (
         <section className={POST_CONTENT_WIDTH_CLASS}>
@@ -132,6 +132,7 @@ const Body = () => {
                     </section>
                 ))}
             </div>
+            <div ref={bodyEndRef} aria-hidden="true" className="h-px" />
         </section>
     );
 };

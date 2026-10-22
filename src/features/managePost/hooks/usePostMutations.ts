@@ -1,7 +1,7 @@
 "use client";
 
-import { useDeletePostManagerQuery, usePatchPostQuery, useSetLikeIncrementQuery, useSetPostQuery } from "@/entities/post/api/post.query";
-import type { DeletePostManagerPayload, SetIncrementPostLikeResponse } from "@/entities/post/model/post.type";
+import { useDeletePostManagerQuery, usePatchPostQuery, useSetPostQuery } from "@/entities/post/api/post.query";
+import type { DeletePostManagerPayload } from "@/entities/post/model/post.type";
 import useNavigate from "@/shared/hooks/useNavigate";
 import { useMutationToastHandlers } from "@/shared/hooks/useMutationToastHandlers";
 import { useToastStore } from "@/shared/stores/useToastStore";
@@ -67,25 +67,4 @@ export const useDeletePostWithFeedback = () => {
     const mutateAsync = (payload: DeletePostManagerPayload) => mutation.mutateAsync(payload, { onSuccess: toastHandlers.onSuccess });
 
     return { ...mutation, mutate, mutateAsync };
-};
-
-export const useLikeIncrementWithFeedback = () => {
-    const toastHandlers = useMutationToastHandlers<SetIncrementPostLikeResponse, { postId: number; userId?: string }>((data) => {
-        if (data?.result?.alreadyLiked) {
-            return "이미 Cheer Up을 보냈어요";
-        }
-
-        if (data?.result?.likesIncremented) {
-            return "Cheer Up을 보냈어요!";
-        }
-
-        return undefined;
-    });
-    const mutation = useSetLikeIncrementQuery();
-
-    const mutate = (payload: { postId: number; userId?: string }) => {
-        mutation.mutate(payload, toastHandlers);
-    };
-
-    return { ...mutation, mutate };
 };
