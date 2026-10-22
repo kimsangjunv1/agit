@@ -5,6 +5,7 @@ import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { createPortal } from "react-dom";
 
 import UI from "@/shared/ui/common/UIComponent";
+import DynamicIsland from "@/shared/ui/common/DynamicIsland";
 
 import useNavigate from "@/shared/hooks/useNavigate";
 import { confirmAction } from "@/shared/lib/confirmAction";
@@ -15,6 +16,7 @@ import { normalizeBlocksForEditor } from "@/features/managePost/lib/normalizePos
 import { collectImagesFromPost } from "@/features/managePost/lib/preparePostSave";
 import type { PostDraftDetail } from "@/entities/post/model/post.type";
 import { useCreatePostStore } from "@/shared/stores/useCreatePostStore";
+import { useLayoutStore } from "@/shared/stores/useLayoutStore";
 import { usePostDraftImageStore } from "@/shared/stores/usePostDraftImageStore";
 import { useToastStore } from "@/shared/stores/useToastStore";
 import PostDraftLoadModal from "./PostDraftLoadModal";
@@ -29,6 +31,7 @@ const Navigation = () => {
     const { rows, setRows } = useBlockStore();
     const { title, summary, setTitle, setSummary, setPost, setDraftId } = useCreatePostStore();
     const { setToast } = useToastStore();
+    const isIslandVisible = useLayoutStore((state) => state.isPageContentVisible && state.transitionPhase === "idle" && !state.isMobileMenuOpen);
 
     const { IS_ROUTE_POST, IS_ROUTE_POST_VIEW, IS_ROUTE_POST_EDIT, IS_ROUTE_POST_CREATE } = getPostRouteFlags(currentPathName);
 
@@ -136,45 +139,60 @@ const Navigation = () => {
         />
     );
 
-    return headerContainer
-        ? createPortal(
-              <>
-                  {IS_ROUTE_POST_EDIT ? <h2 className="truncate text-[1.4rem] leading-[1.5]">{`${title || postTitle || "글 편집"} | 수정중`}</h2> : null}
-                  <nav
-                      aria-label={IS_ROUTE_POST_CREATE ? "포스트 작성 메뉴" : "포스트 편집 메뉴"}
-                      className={`flex flex-col items-start gap-[1.2rem] ${IS_ROUTE_POST_EDIT ? "mt-[1.2rem]" : ""}`}
-                  >
-                      <UI.Button onClick={() => (IS_ROUTE_POST_CREATE ? setShowDraftModal(true) : markdownInputRef.current?.click())}>불러오기</UI.Button>
-                      <UI.Button
-                          disabled={isSavePending || isDraftPending}
-                          onClick={() => savePost(rows)}
-                          className="whitespace-nowrap disabled:opacity-60"
-                      >
-                          {isSavePending ? (IS_ROUTE_POST_CREATE ? "생성 중..." : "수정 중...") : IS_ROUTE_POST_CREATE ? "생성하기" : "수정하기"}
-                      </UI.Button>
-                      {IS_ROUTE_POST_CREATE ? (
-                          <UI.Button
-                              disabled={isDraftPending || isSavePending}
-                              onClick={() => saveDraft(rows)}
-                              className="whitespace-nowrap disabled:opacity-60"
-                          >
-                              {isDraftPending ? "저장 중..." : "임시저장"}
-                          </UI.Button>
-                      ) : null}
-                  </nav>
-                  {markdownInput}
-                  {showDraftModal && IS_ROUTE_POST_CREATE ? createPortal(
+    return (
+        <>
+            {headerContainer && IS_ROUTE_POST_EDIT
+                ? createPortal(<h2 className="truncate text-[1.4rem] leading-[1.5]">{`${title || postTitle || "글 편집"} | 수정중`}</h2>, headerContainer)
+                : null}
+            {isIslandVisible ? (
+                <div className="fixed bottom-[calc(2.4rem+env(safe-area-inset-bottom))] left-1/2 z-[120] -translate-x-1/2">
+                    <DynamicIsland
+                        ariaLabel={IS_ROUTE_POST_CREATE ? "포스트 작성" : "포스트 편집"}
+                        placement="bottom"
+                    >
+                        <nav
+                            aria-label={IS_ROUTE_POST_CREATE ? "포스트 작성 메뉴" : "포스트 편집 메뉴"}
+                            className="flex items-center gap-[0.4rem]"
+                        >
+                            <UI.Button
+                                onClick={() => (IS_ROUTE_POST_CREATE ? setShowDraftModal(true) : markdownInputRef.current?.click())}
+                                className="whitespace-nowrap px-[1.2rem] py-[0.6rem] text-[1.4rem]"
+                            >
+                                불러오기
+                            </UI.Button>
+                            <UI.Button
+                                disabled={isSavePending || isDraftPending}
+                                onClick={() => savePost(rows)}
+                                className="whitespace-nowrap px-[1.2rem] py-[0.6rem] text-[1.4rem] disabled:opacity-60"
+                            >
+                                {isSavePending ? (IS_ROUTE_POST_CREATE ? "생성 중..." : "수정 중...") : IS_ROUTE_POST_CREATE ? "생성하기" : "수정하기"}
+                            </UI.Button>
+                            {IS_ROUTE_POST_CREATE ? (
+                                <UI.Button
+                                    disabled={isDraftPending || isSavePending}
+                                    onClick={() => saveDraft(rows)}
+                                    className="whitespace-nowrap px-[1.2rem] py-[0.6rem] text-[1.4rem] disabled:opacity-60"
+                                >
+                                    {isDraftPending ? "저장 중..." : "임시저장"}
+                                </UI.Button>
+                            ) : null}
+                        </nav>
+                    </DynamicIsland>
+                </div>
+            ) : null}
+            {markdownInput}
+            {showDraftModal && IS_ROUTE_POST_CREATE
+                ? createPortal(
                       <PostDraftLoadModal
                           onClose={() => setShowDraftModal(false)}
                           onLoad={handleLoadDraft}
                           onMarkdownClick={() => markdownInputRef.current?.click()}
                       />,
                       document.body,
-                  ) : null}
-              </>,
-              headerContainer,
-          )
-        : null;
+                  )
+                : null}
+        </>
+    );
 };
 
 export default Navigation;
