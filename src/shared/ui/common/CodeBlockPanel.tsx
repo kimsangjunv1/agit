@@ -120,7 +120,7 @@ const CodeBlockPanel = ({
 
     if (isCompact) {
         return (
-            <section className={`code-block-panel overflow-hidden rounded-[1.2rem] border border-[var(--color-border)] bg-[var(--color-surface-inset)] my-[1.2rem] ${className}`}>
+            <section className={`code-block-panel overflow-hidden rounded-[1.2rem] border border-[var(--color-border)] bg-[var(--color-surface-inset)] mb-[0.8rem] ${className}`}>
                 <div
                     className={`code-block-panel__body flex items-center gap-[0.8rem] bg-[var(--color-surface-inset)] border border-[var(--color-border)] overflow-x-auto font-mono text-[1.6rem] leading-1 text-[var(--color-text-primary)] px-[1.2rem] ${bodyClassName}`}
                 >

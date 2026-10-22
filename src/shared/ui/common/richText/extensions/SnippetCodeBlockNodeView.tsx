@@ -6,8 +6,9 @@ import { useMemo } from "react";
 import { DEFAULT_CODE_LANGUAGE, highlightCodeWithHljs } from "@/shared/lib/codeHighlight";
 import CodeBlockPanel from "@/shared/ui/common/CodeBlockPanel";
 import { CODE_PRE_CLASS, CODE_TEXT_CLASS, POST_SNIPPET_BODY_CLASS } from "@/shared/lib/richText/styles";
+import { TextInsertBars } from "@/shared/ui/common/richText/extensions/textInsertBar";
 
-export function SnippetCodeBlockNodeView({ node, selected }: NodeViewProps) {
+export function SnippetCodeBlockNodeView({ node, selected, editor, getPos }: NodeViewProps) {
     const language = (node.attrs.language as string | undefined) ?? DEFAULT_CODE_LANGUAGE;
     const code = node.textContent;
 
@@ -18,10 +19,16 @@ export function SnippetCodeBlockNodeView({ node, selected }: NodeViewProps) {
     return (
         <NodeViewWrapper
             as="div"
-            className={`post-snippet-code-block ${selected ? "ring-2 ring-[#3b82f6] rounded-[2.4rem]" : ""}`}
+            className={`post-snippet-code-block relative ${selected ? "ring-2 ring-[#3b82f6] rounded-[2.4rem]" : ""}`}
             data-snippet-code-block=""
             data-language={language}
         >
+            <TextInsertBars
+                editor={editor}
+                getPos={getPos}
+                label="코드"
+                nodeType="snippetCodeBlock"
+            />
             <CodeBlockPanel
                 content={content}
                 variant="compact"
