@@ -57,7 +57,7 @@ const Plus = ({ direction }: { direction: "top left" | "top right" | "bottom lef
     };
     return (
         <div
-            data-page-transition-fixed="grid"
+            data-page-transition-fixed={`grid-${direction}`}
             className={`${getDegree()} w-[1.6rem] h-[1.6rem] bg-red fixed`}
         >
             <div className="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] w-full h-[0.1rem] bg-[#cccccc80]" />
