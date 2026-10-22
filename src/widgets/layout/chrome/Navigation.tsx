@@ -24,7 +24,6 @@ import PostDraftLoadModal from "./PostDraftLoadModal";
 const Navigation = () => {
     const params = useParams();
     const [showDraftModal, setShowDraftModal] = useState(false);
-    const [headerContainer, setHeaderContainer] = useState<HTMLElement | null>(null);
     const markdownInputRef = useRef<HTMLInputElement>(null);
 
     const { currentPathName, pushToUrl } = useNavigate();
@@ -37,7 +36,7 @@ const Navigation = () => {
 
     const postIdx = parseInt(params?.id as string);
 
-    const { postTitle, isSavePending, savePost, saveDraft, isDraftPending } = usePostNavigationActions({
+    const { isSavePending, savePost, saveDraft, isDraftPending } = usePostNavigationActions({
         postIdx,
         isView: IS_ROUTE_POST_VIEW,
         isCreate: IS_ROUTE_POST_CREATE,
@@ -121,11 +120,8 @@ const Navigation = () => {
     };
 
     useEffect(() => {
-        setHeaderContainer(document.getElementById(IS_ROUTE_POST_CREATE ? "post-create-header-actions" : "post-header-actions"));
-        if (showDraftModal) {
-            setShowDraftModal(false);
-        }
-    }, [currentPathName, IS_ROUTE_POST_CREATE]);
+        setShowDraftModal(false);
+    }, [currentPathName]);
 
     if (!IS_ROUTE_POST || IS_ROUTE_POST_VIEW) return null;
 
@@ -141,9 +137,6 @@ const Navigation = () => {
 
     return (
         <>
-            {headerContainer && IS_ROUTE_POST_EDIT
-                ? createPortal(<h2 className="truncate text-[1.4rem] leading-[1.5]">{`${title || postTitle || "글 편집"} | 수정중`}</h2>, headerContainer)
-                : null}
             {isIslandVisible ? (
                 <div className="fixed bottom-[calc(2.4rem+env(safe-area-inset-bottom))] left-1/2 z-[120] -translate-x-1/2">
                     <DynamicIsland

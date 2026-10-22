@@ -1,21 +1,9 @@
 "use client";
 import { usePostDetailProvider } from "../model/PostDetailContext";
-import { useEffect, useState } from "react";
-import { createPortal } from "react-dom";
 import useNavigate from "@/shared/hooks/useNavigate";
 import { PostNavigationActions, usePostNavigationActions } from "@/features/managePost";
 
 const Actions = () => {
-    const [headerContainer, setHeaderContainer] = useState<HTMLElement | null>(null);
-
-    useEffect(() => {
-        setHeaderContainer(document.getElementById("post-header-actions"));
-    }, []);
-
-    return headerContainer ? createPortal(<PostActions />, headerContainer) : null;
-};
-
-const PostActions = () => {
     const { postIdx } = usePostDetailProvider();
     const { pushToUrl } = useNavigate();
 
@@ -34,7 +22,7 @@ const PostActions = () => {
     return (
         <nav
             aria-label="포스트 메뉴"
-            className="relative flex w-full justify-center"
+            className="fixed bottom-[calc(8rem+env(safe-area-inset-bottom))] left-[5.2rem] z-20 opacity-[0.5] tablet:bottom-[5.2rem]"
         >
             <PostNavigationActions
                 {...navVisibility}

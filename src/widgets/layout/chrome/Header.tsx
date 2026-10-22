@@ -1,19 +1,15 @@
 "use client";
 
 import { Fragment, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
 
 import UI from "@/shared/ui/common/UIComponent";
 import IconComponent from "@/shared/ui/common/IconComponent";
-import TextShimmer from "@/shared/ui/common/TextShimmerComponent";
 
 import useNavigate from "@/shared/hooks/useNavigate";
 import { getPostRouteFlags } from "@/features/managePost";
 
 import { useLayoutStore } from "@/shared/stores/useLayoutStore";
-import HomeViewModeNav from "@/features/browseArchive/ui/HomeViewModeNav";
 import Marquee from "@/shared/ui/layout/Marquee";
-import ActionFloatingButtons from "./ActionFloatingButtons";
 import { useSession } from "next-auth/react";
 
 const Header = () => {
@@ -21,15 +17,11 @@ const Header = () => {
     const { data: session } = useSession();
     const isAdmin = session?.user.role === "admin";
 
-    const { isMobile, isMobileMenuOpen, setIsMobileMenuOpen } = useLayoutStore();
+    const { isMobileMenuOpen, setIsMobileMenuOpen } = useLayoutStore();
     const { currentPathName, pushToUrl } = useNavigate();
-    const { IS_ROUTE_POST_VIEW, IS_ROUTE_POST_EDIT } = getPostRouteFlags(currentPathName);
+    const { IS_ROUTE_POST_VIEW } = getPostRouteFlags(currentPathName);
 
-    const IS_ROUTE_HOME = currentPathName === "/";
     const IS_ROUTE_MANAGER = currentPathName.startsWith("/manager");
-
-    const IS_ROUTE_RESUME = currentPathName === "/resume";
-    const IS_ROUTE_POST_CREATE = currentPathName === "/post/create";
 
     return (
         <header
@@ -37,8 +29,8 @@ const Header = () => {
             className={`fixed left-0 z-[1000000] mx-auto w-[100svw] ${IS_ROUTE_POST_VIEW || IS_ROUTE_MANAGER ? "pointer-events-none" : ""}`}
         >
             {/* <div className="relative mx-auto flex gap-[2.4rem] h-[12.8rem] w-full items-start p-[5.2rem]"> */}
-            <div className={`relative mx-auto flex gap-[2.4rem] w-full items-start ${IS_ROUTE_MANAGER ? "px-[2rem] py-[1.6rem]" : "p-[5.2rem]"}`}>
-                <section className="pointer-events-auto min-w-0 flex-1 flex justify-start items-start gap-[3.2rem]">
+            <div className={`relative mx-auto flex gap-[2.4rem] justify-between w-full items-start ${IS_ROUTE_MANAGER ? "px-[2rem] py-[1.6rem]" : "p-[5.2rem]"}`}>
+                <section className="pointer-events-auto min-w-0 flex items-start gap-[3.2rem]">
                     <section className="flex flex-col gap-[2.4rem]">
                         <button
                             type="button"
@@ -89,31 +81,6 @@ const Header = () => {
                             ) : null}
                         </section>
                     </section>
-
-                    {/* <section className="flex min-w-0 flex-1 items-start justify-start gap-[1.6rem]">
-                        <AnimatePresence mode="popLayout">
-                            {IS_ROUTE_HOME && !isMobile && <HomeViewModeNav variant="header" />}
-
-                            {(IS_ROUTE_POST_VIEW || IS_ROUTE_POST_EDIT) && (
-                                <div
-                                    key="post-header-actions"
-                                    id="post-header-actions"
-                                    className="w-full min-w-0"
-                                />
-                            )}
-
-                            {IS_ROUTE_RESUME && <p>resume</p>}
-                            {IS_ROUTE_POST_CREATE && (
-                                <section
-                                    key="post-create-header"
-                                    className="flex flex-col items-start gap-[1.2rem]"
-                                >
-                                    <p>create</p>
-                                    <div id="post-create-header-actions" />
-                                </section>
-                            )}
-                        </AnimatePresence>
-                    </section> */}
                 </section>
 
                 {/* 모바일 버튼 */}

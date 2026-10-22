@@ -6,7 +6,6 @@ import Grid from "@/widgets/layout/chrome/Grid";
 import Footer from "@/widgets/layout/chrome/Footer";
 import Header from "@/widgets/layout/chrome/Header";
 import Navigation from "@/widgets/layout/chrome/Navigation";
-import RouteFunction from "@/widgets/layout/chrome/RouteFunction";
 
 import MobileMenu from "@/shared/ui/layout/MobileMenu";
 
@@ -23,7 +22,6 @@ export default function RootChromePanel({ children }: RootChromePanelProps) {
             {children}
             <Footer />
             <Grid />
-            <RouteFunction />
         </>
     );
 }

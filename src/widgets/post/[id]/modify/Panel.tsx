@@ -17,6 +17,7 @@ export default function Panel({ id }: { id: string }) {
                     </PostContentBody>
                 </section>
                 <Layer.Toc />
+                <Layer.EditingLabel />
             </section>
         </PostModifyPageProvider>
     );

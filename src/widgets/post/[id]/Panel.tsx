@@ -34,7 +34,6 @@ export default function Panel({ id, initialData }: { id: string; initialData: Ge
                                         <Layer.Body />
                                         {canShowPostComments(page.data?.result?.post_type) ? <Layer.Comments /> : null}
                                         <Layer.RelatedPosts />
-                                        <Layer.Actions />
                                     </section>
                                 </PostContentBody>
                             </>
@@ -48,6 +47,7 @@ export default function Panel({ id, initialData }: { id: string; initialData: Ge
                 <>
                     <Layer.Toc />
                     <Layer.DynamicPostController key={page.postId} />
+                    <Layer.Actions />
                     <WidthControl value={contentWidth} onChange={setContentWidth} />
                 </>
             ) : null}
