@@ -1,18 +1,17 @@
+import { getServerSession } from "next-auth";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { findReadablePost } from "@/entities/post/api/postAccess.server";
-import { requireSession } from "@/shared/lib/auth/requireSession";
-import { apiError } from "@/shared/lib/apiResponse";
 import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
 import { POST } from "./set/like/increment/route";
 import { GET } from "./get/like/count/route";
 
 vi.mock("server-only", () => ({}));
+vi.mock("next-auth", () => ({ getServerSession: vi.fn() }));
 vi.mock("@/entities/post/api/postAccess.server", async (importOriginal) => ({
     ...await importOriginal<typeof import("@/entities/post/api/postAccess.server")>(),
     findReadablePost: vi.fn(),
 }));
-vi.mock("@/shared/lib/auth/requireSession", () => ({ requireSession: vi.fn() }));
 vi.mock("@/shared/lib/authOptions", () => ({ authOptions: {} }));
 vi.mock("@/shared/lib/supabase/supabaseServer", () => ({ supabaseAdmin: vi.fn() }));
 
@@ -30,7 +29,7 @@ const request = (payload: unknown = validPayload) => new Request("http://localho
 
 beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(requireSession).mockResolvedValue({ authorized: true, session: { user: { id: userId, role: "user", email: "reader@example.com", name: "방문자" }, expires: "2099-01-01" } });
+    vi.mocked(getServerSession).mockResolvedValue({ user: { id: userId, role: "user", email: "reader@example.com", name: "방문자" }, expires: "2099-01-01" });
     vi.mocked(findReadablePost).mockResolvedValue({ idx: 1, user_id: null, visibility: "public", post_type: "article" });
     vi.mocked(supabaseAdmin).mockReturnValue(database as unknown as ReturnType<typeof supabaseAdmin>);
     database.rpc.mockResolvedValue({ data: snapshot, error: null });
@@ -58,14 +57,19 @@ describe("Cheer Up 합계 동기화", () => {
         expect(database.rpc.mock.calls[0][1].p_batch_ids).toEqual([]);
     });
 
-    it("조회도 로그인하지 않으면 DB에 접근하지 않는다", async () => {
-        vi.mocked(requireSession).mockResolvedValue({ authorized: false, response: apiError("로그인이 필요합니다.", { status: 401 }) });
+    it("로그인하지 않아도 비회원 확인 ID와 합계를 조회한다", async () => {
+        vi.mocked(getServerSession).mockResolvedValue(null);
+        const state = { likes: 20, acknowledgedBatchIds: [batchId] };
+        database.rpc.mockResolvedValue({ data: state, error: null });
 
-        const response = await GET(new Request("http://localhost/api/v1/get/like/count?postId=1"));
-        expect(response.status).toBe(401);
+        const response = await GET(new Request(`http://localhost/api/v1/get/like/count?postId=1&batchIds=${batchId}`));
+
+        expect(response.status).toBe(200);
+        expect(findReadablePost).toHaveBeenCalledWith(1, null);
+        expect(database.rpc).toHaveBeenCalledExactlyOnceWith("get_cheer_up_state", {
+            p_post_id: 1, p_user_id: null, p_batch_ids: [batchId],
+        });
         expect(response.headers.get("Cache-Control")).toContain("private, no-store");
-        expect(findReadablePost).not.toHaveBeenCalled();
-        expect(database.rpc).not.toHaveBeenCalled();
     });
 
     it.each([
@@ -142,12 +146,22 @@ describe("Cheer Up 묶음 저장", () => {
         expect(await response.json()).toMatchObject({ resultCode: "CONFLICT" });
     });
 
-    it("로그인 전에는 저장소와 게시물에 접근하지 않는다", async () => {
-        vi.mocked(requireSession).mockResolvedValue({ authorized: false, response: apiError("로그인이 필요합니다.", { status: 401 }) });
+    it("로그인하지 않아도 비회원 묶음으로 저장하고 요청의 사용자 ID는 회원 ID로 쓰지 않는다", async () => {
+        vi.mocked(getServerSession).mockResolvedValue(null);
+        const guestActorId = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
 
-        expect((await POST(request())).status).toBe(401);
-        expect(findReadablePost).not.toHaveBeenCalled();
-        expect(database.rpc).not.toHaveBeenCalled();
+        const response = await POST(request({ ...validPayload, userId: guestActorId }));
+
+        expect(response.status).toBe(200);
+        expect(findReadablePost).toHaveBeenCalledWith(1, null);
+        expect(database.rpc).toHaveBeenCalledExactlyOnceWith("increment_cheer_up_batch", {
+            p_post_id: 1,
+            p_batch_id: batchId,
+            p_count: 300,
+            p_user_id: null,
+            p_ip: "127.0.0.1",
+            p_known_batch_ids: [],
+        });
     });
 
     it("요청의 사용자 ID가 현재 세션과 다르면 저장하지 않는다", async () => {

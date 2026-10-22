@@ -27,6 +27,18 @@ describe("Cheer Up confirmed cache counts", () => {
         client.clear();
     });
 
+    it("updates a signed-out viewer's cache when the viewer key is null", () => {
+        const client = new QueryClient();
+        const detail = ["post", "detail", 1, null];
+        const list = ["post", "list", "all", null];
+        client.setQueryData(detail, response({ idx: 1, likes: 10 }));
+        client.setQueryData(list, response([{ idx: 1, likes: 10 }]));
+        updatePostLikeCaches(client, 1, null, 11);
+        expect(client.getQueryData(detail)).toEqual(response({ idx: 1, likes: 11 }));
+        expect(client.getQueryData(list)).toEqual(response([{ idx: 1, likes: 11 }]));
+        client.clear();
+    });
+
     it("keeps a newer cached total when an older request finishes later", () => {
         const client = new QueryClient();
         const key = ["post", "detail", 1, "reader"];

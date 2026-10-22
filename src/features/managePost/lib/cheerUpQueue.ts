@@ -39,7 +39,7 @@ const browserStorage = () => {
     try { return typeof window === "undefined" ? undefined : window.localStorage; } catch { return undefined; }
 };
 
-/** Shared by all Cheer Up controls for one signed-in user. */
+/** Shared by all Cheer Up controls for one signed-in user or one browser guest. */
 export class CheerUpQueue {
     private readonly storage?: Storage;
     private readonly tabId: string;

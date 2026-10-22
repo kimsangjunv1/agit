@@ -1,14 +1,15 @@
+import { getServerSession } from "next-auth";
+
 import { findReadablePost, postNotFound, privatePostResponse } from "@/entities/post/api/postAccess.server";
 import type { CheerUpState } from "@/entities/post/model/cheerUp.type";
-import { requireSession } from "@/shared/lib/auth/requireSession";
 import { apiError, apiSuccess } from "@/shared/lib/apiResponse";
+import { authOptions } from "@/shared/lib/authOptions";
 import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export async function GET(req: Request) {
-    const auth = await requireSession();
-    if (!auth.authorized) return privatePostResponse(auth.response);
+    const userId = (await getServerSession(authOptions))?.user?.id ?? null;
 
     try {
         const { searchParams } = new URL(req.url);
@@ -21,7 +22,6 @@ export async function GET(req: Request) {
             return privatePostResponse(apiError("게시물 번호와 Cheer Up 식별자를 확인해주세요.", { status: 400, resultCode: "BAD_REQUEST" }));
         }
 
-        const userId = auth.session.user.id;
         if (!(await findReadablePost(postId, userId))) return postNotFound();
         const { data, error } = await supabaseAdmin().rpc("get_cheer_up_state", {
             p_post_id: postId,

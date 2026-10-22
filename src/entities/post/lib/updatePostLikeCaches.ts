@@ -6,7 +6,7 @@ type CountedPost = { idx: number; likes: number };
 type CountedList = { result: CountedPost[] };
 
 /** Confirmed server totals only; pending clicks stay in the shared Cheer Up queue. */
-export function updatePostLikeCaches(client: QueryClient, postId: number, userId: string, likes: number) {
+export function updatePostLikeCaches(client: QueryClient, postId: number, userId: string | null, likes: number) {
     const updateItem = <T extends CountedPost>(post: T): T => post.idx === postId && post.likes < likes ? { ...post, likes } : post;
     const updateList = <T extends CountedList>(response: T): T => ({ ...response, result: response.result.map(updateItem) });
 

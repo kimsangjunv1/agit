@@ -1,8 +1,10 @@
-import { requireSession } from "@/shared/lib/auth/requireSession";
-import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
-import { apiError, apiSuccess } from "@/shared/lib/apiResponse";
+import { getServerSession } from "next-auth";
+
 import { findReadablePost, postNotFound, privatePostResponse } from "@/entities/post/api/postAccess.server";
 import type { CheerUpPayload, CheerUpResult } from "@/entities/post/model/cheerUp.type";
+import { apiError, apiSuccess } from "@/shared/lib/apiResponse";
+import { authOptions } from "@/shared/lib/authOptions";
+import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
 
 const MAX_INTEGER = 2147483647;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -21,8 +23,7 @@ function isPayload(value: unknown): value is CheerUpPayload {
 }
 
 export async function POST(req: Request) {
-    const auth = await requireSession();
-    if (!auth.authorized) return privatePostResponse(auth.response);
+    const userId = (await getServerSession(authOptions))?.user?.id ?? null;
 
     try {
         let payload: unknown;
@@ -34,8 +35,7 @@ export async function POST(req: Request) {
         if (!isPayload(payload)) return apiError("Cheer Up 횟수와 식별자를 확인해주세요.", { status: 400, resultCode: "BAD_REQUEST" });
 
         const { postId, batchId, count, knownBatchIds = [] } = payload;
-        const userId = auth.session.user.id;
-        if (payload.userId !== userId) return apiError("현재 로그인 정보를 확인해주세요.", { status: 403, resultCode: "FORBIDDEN" });
+        if (userId && payload.userId !== userId) return apiError("현재 로그인 정보를 확인해주세요.", { status: 403, resultCode: "FORBIDDEN" });
         if (!(await findReadablePost(postId, userId))) return postNotFound();
 
         const { data, error } = await supabaseAdmin().rpc("increment_cheer_up_batch", {
