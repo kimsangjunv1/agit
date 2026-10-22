@@ -1,9 +1,49 @@
 @font-face {
-    font-family: "Noto Sans KR";
-    font-weight: 100 900;
+    font-family: "Asta Sans";
+    font-weight: 300;
     font-style: normal;
     font-display: swap;
-    src: url("/fonts/noto-sans-kr/woff2/NotoSansKR-Variable.woff2") format("woff2");
+    src: url("/fonts/asta-sans/AstaSans-Light.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Asta Sans";
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+    src: url("/fonts/asta-sans/AstaSans-Regular.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Asta Sans";
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+    src: url("/fonts/asta-sans/AstaSans-Medium.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Asta Sans";
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+    src: url("/fonts/asta-sans/AstaSans-SemiBold.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Asta Sans";
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+    src: url("/fonts/asta-sans/AstaSans-Bold.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Asta Sans";
+    font-weight: 800;
+    font-style: normal;
+    font-display: swap;
+    src: url("/fonts/asta-sans/AstaSans-ExtraBold.ttf") format("truetype");
 }
 
 @font-face {

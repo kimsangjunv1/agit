@@ -69,7 +69,7 @@ export const util = {
                 if (hour > 12) hour -= 12;
             }
             hour = String(hour).padStart(2, "0");
-            return `${yyyy}-${MM}-${dd}_${period}${hour}:${minute}:${second}`;
+            return `${yyyy}-${MM}-${dd} ${period} ${hour}:${minute}:${second}`;
         },
     },
 
