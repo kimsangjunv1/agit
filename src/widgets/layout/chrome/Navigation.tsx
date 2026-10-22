@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useEffect, useRef, useState, type ChangeEvent } from "react";
+import { useEffect, useRef, useState, type ChangeEvent, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 
 import UI from "@/shared/ui/common/UIComponent";
@@ -148,33 +148,34 @@ const Navigation = () => {
                             className="flex items-center gap-[0.4rem]"
                         >
                             <UI.Button
-                                onClick={() => (IS_ROUTE_POST_CREATE ? setShowDraftModal(true) : markdownInputRef.current?.click())}
-                                className="whitespace-nowrap px-[1.2rem] py-[0.6rem] text-[1.4rem]"
+                                onClick={() => setShowDraftModal(true)}
+                                className={EDITOR_ACTION_BUTTON_CLASS}
                             >
-                                불러오기
+                                <LoadIcon />
+                                <span className="sr-only">불러오기</span>
                             </UI.Button>
                             <UI.Button
                                 disabled={isSavePending || isDraftPending}
                                 onClick={() => savePost(rows)}
-                                className="whitespace-nowrap px-[1.2rem] py-[0.6rem] text-[1.4rem] disabled:opacity-60"
+                                className={EDITOR_ACTION_BUTTON_CLASS}
                             >
-                                {isSavePending ? (IS_ROUTE_POST_CREATE ? "생성 중..." : "수정 중...") : IS_ROUTE_POST_CREATE ? "생성하기" : "수정하기"}
+                                <SaveIcon />
+                                <span className="sr-only">{isSavePending ? "저장 중" : "저장하기"}</span>
                             </UI.Button>
-                            {IS_ROUTE_POST_CREATE ? (
-                                <UI.Button
-                                    disabled={isDraftPending || isSavePending}
-                                    onClick={() => saveDraft(rows)}
-                                    className="whitespace-nowrap px-[1.2rem] py-[0.6rem] text-[1.4rem] disabled:opacity-60"
-                                >
-                                    {isDraftPending ? "저장 중..." : "임시저장"}
-                                </UI.Button>
-                            ) : null}
+                            <UI.Button
+                                disabled={isDraftPending || isSavePending}
+                                onClick={() => saveDraft(rows)}
+                                className={EDITOR_ACTION_BUTTON_CLASS}
+                            >
+                                <DraftIcon />
+                                <span className="sr-only">{isDraftPending ? "저장 중" : "임시저장"}</span>
+                            </UI.Button>
                         </nav>
                     </DynamicIsland>
                 </div>
             ) : null}
             {markdownInput}
-            {showDraftModal && IS_ROUTE_POST_CREATE
+            {showDraftModal
                 ? createPortal(
                       <PostDraftLoadModal
                           onClose={() => setShowDraftModal(false)}
@@ -187,5 +188,37 @@ const Navigation = () => {
         </>
     );
 };
+
+const EDITOR_ACTION_BUTTON_CLASS = "flex h-[3.2rem] w-[3.2rem] items-center justify-center";
+
+const EditorActionSvg = ({ children }: { children: ReactNode }) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 -960 960 960"
+        className="h-[2.4rem] w-[2.4rem]"
+        fill="currentColor"
+        aria-hidden
+    >
+        {children}
+    </svg>
+);
+
+const LoadIcon = () => (
+    <EditorActionSvg>
+        <path d="M260-160q-91 0-155.5-63T40-377q0-78 47-139t123-78q17-72 85-137t145-65q33 0 56.5 23.5T520-716v242l64-62 56 56-160 160-160-160 56-56 64 62v-242q-76 14-118 73.5T280-520h-20q-58 0-99 41t-41 99q0 58 41 99t99 41h480q42 0 71-29t29-71q0-42-29-71t-71-29h-60v-80q0-48-22-89.5T600-680v-93q74 35 117 103.5T760-520q69 8 114.5 59.5T920-340q0 75-52.5 127.5T740-160H260Zm220-358Z" />
+    </EditorActionSvg>
+);
+
+const SaveIcon = () => (
+    <EditorActionSvg>
+        <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z" />
+    </EditorActionSvg>
+);
+
+const DraftIcon = () => (
+    <EditorActionSvg>
+        <path d="m480-240 160-160-56-56-64 64v-168h-80v168l-64-64-56 56 160 160ZM200-640v440h560v-440H200Zm0 520q-33 0-56.5-23.5T120-200v-499q0-14 4.5-27t13.5-24l50-61q11-14 27.5-21.5T250-840h460q18 0 34.5 7.5T772-811l50 61q9 11 13.5 24t4.5 27v499q0 33-23.5 56.5T760-120H200Zm16-600h528l-34-40H250l-34 40Zm264 300Z" />
+    </EditorActionSvg>
+);
 
 export default Navigation;
