@@ -1,3 +1,4 @@
+import bcrypt from "bcrypt";
 import { getServerSession } from "next-auth";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -16,6 +17,7 @@ vi.mock("@/entities/post/api/postAccess.server", async (importOriginal) => ({
     findReadablePost: vi.fn(),
 }));
 
+vi.mock("bcrypt", () => ({ default: { hash: vi.fn(async () => "stored-hash"), compare: vi.fn(async () => true) } }));
 vi.mock("next-auth", () => ({ getServerSession: vi.fn() }));
 vi.mock("server-only", () => ({}));
 vi.mock("@/shared/lib/authOptions", () => ({ authOptions: {} }));
@@ -31,6 +33,8 @@ let queryResult: {
 const query = {
     select: vi.fn().mockReturnThis(),
     insert: vi.fn().mockReturnThis(),
+    is: vi.fn().mockReturnThis(),
+    maybeSingle: vi.fn(async () => ({ data: null, error: null })),
     eq: vi.fn().mockReturnThis(),
     or: vi.fn().mockReturnThis(),
     order: vi.fn().mockReturnThis(),
@@ -42,7 +46,7 @@ const query = {
         return Promise.resolve({ ...queryResult, data }).then(resolve);
     },
 };
-const database = { from: vi.fn(() => query) };
+const database = { from: vi.fn(() => query), rpc: vi.fn(async (name: string, _params?: Record<string, unknown>) => ({ data: name === "create_comment" ? { idx: 1, duplicate: false } : true, error: name === "create_comment" ? queryResult.error : null })) };
 
 const createRequest = (payload: unknown) =>
     new Request("http://localhost/api/v1/set/comment/create", {
@@ -50,10 +54,12 @@ const createRequest = (payload: unknown) =>
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
     });
-const validPayload = { post_id: 1, author: "방문자", msg: "잘 읽었어요." };
+const validPayload = { post_id: 1, author: "방문자", msg: "잘 읽었어요.", password: "secret123", profile: 1, emoji_id: "heart", request_id: "550e8400-e29b-41d4-a716-446655440000" };
 
 beforeEach(() => {
     vi.clearAllMocks();
+    query.maybeSingle.mockResolvedValue({ data: null, error: null });
+    vi.stubEnv("NEXTAUTH_SECRET", "comment-test-secret");
     queryResult = { data: null, error: null, count: 0 };
     vi.mocked(getServerSession).mockResolvedValue(null);
     vi.mocked(findReadablePost).mockResolvedValue({ idx: 1, user_id: null, visibility: "public", post_type: "article" });
@@ -77,7 +83,7 @@ describe("댓글 등록", () => {
         );
 
         expect(response.status).toBe(201);
-        expect(query.insert).toHaveBeenCalledWith({ ...validPayload, is_admin: false, is_secret: false });
+        expect(database.rpc).toHaveBeenCalledWith("create_comment", expect.objectContaining({ p_post_id: 1, p_author: "방문자", p_msg: "잘 읽었어요.", p_is_admin: false, p_password_hash: "stored-hash" }));
         expect(await response.json()).toMatchObject({ resultCode: "SUCCESS", result: null });
     });
 
@@ -86,7 +92,7 @@ describe("댓글 등록", () => {
 
         await POST(createRequest({ ...validPayload, is_admin: false }));
 
-        expect(query.insert).toHaveBeenCalledWith({ ...validPayload, is_admin: true, is_secret: false });
+        expect(database.rpc).toHaveBeenCalledWith("create_comment", expect.objectContaining({ p_author: "관리자", p_user_id: "admin-1", p_is_admin: true, p_password_hash: null, p_emoji_id: null }));
     });
 
     it("일반 로그인 사용자가 관리자 표시를 위조할 수 없다", async () => {
@@ -94,7 +100,7 @@ describe("댓글 등록", () => {
 
         await POST(createRequest({ ...validPayload, is_admin: true }));
 
-        expect(query.insert).toHaveBeenCalledWith({ ...validPayload, is_admin: false, is_secret: false });
+        expect(database.rpc).toHaveBeenCalledWith("create_comment", expect.objectContaining({ p_author: "사용자", p_user_id: "user-1", p_is_admin: false }));
     });
 
     it.each([
@@ -118,7 +124,7 @@ describe("댓글 등록", () => {
         const response = await POST(createRequest({ ...validPayload, author: author.normalize("NFD"), msg }));
 
         expect(response.status).toBe(201);
-        expect(query.insert).toHaveBeenCalledWith({ post_id: validPayload.post_id, author, msg, is_admin: false, is_secret: false });
+        expect(database.rpc).toHaveBeenCalledWith("create_comment", expect.objectContaining({ p_post_id: 1, p_author: author, p_msg: msg }));
     });
 
     it("UTF-16 길이가 길어도 보이는 10글자의 이모지는 등록할 수 있다", async () => {
@@ -127,7 +133,7 @@ describe("댓글 등록", () => {
         const response = await POST(createRequest({ ...validPayload, author }));
 
         expect(response.status).toBe(201);
-        expect(query.insert).toHaveBeenCalledWith({ ...validPayload, author, is_admin: false, is_secret: false });
+        expect(database.rpc).toHaveBeenCalledWith("create_comment", expect.objectContaining({ p_author: author, p_is_admin: false }));
     });
 
     it("서버에서 인증된 관리자의 운영진 닉네임은 허용한다", async () => {
@@ -136,7 +142,7 @@ describe("댓글 등록", () => {
         const response = await POST(createRequest({ ...validPayload, author: "관리자" }));
 
         expect(response.status).toBe(201);
-        expect(query.insert).toHaveBeenCalledWith({ ...validPayload, author: "관리자", is_admin: true, is_secret: false });
+        expect(database.rpc).toHaveBeenCalledWith("create_comment", expect.objectContaining({ p_author: "관리자", p_is_admin: true }));
     });
 
     it.each([
@@ -216,7 +222,7 @@ describe("공개 댓글 조회", () => {
         const response = await getDetail(new Request("http://localhost/api/v1/get/comment/detail/1"));
         const columns = (query.select.mock.calls[0][0] as string).split(",").map((column) => column.trim());
 
-        expect(database.from).toHaveBeenCalledWith("comments");
+        expect(database.from).toHaveBeenCalledWith("comment_threads");
         expect(columns).toContain("msg");
         expect(columns).not.toContain("*");
         expect(columns).not.toContain("password");
@@ -224,7 +230,7 @@ describe("공개 댓글 조회", () => {
         expect(query.or).toHaveBeenCalledWith("is_secret.is.null,is_secret.eq.false");
         expect(query.range).toHaveBeenCalledWith(0, 9);
         expect(response.status).toBe(200);
-        expect(await response.json()).toMatchObject({ result: queryResult.data, pagination: { totalCount: 1 } });
+        expect(await response.json()).toMatchObject({ result: [{ idx: 2, author: "방문자", msg: "잘 읽었어요.", can_manage: false }], pagination: { totalCount: 1, commentTotalCount: 1 } });
     });
 
     it.each([
@@ -294,5 +300,50 @@ describe("관리자 댓글 조회", () => {
         expect(query.or).toHaveBeenCalledWith("visibility.eq.public,and(visibility.eq.private,user_id.eq.admin-1)", { referencedTable: "posts" });
         expect(query.range).toHaveBeenCalledWith(0, 19);
         expect(response.status).toBe(200);
+    });
+});
+
+ describe("댓글 보완 등록 정책", () => {
+    it.each([{ password: undefined }, { password: "123" }, { password: "가".repeat(25) }, { profile: 99 }, { emoji_id: "unknown" }, { request_id: undefined }])("필수 비회원 정보를 확인한다 %j", async (patch) => {
+        expect((await POST(createRequest({ ...validPayload, ...patch }))).status).toBe(400);
+    });
+    it.each(["til", "diary"])("%s에는 직접 등록하지 못한다", async (post_type) => {
+        vi.mocked(findReadablePost).mockResolvedValue({ idx: 1, user_id: null, visibility: "public", post_type });
+        expect((await POST(createRequest(validPayload))).status).toBe(403);
+    });
+    it("광고 문구는 서버에서도 차단한다", async () => {
+        expect((await POST(createRequest({ ...validPayload, msg: "카지노 가입머니 지급" }))).status).toBe(400);
+    });
+});
+
+describe("댓글 등록 멱등성과 요청 제한", () => {
+    it("요청 한도에 걸리면 비밀번호 해시 연산을 시작하지 않는다", async () => {
+        database.rpc.mockResolvedValueOnce({ data: false as never, error: null });
+        expect((await POST(createRequest(validPayload))).status).toBe(429);
+        expect(bcrypt.hash).not.toHaveBeenCalled();
+    });
+    it("같은 요청을 재전송하면 해시·쓰기 한도를 다시 소비하지 않는다", async () => {
+        await POST(createRequest(validPayload));
+        const args = database.rpc.mock.calls.find(([name]) => name === "create_comment");
+        const fingerprint = (args as unknown as [string, { p_request_fingerprint: string }])[1].p_request_fingerprint;
+        query.maybeSingle.mockResolvedValueOnce({ data: { request_fingerprint: fingerprint } as never, error: null });
+        vi.mocked(bcrypt.hash).mockClear();
+        database.rpc.mockClear();
+        expect((await POST(createRequest(validPayload))).status).toBe(201);
+        expect(bcrypt.hash).not.toHaveBeenCalled();
+        expect(database.rpc).not.toHaveBeenCalled();
+    });
+    it("동일 ID의 다른 내용은 충돌로 처리한다", async () => {
+        query.maybeSingle.mockResolvedValueOnce({ data: { request_fingerprint: "different" } as never, error: null });
+        expect((await POST(createRequest(validPayload))).status).toBe(409);
+        expect(database.rpc).not.toHaveBeenCalled();
+    });
+    it("DB 원자적 요청 제한도 429로 전달한다", async () => {
+        queryResult.error = { code: "PT429" };
+        expect((await POST(createRequest(validPayload))).status).toBe(429);
+    });
+    it("다른 게시물 답글이나 삭제 대상은 DB 검증 실패로 반환한다", async () => {
+        queryResult.error = { code: "22023" };
+        expect((await POST(createRequest({ ...validPayload, parent_id: 2 }))).status).toBe(400);
     });
 });

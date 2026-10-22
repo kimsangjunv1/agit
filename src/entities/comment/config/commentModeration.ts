@@ -33,3 +33,7 @@ export const COMMENT_PROFANITY_RULES: readonly CommentProfanityRule[] = [
 
 // 실제 관리자는 서버에서 인증한 경우에만 이 이름들을 사용할 수 있어요.
 export const COMMENT_RESERVED_NICKNAMES = ["관리자", "운영자", "운영진", "관리팀", "운영팀", "공식계정", "아지트공식", "admin", "administrator", "moderator"] as const;
+
+// 정상 참고 링크는 허용하고 명백한 광고 문구와 등록된 금지 도메인만 차단합니다.
+export const COMMENT_AD_PHRASES = ["카지노가입", "가입머니", "바카라홍보", "토토홍보", "불법대출", "대출상담문의", "출장마사지", "성인만남", "구매대행홍보"] as const;
+export const COMMENT_BLOCKED_LINK_HOSTS = [] as readonly string[];

@@ -17,6 +17,7 @@ export async function GET(req: Request) {
 
         let query = supabase.from(TABLE_NAME).select("idx, post_id, author, msg, is_admin, created_at, posts!inner(title)", { count: "estimated" })
             .or(postVisibilityFilter(auth.session.user.id), { referencedTable: "posts" })
+            .is("deleted_at", null)
             .order("created_at", { ascending: false });
 
         const { page, pageSize } = getPageParams(searchParams, DEFAULT_PAGE_SIZE);

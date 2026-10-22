@@ -11,6 +11,7 @@ export async function GET() {
             .from(TABLE_NAME_POST)
             .select("msg, author, created_at, idx, posts!inner(idx)")
             .eq("posts.visibility", "public")
+            .is("deleted_at", null)
             .or("is_secret.is.null,is_secret.eq.false")
             .order("created_at", { ascending: false })
             .limit(10);

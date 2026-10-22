@@ -2,6 +2,7 @@ export interface ApiPaginationResponse {
     page: number;
     pageSize: number;
     totalCount: number;
+    commentTotalCount?: number;
     totalPages: number;
     hasNext: boolean;
     hasPrevious: boolean;

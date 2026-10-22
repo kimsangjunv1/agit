@@ -1,15 +1,13 @@
 "use client";
 
-import { useId, useRef, useState, type FormEvent } from "react";
+import { useId, useRef } from "react";
 import { useInView } from "motion/react";
 
-import { useGetCommentDetailQuery, useSetCommentQuery } from "@/entities/comment/api/comment.query";
-import { COMMENT_AUTHOR_MAX_CODE_UNITS, COMMENT_AUTHOR_MAX_LENGTH, COMMENT_MESSAGE_MAX_LENGTH } from "@/entities/comment/model/comment.constants";
-import { getCommentAuthorLength, getRandomCommentNickname, limitCommentAuthor } from "@/entities/comment/lib/commentNickname";
-import { util } from "@/shared/lib/util";
-import { confirmAction } from "@/shared/lib/confirmAction";
+import { useGetCommentDetailQuery } from "@/entities/comment/api/comment.query";
 import { usePostDetailProvider } from "../model/PostDetailContext";
 import { POST_CONTENT_WIDTH_CLASS } from "@/shared/lib/richText/styles";
+import CommentComposer from "./CommentComposer";
+import CommentThread from "./CommentThread";
 import InfiniteScrollTrigger from "@/shared/ui/common/InfiniteScrollTrigger";
 
 const Comments = () => {
@@ -17,48 +15,10 @@ const Comments = () => {
     const sectionRef = useRef<HTMLElement>(null);
     const hasBeenVisible = useInView(sectionRef, { root: scrollViewportRef, once: true });
     const { data, isLoading, isError, error, isFetching, refetch, hasNextPage, fetchNextPage } = useGetCommentDetailQuery(postIdx, { enabled: hasBeenVisible });
-    const { mutateAsync, isPending } = useSetCommentQuery();
-    const [author, setAuthor] = useState("");
-    const [msg, setMsg] = useState("");
-    const [submitError, setSubmitError] = useState("");
-    const isAuthorComposing = useRef(false);
     const formId = useId();
     const comments = data?.pages.flatMap((page) => page.result) ?? [];
     const firstPage = data?.pages[0];
     const hasListError = isError || firstPage?.resultCode === "ERROR";
-
-    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        if (isPending || isAuthorComposing.current) return;
-
-        if (!author.trim() || !msg.trim()) {
-            setSubmitError("닉네임과 댓글 내용을 입력해주세요.");
-            return;
-        }
-
-        if (getCommentAuthorLength(author.trim()) > COMMENT_AUTHOR_MAX_LENGTH) {
-            setSubmitError(`닉네임은 ${COMMENT_AUTHOR_MAX_LENGTH}글자까지 입력할 수 있어요.`);
-            return;
-        }
-
-        setSubmitError("");
-        const payload = { post_id: postIdx, author: author.trim(), msg: msg.trim() };
-        void confirmAction({
-            title: "댓글을 등록할까요?",
-            description: `${payload.author}\n${payload.msg}`,
-            confirmText: "등록하기",
-            onConfirm: async () => {
-                try {
-                    await mutateAsync(payload);
-                    setMsg("");
-                    setToast({ msg: "댓글을 남겼어요.", time: 2 });
-                } catch (cause) {
-                    setSubmitError(cause instanceof Error ? cause.message : "댓글을 등록하지 못했어요. 다시 시도해주세요.");
-                    throw cause;
-                }
-            },
-        });
-    };
 
     return (
         <section
@@ -71,7 +31,7 @@ const Comments = () => {
                 id={`${formId}-title`}
                 className="text-[2rem] font-semibold"
             >
-                댓글 <span className="text-[var(--color-text-muted)]">{firstPage?.pagination?.totalCount ?? "…"}</span>
+                댓글 <span className="text-[var(--color-text-muted)]">{firstPage?.pagination?.commentTotalCount ?? firstPage?.pagination?.totalCount ?? "…"}</span>
             </h2>
             <p className="mt-[0.8rem] text-[1.4rem] text-[var(--color-text-muted)]">로그인 없이 닉네임으로 댓글을 남길 수 있어요.</p>
 
@@ -104,25 +64,7 @@ const Comments = () => {
 
                 {comments.length > 0 && (
                     <ul className="divide-y divide-[var(--color-border)] border-y border-[var(--color-border)]">
-                        {comments.map((comment) => (
-                            <li
-                                key={comment.idx}
-                                className="py-[2.4rem]"
-                            >
-                                <div className="flex flex-wrap items-center gap-[0.8rem] text-[1.4rem]">
-                                    <span className="break-all font-semibold">{comment.author || "익명"}</span>
-                                    {comment.is_admin && <span className="rounded-full bg-[var(--color-brand-100)] px-[0.8rem] py-[0.4rem] text-[1.2rem] text-[var(--color-brand-700)]">관리자</span>}
-                                    <time
-                                        dateTime={comment.created_at}
-                                        className="text-[var(--color-text-muted)]"
-                                    >
-                                        {util.string.getCurrentDate(comment.created_at, 4)}
-                                        {comment.is_modified ? " · 수정됨" : ""}
-                                    </time>
-                                </div>
-                                <p className="mt-[1.2rem] whitespace-pre-wrap [overflow-wrap:anywhere] text-[1.6rem] leading-[1.8]">{comment.msg}</p>
-                            </li>
-                        ))}
+                        {comments.map((comment) => <CommentThread key={comment.idx} comment={comment} />)}
                     </ul>
                 )}
                 {hasNextPage ? (
@@ -137,102 +79,7 @@ const Comments = () => {
                 ) : null}
             </div>
 
-            <form
-                onSubmit={handleSubmit}
-                aria-busy={isPending}
-            >
-                <fieldset
-                    disabled={isPending}
-                    className="flex min-w-0 flex-col gap-[1.6rem]"
-                >
-                    <div className="flex flex-col gap-[0.8rem]">
-                        <label
-                            htmlFor={`${formId}-author`}
-                            className="text-[1.4rem]"
-                        >
-                            닉네임
-                        </label>
-                        <div className="flex min-w-0 items-center gap-[0.8rem]">
-                            <input
-                                id={`${formId}-author`}
-                                name="author"
-                                autoComplete="nickname"
-                                value={author}
-                                onChange={(event) => setAuthor(isAuthorComposing.current ? event.target.value : limitCommentAuthor(event.target.value))}
-                                onCompositionStart={() => {
-                                    isAuthorComposing.current = true;
-                                }}
-                                onCompositionEnd={(event) => {
-                                    isAuthorComposing.current = false;
-                                    setAuthor(limitCommentAuthor(event.currentTarget.value));
-                                }}
-                                aria-describedby={`${formId}-author-length`}
-                                maxLength={COMMENT_AUTHOR_MAX_CODE_UNITS}
-                                required
-                                placeholder="최대 10글자로 입력해주세요"
-                                className="min-w-0 w-full flex-1 rounded-[0.8rem] border border-[var(--color-border)] bg-[var(--color-surface)] px-[1.6rem] py-[1.2rem] text-[1.6rem] focus-visible:outline-2 focus-visible:outline-[var(--color-brand-500)] disabled:opacity-50"
-                            />
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    setAuthor(getRandomCommentNickname(author));
-                                    setSubmitError("");
-                                }}
-                                className="shrink-0 rounded-[0.8rem] border border-[var(--color-border)] bg-[var(--color-surface-floating)] px-[1.2rem] py-[1.2rem] text-[1.4rem] disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-4"
-                            >
-                                랜덤 변경
-                            </button>
-                        </div>
-                        <p
-                            id={`${formId}-author-length`}
-                            className="text-right text-[1.2rem] text-[var(--color-text-muted)]"
-                        >
-                            {getCommentAuthorLength(author)} / {COMMENT_AUTHOR_MAX_LENGTH}
-                        </p>
-                    </div>
-                    <div className="flex flex-col gap-[0.8rem]">
-                        <label
-                            htmlFor={`${formId}-message`}
-                            className="text-[1.4rem]"
-                        >
-                            댓글 내용
-                        </label>
-                        <textarea
-                            id={`${formId}-message`}
-                            name="msg"
-                            value={msg}
-                            onChange={(event) => setMsg(event.target.value)}
-                            maxLength={COMMENT_MESSAGE_MAX_LENGTH}
-                            aria-describedby={`${formId}-length`}
-                            required
-                            rows={5}
-                            placeholder="글에 대한 생각을 남겨주세요"
-                            className="w-full resize-y rounded-[0.8rem] border border-[var(--color-border)] bg-[var(--color-surface)] px-[1.6rem] py-[1.2rem] text-[1.6rem] leading-[1.8] focus-visible:outline-2 focus-visible:outline-[var(--color-brand-500)] disabled:opacity-50"
-                        />
-                        <p
-                            id={`${formId}-length`}
-                            className="text-right text-[1.2rem] text-[var(--color-text-muted)]"
-                        >
-                            {msg.length} / {COMMENT_MESSAGE_MAX_LENGTH}
-                        </p>
-                    </div>
-                    {submitError && (
-                        <p
-                            role="alert"
-                            className="text-[1.4rem] text-[var(--color-red-600)]"
-                        >
-                            {submitError}
-                        </p>
-                    )}
-                    <button
-                        type="submit"
-                        disabled={isPending || !author.trim() || !msg.trim()}
-                        className="self-end rounded-[0.8rem] bg-[var(--color-surface-floating)] px-[2rem] py-[1.2rem] text-[1.4rem] font-semibold disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-4"
-                    >
-                        {isPending ? "등록하고 있어요…" : "댓글 남기기"}
-                    </button>
-                </fieldset>
-            </form>
+            <CommentComposer key={postIdx} />
         </section>
     );
 };

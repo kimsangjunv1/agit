@@ -1,4 +1,4 @@
-import { COMMENT_PROFANITY_RULES, COMMENT_RESERVED_NICKNAMES } from "@/entities/comment/config/commentModeration";
+import { COMMENT_AD_PHRASES, COMMENT_BLOCKED_LINK_HOSTS, COMMENT_PROFANITY_RULES, COMMENT_RESERVED_NICKNAMES } from "@/entities/comment/config/commentModeration";
 
 const INITIAL_CONSONANTS = "ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ";
 const VOWELS = "ㅏㅐㅑㅒㅓㅔㅕㅖㅗㅘㅙㅚㅛㅜㅝㅞㅟㅠㅡㅢㅣ";
@@ -64,5 +64,15 @@ export const validateCommentContent = ({ author, msg, isAdmin }: { author: strin
         return "댓글에 사용할 수 없는 표현이 포함되어 있어요. 내용을 확인해주세요.";
     }
 
+    const advertisingText = compact(normalizeForComparison(`${author} ${msg}`));
+    if (COMMENT_AD_PHRASES.some((phrase) => advertisingText.includes(compact(normalizeForComparison(phrase))))) {
+        return "광고성 문구는 사용할 수 없어요.";
+    }
+    for (const match of `${author} ${msg}`.matchAll(/https?:\/\/[^\s<>]+/giu)) {
+        try {
+            const host = new URL(match[0]).hostname.toLowerCase();
+            if (COMMENT_BLOCKED_LINK_HOSTS.some((blocked) => host === blocked || host.endsWith(`.${blocked}`))) return "허용하지 않는 광고 링크가 포함되어 있어요.";
+        } catch { /* 불완전한 링크는 일반 텍스트로 취급합니다. */ }
+    }
     return null;
 };

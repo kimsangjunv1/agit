@@ -2,15 +2,15 @@ import { useInfiniteQuery, useQuery, useMutation, useQueryClient } from "@tansta
 import { useSession } from "next-auth/react";
 
 import { AgitRoutes } from "@/shared/constants/entityKeys";
-import { deleteCommentManagerFetch, getCommentLatestListFetch, getCommentListFetch, getCommentManagerListFetch, setCommentFetch } from "@/entities/comment/api/comment.api";
-import type { DeleteCommentManagerPayload, GetCommentLatestListResponse, GetCommentManagerListResponse, SetCommentPayload } from "@/entities/comment/model/comment.type";
+import { deleteCommentFetch, updateCommentFetch, deleteCommentManagerFetch, getCommentLatestListFetch, getCommentListFetch, getCommentManagerListFetch, setCommentFetch } from "@/entities/comment/api/comment.api";
+import type { DeleteCommentPayload, UpdateCommentPayload, DeleteCommentManagerPayload, GetCommentLatestListResponse, GetCommentManagerListResponse, SetCommentPayload } from "@/entities/comment/model/comment.type";
 
-export const useGetCommentDetailQuery = (postIdx: number, { enabled = true }: { enabled?: boolean } = {}) => {
+export const useGetCommentDetailQuery = (postIdx: number, { enabled = true, parentId }: { enabled?: boolean; parentId?: number } = {}) => {
     const { data: session, status } = useSession();
 
     return useInfiniteQuery({
-        queryKey: [AgitRoutes.KEY_COMMENT, "detail", postIdx, status === "loading" ? "loading" : session?.user?.id ?? null, "infinite"],
-        queryFn: ({ pageParam }) => getCommentListFetch(postIdx, pageParam),
+        queryKey: [AgitRoutes.KEY_COMMENT, "detail", postIdx, status === "loading" ? "loading" : session?.user?.id ?? null, "infinite", parentId ?? null],
+        queryFn: ({ pageParam }) => getCommentListFetch(postIdx, pageParam, parentId),
         initialPageParam: 1,
         getNextPageParam: (lastPage) => lastPage.pagination?.hasNext ? lastPage.pagination.page + 1 : undefined,
         staleTime: 0,
@@ -90,4 +90,20 @@ export const useDeleteCommentManagerQuery = () => {
         error,
         reset,
     };
+};
+
+export const useUpdateCommentQuery = () => {
+    const client = useQueryClient();
+    return useMutation({
+        mutationFn: (payload: UpdateCommentPayload) => updateCommentFetch(payload),
+        onSuccess: async () => { await client.invalidateQueries({ queryKey: [AgitRoutes.KEY_COMMENT] }); },
+    });
+};
+
+export const useDeleteCommentQuery = () => {
+    const client = useQueryClient();
+    return useMutation({
+        mutationFn: (payload: DeleteCommentPayload) => deleteCommentFetch(payload),
+        onSuccess: async () => { await client.invalidateQueries({ queryKey: [AgitRoutes.KEY_COMMENT] }); },
+    });
 };
