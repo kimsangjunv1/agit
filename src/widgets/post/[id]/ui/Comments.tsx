@@ -27,13 +27,15 @@ const Comments = () => {
             aria-labelledby={`${formId}-title`}
             className={`${POST_CONTENT_WIDTH_CLASS} my-[5.2rem] scroll-mt-[18rem] tablet:scroll-mt-[12rem]`}
         >
-            <h2
-                id={`${formId}-title`}
-                className="text-[2rem] font-semibold"
-            >
-                댓글 <span className="text-[var(--color-text-muted)]">{firstPage?.pagination?.commentTotalCount ?? firstPage?.pagination?.totalCount ?? "…"}</span>
-            </h2>
-            <p className="mt-[0.8rem] text-[1.4rem] text-[var(--color-text-muted)]">로그인 없이 닉네임으로 댓글을 남길 수 있어요.</p>
+            <section className="flex items-center gap-[0.8rem]">
+                <h2
+                    id={`${formId}-title`}
+                    className="text-[2rem] font-semibold"
+                >
+                    댓글 <span className="text-[var(--color-text-muted)]">{firstPage?.pagination?.commentTotalCount ?? firstPage?.pagination?.totalCount ?? "…"}</span>
+                </h2>
+                <p className="text-[1.4rem] text-[var(--color-text-muted)]">부적절한 댓글은 임의로 삭제조치 될 수 있어요.</p>
+            </section>
 
             <div
                 className="my-[2.4rem]"
@@ -64,7 +66,12 @@ const Comments = () => {
 
                 {comments.length > 0 && (
                     <ul className="divide-y divide-[var(--color-border)] border-y border-[var(--color-border)]">
-                        {comments.map((comment) => <CommentThread key={comment.idx} comment={comment} />)}
+                        {comments.map((comment) => (
+                            <CommentThread
+                                key={comment.idx}
+                                comment={comment}
+                            />
+                        ))}
                     </ul>
                 )}
                 {hasNextPage ? (
