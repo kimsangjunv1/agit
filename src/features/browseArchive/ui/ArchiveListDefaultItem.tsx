@@ -2,6 +2,7 @@
 
 import { forwardRef } from "react";
 
+import { CheerUpIcon } from "@/shared/ui/common/CheerUpIcon";
 import TransitionLink from "@/shared/ui/common/TransitionLink";
 import PostThumbnail from "@/shared/ui/common/PostThumbnail";
 import { PostItem } from "@/entities/post/model/post.type";
@@ -68,7 +69,10 @@ const ArchiveListDefaultItem = forwardRef<HTMLElement, ArchiveListDefaultItemPro
                     <p className="bg-[#252525] text-left font-semibold flex items-center justify-center text-[var(--color-text-muted)] mobile:text-[1.6rem] tablet:text-[1.6rem] p-[0.8rem_0.4rem_0.4rem_0.4rem]">
                         {post.category?.title}
                     </p>
-                    <p>{post.likes ?? 0}</p>
+                    <p className="bg-[#252525] text-left font-semibold flex items-center gap-[0.4rem] text-[var(--color-text-muted)] mobile:text-[1.6rem] tablet:text-[1.6rem] p-[0.8rem_0.4rem_0.4rem_0.4rem]">
+                        <CheerUpIcon size={16} />
+                        {post.likes ?? 0}
+                    </p>
                 </div>
                 {/* <p className="[text-align-last:justify] bg-[var(--color-surface-floating)] font-bold p-[0.8rem] text-[var(--color-text-primary)]">
                     {post.category?.title} ・ {util.string.getCurrentDate(post.created_at)} ・ {post.likes ?? 0} likes
