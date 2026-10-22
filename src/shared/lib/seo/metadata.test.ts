@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { buildPostMetadata, buildCanonicalUrl } from "@/shared/lib/seo/metadata";
+import { buildPostMetadata, buildCanonicalUrl, serializeJsonLd } from "@/shared/lib/seo/metadata";
 
 describe("buildCanonicalUrl", () => {
     it("절대 URL을 생성한다", () => {
@@ -22,5 +22,14 @@ describe("buildPostMetadata", () => {
         expect(metadata.description).toBe("요약 내용");
         expect(metadata.alternates?.canonical).toBe("/post/1");
         expect(metadata.openGraph?.title).toBe("테스트 게시물");
+    });
+});
+
+describe("serializeJsonLd", () => {
+    it("스크립트를 끊는 < 문자를 이스케이프한다", () => {
+        const serialized = serializeJsonLd({ headline: "</script><script>" });
+
+        expect(serialized).not.toContain("<");
+        expect(serialized).toContain("\\u003c/script>\\u003cscript>");
     });
 });

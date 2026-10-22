@@ -4,14 +4,16 @@ import Main from "@/widgets/layout/Main";
 import FivepixelsView from "@/views/experiment/fivepixels/FivepixelsView";
 import { getPostLatestListServerFetch } from "@/entities/post/api/post.server.api";
 import { GetPostLatestListResponse } from "@/entities/post/model/post.type";
-import { buildPageMetadata, buildWebsiteJsonLd } from "@/shared/lib/seo/metadata";
-import JsonLd from "@/shared/ui/seo/JsonLd";
+import { buildPageMetadata, NOINDEX_METADATA } from "@/shared/lib/seo/metadata";
 import { buildPagination } from "@/shared/lib/utils/apiResponse";
 
-export const metadata: Metadata = buildPageMetadata({
-    title: "ARCHIVE",
-    path: "/",
-});
+export const metadata: Metadata = {
+    ...buildPageMetadata({
+        title: "ARCHIVE",
+        path: "/experiment/fivepixels",
+    }),
+    ...NOINDEX_METADATA,
+};
 
 export const dynamic = "force-dynamic";
 
@@ -32,15 +34,12 @@ const Page = async () => {
     }
 
     return (
-        <>
-            <JsonLd data={buildWebsiteJsonLd()} />
-            <Main
-                id="home"
-                className={{ inner: "min-h-[100svh]", container: "" }}
-            >
-                <FivepixelsView initialData={initialData} />
-            </Main>
-        </>
+        <Main
+            id="home"
+            className={{ inner: "min-h-[100svh]", container: "" }}
+        >
+            <FivepixelsView initialData={initialData} />
+        </Main>
     );
 };
 

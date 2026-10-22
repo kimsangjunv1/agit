@@ -18,6 +18,10 @@ export const NOINDEX_METADATA: Metadata = {
     },
 };
 
+export function serializeJsonLd(data: unknown) {
+    return JSON.stringify(data).replace(/</g, "\\u003c");
+}
+
 export function buildCanonicalUrl(path: string) {
     const normalizedPath = path.startsWith("/") ? path : `/${path}`;
     return `${getSiteUrl()}${normalizedPath}`;

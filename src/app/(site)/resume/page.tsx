@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 
 import { buildRenewalPersonJsonLd } from "@/entities/resume/constants/resumeRenewalData";
-import { buildPageMetadata } from "@/shared/lib/seo/metadata";
+import { buildPageMetadata, serializeJsonLd } from "@/shared/lib/seo/metadata";
 import Main from "@/widgets/layout/Main";
 import ResumeView from "@/views/resume/ResumeView";
 
@@ -20,7 +20,7 @@ const Page = () => {
             <Script
                 id="resume-person-jsonld"
                 type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+                dangerouslySetInnerHTML={{ __html: serializeJsonLd(personJsonLd) }}
             />
             <Main
                 id="resume"

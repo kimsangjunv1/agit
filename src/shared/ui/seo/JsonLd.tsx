@@ -1,3 +1,5 @@
+import { serializeJsonLd } from "@/shared/lib/seo/metadata";
+
 type JsonLdProps = {
     data: Record<string, unknown>;
 };
@@ -5,7 +7,7 @@ type JsonLdProps = {
 const JsonLd = ({ data }: JsonLdProps) => (
     <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(data) }}
     />
 );
 
