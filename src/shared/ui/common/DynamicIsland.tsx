@@ -9,12 +9,14 @@ type DynamicIslandProps = {
     className?: string;
     placement?: "top" | "bottom";
     overlay?: ReactNode;
+    maxWidth?: number;
+    maxHeight?: number;
 };
 
 const CIRCLE_SIZE = 48;
 const springTransition = { type: "spring", stiffness: 380, damping: 30, mass: 0.7 } as const;
 
-const DynamicIsland = ({ children, ariaLabel, className = "", placement = "top", overlay }: DynamicIslandProps) => {
+const DynamicIsland = ({ children, ariaLabel, className = "", placement = "top", overlay, maxWidth, maxHeight }: DynamicIslandProps) => {
     const reducedMotion = useReducedMotion();
     const contentRef = useRef<HTMLDivElement>(null);
     const [phase, setPhase] = useState<"drop" | "expand" | "ready">("drop");
@@ -45,13 +47,15 @@ const DynamicIsland = ({ children, ariaLabel, className = "", placement = "top",
             className={`relative overflow-hidden rounded-full bg-[var(--color-surface-floating)] text-[var(--color-text-primary)] backdrop-blur-[5px] ${className}`}
             initial={{ y: placement === "bottom" ? 80 : -80, opacity: 0, width: CIRCLE_SIZE, height: CIRCLE_SIZE }}
             animate={{ y: 0, opacity: 1, width: isExpanded ? size.width : CIRCLE_SIZE, height: isExpanded ? size.height : CIRCLE_SIZE }}
+            exit={{ y: placement === "bottom" ? 40 : -40, opacity: 0, width: CIRCLE_SIZE, height: CIRCLE_SIZE }}
             transition={reducedMotion ? { duration: 0 } : springTransition}
-            onAnimationComplete={() => setPhase((current) => (current === "drop" ? "expand" : "ready"))}
+            onAnimationComplete={() => setPhase((current) => (current === "ready" ? current : current === "drop" ? "expand" : "ready"))}
         >
             {overlay ? <div className="pointer-events-none absolute inset-0">{overlay}</div> : null}
             <motion.div
                 ref={contentRef}
-                className="relative w-max max-w-[calc(100vw-2.4rem)] p-[0.8rem]"
+                className={`relative w-max max-w-[calc(100vw-2.4rem)] p-[0.8rem] ${maxWidth || maxHeight ? "overflow-auto overscroll-contain" : ""}`}
+                style={{ maxWidth, maxHeight }}
                 inert={!isContentVisible}
                 aria-hidden={!isContentVisible}
                 initial={false}

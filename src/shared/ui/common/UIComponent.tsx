@@ -25,6 +25,7 @@ import {
 import useNavigate from "@/shared/hooks/useNavigate";
 import { useToastStore } from "@/shared/stores/useToastStore";
 import IconComponent from "@/shared/ui/common/IconComponent";
+import FloatingSelector from "@/shared/ui/common/FloatingSelector";
 import Window from "@/shared/ui/common/Window";
 import { util } from "@/shared/lib/util";
 import { useDirtyStore } from "@/shared/stores/useDirtyStore";
@@ -2253,6 +2254,7 @@ const UI = {
     Loading,
     ErrorBoundaryWrapper,
     Window,
+    FloatingSelector,
     Table: Object.assign(Table, {
         Header: TableHeader,
         Body: TableBody,

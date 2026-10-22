@@ -1,13 +1,16 @@
 "use client";
 
-import { useId, useRef, useState, type FormEvent } from "react";
+import { useEffect, useId, useRef, useState, type FormEvent } from "react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 
 import { useSetCommentQuery } from "@/entities/comment/api/comment.query";
-import { COMMENT_EMOJIS, COMMENT_PROFILES, DEFAULT_COMMENT_PROFILE, getRandomCommentEmojiId } from "@/entities/comment/config/commentAppearance";
+import { COMMENT_EMOJIS, COMMENT_PROFILES, DEFAULT_COMMENT_PROFILE, getCommentProfile, getRandomCommentEmojiId } from "@/entities/comment/config/commentAppearance";
 import { COMMENT_AUTHOR_MAX_CODE_UNITS, COMMENT_AUTHOR_MAX_LENGTH, COMMENT_MESSAGE_MAX_LENGTH } from "@/entities/comment/model/comment.constants";
 import { getCommentAuthorLength, getRandomCommentNickname, limitCommentAuthor } from "@/entities/comment/lib/commentNickname";
+import { MaterialIcon } from "@/shared/ui/common/MaterialIcon";
+import UI from "@/shared/ui/common/UIComponent";
 import { usePostDetailProvider } from "../model/PostDetailContext";
 
 export const commentInputClass = "w-full min-w-0 rounded-[0.8rem] border border-[var(--color-border)] bg-[var(--color-surface)] px-[1.6rem] py-[1.2rem] text-[1.6rem] focus-visible:outline-2 focus-visible:outline-[var(--color-brand-500)] disabled:opacity-50";
@@ -21,6 +24,8 @@ interface Props {
     onSubmitted?: () => void;
 }
 
+const passwordReady = (password: string) => password.length >= 6 && password.length <= 24 && new TextEncoder().encode(password).length <= 72;
+
 const CommentComposer = ({ parentId, replyToId, replyToAuthor, onCancel, onSubmitted }: Props) => {
     const { postIdx, setToast } = usePostDetailProvider();
     const { data: session, status } = useSession();
@@ -32,17 +37,27 @@ const CommentComposer = ({ parentId, replyToId, replyToAuthor, onCancel, onSubmi
     const [profile, setProfile] = useState<number>(DEFAULT_COMMENT_PROFILE);
     // Initialize on interaction to keep the server and hydration markup identical.
     const [emojiId, setEmojiId] = useState("");
+    const [needsPassword, setNeedsPassword] = useState(false);
     const [submitError, setSubmitError] = useState("");
     const requestRef = useRef<{ snapshot: string; id: string } | null>(null);
     const submitting = useRef(false);
     const isAuthorComposing = useRef(false);
+    const passwordRef = useRef<HTMLInputElement>(null);
     const formId = useId();
+    const reducedMotion = useReducedMotion();
     const authorName = isGuest ? author.trim() : session?.user?.name?.trim() ?? "";
+    const selectedProfile = getCommentProfile(profile);
+    const selectedEmoji = COMMENT_EMOJIS.find((option) => option.id === emojiId);
+    const canConfirmPassword = passwordReady(password);
     const initializeEmoji = () => { if (!emojiId) setEmojiId(getRandomCommentEmojiId()); };
+    const motionTransition = reducedMotion ? { duration: 0 } : { duration: 0.22, ease: "easeOut" as const };
 
-    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        if (submitting.current || isPending || isAuthorComposing.current || status === "loading") return;
+    useEffect(() => {
+        if (needsPassword) passwordRef.current?.focus();
+    }, [needsPassword]);
+
+    const revealPassword = () => {
+        if (isAuthorComposing.current || status === "loading" || isPending) return;
         if (!authorName || !msg.trim()) {
             setSubmitError("닉네임과 댓글 내용을 입력해주세요.");
             return;
@@ -51,7 +66,26 @@ const CommentComposer = ({ parentId, replyToId, replyToAuthor, onCancel, onSubmi
             setSubmitError(`닉네임은 ${COMMENT_AUTHOR_MAX_LENGTH}글자까지 입력할 수 있어요.`);
             return;
         }
-        if (isGuest && (password.length < 6 || password.length > 24 || new TextEncoder().encode(password).length > 72)) {
+        setSubmitError("");
+        setNeedsPassword(true);
+    };
+
+    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        if (submitting.current || isPending || isAuthorComposing.current || status === "loading") return;
+        if (isGuest && !needsPassword) {
+            revealPassword();
+            return;
+        }
+        if (!authorName || !msg.trim()) {
+            setSubmitError("닉네임과 댓글 내용을 입력해주세요.");
+            return;
+        }
+        if (getCommentAuthorLength(authorName) > COMMENT_AUTHOR_MAX_LENGTH) {
+            setSubmitError(`닉네임은 ${COMMENT_AUTHOR_MAX_LENGTH}글자까지 입력할 수 있어요.`);
+            return;
+        }
+        if (isGuest && !passwordReady(password)) {
             setSubmitError("비밀번호는 6~24자로 입력해주세요.");
             return;
         }
@@ -75,6 +109,7 @@ const CommentComposer = ({ parentId, replyToId, replyToAuthor, onCancel, onSubmi
             setMsg("");
             setPassword("");
             setEmojiId("");
+            setNeedsPassword(false);
             setToast({ msg: parentId ? "답글을 남겼어요." : "댓글을 남겼어요.", time: 2 });
             onSubmitted?.();
         } catch (cause) {
@@ -88,10 +123,23 @@ const CommentComposer = ({ parentId, replyToId, replyToAuthor, onCancel, onSubmi
         <form onSubmit={handleSubmit} onFocus={initializeEmoji} aria-busy={isPending} className="text-[1.4rem]">
             <fieldset disabled={isPending || status === "loading"} className="flex min-w-0 flex-col gap-[1.6rem]">
                 <legend className="mb-[1.6rem] font-semibold">{parentId ? `${replyToAuthor || "댓글"}님에게 답글 남기기` : "댓글 남기기"}</legend>
-                {isGuest ? <>
+                {isGuest ? (
                     <div className="flex flex-col gap-[0.8rem]">
-                        <label htmlFor={`${formId}-author`}>닉네임</label>
+                        <label htmlFor={`${formId}-author`} className="sr-only">닉네임</label>
                         <div className="flex min-w-0 items-center gap-[0.8rem]">
+                            <UI.FloatingSelector
+                                ariaLabel="프로필 선택"
+                                triggerClassName="h-[4.8rem] w-[4.8rem] shrink-0 overflow-hidden rounded-full border-2 border-[var(--color-brand-500)]"
+                                trigger={<Image src={selectedProfile.image} alt="" width={48} height={48} className="h-full w-full object-cover" />}
+                            >
+                                <div className="flex w-max gap-[0.4rem]">
+                                    {COMMENT_PROFILES.map((option) => (
+                                        <button key={option.id} type="button" aria-pressed={profile === option.id} aria-label={option.label} onClick={() => setProfile(option.id)} className={`rounded-full border-2 p-[0.3rem] ${profile === option.id ? "border-[var(--color-brand-500)]" : "border-transparent"}`}>
+                                            <Image src={option.image} alt="" width={56} height={56} className="h-[5.6rem] w-[5.6rem] rounded-full object-cover" />
+                                        </button>
+                                    ))}
+                                </div>
+                            </UI.FloatingSelector>
                             <input id={`${formId}-author`} name="author" autoComplete="nickname" value={author}
                                 onChange={(event) => setAuthor(isAuthorComposing.current ? event.target.value : limitCommentAuthor(event.target.value))}
                                 onCompositionStart={() => { isAuthorComposing.current = true; }}
@@ -101,21 +149,7 @@ const CommentComposer = ({ parentId, replyToId, replyToAuthor, onCancel, onSubmi
                         </div>
                         <p id={`${formId}-author-length`} className="text-right text-[1.2rem] text-[var(--color-text-muted)]">{getCommentAuthorLength(author)} / {COMMENT_AUTHOR_MAX_LENGTH}</p>
                     </div>
-                    <div className="flex flex-col gap-[0.8rem]">
-                        <label htmlFor={`${formId}-password`}>비밀번호</label>
-                        <input id={`${formId}-password`} name="password" type="password" autoComplete="new-password" value={password} onChange={(event) => setPassword(event.target.value)} minLength={6} maxLength={24} required aria-describedby={`${formId}-password-help`} placeholder="수정·삭제에 사용할 비밀번호 (6~24자)" className={commentInputClass} />
-                        <p id={`${formId}-password-help`} className="text-[1.2rem] text-[var(--color-text-muted)]">비밀번호를 잊으면 직접 수정·삭제할 수 없어요.</p>
-                    </div>
-                    <fieldset className="flex flex-wrap gap-[1.2rem]">
-                        <legend className="mb-[0.8rem]">프로필 선택</legend>
-                        {COMMENT_PROFILES.map((option) => <label key={option.id} className="cursor-pointer">
-                            <input type="radio" name={`${formId}-profile`} value={option.id} checked={profile === option.id} onChange={() => setProfile(option.id)} className="peer sr-only" />
-                            <span className="block rounded-full border-2 border-transparent p-[0.3rem] peer-checked:border-[var(--color-brand-500)] peer-focus-visible:outline-2 peer-focus-visible:outline-offset-4">
-                                <Image src={option.image} alt={option.label} width={56} height={56} className="h-[5.6rem] w-[5.6rem] rounded-full object-cover" />
-                            </span>
-                        </label>)}
-                    </fieldset>
-                </> : <p className="text-[var(--color-text-muted)]">{authorName}님으로 작성해요.</p>}
+                ) : <p className="text-[var(--color-text-muted)]">{authorName}님으로 작성해요.</p>}
                 <div className="flex flex-col gap-[0.8rem]">
                     <label htmlFor={`${formId}-message`}>{parentId ? "답글 내용" : "댓글 내용"}</label>
                     <textarea id={`${formId}-message`} name="msg" value={msg} onChange={(event) => setMsg(event.target.value)} maxLength={COMMENT_MESSAGE_MAX_LENGTH} aria-describedby={`${formId}-length`} required rows={parentId ? 3 : 5} placeholder="글에 대한 생각을 남겨주세요" className={`${commentInputClass} resize-y leading-[1.8]`} />
@@ -124,14 +158,45 @@ const CommentComposer = ({ parentId, replyToId, replyToAuthor, onCancel, onSubmi
                 {submitError ? <p role="alert" className="text-[var(--color-red-600)]">{submitError}</p> : null}
                 <div className="flex flex-wrap items-center justify-end gap-[0.8rem]">
                     {onCancel ? <button type="button" onClick={onCancel} className={commentButtonClass}>취소</button> : null}
-                    {isGuest ? <>
-                        <label htmlFor={`${formId}-emoji`} className="sr-only">댓글 이모지 선택</label>
-                        <select id={`${formId}-emoji`} value={emojiId} onChange={(event) => setEmojiId(event.target.value)} className={`${commentButtonClass} border border-[var(--color-border)]`}>
-                            {!emojiId ? <option value="">이모지</option> : null}
-                            {COMMENT_EMOJIS.map((option) => <option key={option.id} value={option.id}>{option.emoji} {option.label}</option>)}
-                        </select>
-                    </> : null}
-                    <button type="submit" disabled={isPending || status === "loading" || !authorName || !msg.trim() || (isGuest && password.length < 6)} className={commentButtonClass}>{isPending ? "등록하고 있어요…" : parentId ? "답글 남기기" : "댓글 남기기"}</button>
+                    {isGuest ? (
+                        <UI.FloatingSelector
+                            ariaLabel="댓글 이모지 선택"
+                            align="end"
+                            triggerClassName={`${commentButtonClass} border border-[var(--color-border)]`}
+                            trigger={<span>{selectedEmoji ? `${selectedEmoji.emoji} ${selectedEmoji.label}` : "이모지"}</span>}
+                        >
+                            <div className="flex w-max flex-col gap-[0.4rem]">
+                                {COMMENT_EMOJIS.map((option) => (
+                                    <button key={option.id} type="button" aria-pressed={emojiId === option.id} onClick={() => setEmojiId(option.id)} className={`flex items-center gap-[0.8rem] rounded-full px-[1.2rem] py-[0.8rem] text-left hover:bg-white/10 ${emojiId === option.id ? "bg-white/10" : ""}`}>
+                                        <span aria-hidden="true">{option.emoji}</span>
+                                        <span>{option.label}</span>
+                                    </button>
+                                ))}
+                            </div>
+                        </UI.FloatingSelector>
+                    ) : null}
+                    {isGuest ? (
+                        <div className="flex min-h-[4.8rem] items-center justify-end">
+                            <AnimatePresence mode="wait" initial={false}>
+                                {needsPassword ? (
+                                    <motion.div key="password" className="flex min-w-0 items-center gap-[0.8rem]" initial={reducedMotion ? false : { opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} exit={reducedMotion ? undefined : { opacity: 0, y: 18 }} transition={motionTransition}>
+                                        <label htmlFor={`${formId}-password`} className="sr-only">비밀번호</label>
+                                        <input ref={passwordRef} id={`${formId}-password`} name="password" type="password" autoComplete="new-password" value={password} onChange={(event) => setPassword(event.target.value)} minLength={6} maxLength={24} required aria-describedby={`${formId}-password-help`} placeholder="수정·삭제에 사용할 비밀번호 (6~24자)" className={`${commentInputClass} w-[24rem] max-w-[calc(100vw-12rem)]`} />
+                                        <p id={`${formId}-password-help`} className="sr-only">비밀번호를 잊으면 직접 수정·삭제할 수 없어요.</p>
+                                        <button type="submit" disabled={isPending || status === "loading" || !canConfirmPassword} aria-label={parentId ? "답글 등록" : "댓글 등록"} className={`${commentButtonClass} flex h-[4.8rem] w-[4.8rem] items-center justify-center px-0`}>
+                                            <MaterialIcon name="check" size={22} className={canConfirmPassword ? "text-[var(--color-brand-500)]" : "text-[var(--color-text-muted)]"} />
+                                        </button>
+                                    </motion.div>
+                                ) : (
+                                    <motion.button key="submit" type="button" disabled={isPending || status === "loading" || !authorName || !msg.trim()} onClick={revealPassword} initial={reducedMotion ? false : { opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} exit={reducedMotion ? undefined : { opacity: 0, y: -16 }} transition={motionTransition} className={commentButtonClass}>
+                                        {parentId ? "답글 남기기" : "댓글 남기기"}
+                                    </motion.button>
+                                )}
+                            </AnimatePresence>
+                        </div>
+                    ) : (
+                        <button type="submit" disabled={isPending || status === "loading" || !authorName || !msg.trim()} className={commentButtonClass}>{isPending ? "등록하고 있어요…" : parentId ? "답글 남기기" : "댓글 남기기"}</button>
+                    )}
                 </div>
             </fieldset>
         </form>
