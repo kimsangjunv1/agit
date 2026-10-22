@@ -8,7 +8,7 @@ import { CheerUpIcon } from "@/shared/ui/common/CheerUpIcon";
 import { useLayoutStore } from "@/shared/stores/useLayoutStore";
 import { usePostDetailProvider } from "../model/PostDetailContext";
 
-const WORDS = ["좋아요!", "와우", "귿"] as const;
+const WORDS = ["좋아요!", "와우", "귿", "최고!", "멋져요", "짱이야", "대박!", "힘내!", "파이팅", "응원해요", "굿잡", "👍", "👏", "💕", "😍", "🔥", "💪", "🌿", "🌟"] as const;
 type CheerWord = { id: number; text: string; x: number; rise: number };
 
 const CheerUpIsland = () => {
@@ -69,11 +69,14 @@ const CheerUpIsland = () => {
     return (
         <div className="fixed bottom-[calc(13.6rem+env(safe-area-inset-bottom))] left-1/2 z-[121] -translate-x-1/2">
             <div className="relative">
-                <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-10">
+                <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 z-10"
+                >
                     {words.map((word) => (
                         <motion.span
                             key={word.id}
-                            className="absolute left-1/2 top-0 whitespace-nowrap text-[8px] font-semibold leading-none text-[var(--color-text-primary)]"
+                            className="absolute left-1/2 top-0 whitespace-nowrap text-[18px] font-semibold leading-none text-[var(--color-text-primary)]"
                             initial={{ x: word.x, y: 8, opacity: 0 }}
                             animate={{ y: [8, -word.rise / 2, -word.rise], opacity: [0, 1, 0] }}
                             transition={{ duration: 0.65, ease: "easeOut" }}
@@ -83,7 +86,10 @@ const CheerUpIsland = () => {
                         </motion.span>
                     ))}
                 </div>
-                <DynamicIsland ariaLabel="Cheer Up" placement="bottom">
+                <DynamicIsland
+                    ariaLabel="Cheer Up"
+                    placement="bottom"
+                >
                     <motion.button
                         type="button"
                         aria-label={`Cheer Up ${likeCount}회, 여러 번 응원하기`}
