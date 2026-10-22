@@ -20,7 +20,6 @@ import { Row, useBlockStore } from "@/features/managePost/model/useEditorBlockSt
 import { normalizeBlocksForEditor } from "@/features/managePost/lib/normalizePostBlocks";
 import {
     BLOCK_COLUMN_CLASS,
-    BLOCK_MIN_HEIGHT_CLASS,
     BLOCK_ROW_CLASS,
     POST_BLOCK_CONTENT_CLASS,
     POST_BLOCK_HEADING_CLASS,
@@ -55,7 +54,14 @@ const REORDER_TRANSITION = {
     damping: 42,
 };
 
-const GROUP_ACTION_BUTTON_CLASS = "flex h-[2.4rem] w-[3.6rem] items-center justify-center rounded-[1.2rem] text-[var(--color-gray-900)] transition-colors hover:bg-[var(--color-gray-100)]";
+const BLOCK_CORNER_CLUSTER_CLASS =
+    "absolute bottom-[calc(100%+0.2cm)] right-0 z-20 flex items-center gap-[0.4rem] opacity-0 pointer-events-none transition-opacity group-hover/block:pointer-events-auto group-hover/block:opacity-100 before:absolute before:inset-x-0 before:top-full before:h-[0.2cm] before:content-['']";
+const EDGE_ADD_BUTTON_CLASS =
+    "absolute z-30 flex h-[3.2rem] w-[3.2rem] items-center justify-center rounded-full bg-[var(--color-surface)] text-[var(--color-gray-900)] shadow-[var(--shadow-normal)] opacity-0 pointer-events-none transition-opacity";
+const BLOCK_EDGE_ADD_VISIBILITY_CLASS = "group-hover/block:pointer-events-auto group-hover/block:opacity-100";
+const ROW_EDGE_ADD_VISIBILITY_CLASS = "group-hover/row:pointer-events-auto group-hover/row:opacity-100";
+const BLOCK_MODE_PILL_BUTTON_CLASS =
+    "flex h-[3.2rem] w-[3.2rem] items-center justify-center rounded-full text-[var(--color-gray-900)] transition-colors hover:bg-[var(--color-gray-100)] aria-pressed:bg-[var(--color-surface-hover)] aria-pressed:text-[var(--color-interaction-hover)] focus-visible:outline-2 focus-visible:outline-[var(--color-interaction-hover)]";
 
 const BLOCK_MODE_OPTIONS = [
     { mode: "sub", label: "서브", icon: "notes" },
@@ -63,7 +69,13 @@ const BLOCK_MODE_OPTIONS = [
     { mode: "main", label: "메인", icon: "title" },
 ] as const;
 
-const getRowKey = (row: Row) => row.map((b) => b.id).join("-");
+const dragChromeClass = (isDraggingRow: boolean, isOtherRowDragging: boolean, hoverClass: string) => {
+    if (isOtherRowDragging) return "!pointer-events-none !opacity-0";
+    if (isDraggingRow) return "!pointer-events-auto !opacity-100";
+    return hoverClass;
+};
+
+const getRowKey = (row: Row) => row.map((block) => block.id).join("-");
 
 const BlockEditableField = ({
     value,
@@ -106,12 +118,26 @@ const BlockEditableField = ({
 
 const SortableBlock = ({ contents }: { contents?: Row[] }) => {
     const { rows, setRows } = useBlockStore();
+    const [draggingRowKey, setDraggingRowKey] = useState<string | null>(null);
 
     useEffect(() => {
         if (contents && contents.length > 0) {
             setRows(normalizeBlocksForEditor(contents));
         }
     }, [contents, setRows]);
+
+    useEffect(() => {
+        if (!draggingRowKey) return;
+
+        const endDrag = () => setDraggingRowKey(null);
+        window.addEventListener("pointerup", endDrag);
+        window.addEventListener("pointercancel", endDrag);
+
+        return () => {
+            window.removeEventListener("pointerup", endDrag);
+            window.removeEventListener("pointercancel", endDrag);
+        };
+    }, [draggingRowKey]);
 
     const sectionEndRows = useMemo(() => getSectionEndRowIndexes(rows), [rows]);
 
@@ -121,7 +147,7 @@ const SortableBlock = ({ contents }: { contents?: Row[] }) => {
             values={rows}
             onReorder={(newRows) => useBlockStore.getState().setRows(newRows)}
             as="section"
-            className={POST_BLOCK_LIST_CLASS}
+            className={`${POST_BLOCK_LIST_CLASS} ${draggingRowKey ? "isolate" : ""}`}
         >
             {rows.map((row, rowIndex) => (
                 <Item
@@ -129,45 +155,25 @@ const SortableBlock = ({ contents }: { contents?: Row[] }) => {
                     row={row}
                     rowIndex={rowIndex}
                     isSectionEnd={sectionEndRows.has(rowIndex)}
+                    draggingRowKey={draggingRowKey}
+                    onRowDragStart={setDraggingRowKey}
                 />
             ))}
         </Reorder.Group>
     );
 };
 
-const Item = ({ row, rowIndex, isSectionEnd }: { row: Row; rowIndex: number; isSectionEnd: boolean }) => {
+const Item = ({ row, rowIndex, isSectionEnd, draggingRowKey, onRowDragStart }: { row: Row; rowIndex: number; isSectionEnd: boolean; draggingRowKey: string | null; onRowDragStart: (rowKey: string) => void }) => {
     const dragControls = useDragControls();
     const rowRef = useRef<HTMLDivElement>(null);
     const focusedBlockIndexRef = useRef<number | null>(null);
+    const rowKey = getRowKey(row);
+    const isDraggingRow = draggingRowKey === rowKey;
+    const isOtherRowDragging = draggingRowKey !== null && !isDraggingRow;
 
-    const [isGrabbing, setIsGrabbing] = useState(false);
     const [focusedEditor, setFocusedEditor] = useState<Editor | null>(null);
 
-    const { setToast } = useToastStore();
-    const { rows, addBlock, deleteRow, updateBlock, selectedPosition } = useBlockStore();
-    const isSingleGroup = rows.length === 1;
-    const activeBlockIndex = selectedPosition?.rowIndex === rowIndex && row[selectedPosition.blockIndex] ? selectedPosition.blockIndex : 0;
-    const activeBlock = row[activeBlockIndex];
-    const activeBlockMode = resolveBlockMode(activeBlock);
-
-    const handleBlockModeChange = (mode: BlockMode) => {
-        if (mode === activeBlockMode) return;
-
-        const patch: Partial<SectionContent> = { blockMode: mode, type: 0 };
-
-        if (mode === "code") {
-            const { code } = extractCodeFromContent(blockContentToHtml(activeBlock.content));
-            const language = detectCodeLanguage(code);
-            patch.title = activeBlock.title?.trim() || getDefaultCodeFileBaseName(language);
-            patch.subtitle = "";
-            patch.content = toCodeBlockHtml(code, language);
-        } else if (activeBlockMode === "code") {
-            patch.title = "";
-            patch.subtitle = "";
-        }
-
-        updateBlock(rowIndex, activeBlockIndex, patch);
-    };
+    const { rows, addBlock } = useBlockStore();
 
     const handleEditorFocus = useCallback((blockIndex: number, editor: Editor) => {
         focusedBlockIndexRef.current = blockIndex;
@@ -190,7 +196,7 @@ const Item = ({ row, rowIndex, isSectionEnd }: { row: Row; rowIndex: number; isS
             value={row}
             layout
             transition={REORDER_TRANSITION}
-            className={`group/row relative flex flex-col gap-[0.8rem] ${isSectionEnd ? POST_BLOCK_SECTION_END_CLASS : ""}`}
+            className={`group/row relative flex flex-col gap-[0.8rem] ${isOtherRowDragging ? "opacity-70" : ""} ${isSectionEnd ? POST_BLOCK_SECTION_END_CLASS : ""}`}
             as="div"
             dragControls={dragControls}
             dragListener={false}
@@ -204,128 +210,68 @@ const Item = ({ row, rowIndex, isSectionEnd }: { row: Row; rowIndex: number; isS
                 <p className="text-[#ffffff] font-mono">group</p>
             </section> */}
 
-            <motion.section
-                layout="position"
-                className="absolute top-0 right-0 tablet:right-[max(-4.8rem,calc((var(--size-tablet)-100svw)/2))] z-10 flex flex-col items-center gap-[1.2rem] opacity-0 transition-opacity pointer-events-none group-hover/row:pointer-events-auto group-hover/row:opacity-100 hover:pointer-events-auto hover:opacity-100 tablet:pointer-events-auto tablet:before:absolute tablet:before:inset-y-0 tablet:before:right-full tablet:before:w-[1.6rem] tablet:before:content-['']"
+            <motion.button
+                type="button"
+                onClick={() => addBlock(rowIndex, "up")}
+                whileTap={{ scale: 0.95 }}
+                className={`${EDGE_ADD_BUTTON_CLASS} ${dragChromeClass(false, isOtherRowDragging, ROW_EDGE_ADD_VISIBILITY_CLASS)} left-1/2 top-[calc(-3.2rem-0.2cm)] -translate-x-1/2 after:absolute after:inset-x-0 after:top-full after:h-[0.2cm] after:content-['']`}
             >
-                <section className="shadow-[var(--shadow-normal)] bg-[var(--color-surface)] rounded-full py-[0.8rem]">
-                    <UI.Button
-                        onClick={() => addBlock(rowIndex, "down")}
-                        className={GROUP_ACTION_BUTTON_CLASS}
-                    >
-                        <span className="sr-only">아래 그룹 추가</span>
-                        <MaterialIcon
-                            name="add_row_below"
-                            size={20}
-                        />
-                    </UI.Button>
+                <span className="sr-only">위에 행 추가</span>
+                <MaterialIcon
+                    name="add"
+                    size={20}
+                />
+            </motion.button>
+            <motion.button
+                type="button"
+                onClick={() => addBlock(rowIndex, "down")}
+                whileTap={{ scale: 0.95 }}
+                className={`${EDGE_ADD_BUTTON_CLASS} ${dragChromeClass(false, isOtherRowDragging, ROW_EDGE_ADD_VISIBILITY_CLASS)} bottom-[calc(-3.2rem-0.2cm)] left-1/2 -translate-x-1/2 before:absolute before:inset-x-0 before:bottom-full before:h-[0.2cm] before:content-['']`}
+            >
+                <span className="sr-only">아래에 행 추가</span>
+                <MaterialIcon
+                    name="add"
+                    size={20}
+                />
+            </motion.button>
 
-                    <UI.Button
+            <section className={`${BLOCK_ROW_CLASS} relative items-start`}>
+                {row.length === 2 ? (
+                    <motion.button
+                        type="button"
                         onClick={() => {
-                            if (row.length === 1) {
-                                addBlock(rowIndex, "right");
-                                return;
-                            }
-
-                            if (row.length === 2) {
-                                const newRows = rows.map((e, idx) => (idx === rowIndex ? e.reverse() : e));
-                                useBlockStore.getState().setRows(newRows);
-                            }
+                            const newRows = rows.map((entry, idx) => (idx === rowIndex ? [...entry].reverse() : entry));
+                            useBlockStore.getState().setRows(newRows);
                         }}
-                        className={GROUP_ACTION_BUTTON_CLASS}
+                        whileTap={{ scale: 0.95 }}
+                        className={`${EDGE_ADD_BUTTON_CLASS} ${dragChromeClass(false, isOtherRowDragging, ROW_EDGE_ADD_VISIBILITY_CLASS)} left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2`}
                     >
-                        <span className="sr-only">{row.length === 1 ? "블록 추가" : "좌우 전환"}</span>
-                        {row.length === 1 ? (
-                            <svg aria-hidden="true" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor">
-                                <path d="M160-760v560h240v-560H160ZM80-120v-720h720v160h-80v-80H480v560h240v-80h80v160H80Zm400-360Zm-80 0h80-80Zm0 0Zm320 120v-80h-80v-80h80v-80h80v80h80v80h-80v80h-80Z" />
-                            </svg>
-                        ) : (
-                            <MaterialIcon
-                                name="swap_horiz"
-                                size={20}
-                                className="mobile:rotate-90 pc:rotate-0"
-                            />
-                        )}
-                    </UI.Button>
-
-                    <section className="flex max-w-full flex-wrap items-center justify-center bg-[var(--color-background-light)] rounded-full">
-                        {!isSingleGroup ? (
-                            <UI.Button
-                                onClick={() => {
-                                    void confirmAction({
-                                        title: "그룹을 삭제할까요?",
-                                        description: `${rowIndex + 1}번째 그룹의 블록 ${row.length}개가 함께 삭제됩니다.`,
-                                        confirmText: "삭제하기",
-                                        onConfirm: () => {
-                                            deleteRow(rowIndex);
-                                            setToast({ msg: "그룹을 제거했어요", time: 2 });
-                                        },
-                                    });
-                                }}
-                                className={`${GROUP_ACTION_BUTTON_CLASS}`}
-                            >
-                                <span className="sr-only">그룹 삭제</span>
-                                <svg aria-hidden="true" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor">
-                                    <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
-                                </svg>
-                            </UI.Button>
-                        ) : null}
-                    </section>
-                </section>
-
-                <section
-                    className={`flex justify-center items-center gap-[0.8rem] w-full shadow-[var(--shadow-normal)] h-[3.6rem] bg-[var(--color-surface)] rounded-full ${isGrabbing ? "cursor-grabbing" : "cursor-grab"}`}
-                    onPointerDown={(e) => {
-                        e.preventDefault();
-                        setIsGrabbing(true);
-                        dragControls.start(e);
-                    }}
-                    onPointerUp={() => setIsGrabbing(false)}
-                >
-                    <MaterialIcon
-                        name="reorder"
-                        size={16}
-                        className="select-none"
-                    />
-                </section>
-
-                {activeBlock.type === 0 ? (
-                    <section
-                        role="group"
-                        aria-label="블록 형식"
-                        className="flex flex-col shadow-[var(--shadow-normal)] bg-[var(--color-surface)] rounded-full py-[0.8rem]"
-                    >
-                        {BLOCK_MODE_OPTIONS.map(({ mode, label, icon }) => (
-                            <motion.button
-                                key={mode}
-                                type="button"
-                                title={label}
-                                aria-label={`${label} 블록으로 전환`}
-                                aria-pressed={activeBlockMode === mode}
-                                onClick={() => handleBlockModeChange(mode)}
-                                whileTap={{ scale: 0.95 }}
-                                className={`${GROUP_ACTION_BUTTON_CLASS} aria-pressed:bg-[var(--color-surface-hover)] aria-pressed:text-[var(--color-interaction-hover)] focus-visible:outline-2 focus-visible:outline-[var(--color-interaction-hover)]`}
-                            >
-                                <MaterialIcon name={icon} size={20} />
-                            </motion.button>
-                        ))}
-                    </section>
+                        <span className="sr-only">좌우 전환</span>
+                        <MaterialIcon
+                            name="swap_horiz"
+                            size={20}
+                            className="rotate-90 tablet:rotate-0"
+                        />
+                    </motion.button>
                 ) : null}
-            </motion.section>
-
-            <section className={`${BLOCK_ROW_CLASS} items-start`}>
                 {row.map((block, blockIndex) => (
                     <motion.section
                         key={block.id}
                         layout="position"
-                        className={`${BLOCK_COLUMN_CLASS} items-start ${blockKeepsEditorMinHeight(block) ? BLOCK_MIN_HEIGHT_CLASS : "!min-h-0 h-auto"}`}
+                        className={`${BLOCK_COLUMN_CLASS} relative items-start overflow-visible focus-within:border-[#ff4321] ${isOtherRowDragging ? "!z-0" : "z-20"} ${blockKeepsEditorMinHeight(block) ? "" : "!min-h-0 h-auto"}`}
                     >
                         <Block
                             block={block}
                             rowIndex={rowIndex}
                             blockIndex={blockIndex}
-                            last={row.length !== 1}
                             blockCount={row.length}
+                            isGrabbing={isDraggingRow}
+                            suppressHoverChrome={isOtherRowDragging}
+                            onDragHandlePointerDown={(event) => {
+                                event.preventDefault();
+                                onRowDragStart(rowKey);
+                                dragControls.start(event);
+                            }}
                             onEditorFocus={(editor) => handleEditorFocus(blockIndex, editor)}
                             onEditorBlur={() => handleEditorBlur(blockIndex)}
                         />
@@ -335,7 +281,7 @@ const Item = ({ row, rowIndex, isSectionEnd }: { row: Row; rowIndex: number; isS
 
             {focusedEditor && !focusedEditor.isDestroyed ? (
                 <div
-                    className="pointer-events-auto absolute bottom-[-12px] left-1/2 z-20 w-full -translate-x-1/2"
+                    className={`pointer-events-none absolute top-[calc(100%+0.2cm)] left-1/2 z-30 w-full -translate-x-1/2 opacity-0 transition-opacity before:absolute before:inset-x-0 before:bottom-full before:h-[0.2cm] before:content-[''] ${dragChromeClass(false, isOtherRowDragging, "group-hover/row:pointer-events-auto group-hover/row:opacity-100")}`}
                     onPointerDown={(event) => event.stopPropagation()}
                 >
                     <TipTapToolbar editor={focusedEditor} />
@@ -349,20 +295,24 @@ const Block = ({
     block,
     rowIndex,
     blockIndex,
-    last,
     blockCount,
+    isGrabbing,
+    suppressHoverChrome,
+    onDragHandlePointerDown,
     onEditorFocus,
     onEditorBlur,
 }: {
     block: SectionContent;
     rowIndex: number;
     blockIndex: number;
-    last: boolean;
     blockCount: number;
+    isGrabbing: boolean;
+    suppressHoverChrome: boolean;
+    onDragHandlePointerDown: (event: React.PointerEvent<HTMLDivElement>) => void;
     onEditorFocus: (editor: Editor) => void;
     onEditorBlur: () => void;
 }) => {
-    const { updateBlock, deleteBlock, copyBlock, pasteBlock, selectBlock, unSelectBlock } = useBlockStore();
+    const { rows, addBlock, updateBlock, deleteBlock, deleteRow, copyBlock, pasteBlock, selectBlock, unSelectBlock } = useBlockStore();
     const { setToast } = useToastStore();
     const addFromFile = usePostDraftImageStore((state) => state.addFromFile);
 
@@ -370,7 +320,29 @@ const Block = ({
     const [currentImageUrl, setCurrentImageUrl] = useState<string>(block.imageUrl ?? "/");
     const textContent = blockContentToHtml(block.content);
     const codeBlockMode = isCodeBlock(block);
+    const blockMode = resolveBlockMode(block);
     const showHeadingFields = block.type === 0 && isMainBlock(block) && !codeBlockMode;
+    const showModePill = block.type === 0;
+    const removeMode = blockCount > 1 ? "block" : rows.length > 1 ? "row" : null;
+
+    const handleBlockModeChange = (mode: BlockMode) => {
+        if (mode === blockMode) return;
+
+        const patch: Partial<SectionContent> = { blockMode: mode, type: 0 };
+
+        if (mode === "code") {
+            const { code } = extractCodeFromContent(textContent);
+            const language = detectCodeLanguage(code);
+            patch.title = block.title?.trim() || getDefaultCodeFileBaseName(language);
+            patch.subtitle = "";
+            patch.content = toCodeBlockHtml(code, language);
+        } else if (blockMode === "code") {
+            patch.title = "";
+            patch.subtitle = "";
+        }
+
+        updateBlock(rowIndex, blockIndex, patch);
+    };
 
     const handleFormatCode = useCallback(async () => {
         const { code } = extractCodeFromContent(textContent);
@@ -448,15 +420,66 @@ const Block = ({
                 }
             }}
         >
-            {last ? (
-                <section
-                    className="absolute bottom-[4px] right-[4px] z-10 flex items-center rounded-full overflow-hidden bg-[var(--color-surface)] opacity-30 pointer-events-none group-hover/block:opacity-100 group-hover/block:pointer-events-auto group-focus-within/block:opacity-100 group-focus-within/block:pointer-events-auto"
-                    // className={`absolute top-[calc((2.8rem/1)*-1)] left-[50%] transform translate-x-[-50%] z-10 flex items-center rounded-full overflow-hidden p-[0.4rem] ${block.blockMode === "code" ? "bg-[#2d2d2d]" : "bg-white"}`}
-                    onClick={(event) => event.stopPropagation()}
+            <div
+                className={`${BLOCK_CORNER_CLUSTER_CLASS} ${dragChromeClass(isGrabbing, suppressHoverChrome, "")}`}
+                onClick={(event) => event.stopPropagation()}
+            >
+                <div
+                    role="button"
+                    aria-label="행 이동"
+                    className={`flex h-[3.2rem] w-[3.2rem] shrink-0 items-center justify-center rounded-full bg-[var(--color-surface)] shadow-[var(--shadow-normal)] ${isGrabbing ? "cursor-grabbing" : "cursor-grab"}`}
+                    onPointerDown={(event) => {
+                        event.stopPropagation();
+                        onDragHandlePointerDown(event);
+                    }}
                 >
-                    {last ? (
+                    <MaterialIcon
+                        name="reorder"
+                        size={16}
+                        className="select-none"
+                    />
+                </div>
+                {showModePill ? (
+                        <section
+                            role="group"
+                            aria-label="블록 형식"
+                            className="flex h-[3.2rem] items-center rounded-full bg-[var(--color-surface)] shadow-[var(--shadow-normal)]"
+                        >
+                            {BLOCK_MODE_OPTIONS.map(({ mode, label, icon }) => (
+                                <motion.button
+                                    key={mode}
+                                    type="button"
+                                    title={label}
+                                    aria-label={`${label} 블록으로 전환`}
+                                    aria-pressed={blockMode === mode}
+                                    onClick={() => handleBlockModeChange(mode)}
+                                    whileTap={{ scale: 0.95 }}
+                                    className={BLOCK_MODE_PILL_BUTTON_CLASS}
+                                >
+                                    <MaterialIcon
+                                        name={icon}
+                                        size={20}
+                                    />
+                                </motion.button>
+                            ))}
+                        </section>
+                    ) : null}
+                    {removeMode ? (
                         <UI.Button
                             onClick={() => {
+                                if (removeMode === "row") {
+                                    void confirmAction({
+                                        title: "행을 삭제할까요?",
+                                        description: `${rowIndex + 1}번째 행을 삭제합니다.`,
+                                        confirmText: "삭제하기",
+                                        onConfirm: () => {
+                                            deleteRow(rowIndex);
+                                            setToast({ msg: "행을 제거했어요", time: 2 });
+                                        },
+                                    });
+                                    return;
+                                }
+
                                 void confirmAction({
                                     title: "블록을 삭제할까요?",
                                     description: `${rowIndex + 1}번째 그룹의 ${blockIndex + 1}번째 블록을 삭제합니다.`,
@@ -464,16 +487,49 @@ const Block = ({
                                     onConfirm: () => deleteBlock(rowIndex, blockIndex),
                                 });
                             }}
-                            className="cursor-pointer rounded-full p-[0.4rem]"
+                            className="flex h-[3.2rem] w-[3.2rem] cursor-pointer items-center justify-center rounded-full bg-[var(--color-surface)] p-0 shadow-[var(--shadow-normal)]"
                         >
                             <IconComponent
                                 type="outlined-cross"
-                                alt="블록 지우기"
-                                // className="invert brightness-0"
+                                alt={removeMode === "row" ? "행 지우기" : "블록 지우기"}
                             />
                         </UI.Button>
                     ) : null}
-                </section>
+            </div>
+
+            {blockCount === 1 ? (
+                <>
+                    <motion.button
+                        type="button"
+                        onClick={(event) => {
+                            event.stopPropagation();
+                            addBlock(rowIndex, "left");
+                        }}
+                        whileTap={{ scale: 0.95 }}
+                        className={`${EDGE_ADD_BUTTON_CLASS} ${dragChromeClass(isGrabbing, suppressHoverChrome, BLOCK_EDGE_ADD_VISIBILITY_CLASS)} left-[calc(-3.2rem-0.2cm)] top-1/2 -translate-y-1/2 after:absolute after:inset-y-0 after:left-full after:w-[0.2cm] after:content-['']`}
+                    >
+                        <span className="sr-only">왼쪽에 블록 추가</span>
+                        <MaterialIcon
+                            name="add"
+                            size={20}
+                        />
+                    </motion.button>
+                    <motion.button
+                        type="button"
+                        onClick={(event) => {
+                            event.stopPropagation();
+                            addBlock(rowIndex, "right");
+                        }}
+                        whileTap={{ scale: 0.95 }}
+                        className={`${EDGE_ADD_BUTTON_CLASS} ${dragChromeClass(isGrabbing, suppressHoverChrome, BLOCK_EDGE_ADD_VISIBILITY_CLASS)} right-[calc(-3.2rem-0.2cm)] top-1/2 -translate-y-1/2 before:absolute before:inset-y-0 before:right-full before:w-[0.2cm] before:content-['']`}
+                    >
+                        <span className="sr-only">오른쪽에 블록 추가</span>
+                        <MaterialIcon
+                            name="add"
+                            size={20}
+                        />
+                    </motion.button>
+                </>
             ) : null}
 
             <section className={`relative ${POST_BLOCK_CONTENT_CLASS} ${keepMinHeight ? "h-full" : "h-auto"}`}>

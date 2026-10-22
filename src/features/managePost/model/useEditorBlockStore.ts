@@ -12,7 +12,7 @@ interface BlockStore {
     currentLockKey: number;
 
     // 행/블록 조작
-    addBlock: (rowIndex: number, direction: "right" | "down") => void;
+    addBlock: (rowIndex: number, direction: "left" | "right" | "up" | "down") => void;
     updateBlock: (rowIndex: number, blockIndex: number, newData: Partial<SectionContent>) => void;
     deleteBlock: (rowIndex: number, blockIndex: number) => void;
     deleteRow: (rowIndex: number) => void;
@@ -71,11 +71,19 @@ export const useBlockStore = create<BlockStore>((set, get) => ({
             blockMode: "sub",
         };
         set((state) => {
-            const newRows = state.rows.map((row, i) => (i === rowIndex && direction === "right" && row.length < 2 ? [...row, newBlock] : row));
-            if (direction === "down") {
-                newRows.splice(rowIndex + 1, 0, [newBlock]);
+            if (direction === "left" || direction === "right") {
+                const row = state.rows[rowIndex];
+                if (!row || row.length >= 2) return { rows: state.rows };
+
+                const nextRow = direction === "left" ? [newBlock, ...row] : [...row, newBlock];
+                return {
+                    rows: state.rows.map((entry, index) => (index === rowIndex ? nextRow : entry)),
+                };
             }
-            return { rows: newRows };
+
+            const nextRows = [...state.rows];
+            nextRows.splice(direction === "up" ? rowIndex : rowIndex + 1, 0, [newBlock]);
+            return { rows: nextRows };
         });
     },
 

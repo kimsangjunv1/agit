@@ -18,6 +18,7 @@ import { DEFAULT_CODE_LANGUAGE } from "@/shared/lib/codeHighlight";
 import { codeBlockLowlight } from "@/shared/ui/common/richText/extensions/codeBlockEditor";
 import { DraftImageDrop } from "@/shared/ui/common/richText/extensions/draftImageDrop";
 import { ResizableImage } from "@/shared/ui/common/richText/extensions/resizableImage";
+import { EmptyBodyPlaceholder } from "@/shared/ui/common/richText/extensions/emptyBodyPlaceholder";
 import { SnippetCodeBlock, SnippetCodeBlockLanguageAutoDetect } from "@/shared/ui/common/richText/extensions/snippetCodeBlock";
 
 type Props = {
@@ -30,7 +31,7 @@ type Props = {
 
 const TIPTAP_EDITOR_CLASS = ["tiptap-editor-content outline-none focus:outline-none", POST_TIPTAP_CONTENT_CLASS].join(" ");
 
-const TIPTAP_WRAPPER_CLASS = "h-full rounded-[1.6rem] outline-none pb-[3.4rem]";
+const TIPTAP_WRAPPER_CLASS = "h-full rounded-[1.6rem] outline-none";
 
 const CustomTextStyle = TextStyle.configure({
     HTMLAttributes: { class: RICH_TEXT_SPAN_CLASS },
@@ -109,6 +110,7 @@ const Normal = ({ content = "", onChange, showToolbar = true, onEditorFocus, onE
             }),
             SnippetCodeBlockLanguageAutoDetect,
             DraftImageDrop,
+            EmptyBodyPlaceholder,
         ],
         content,
         onFocus: ({ editor: currentEditor }) => onEditorFocus?.(currentEditor),
