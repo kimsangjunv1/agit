@@ -47,7 +47,7 @@ const MobileMenu = () => {
                 {isMobileMenuOpen ? (
                     <motion.article
                         data-page-transition-fixed="sidebar"
-                        className="mobile flex flex-col justify-center items-center gap-[1.6rem] fixed top-0 right-0 w-[50svw] h-[100svh] bg-[var(--color-surface-floating)] z-[100000000]"
+                        className="mobile flex flex-col justify-center items-center gap-[1.6rem] fixed top-0 right-0 h-[100svh] bg-black z-[100000000]"
                         // className="mobile flex flex-col justify-center items-center gap-[1.6rem] fixed top-0 left-0 w-full h-full bg-[#232323] z-10000"
                         initial={{ clipPath: CLIP_MENU.hidden }}
                         animate={{ clipPath: CLIP_MENU.visible }}
