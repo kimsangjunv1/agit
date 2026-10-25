@@ -10,6 +10,7 @@ import { POST_INNER_CLASS, POST_PAGE_CLASS } from "@/shared/lib/richText/styles"
 import Scrollbar from "@/shared/ui/common/Scrollbar";
 import WidthControl, { type PostContentWidth } from "./ui/WidthControl";
 import CheerUpIsland from "./ui/CheerUpIsland";
+import { PostIslandStack } from "./ui/PostIslandStack";
 export default function Panel({ id, initialData }: { id: string; initialData: GetPostDetailResponse }) {
     const page = usePostDetail(id, initialData);
     const [contentWidth, setContentWidth] = useState<PostContentWidth>("tablet");
@@ -47,10 +48,12 @@ export default function Panel({ id, initialData }: { id: string; initialData: Ge
             {page.isReady ? (
                 <>
                     <Layer.Toc />
-                    <Layer.DynamicPostController key={page.postId} />
-                    <CheerUpIsland key={`cheer-${page.postId}`} />
+                    <PostIslandStack>
+                        <CheerUpIsland key={`cheer-${page.postId}`} />
+                        <Layer.DynamicPostController key={page.postId} />
+                        <WidthControl value={contentWidth} onChange={setContentWidth} />
+                    </PostIslandStack>
                     <Layer.Actions />
-                    <WidthControl value={contentWidth} onChange={setContentWidth} />
                 </>
             ) : null}
         </PostDetailPageProvider>

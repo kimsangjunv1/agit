@@ -5,15 +5,14 @@ import { motion, useAnimationControls, useReducedMotion } from "motion/react";
 
 import DynamicIsland from "@/shared/ui/common/DynamicIsland";
 import { CheerUpIcon } from "@/shared/ui/common/CheerUpIcon";
-import { useLayoutStore } from "@/shared/stores/useLayoutStore";
 import { usePostDetailProvider } from "../model/PostDetailContext";
+import { PostIslandSlot } from "./PostIslandStack";
 
 const WORDS = ["좋아요!", "와우", "귿", "최고!", "멋져요", "짱이야", "대박!", "힘내!", "파이팅", "응원해요", "굿잡", "👍", "👏", "💕", "😍", "🔥", "💪", "🌿", "🌟"] as const;
 type CheerWord = { id: number; text: string; x: number; rise: number };
 
 const CheerUpIsland = () => {
     const { bodyEndRef, scrollViewportRef, likeCount, cheer } = usePostDetailProvider();
-    const isPageVisible = useLayoutStore((state) => state.isPageContentVisible && state.transitionPhase === "idle" && !state.isMobileMenuOpen);
     const reducedMotion = useReducedMotion();
     const pulse = useAnimationControls();
     const wordId = useRef(0);
@@ -64,10 +63,8 @@ const CheerUpIsland = () => {
         }
     };
 
-    if (!hasReachedEnd || !isPageVisible) return null;
-
     return (
-        <div className="fixed bottom-[calc(13.6rem+env(safe-area-inset-bottom))] left-1/2 z-[121] -translate-x-1/2">
+        <PostIslandSlot present={hasReachedEnd}>
             <div className="relative">
                 <div
                     aria-hidden="true"
@@ -104,7 +101,7 @@ const CheerUpIsland = () => {
                     </motion.button>
                 </DynamicIsland>
             </div>
-        </div>
+        </PostIslandSlot>
     );
 };
 

@@ -5,8 +5,8 @@ import { useReducedMotion } from "motion/react";
 
 import DynamicIsland from "@/shared/ui/common/DynamicIsland";
 import { MaterialIcon } from "@/shared/ui/common/MaterialIcon";
-import { useLayoutStore } from "@/shared/stores/useLayoutStore";
 import { usePostDetailProvider } from "../model/PostDetailContext";
+import { PostIslandSlot } from "./PostIslandStack";
 
 const SCROLL_START_PX = 12;
 const COMPLETE_PERCENT = 99;
@@ -21,7 +21,6 @@ const readingYear = (createDate: string) => {
 const DynamicPostController = () => {
     const reducedMotion = useReducedMotion();
     const { scrollViewportRef, title, createDate, next, postId, pushToUrl } = usePostDetailProvider();
-    const isVisible = useLayoutStore((state) => state.isPageContentVisible && state.transitionPhase === "idle" && !state.isMobileMenuOpen);
     const gaugeRef = useRef<HTMLDivElement>(null);
     const progressRef = useRef<HTMLDivElement>(null);
     const percentRef = useRef(0);
@@ -74,9 +73,7 @@ const DynamicPostController = () => {
             progressRef.current.setAttribute("aria-valuenow", String(Math.round(percentRef.current)));
             progressRef.current.setAttribute("aria-valuetext", `${Math.round(percentRef.current)}%`);
         }
-    }, [phase, isVisible, dismissed]);
-
-    if (!isVisible || dismissed || phase === "top") return null;
+    }, [phase, dismissed]);
 
     const canOpenNext = phase === "complete" && Boolean(next);
     const year = readingYear(createDate);
@@ -91,7 +88,7 @@ const DynamicPostController = () => {
     };
 
     return (
-        <div className="fixed bottom-[calc(7.2rem+env(safe-area-inset-bottom))] left-1/2 z-[120] -translate-x-1/2">
+        <PostIslandSlot present={!dismissed && phase !== "top"}>
             <div
                 ref={progressRef}
                 role="progressbar"
@@ -137,7 +134,7 @@ const DynamicPostController = () => {
                     </div>
                 </DynamicIsland>
             </div>
-        </div>
+        </PostIslandSlot>
     );
 };
 

@@ -1,7 +1,7 @@
 "use client";
 
 import DynamicIsland from "@/shared/ui/common/DynamicIsland";
-import { useLayoutStore } from "@/shared/stores/useLayoutStore";
+import { PostIslandSlot } from "./PostIslandStack";
 
 const WIDTH_OPTIONS = [
     {
@@ -29,12 +29,8 @@ type WidthControlProps = {
 };
 
 const WidthControl = ({ value, onChange }: WidthControlProps) => {
-    const isVisible = useLayoutStore((state) => state.isPageContentVisible && state.transitionPhase === "idle" && !state.isMobileMenuOpen);
-
-    if (!isVisible) return null;
-
     return (
-        <div className="fixed bottom-[calc(1.6rem+env(safe-area-inset-bottom))] left-1/2 z-[120] -translate-x-1/2">
+        <PostIslandSlot present>
             <DynamicIsland
                 ariaLabel="본문 너비 선택"
                 placement="bottom"
@@ -65,7 +61,7 @@ const WidthControl = ({ value, onChange }: WidthControlProps) => {
                     ))}
                 </div>
             </DynamicIsland>
-        </div>
+        </PostIslandSlot>
     );
 };
 
