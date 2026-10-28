@@ -25,15 +25,13 @@ export const RENEWAL_VIEWPORT = {
 } as const;
 
 export const renewalHero = {
-    category: "HELLO",
+    category: "ABOUT",
     title: resumeProfile.name,
     subtitle: resumeProfile.role,
-    greeting: `안녕하세요,\n프론트엔드 개발자 ${resumeProfile.name}입니다.`,
-    intro: [
-        "2년 7개월간 React·Next.js 기반 프론트엔드 개발을 담당하며, 결제·정산 시스템과 대규모 백오피스의 신규 구축 및 레거시 전환을 주도해 왔습니다.",
-        "약 8,000건 규모의 데이터 조회 병목과 고빈도 인터랙션의 API 호출·렌더링 성능을 개선하고, API 에러 로깅·알림 체계로 운영 안정성을 높였습니다.",
-        "사용자에게 보이는 화면뿐 아니라, 제품을 함께 만드는 사람들의 개발·협업 경험까지 개선하는 프론트엔드 개발자를 지향합니다.",
-    ],
+    motivationLabel: "Motivation.",
+    motivation: resumeProfile.motivation,
+    introductionLabel: "Introduction.",
+    introduction: resumeProfile.introduction,
     role: "Frontend Developer",
     profileImage: "/images/picture/resume-profile.png",
     quickLinks: [
@@ -56,15 +54,11 @@ const EXPERIENCE_TOC_LABELS: Record<string, string> = {
 };
 
 export const renewalProjectVisuals: Record<string, { category: string; logo?: string }> = {
-    fandombox: { category: "Product" },
-    maze: { category: "Corporate" },
-    fivepixels: { category: "Open Source" },
-    keepupass: { category: "SaaS Admin" },
-    "dev-team-process": { category: "Team Lead" },
-    kqr: { category: "SaaS" },
+    "qa-feedback": { category: "Internal Tool" },
+    eds: { category: "Design System" },
     "imachine-ceo": { category: "SaaS" },
-    "enjoysoft-hub": { category: "Internal SaaS" },
-    "agency-ceo": { category: "SaaS" },
+    fandombox: { category: "Product" },
+    fivepixels: { category: "Open Source" },
 };
 
 function getProjectById(projectId: string): ResumeProject {
@@ -99,18 +93,17 @@ function mergeTechStack(projectIds: string[]): string {
 }
 
 const EXPERIENCE_ACHIEVEMENTS: Record<string, string[]> = {
-    "maze-company": [
-        "초당 20~30회의 연속 입력을 300ms 단위로 병합해 API 호출을 최대 초당 3회로 제한",
-        "렌더링 부하를 줄여 iPhone 6 평균 FPS를 20대에서 45 이상으로 개선",
-        "기업 홈페이지에 지연 로딩과 코드 분할을 적용해 LCP를 5.1초에서 2.3초로 단축",
-        "초기 JavaScript 용량을 1.4MB에서 690KB로 줄이고, 저사양 기기에서 주요 흐름을 회귀 검증",
-    ],
     enjoysoft: [
-        "Classic ASP 점주 백오피스의 12개 화면을 Next.js로 이관하고, 약 8,000건의 조회 시간을 24분에서 12초로 단축",
-        "대리점 백오피스의 중복 API 요청을 화면당 4~6회에서 1회로 줄이고, Playwright 회귀 시나리오 18개 구축",
-        "사내 디자인 시스템을 구축해 UI 수정·교체 기간을 7일 이상에서 2일로 단축하고, 작업 공수 약 70% 절감",
-        "라이선스 관리 프로세스를 자동화해 연간 수작업 약 200시간 절감",
-        "토스페이먼츠 인증·결제 정보를 서버에서 처리하도록 설계하고, 유료 전환율 80% 이상 달성",
+        "QA용 피드백 라이브러리로 동일 이슈 재질문을 평균 3~4회에서 0~1회로 줄임",
+        "EDS 디자인 시스템으로 캘린더 등 공통 UI 변경을 약 6~7일에서 1일 이내로 단축",
+        "아이머신 CEO를 Next.js로 재구축하고 일일 관련 문의를 최대 31건에서 3~4건으로 감소",
+        "Slack 모니터링으로 오류 대응을 약 1~2일에서 평균 3시간 이내로 단축",
+        "토스페이먼츠 빌링키 구독 결제와 서버 측 멱등성 키·SSR 구독 검증을 설계·구현",
+    ],
+    "maze-company": [
+        "3×3 당첨 구조를 연속 터치·게이지 인터랙션으로 전환해 서버 부하와 게임 경험을 함께 개선",
+        "게이지 구간별 API 요청 분리로 당첨 검증과 인터랙션 연속성을 확보",
+        "스프라이트·WebP·GPU 가속으로 iPhone 6 기준 FPS를 23에서 55~60으로 개선",
     ],
 };
 
@@ -168,7 +161,7 @@ export const renewalContact = {
     email: resumeProfile.email,
     github: resumeProfile.github,
     githubLabel: "github.com/kimsangjunv1",
-    quote: '"사용자 경험과 동료의 개발 경험을 함께 개선합니다."',
+    quote: '"반복되는 UI·QA 비용을 줄이고, 변화에 빠른 프론트엔드 환경을 만듭니다."',
     notion: "https://app.notion.com/p/3d4a7d54d69680e59c30d5f43f0e8e45?source=copy_link",
     notionLabel: "노션",
 };
@@ -206,6 +199,6 @@ export function buildRenewalPersonJsonLd() {
         url: resumeProfile.service,
         sameAs: [resumeProfile.github, renewalProfileDetails.linkedin, resumeProfile.portfolio],
         knowsAbout: resumeTechStack,
-        description: resumeProfile.introduction,
+        description: resumeProfile.introduction.join(" "),
     };
 }

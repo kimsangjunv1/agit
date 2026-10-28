@@ -2,6 +2,7 @@
 
 import { ArrowUpRight, X } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
+import Image from "next/image";
 import { useCallback, useEffect, useId, useState } from "react";
 import { createPortal } from "react-dom";
 
@@ -201,6 +202,28 @@ const ProjectDetailModal = ({ project, onClose }: { project: ResumeProjectDetail
                     </section>
 
                     <section className="flex flex-col gap-[3.2rem] p-[2.4rem]">
+                        {project.flowCharts && project.flowCharts.length > 0 ? (
+                            <section className="flex flex-col gap-[1.6rem]">
+                                <h3 className={PROJECT_DETAIL_TITLE_CLASS_NAME}>프로세스 플로우</h3>
+                                <div className="flex flex-col gap-[1.6rem]">
+                                    {project.flowCharts.map((flowChart) => (
+                                        <figure
+                                            key={flowChart.src}
+                                            className="overflow-hidden border border-[var(--color-border)] bg-[var(--color-background-light)]"
+                                        >
+                                            <Image
+                                                src={flowChart.src}
+                                                alt={flowChart.alt}
+                                                width={1807}
+                                                height={605}
+                                                className="h-auto w-full object-contain"
+                                            />
+                                        </figure>
+                                    ))}
+                                </div>
+                            </section>
+                        ) : null}
+
                         {project.sections.map((section) => (
                             <ProjectDetailSection
                                 key={section.title}

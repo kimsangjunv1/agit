@@ -19,10 +19,34 @@ const ResumeRenewalHero = () => {
             <RenewalRightBlocks
                 className="min-h-[calc(100svh-(var(--header-height)*2))] justify-center"
                 label={<p className={R.label}>{renewalHero.category}</p>}
-                headline={<h1 className={`${R.heroKeyline} whitespace-pre-line`}>{renewalHero.greeting}</h1>}
+                headline={
+                    <section className="flex flex-col gap-[1.6rem]">
+                        <p className={R.label}>{renewalHero.motivationLabel}</p>
+                        <div className="flex flex-col gap-[1.6rem]">
+                            {renewalHero.motivation.map((paragraph, index) =>
+                                index === 0 ? (
+                                    <h1
+                                        key={paragraph}
+                                        className={R.heroKeyline}
+                                    >
+                                        {paragraph}
+                                    </h1>
+                                ) : (
+                                    <p
+                                        key={paragraph}
+                                        className={R.body}
+                                    >
+                                        {paragraph}
+                                    </p>
+                                ),
+                            )}
+                        </div>
+                    </section>
+                }
                 description={
-                    <div className="flex flex-col gap-[1.6rem]">
-                        {renewalHero.intro.map((paragraph) => (
+                    <section className="flex flex-col gap-[1.6rem]">
+                        <p className={R.label}>{renewalHero.introductionLabel}</p>
+                        {renewalHero.introduction.map((paragraph) => (
                             <p
                                 key={paragraph}
                                 className={R.body}
@@ -30,7 +54,7 @@ const ResumeRenewalHero = () => {
                                 {paragraph}
                             </p>
                         ))}
-                    </div>
+                    </section>
                 }
                 details={
                     <div className="flex flex-col gap-[2.4rem]">

@@ -42,6 +42,11 @@ export type ResumeProjectDetailSection = {
     ordered?: boolean;
 };
 
+export type ResumeProjectFlowChart = {
+    src: string;
+    alt: string;
+};
+
 export type ResumeProjectDetail = {
     id: string;
     title: string;
@@ -52,6 +57,8 @@ export type ResumeProjectDetail = {
     team: string;
     tileMetric: string;
     technologies: { name: string; description: string }[];
+    /** 문제와 요구사항 섹션 위에 표시할 플로우 차트 */
+    flowCharts?: ResumeProjectFlowChart[];
     sections: ResumeProjectDetailSection[];
 };
 
