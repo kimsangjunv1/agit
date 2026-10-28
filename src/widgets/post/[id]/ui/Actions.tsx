@@ -7,7 +7,7 @@ const Actions = () => {
     const { postIdx } = usePostDetailProvider();
     const { pushToUrl } = useNavigate();
 
-    const { alreadyLiked, likeCount, navVisibility, hasNavActions, isDeletePending, handleNavAction } = usePostNavigationActions({
+    const { navVisibility, hasNavActions, isDeletePending, handleNavAction } = usePostNavigationActions({
         postIdx,
         isView: true,
         isCreate: false,
@@ -26,8 +26,6 @@ const Actions = () => {
         >
             <PostNavigationActions
                 {...navVisibility}
-                likeCount={likeCount}
-                alreadyLiked={alreadyLiked}
                 isDeletePending={isDeletePending}
                 onAction={handleNavAction}
             />

@@ -8,7 +8,6 @@ import { useGetPostDetailQuery } from "@/entities/post/api/post.query";
 import { setPostDraftFetch } from "@/entities/post/api/post.api";
 import type { SectionContent } from "@/entities/post/model/post.type";
 import { useDeletePostWithFeedback, usePatchPostWithFeedback, useSetPostWithFeedback } from "@/features/managePost/hooks/usePostMutations";
-import { useCheerUp } from "@/features/managePost/hooks/useCheerUp";
 import { preparePostPayloadForSave } from "@/features/managePost/lib/preparePostSave";
 import type { PostNavAction } from "@/features/managePost/lib/postNavigationActions";
 import { canManagePost, getPostNavVisibility, hasVisiblePostNavActions } from "@/features/managePost/lib/postPermissions";
@@ -42,7 +41,6 @@ export const usePostNavigationActions = ({ postIdx, isView, isCreate, isEdit, pu
 
     const { mutateAsync: patchPostFetchAsync, isPending: isPatchPending } = usePatchPostWithFeedback();
     const { mutateAsync: setPostFetchAsync, isPending: isSetPending } = useSetPostWithFeedback();
-    const cheerUp = useCheerUp(postIdx, postDetailData?.result?.likes ?? 0);
     const { mutateAsync: deletePostFetchAsync, isPending: isDeletePending } = useDeletePostWithFeedback();
 
     const canManage = useMemo(
@@ -182,11 +180,6 @@ export const usePostNavigationActions = ({ postIdx, isView, isCreate, isEdit, pu
             return;
         }
 
-        if (action === "like") {
-            cheerUp.cheer();
-            return;
-        }
-
         if (action === "comments") {
             scrollToComments();
             return;
@@ -210,8 +203,6 @@ export const usePostNavigationActions = ({ postIdx, isView, isCreate, isEdit, pu
     return {
         postTitle: postDetailData?.result?.title,
         tocItems,
-        alreadyLiked: cheerUp.hasCheered || postDetailData?.result?.alreadyLiked,
-        likeCount: cheerUp.count,
         navVisibility,
         hasNavActions,
         isPatchPending,

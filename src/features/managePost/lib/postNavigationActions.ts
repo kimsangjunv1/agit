@@ -10,11 +10,6 @@ export const POST_NAV_ACTIONS = [
         action: "delete" as const,
     },
     {
-        title: "Cheer Up",
-        icon: "outlined-like",
-        action: "like" as const,
-    },
-    {
         title: "수정하기",
         icon: "outlined-edit",
         action: "edit" as const,
