@@ -6,7 +6,6 @@ type PostPermissionContext = {
 
 export type PostNavVisibility = {
     showShare: boolean;
-    showLike: boolean;
     showComments: boolean;
     showToc: boolean;
     showReading: boolean;
@@ -25,7 +24,6 @@ export const canShowPostComments = (postType?: string) => postType !== "til" && 
 
 export const getPostNavVisibility = ({ canManage, isView, hasToc, postType }: { canManage: boolean; isView: boolean; hasToc: boolean; postType?: string }): PostNavVisibility => ({
     showShare: isView,
-    showLike: isView,
     showComments: isView && canShowPostComments(postType),
     showToc: isView && hasToc,
     showReading: isView,

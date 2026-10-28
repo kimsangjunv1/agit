@@ -10,12 +10,9 @@ import { getPostRouteFlags } from "../lib/postRoute";
 import useNavigate from "@/shared/hooks/useNavigate";
 import { usePostReadingSettingsStore } from "@/shared/stores/usePostReadingSettingsStore";
 import { useLayoutStore } from "@/shared/stores/useLayoutStore";
-import { CheerUpIcon } from "@/shared/ui/common/CheerUpIcon";
 import DynamicIsland from "@/shared/ui/common/DynamicIsland";
 
 type PostNavigationActionsProps = PostNavVisibility & {
-    likeCount: number;
-    alreadyLiked?: boolean;
     isDeletePending: boolean;
     onAction: (action: PostNavAction) => void;
 };
@@ -105,13 +102,10 @@ const ReadingSettingControl = ({
 
 const PostNavigationActions = ({
     showShare,
-    showLike,
     showComments,
     showReading,
     showEdit,
     showDelete,
-    likeCount,
-    alreadyLiked,
     isDeletePending,
     onAction,
 }: PostNavigationActionsProps) => {
@@ -119,8 +113,6 @@ const PostNavigationActions = ({
     const shouldShowIsland = useLayoutStore((state) => state.isPageContentVisible && state.transitionPhase === "idle");
 
     const { currentPathName } = useNavigate();
-    const isLiked = alreadyLiked ?? false;
-    const likeLabel = likeCount > 0 ? `Cheer Up ${likeCount}` : "Cheer Up";
 
     const { IS_ROUTE_POST_VIEW } = getPostRouteFlags(currentPathName);
     const [isReadingSettingsOpen, setIsReadingSettingsOpen] = useState(false);
@@ -224,15 +216,6 @@ const PostNavigationActions = ({
                                                 />
                                             }
                                             onClick={() => onAction("share")}
-                                        />
-                                    ) : null}
-                                    {showLike ? (
-                                        <NavButton
-                                            title={likeLabel}
-                                            pressed={isLiked}
-                                            className={isLiked ? "bg-[#00ff61] text-[var(--color-on-accent)]" : ""}
-                                            icon={<CheerUpIcon />}
-                                            onClick={() => onAction("like")}
                                         />
                                     ) : null}
                                     {showComments ? (
