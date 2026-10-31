@@ -4,13 +4,19 @@ import { renewalExperiences } from "@/entities/resume/constants/resumeRenewalDat
 
 import * as Layer from "./ui";
 import { R } from "./ui/renewalStyles";
-import { Fragment, ReactNode, useRef, useState } from "react";
+import { Fragment, ReactNode, useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { motion, useReducedMotion } from "motion/react";
+import { motion, useMotionValue, useReducedMotion, useSpring } from "motion/react";
 import Scrollbar from "@/shared/ui/common/Scrollbar";
 import { useLayoutStore } from "@/shared/stores/useLayoutStore";
 
 const MASCOT_REVEAL_EASE = [0.22, 1, 0.36, 1] as const;
+const MASCOT_BACK_ARM_MAX_DEG = 55;
+const MASCOT_FRONT_ARM_MAX_DEG = 25;
+const MASCOT_FACE_MAX_DEG = 10;
+const MASCOT_ANGLE_SOFTNESS = 1.15;
+
+const mapSoftAngle = (normalized: number, maxDeg: number) => maxDeg * Math.tanh(normalized * MASCOT_ANGLE_SOFTNESS);
 
 type DefaultInfoType = {
     title: string;
@@ -49,8 +55,8 @@ export default function Panel() {
             >
                 <SectionItem
                     isFirstSection
-                    title="안녕하세요"
-                    text="테스트"
+                    title="'안녕하세요'"
+                    text="안녕하세요 불가합니다."
                     // text="개요 오리온캑터스는 디자인을 바탕으로 기획과 개발을 함께하는 스튜디오입니다. 웹과 앱, 폰트와 브랜드 등에서 문제에 맞는 형태를 찾고, 잘 쓰이고 또 마음이 가는 경험을 설계합니다.
                     // 쌓아온 지식과 자원을 슬기롭게 활용해, 함께 만든 결과를 계속 쓰고 발전시킬 수 있도록 필요한 자산과 방법을 나눕니다. design@orioncactus.com"
                     className={{
@@ -64,21 +70,61 @@ export default function Panel() {
                     text="개요 오리온캑터스는 디자인을 바탕으로 기획과 개발을 함께하는 스튜디오입니다. 웹과 앱, 폰트와 브랜드 등에서 문제에 맞는 형태를 찾고, 잘 쓰이고 또 마음이 가는 경험을 설계합니다.
                     쌓아온 지식과 자원을 슬기롭게 활용해, 함께 만든 결과를 계속 쓰고 발전시킬 수 있도록 필요한 자산과 방법을 나눕니다. design@orioncactus.com"
                 />
-                <CarouselItem
+                <SectionItem
                     title="함께 만들 수 있는 것"
-                    text="asd"
+                    element={
+                        <section className="flex flex-col gap-[1.6rem]">
+                            <CarouselItem
+                                title="웹 디자인 및 개발"
+                                text="asd"
+                            />
+                            <CarouselItem
+                                title="앱 디자인 및 개발"
+                                text="asd"
+                            />
+                            <CarouselItem
+                                title="브랜딩"
+                                text="asd"
+                            />
+                            <CarouselItem
+                                title="프론트엔드"
+                                text="asd"
+                            />
+                        </section>
+                    }
                 />
-                <CarouselItem
-                    title="함께 만들 수 있는 것"
-                    text="asd"
+                <SectionItem
+                    title="이렇게 만듭니다"
+                    element={
+                        <section>
+                            <CarouselItem
+                                title="필요한 것부터 함께 찾습니다"
+                                text="asd"
+                            />
+                            <CarouselItem
+                                title="쓰일 환경에서 확인하며 만듭니다"
+                                text="asd"
+                            />
+                            <CarouselItem
+                                title="마음이 가는 이유까지 챙깁니다"
+                                text="asd"
+                            />
+                            <CarouselItem
+                                title="다음 작업으로 이어갈 수 있게 합니다"
+                                text="asd"
+                            />
+                        </section>
+                    }
                 />
                 <SectionItem
                     title="경험 분야"
                     element={
-                        <div>
-                            <section>asd</section>
-                            <section>asd</section>
-                        </div>
+                        <section>
+                            <CarouselItem
+                                title="함께 만들 수 있는 것"
+                                text="asd"
+                            />
+                        </section>
                     }
                 />
                 <SectionItem
@@ -100,7 +146,7 @@ export default function Panel() {
                 autoHide
             >
                 <SectionItem
-                    title="한눈에 보기"
+                    title="프로젝트"
                     element={
                         <section className="grid grid-cols-2 gap-[5.2rem]">
                             <ProjectItem
@@ -167,10 +213,54 @@ export default function Panel() {
 }
 
 const FirstSectionMascot = () => {
+    const bodyRef = useRef<HTMLDivElement | null>(null);
     const reducedMotion = useReducedMotion();
     const canPlayIntro = useLayoutStore((state) => state.isPageContentVisible && state.transitionPhase === "idle");
     const introHidden = { y: "100%" };
     const introVisible = { y: 0 };
+    const backArmTarget = useMotionValue(0);
+    const faceTarget = useMotionValue(0);
+    const frontArmTarget = useMotionValue(0);
+    // 뒤팔(가장 빠름) → 얼굴 → 앞팔(가장 느림)
+    const backArmRotate = useSpring(backArmTarget, {
+        stiffness: reducedMotion ? 1000 : 150,
+        damping: reducedMotion ? 80 : 22,
+        mass: 0.42,
+    });
+    const faceRotate = useSpring(faceTarget, {
+        stiffness: reducedMotion ? 1000 : 145,
+        damping: reducedMotion ? 80 : 25,
+        mass: 0.55,
+    });
+    const frontArmRotate = useSpring(frontArmTarget, {
+        stiffness: reducedMotion ? 1000 : 95,
+        damping: reducedMotion ? 80 : 28,
+        mass: 0.72,
+    });
+
+    useEffect(() => {
+        if (reducedMotion) {
+            backArmTarget.set(0);
+            faceTarget.set(0);
+            frontArmTarget.set(0);
+            return;
+        }
+
+        const handlePointerMove = (event: PointerEvent) => {
+            const body = bodyRef.current;
+            if (!body) return;
+
+            const bounds = body.getBoundingClientRect();
+            const centerX = bounds.left + bounds.width * 0.42;
+            const normalized = (event.clientX - centerX) / Math.max(bounds.width * 0.75, 1);
+            backArmTarget.set(mapSoftAngle(normalized, MASCOT_BACK_ARM_MAX_DEG));
+            faceTarget.set(mapSoftAngle(normalized, MASCOT_FACE_MAX_DEG));
+            frontArmTarget.set(mapSoftAngle(normalized, MASCOT_FRONT_ARM_MAX_DEG));
+        };
+
+        window.addEventListener("pointermove", handlePointerMove, { passive: true });
+        return () => window.removeEventListener("pointermove", handlePointerMove);
+    }, [backArmTarget, faceTarget, frontArmTarget, reducedMotion]);
 
     return (
         <motion.div
@@ -183,15 +273,43 @@ const FirstSectionMascot = () => {
                 ease: MASCOT_REVEAL_EASE,
             }}
         >
-            <Image
-                src="/images/picture/img-resume-renewal-mascot.svg"
-                alt=""
-                width={369}
-                height={319}
-                priority
-                className="h-auto w-[50%] select-none"
-                // className="h-auto w-[min(92%,48rem)] select-none"
-            />
+            <div
+                ref={bodyRef}
+                className="relative w-[50%] select-none"
+            >
+                <motion.img
+                    src="/images/picture/img-resume-renewal-mascot-hand-back.svg"
+                    alt=""
+                    width={127}
+                    height={128}
+                    draggable={false}
+                    className="absolute bottom-[30%] left-[60%] z-0 h-auto w-[38%] origin-bottom"
+                    style={{ rotate: backArmRotate }}
+                />
+                <motion.div
+                    className="relative z-[1] absolute bottom-[-10%] left-[-10%]"
+                    // className="relative z-[1] origin-bottom"
+                    style={{ rotate: faceRotate }}
+                >
+                    <Image
+                        src="/images/picture/img-resume-renewal-mascot.svg"
+                        alt=""
+                        width={369}
+                        height={319}
+                        priority
+                        className="h-auto w-full"
+                    />
+                </motion.div>
+                <motion.img
+                    src="/images/picture/img-resume-renewal-mascot-hand-front.svg"
+                    alt=""
+                    width={127}
+                    height={125}
+                    draggable={false}
+                    className="absolute bottom-[4%] left-[40%] z-[2] h-auto w-[40%] origin-bottom"
+                    style={{ rotate: frontArmRotate }}
+                />
+            </div>
         </motion.div>
     );
 };
@@ -222,14 +340,21 @@ const ListItem = () => {
 const CarouselItem = ({ title, text, divider = true, isFirstSection = false, className }: CarouselItem) => {
     const [open, setOpen] = useState(false);
     return (
-        <section className={`pb-[5.2rem] px-[5.2rem] flex flex-col gap-[1.6rem] ${divider ? "border-b border-b-[#ffffff20]" : ""} ${isFirstSection ? "pt-[19.2rem]" : "pt-[5.2rem]"}`}>
-            <section>
-                <h2>{title}</h2>
-                <button onClick={() => setOpen(!open)}>보기</button>
+        <button
+            className={`flex flex-col items-start gap-[0.4rem] ${open ? "mb-[1.2rem]" : ""}`}
+            onClick={() => setOpen(!open)}
+        >
+            <section className="flex gap-[0.8rem]">
+                <h2 className={`${open ? "text-[var(--color-brand-500)]" : ""}`}>{title}</h2>
+                <p
+                    className={`text-[1.2rem] skew-x-[-8deg] rounded-[0.2rem] bg-[var(--color-brand-500)] h-[1.5rem] px-[0.2rem] pt-[0.1rem] font-extrabold text-black ${open ? "text-[var(--color-brand-500)]" : ""}`}
+                >
+                    {open ? "Hide" : "View"}
+                </p>
             </section>
 
-            {open ? <p>{text}</p> : null}
-        </section>
+            {open ? <p className="text-[var(--color-brand-300)]">{text}</p> : null}
+        </button>
     );
 };
 
