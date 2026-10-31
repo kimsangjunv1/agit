@@ -512,6 +512,75 @@ describe("CheerUpQueue", () => {
         expect(queue.getCount(1)).toBe(101);
         expect(send.mock.calls.filter(([, init]) => init?.method === "GET")).toHaveLength(1);
     });
+
+    it("live-syncs watched posts on an interval while the tab is active", async () => {
+        const send = vi.fn(async (_url: RequestInfo | URL, init?: RequestInit) => {
+            if (init?.method !== "POST") return success({ likes: 100, acknowledgedBatchIds: [] });
+            return success({ likes: 100, acknowledgedBatchIds: [] });
+        });
+        const queue = makeQueue({ send, liveSyncMs: 5_000, idleMs: 60_000 });
+        const gets = () => send.mock.calls.filter(([, init]) => init?.method !== "POST").length;
+
+        queue.watch(1, 100);
+        await vi.advanceTimersByTimeAsync(0);
+        expect(gets()).toBe(1);
+
+        await vi.advanceTimersByTimeAsync(4_999);
+        expect(gets()).toBe(1);
+        await vi.advanceTimersByTimeAsync(1);
+        expect(gets()).toBe(2);
+        await vi.advanceTimersByTimeAsync(5_000);
+        expect(gets()).toBe(3);
+    });
+
+    it("stops live sync while the tab is hidden and resumes after focus activity", async () => {
+        const send = vi.fn(async (_url: RequestInfo | URL, init?: RequestInit) => {
+            if (init?.method !== "POST") return success({ likes: 100, acknowledgedBatchIds: [] });
+            return success({ likes: 100, acknowledgedBatchIds: [] });
+        });
+        const queue = makeQueue({ send, liveSyncMs: 5_000, idleMs: 60_000 });
+        const gets = () => send.mock.calls.filter(([, init]) => init?.method !== "POST").length;
+
+        queue.watch(1, 100);
+        await vi.advanceTimersByTimeAsync(0);
+        expect(gets()).toBe(1);
+
+        queue.setTabVisible(false);
+        await vi.advanceTimersByTimeAsync(15_000);
+        expect(gets()).toBe(1);
+
+        queue.setTabVisible(true);
+        await vi.advanceTimersByTimeAsync(0);
+        expect(gets()).toBe(2);
+
+        await vi.advanceTimersByTimeAsync(5_000);
+        expect(gets()).toBe(3);
+    });
+
+    it("stops live sync after idle and resumes when the user moves again", async () => {
+        const send = vi.fn(async (_url: RequestInfo | URL, init?: RequestInit) => {
+            if (init?.method !== "POST") return success({ likes: 100, acknowledgedBatchIds: [] });
+            return success({ likes: 100, acknowledgedBatchIds: [] });
+        });
+        const queue = makeQueue({ send, liveSyncMs: 5_000, idleMs: 60_000 });
+        const gets = () => send.mock.calls.filter(([, init]) => init?.method !== "POST").length;
+
+        queue.watch(1, 100);
+        await vi.advanceTimersByTimeAsync(0);
+        expect(gets()).toBe(1);
+
+        await vi.advanceTimersByTimeAsync(60_000);
+        const afterIdle = gets();
+        await vi.advanceTimersByTimeAsync(15_000);
+        expect(gets()).toBe(afterIdle);
+
+        queue.notifyUserActivity();
+        await vi.advanceTimersByTimeAsync(0);
+        expect(gets()).toBe(afterIdle + 1);
+
+        await vi.advanceTimersByTimeAsync(5_000);
+        expect(gets()).toBe(afterIdle + 2);
+    });
 });
 
 const queueCount = (queue: CheerUpQueue) => queue.getCount(1);

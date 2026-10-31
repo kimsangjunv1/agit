@@ -7,7 +7,10 @@ const MAX_ATTEMPTS = 5;
 const MAX_BATCH_COUNT = 1_000_000;
 const LEASE_MS = 30000;
 const RETENTION_MS = 30 * 24 * 60 * 60 * 1000;
+const LIVE_SYNC_MS = 5000;
+const IDLE_MS = 60_000;
 const PREFIX = "cheer-up:v1:";
+const ACTIVITY_EVENTS = ["pointerdown", "pointermove", "keydown", "scroll", "touchstart"] as const;
 
 type Batch = {
     version: 1;
@@ -29,7 +32,15 @@ type Batch = {
 };
 
 type PostState = { serverCount?: number; confirmedCount?: number; hasCheered: boolean; watchers: number; sentBatchIds: Set<string>; request?: symbol };
-type QueueOptions = { storage?: Storage; tabId?: string; send?: typeof fetch; onError?: () => void; onConfirmed?: (postId: number, likes: number) => void };
+type QueueOptions = {
+    storage?: Storage;
+    tabId?: string;
+    send?: typeof fetch;
+    onError?: () => void;
+    onConfirmed?: (postId: number, likes: number) => void;
+    liveSyncMs?: number;
+    idleMs?: number;
+};
 
 class RequestError extends Error {
     constructor(readonly status: number, readonly retryAfter = 0) { super(`Cheer Up request failed (${status})`); }
@@ -56,6 +67,12 @@ export class CheerUpQueue {
     private refreshNeeded = new Set<number>();
     private restoring = new Set<number>();
     private recoveryTimer?: ReturnType<typeof setTimeout>;
+    private liveSyncTimer?: ReturnType<typeof setInterval>;
+    private idleTimer?: ReturnType<typeof setTimeout>;
+    private lastActivityAt = 0;
+    private visibilityOverride?: boolean;
+    private readonly liveSyncMs: number;
+    private readonly idleMs: number;
     private active = false;
     private version = 0;
     private epoch = 0;
@@ -67,11 +84,29 @@ export class CheerUpQueue {
         this.send = options.send ?? ((input, init) => fetch(input, init));
         this.onError = options.onError;
         this.onConfirmed = options.onConfirmed;
+        this.liveSyncMs = options.liveSyncMs ?? LIVE_SYNC_MS;
+        this.idleMs = options.idleMs ?? IDLE_MS;
     }
 
     subscribe = (listener: () => void) => { this.listeners.add(listener); return () => { this.listeners.delete(listener); }; };
     getVersion = () => this.version;
     setOnConfirmed(callback: (postId: number, likes: number) => void) { this.onConfirmed = callback; }
+    /** Marks recent user activity and resumes live sync when allowed. */
+    notifyUserActivity() {
+        if (!this.active) return;
+        this.noteActivity(true);
+    }
+    /** Overrides tab visibility for hosts without Document, and for tests. */
+    setTabVisible(visible: boolean) {
+        this.visibilityOverride = visible;
+        if (!this.active) return;
+        if (!visible) {
+            this.flush();
+            this.syncLivePolling();
+            return;
+        }
+        this.onAttention();
+    }
     private emit() { this.version++; this.listeners.forEach((listener) => listener()); }
 
     private post(postId: number) {
@@ -110,6 +145,7 @@ export class CheerUpQueue {
         if (this.active) return;
         this.active = true;
         this.epoch++;
+        this.noteActivity(false);
         this.restore(true);
         if (typeof window !== "undefined") {
             window.addEventListener("focus", this.onAttention);
@@ -117,8 +153,10 @@ export class CheerUpQueue {
             window.addEventListener("pagehide", this.onExit);
             window.addEventListener("storage", this.onStorage);
             document.addEventListener("visibilitychange", this.onVisibility);
+            ACTIVITY_EVENTS.forEach((event) => window.addEventListener(event, this.onUserActivity, { passive: true, capture: true }));
         }
         this.posts.forEach((_post, postId) => this.schedule(postId));
+        this.syncLivePolling();
     }
 
     stop() {
@@ -128,6 +166,7 @@ export class CheerUpQueue {
         this.timers.forEach(clearTimeout);
         this.timers.clear();
         clearTimeout(this.recoveryTimer);
+        this.stopLivePolling();
         this.controllers.forEach((controller) => controller.abort());
         this.controllers.clear();
         const interrupted = new Set(this.inFlight);
@@ -150,6 +189,7 @@ export class CheerUpQueue {
             window.removeEventListener("pagehide", this.onExit);
             window.removeEventListener("storage", this.onStorage);
             document.removeEventListener("visibilitychange", this.onVisibility);
+            ACTIVITY_EVENTS.forEach((event) => window.removeEventListener(event, this.onUserActivity, { capture: true }));
         }
     }
 
@@ -157,10 +197,16 @@ export class CheerUpQueue {
         if (serverCount !== undefined) this.seed(postId, serverCount);
         const post = this.post(postId);
         post.watchers++;
-        if (post.watchers === 1) void this.reconcile(postId);
+        if (post.watchers === 1) {
+            void this.reconcile(postId);
+            this.syncLivePolling();
+        }
         return () => {
             post.watchers = Math.max(0, post.watchers - 1);
-            if (!post.watchers) this.flush(postId);
+            if (!post.watchers) {
+                this.flush(postId);
+                this.syncLivePolling();
+            }
         };
     }
 
@@ -459,14 +505,80 @@ export class CheerUpQueue {
         if (posts.size) this.emit();
     }
 
+    private isTabVisible() {
+        if (this.visibilityOverride !== undefined) return this.visibilityOverride;
+        return typeof document === "undefined" || document.visibilityState !== "hidden";
+    }
+    private hasWatchers() {
+        for (const post of this.posts.values()) if (post.watchers > 0) return true;
+        return false;
+    }
+    private isUserActive() {
+        return this.lastActivityAt > 0 && Date.now() - this.lastActivityAt < this.idleMs;
+    }
+    private canLiveSync() {
+        return this.active && this.isTabVisible() && this.isUserActive() && this.hasWatchers();
+    }
+    private stopLivePolling() {
+        clearInterval(this.liveSyncTimer);
+        this.liveSyncTimer = undefined;
+        clearTimeout(this.idleTimer);
+        this.idleTimer = undefined;
+    }
+    private armIdleTimer() {
+        clearTimeout(this.idleTimer);
+        this.idleTimer = setTimeout(() => this.syncLivePolling(), this.idleMs);
+    }
+    private noteActivity(resume = true) {
+        this.lastActivityAt = Date.now();
+        this.armIdleTimer();
+        if (resume) this.syncLivePolling(true);
+    }
+    private pollWatched() {
+        if (!this.canLiveSync()) {
+            this.syncLivePolling();
+            return;
+        }
+        this.posts.forEach((post, postId) => {
+            if (post.watchers > 0) void this.reconcile(postId);
+        });
+    }
+    private syncLivePolling(resumeImmediate = false) {
+        if (!this.canLiveSync()) {
+            clearInterval(this.liveSyncTimer);
+            this.liveSyncTimer = undefined;
+            return;
+        }
+        if (!this.liveSyncTimer) {
+            if (resumeImmediate) this.pollWatched();
+            this.liveSyncTimer = setInterval(() => this.pollWatched(), this.liveSyncMs);
+        }
+    }
+    private onUserActivity = () => {
+        if (!this.active) return;
+        this.noteActivity(true);
+    };
     private onAttention = () => {
         if (!this.active) return;
+        this.noteActivity(false);
         this.restore();
-        this.posts.forEach((post, postId) => { if (post.watchers || this.knownIds(postId).length) void this.reconcile(postId); });
+        this.posts.forEach((post, postId) => {
+            if (post.watchers || this.knownIds(postId).length) void this.reconcile(postId);
+        });
+        this.syncLivePolling();
     };
-    private onVisibility = () => { if (document.visibilityState === "hidden") this.flush(); else this.onAttention(); };
+    private onVisibility = () => {
+        this.visibilityOverride = undefined;
+        if (document.visibilityState === "hidden") {
+            this.flush();
+            this.syncLivePolling();
+            return;
+        }
+        this.onAttention();
+    };
     private onExit = () => {
         this.flush();
+        this.syncLivePolling();
         // The next document can immediately recover a lost keepalive response after a normal exit.
         this.batches.forEach((batch) => {
             if (batch.ownerId !== this.tabId || batch.status === "acknowledged") return;
