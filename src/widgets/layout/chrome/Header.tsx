@@ -11,6 +11,7 @@ import { getPostRouteFlags } from "@/features/managePost";
 import { useLayoutStore } from "@/shared/stores/useLayoutStore";
 import Marquee from "@/shared/ui/layout/Marquee";
 import { useSession } from "next-auth/react";
+import { MetallicPaint } from "@/shared/ui/common/metallic-paint/MetallicPaint";
 
 const Header = () => {
     const [showMenu, setShowMenu] = useState(false);
@@ -37,13 +38,21 @@ const Header = () => {
                             onClick={() => pushToUrl("/")}
                             className="flex justify-start items-start gap-[1.2rem]"
                         >
-                            <IconComponent
+                            <MetallicPaint
+                                imageSrc="/images/icon/graphic/ico-graphic-logo-horizontal.svg"
+                                color="#c0c0c0"
+                                width={44}
+                                height={44}
+                                edgeBend={1}
+                                speed={20}
+                            />
+                            {/* <IconComponent
                                 type={`graphic-logo-horizontal`}
                                 alt={"아지트"}
                                 width={140}
                                 height={44}
                                 className="mobile:h-[calc(1.6rem*2.2)] mobile:w-[calc(1.6rem*7)] pc:h-[4rem] pc:w-auto"
-                            />
+                            /> */}
                             <section className="flex flex-col gap-[0.4rem]">
                                 <p className="text-[1.8rem]">agit.</p>
                                 <Marquee
