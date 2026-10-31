@@ -38,11 +38,12 @@ const Header = () => {
                         >
                             <MetallicPaint
                                 imageSrc="/images/icon/graphic/ico-graphic-logo-horizontal.svg"
+                                // color="#ff4321"
                                 color="#c0c0c0"
                                 width={44}
                                 height={44}
                                 edgeBend={1}
-                                speed={20}
+                                speed={5}
                             />
                             <section className="flex flex-col gap-[0.4rem]">
                                 <p className="text-[1.8rem]">agit.</p>

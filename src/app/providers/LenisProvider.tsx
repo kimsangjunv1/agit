@@ -3,7 +3,7 @@
 import ReactLenis from "lenis/react";
 import { usePathname } from "next/navigation";
 
-const LENIS_ROUTES = new Set(["/resume"]);
+const LENIS_ROUTES = new Set(["/resume", "/resume-renewal"]);
 
 export default function LenisProvider() {
     const pathname = usePathname();

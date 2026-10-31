@@ -6,16 +6,6 @@ const withBundleAnalyzer = bundleAnalyzer({
 });
 
 const nextConfig: NextConfig = {
-    async redirects() {
-        return [
-            {
-                source: "/resume-renewal",
-                destination: "/resume",
-                permanent: true,
-            },
-        ];
-    },
-
     images: {
         // 권한을 확인하는 게시글 이미지 API가 최적화 캐시에 저장되지 않게 한다.
         localPatterns: [{ pathname: "/images/**", search: "" }],
