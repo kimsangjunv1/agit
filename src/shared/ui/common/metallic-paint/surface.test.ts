@@ -87,8 +87,8 @@ describe("createMetalSurface", () => {
         expect(floor / stroke).toBeLessThan(0.35);
     });
 
-    it("retains bevels along the curved strokes in the company logo", async () => {
-        const { data, info } = await sharp("public/images/common/ttobagi-logo.webp").ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+    it("retains bevels along the curved strokes in the agit logo", async () => {
+        const { data, info } = await sharp("public/images/icon/graphic/ico-graphic-logo-vertical.svg").ensureAlpha().raw().toBuffer({ resolveWithObject: true });
         const alpha = Uint8Array.from({ length: info.width * info.height }, (_, i) => data[i * 4 + 3]);
         const surface = createMetalSurface(alpha, info.width, info.height);
         let stroke = 0;
