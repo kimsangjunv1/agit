@@ -14,6 +14,10 @@ export type ScrollbarProps = HTMLAttributes<HTMLDivElement> & {
     viewportProps?: Omit<HTMLAttributes<HTMLDivElement>, "children" | "className">;
     thickness?: number;
     minThumbSize?: number;
+    /** true면 상호작용 후 일정 시간이 지나면 스크롤바를 숨깁니다. */
+    autoHide?: boolean;
+    /** autoHide 시 숨기기까지 대기 시간(초). 기본 1초. */
+    autoHideDelay?: number;
 };
 
 const clamp = (value: number, max: number) => Math.min(Math.max(value, 0), max);
@@ -41,6 +45,8 @@ const Scrollbar = ({
     viewportProps,
     thickness = 8,
     minThumbSize = 24,
+    autoHide = false,
+    autoHideDelay = 1,
     "aria-label": ariaLabel,
     ...rootProps
 }: ScrollbarProps) => {
@@ -50,11 +56,54 @@ const Scrollbar = ({
     const trackRef = useRef<HTMLDivElement | null>(null);
     const thumbRef = useRef<HTMLDivElement | null>(null);
     const dragRef = useRef<{ pointerId: number; start: number; scroll: number } | null>(null);
+    const hideTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const isHoveringRef = useRef(false);
+    const isDraggingRef = useRef(false);
+    const showBarRef = useRef<() => void>(() => undefined);
     const [hasOverflow, setHasOverflow] = useState(false);
+    const [isBarVisible, setIsBarVisible] = useState(!autoHide);
     const generatedId = useId();
     const viewportId = viewportProps?.id ?? generatedId;
     const vertical = direction === "vertical";
     const label = ariaLabel ?? (vertical ? "세로 스크롤" : "가로 스크롤");
+    const barVisible = !autoHide || isBarVisible;
+
+    const clearHideTimeout = () => {
+        if (hideTimeoutRef.current === null) return;
+        clearTimeout(hideTimeoutRef.current);
+        hideTimeoutRef.current = null;
+    };
+
+    const isHoldingBar = () => isHoveringRef.current || isDraggingRef.current;
+
+    const scheduleHide = () => {
+        if (!autoHide) return;
+        clearHideTimeout();
+        if (isHoldingBar()) return;
+        hideTimeoutRef.current = setTimeout(() => {
+            setIsBarVisible(false);
+            hideTimeoutRef.current = null;
+        }, Math.max(0, autoHideDelay) * 1000);
+    };
+
+    const showBar = () => {
+        if (!autoHide) return;
+        setIsBarVisible(true);
+        scheduleHide();
+    };
+
+    showBarRef.current = showBar;
+
+    useEffect(() => {
+        if (!autoHide) {
+            clearHideTimeout();
+            setIsBarVisible(true);
+            return;
+        }
+
+        setIsBarVisible(false);
+        return () => clearHideTimeout();
+    }, [autoHide, autoHideDelay]);
 
     useEffect(() => {
         const viewport = scrollRef.current;
@@ -81,6 +130,10 @@ const Scrollbar = ({
         const scheduleUpdate = () => {
             if (frame === null) frame = requestAnimationFrame(update);
         };
+        const handleScroll = () => {
+            showBarRef.current();
+            scheduleUpdate();
+        };
         const handleWheel = (event: WheelEvent) => {
             if (vertical || event.ctrlKey || event.defaultPrevented) return;
 
@@ -99,13 +152,13 @@ const Scrollbar = ({
         observer.observe(viewport);
         observer.observe(content);
         observer.observe(track);
-        viewport.addEventListener("scroll", scheduleUpdate, { passive: true });
+        viewport.addEventListener("scroll", handleScroll, { passive: true });
         if (!vertical) viewport.addEventListener("wheel", handleWheel, { passive: false });
         scheduleUpdate();
 
         return () => {
             observer.disconnect();
-            viewport.removeEventListener("scroll", scheduleUpdate);
+            viewport.removeEventListener("scroll", handleScroll);
             viewport.removeEventListener("wheel", handleWheel);
             if (frame !== null) cancelAnimationFrame(frame);
         };
@@ -119,12 +172,26 @@ const Scrollbar = ({
         else viewport.scrollLeft = position;
     };
 
+    const handleTrackPointerEnter = () => {
+        if (!autoHide) return;
+        isHoveringRef.current = true;
+        showBar();
+        clearHideTimeout();
+    };
+
+    const handleTrackPointerLeave = () => {
+        if (!autoHide) return;
+        isHoveringRef.current = false;
+        scheduleHide();
+    };
+
     const handleTrackPointerDown = (event: PointerEvent<HTMLDivElement>) => {
         const viewport = scrollRef.current;
         const track = trackRef.current;
         if (event.button !== 0 || !viewport || !track || !hasOverflow) return;
 
         event.preventDefault();
+        showBar();
         thumbRef.current?.focus({ preventScroll: true });
         const { maxScroll, thumbSize, travel } = measure(viewport, track, vertical, minThumbSize);
         const bounds = track.getBoundingClientRect();
@@ -138,6 +205,9 @@ const Scrollbar = ({
 
         event.preventDefault();
         event.stopPropagation();
+        isDraggingRef.current = true;
+        showBar();
+        clearHideTimeout();
         event.currentTarget.focus({ preventScroll: true });
         event.currentTarget.setPointerCapture(event.pointerId);
         event.currentTarget.dataset.dragging = "true";
@@ -163,8 +233,10 @@ const Scrollbar = ({
         if (dragRef.current?.pointerId !== event.pointerId) return;
 
         dragRef.current = null;
+        isDraggingRef.current = false;
         delete event.currentTarget.dataset.dragging;
         if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+        scheduleHide();
     };
 
     const handleThumbKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
@@ -199,6 +271,7 @@ const Scrollbar = ({
         }
 
         event.preventDefault();
+        showBar();
         setScroll(clamp(next, maxScroll));
     };
 
@@ -230,10 +303,17 @@ const Scrollbar = ({
             <div
                 ref={trackRef}
                 data-scrollbar-track=""
-                aria-hidden={!hasOverflow}
-                className={`absolute z-10 touch-none select-none ${vertical ? "inset-y-[1.2rem] right-[0.8rem]" : "inset-x-[1.2rem] bottom-[calc(0.8rem+env(safe-area-inset-bottom))]"} ${hasOverflow ? "" : "invisible pointer-events-none"} ${trackClassName}`}
-                style={vertical ? { width: Math.max(1, thickness) } : { height: Math.max(1, thickness) }}
+                data-visible={hasOverflow && barVisible ? "true" : "false"}
+                aria-hidden={!hasOverflow || !barVisible}
+                className={`absolute z-10 touch-none select-none transition-[opacity,transform] duration-200 ease-out will-change-[opacity,transform] ${vertical ? "inset-y-[1.2rem] right-[0.8rem] origin-right" : "inset-x-[1.2rem] bottom-[calc(0.8rem+env(safe-area-inset-bottom))] origin-bottom"} ${hasOverflow ? "" : "invisible pointer-events-none"} ${hasOverflow && !barVisible ? "pointer-events-none" : ""} ${trackClassName}`}
+                style={{
+                    ...(vertical ? { width: Math.max(1, thickness) } : { height: Math.max(1, thickness) }),
+                    opacity: hasOverflow && barVisible ? 1 : 0,
+                    transform: hasOverflow && barVisible ? "scale(1)" : "scale(0.95)",
+                }}
                 onPointerDown={handleTrackPointerDown}
+                onPointerEnter={handleTrackPointerEnter}
+                onPointerLeave={handleTrackPointerLeave}
             >
                 <div
                     ref={thumbRef}
