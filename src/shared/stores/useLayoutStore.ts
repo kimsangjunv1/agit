@@ -131,13 +131,17 @@ export const useLayoutStore = create<LayoutStoreType>()((set) => ({
         }));
     },
     beginInitialReveal: () => {
-        set(() => ({
+        set((state) => ({
             transitionPhase: "covering",
             transitionDirection: "forward",
             pendingNavigation: null,
             isPageContentVisible: false,
             isRouteChange: 1,
             isRouteChangeType: 1,
+            pageReadinessId: state.pageReadinessId + 1,
+            pageReadinessBlockers: {},
+            pageReadinessTasks: {},
+            isPageReadinessComplete: false,
         }));
     },
     setIsPageContentVisible: (args: boolean) => {

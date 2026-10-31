@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import { useLenis } from "lenis/react";
@@ -9,6 +9,12 @@ import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
 import {
     PAGE_REVEAL_COVER_DURATION,
     PAGE_REVEAL_COVER_EASE,
+    PAGE_REVEAL_LOGO_READY_HOLD,
+    PAGE_REVEAL_LOGO_SPIN_DURATION,
+    PAGE_REVEAL_LOGO_SPIN_EASE,
+    PAGE_REVEAL_LOGO_STEP_DEG,
+    PAGE_REVEAL_LOGO_STEP_INTERVAL,
+    PAGE_REVEAL_READY_SETTLE_MS,
     PAGE_REVEAL_READY_TIMEOUT,
     PAGE_REVEAL_UNCOVER_DURATION,
     PAGE_REVEAL_UNCOVER_EASE,
@@ -33,14 +39,20 @@ const PageRevealOverlay = () => {
     const pathnameAtNavStart = useRef(pathname);
     const hasExecutedNavigation = useRef(false);
     const hasStartedInitialReveal = useRef(false);
+    const hasFinishedInitialReady = useRef(false);
+    const pendingLogoReady = useRef(false);
+    const logoStepTimerRef = useRef<number | null>(null);
     const activeViewTransition = useRef<ViewTransition | null>(null);
     const outgoingSnapshot = useRef<HTMLDivElement | null>(null);
+    const [isInitialLogoReady, setIsInitialLogoReady] = useState(false);
+    const [logoRotateDeg, setLogoRotateDeg] = useState(PAGE_REVEAL_LOGO_STEP_DEG);
 
     const {
         transitionPhase,
         pendingNavigation,
         isPageContentVisible,
         pageReadinessBlockers,
+        pageReadinessTasks,
         pageReadinessId,
         isPageReadinessComplete,
         setTransitionPhase,
@@ -58,6 +70,7 @@ const PageRevealOverlay = () => {
     const isInitialCovering = transitionPhase === "covering" && pendingNavigation === null;
     const isRouteTransitioning = pendingNavigation !== null;
     const isRoutePreparing = isRouteTransitioning && (transitionPhase === "covering" || transitionPhase === "navigating" || transitionPhase === "waiting");
+    const shouldSpinLogo = isInitialReveal && !isInitialLogoReady && !reducedMotion;
 
     useEffect(() => {
         if (!lenis || !isRouteTransitioning) return;
@@ -97,6 +110,31 @@ const PageRevealOverlay = () => {
         void transition.ready.catch(() => {});
         void transition.finished.then(finishTransition, finishTransition);
     }, [reducedMotion, setTransitionPhase, finishTransition, completePageReadiness]);
+
+    const finishInitialReady = useCallback(() => {
+        if (hasFinishedInitialReady.current) return;
+        if (useLayoutStore.getState().pendingNavigation !== null) return;
+
+        hasFinishedInitialReady.current = true;
+        completePageReadiness();
+
+        // 돌고 있던 한 바퀴는 끝까지 마친 뒤 색을 바꿔요.
+        if (reducedMotion) {
+            setIsInitialLogoReady(true);
+            return;
+        }
+
+        pendingLogoReady.current = true;
+    }, [completePageReadiness, reducedMotion]);
+
+    const completeReadyPhase = useCallback(() => {
+        if (useLayoutStore.getState().pendingNavigation === null) {
+            finishInitialReady();
+            return;
+        }
+
+        revealPage();
+    }, [finishInitialReady, revealPage]);
 
     const executeNavigation = () => {
         if (!pendingNavigation) return;
@@ -176,26 +214,56 @@ const PageRevealOverlay = () => {
         if (transitionPhase !== "waiting") return;
         if (hasPageReadinessBlockers) return;
 
-        // 목적지의 layout effect에서 등록한 blocker까지 확인한 뒤 화면을 교체해요.
-        const timer = window.setTimeout(() => {
-            if (Object.keys(useLayoutStore.getState().pageReadinessBlockers).length === 0) {
-                revealPage();
-            }
-        }, 0);
+        // task가 아직 없으면 마운트·등록 타이밍을 잠깐 기다리고, 있으면 바로 확인해요.
+        const hasReadinessTasks = Object.keys(pageReadinessTasks).length > 0;
+        const timer = window.setTimeout(
+            () => {
+                if (Object.keys(useLayoutStore.getState().pageReadinessBlockers).length === 0) {
+                    completeReadyPhase();
+                }
+            },
+            hasReadinessTasks ? 0 : PAGE_REVEAL_READY_SETTLE_MS,
+        );
 
         return () => window.clearTimeout(timer);
-    }, [transitionPhase, hasPageReadinessBlockers, revealPage]);
+    }, [transitionPhase, hasPageReadinessBlockers, pageReadinessTasks, completeReadyPhase]);
 
     useEffect(() => {
         if (transitionPhase !== "navigating" && transitionPhase !== "waiting") return;
 
-        const timer = window.setTimeout(revealPage, PAGE_REVEAL_READY_TIMEOUT);
+        // blocker가 남아 있으면 이미지·데이터 실측을 우선하고, 신호 없이 멈춘 경우만 강제 종료해요.
+        const timer = window.setTimeout(() => {
+            const state = useLayoutStore.getState();
+            if (state.transitionPhase === "waiting" && Object.keys(state.pageReadinessBlockers).length > 0) {
+                return;
+            }
+
+            completeReadyPhase();
+        }, PAGE_REVEAL_READY_TIMEOUT);
 
         return () => window.clearTimeout(timer);
-    }, [transitionPhase, revealPage]);
+    }, [transitionPhase, completeReadyPhase]);
+
+    useEffect(() => {
+        if (!isInitialLogoReady) return;
+        if (transitionPhase !== "waiting") return;
+        if (pendingNavigation !== null) return;
+
+        const timer = window.setTimeout(
+            () => {
+                setTransitionPhase("revealing");
+            },
+            reducedMotion ? 0 : PAGE_REVEAL_LOGO_READY_HOLD * 1000,
+        );
+
+        return () => window.clearTimeout(timer);
+    }, [isInitialLogoReady, transitionPhase, pendingNavigation, reducedMotion, setTransitionPhase]);
 
     useEffect(
         () => () => {
+            if (logoStepTimerRef.current !== null) {
+                window.clearTimeout(logoStepTimerRef.current);
+            }
             activeViewTransition.current?.skipTransition();
             outgoingSnapshot.current?.remove();
             delete document.documentElement.dataset.pageTransition;
@@ -211,7 +279,7 @@ const PageRevealOverlay = () => {
     const clipInitial = transitionPhase === "revealing" ? clip.covered : clip.hidden;
 
     const isCovering = transitionPhase === "covering";
-    const duration = reducedMotion ? 0 : isCovering ? PAGE_REVEAL_COVER_DURATION : PAGE_REVEAL_UNCOVER_DURATION;
+    const duration = reducedMotion ? 0 : isCovering ? PAGE_REVEAL_COVER_DURATION : transitionPhase === "revealing" ? PAGE_REVEAL_UNCOVER_DURATION : 0;
     const ease = isCovering ? PAGE_REVEAL_COVER_EASE : PAGE_REVEAL_UNCOVER_EASE;
 
     return (
@@ -237,14 +305,16 @@ const PageRevealOverlay = () => {
             {!isPageContentVisible ? (
                 <div
                     aria-hidden
-                    className="fixed inset-0 z-[1000000000] bg-[var(--color-background-light)] pointer-events-none"
+                    className="fixed inset-0 z-[1000000000] bg-[##000000] pointer-events-none"
+                    // className="fixed inset-0 z-[1000000000] bg-[var(--color-background-light)] pointer-events-none"
                 />
             ) : null}
 
             {isInitialReveal ? (
                 <motion.div
                     aria-hidden
-                    className="fixed inset-0 z-[1000000001] bg-[var(--color-surface-floating)] pointer-events-auto flex items-center justify-center"
+                    className="fixed inset-0 z-[1000000001] bg-[#000000] pointer-events-auto flex items-center justify-center"
+                    // className="fixed inset-0 z-[1000000001] bg-[var(--color-surface-floating)] pointer-events-auto flex items-center justify-center"
                     initial={{ clipPath: clipInitial }}
                     animate={{ clipPath: clipTarget }}
                     transition={{
@@ -257,7 +327,8 @@ const PageRevealOverlay = () => {
                         if (transitionPhase === "covering" && !hasExecutedNavigation.current) {
                             if (isInitialCovering) {
                                 setIsPageContentVisible(true);
-                                setTransitionPhase("revealing");
+                                resetPageReadiness();
+                                setTransitionPhase("waiting");
                             }
 
                             return;
@@ -268,15 +339,48 @@ const PageRevealOverlay = () => {
                         }
                     }}
                 >
-                    <IconComponent
-                        type="graphic-logo-horizontal"
-                        alt="아지트"
-                        width={256}
-                        height={52}
-                        // width={138}
-                        // height={52}
-                        className="invert"
-                    />
+                    <motion.div
+                        className="flex items-center justify-center"
+                        initial={{ rotate: 0 }}
+                        animate={{ rotate: logoRotateDeg }}
+                        transition={
+                            shouldSpinLogo
+                                ? {
+                                      duration: PAGE_REVEAL_LOGO_SPIN_DURATION,
+                                      ease: PAGE_REVEAL_LOGO_SPIN_EASE,
+                                  }
+                                : { duration: 0 }
+                        }
+                        onAnimationComplete={() => {
+                            if (!shouldSpinLogo) return;
+
+                            if (pendingLogoReady.current) {
+                                setIsInitialLogoReady(true);
+                                return;
+                            }
+
+                            const holdMs = Math.max(0, (PAGE_REVEAL_LOGO_STEP_INTERVAL - PAGE_REVEAL_LOGO_SPIN_DURATION) * 1000);
+                            if (logoStepTimerRef.current !== null) {
+                                window.clearTimeout(logoStepTimerRef.current);
+                            }
+                            logoStepTimerRef.current = window.setTimeout(() => {
+                                logoStepTimerRef.current = null;
+                                if (pendingLogoReady.current) {
+                                    setIsInitialLogoReady(true);
+                                    return;
+                                }
+                                setLogoRotateDeg((deg) => deg + PAGE_REVEAL_LOGO_STEP_DEG);
+                            }, holdMs);
+                        }}
+                    >
+                        <IconComponent
+                            type="graphic-logo-horizontal"
+                            alt="아지트"
+                            width={256}
+                            height={52}
+                            className={`transition-colors duration-300 ${isInitialLogoReady ? "text-[#ff4321]" : "text-white"}`}
+                        />
+                    </motion.div>
                 </motion.div>
             ) : null}
         </>

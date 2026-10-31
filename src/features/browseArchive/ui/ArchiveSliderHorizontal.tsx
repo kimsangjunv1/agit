@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion, useScroll, useTransform } from "motion/react";
-import { useEffect, useRef, useState, type RefObject } from "react";
+import { useRef, type RefObject } from "react";
 
 import { useGetPostLatestListQuery } from "@/entities/post/api/post.query";
 import { GetPostLatestListResponse, PostLatestItem } from "@/entities/post/model/post.type";
@@ -190,33 +190,14 @@ const ArchiveSliderHorizontalContent = ({ posts }: ArchiveSliderHorizontalConten
     );
 };
 
-const ArchiveSliderHorizontalStatic = ({ initialData }: ArchiveSliderHorizontalProps) => {
-    const posts = initialData.result ?? [];
-
-    if (initialData.resultCode === "ERROR" && posts.length === 0) {
-        return (
-            <FeedError
-                message={initialData.resultMessage}
-                onRetry={() => undefined}
-            />
-        );
-    }
-
-    if (posts.length === 0) {
-        return <FeedEmpty />;
-    }
-
-    return <ArchiveSliderHorizontalContent posts={posts} />;
-};
-
-const ArchiveSliderHorizontalWithQuery = ({ initialData }: ArchiveSliderHorizontalProps) => {
-    const { data, isLoading, isError, error, refetch } = useGetPostLatestListQuery(initialData);
+const ArchiveSliderHorizontal = ({ initialData }: ArchiveSliderHorizontalProps) => {
+    const { data, isLoading, isError, error, refetch, ready } = useGetPostLatestListQuery(initialData);
     const posts = data?.result ?? [];
-    const isDataReady = !isLoading || posts.length > 0 || isError || data?.resultCode === "ERROR";
+    const isDataReady = ready && (!isLoading || posts.length > 0 || isError || data?.resultCode === "ERROR");
 
     usePageTransitionReady("archive-slider-horizontal-data", isDataReady);
 
-    if (isLoading && posts.length === 0) {
+    if (!ready || (isLoading && posts.length === 0)) {
         return <FeedLoading className="h-screen" />;
     }
 
@@ -243,20 +224,6 @@ const ArchiveSliderHorizontalWithQuery = ({ initialData }: ArchiveSliderHorizont
     }
 
     return <ArchiveSliderHorizontalContent posts={posts} />;
-};
-
-const ArchiveSliderHorizontal = ({ initialData }: ArchiveSliderHorizontalProps) => {
-    const [isClient, setIsClient] = useState(false);
-
-    useEffect(() => {
-        setIsClient(true);
-    }, []);
-
-    if (!isClient) {
-        return <ArchiveSliderHorizontalStatic initialData={initialData} />;
-    }
-
-    return <ArchiveSliderHorizontalWithQuery initialData={initialData} />;
 };
 
 export default ArchiveSliderHorizontal;

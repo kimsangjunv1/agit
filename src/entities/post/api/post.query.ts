@@ -100,7 +100,7 @@ export const useGetPostLatestListQuery = (initialData?: GetPostLatestListRespons
         throwOnError: false,
     });
 
-    return { data, isLoading, isError, error, isFetching, refetch };
+    return { data, isLoading, isError, error, isFetching, refetch, ready };
 };
 
 type UseGetPostDetailQueryOptions = {
