@@ -5,9 +5,7 @@ export const PAGE_REVEAL_COVER_EASE = [0.77, 0, 0.175, 1] as const;
 export const PAGE_REVEAL_UNCOVER_EASE = [0.22, 1, 0.36, 1] as const;
 
 export const PAGE_REVEAL_COVER_DURATION = 1.1;
-// export const PAGE_REVEAL_COVER_DURATION = 0.52;
 export const PAGE_REVEAL_UNCOVER_DURATION = 1.1;
-// export const PAGE_REVEAL_UNCOVER_DURATION = 0.62;
 
 export const PAGE_SLIDE_DURATION = 0.8;
 

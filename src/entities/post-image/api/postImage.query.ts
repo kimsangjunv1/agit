@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { deleteUnusedPostImagesOnManagerFetch, getPostImageInventoryOnManagerFetch } from "@/entities/post-image/api/postImage.api";
-import type { DeleteUnusedPostImagesResponse, GetPostImageInventoryResponse } from "@/entities/post-image/model/postImage.type";
+import type { GetPostImageInventoryResponse } from "@/entities/post-image/model/postImage.type";
 import { AgitRoutes } from "@/shared/constants/entityKeys";
 
 export const useGetPostImageInventoryOnManagerQuery = () => {

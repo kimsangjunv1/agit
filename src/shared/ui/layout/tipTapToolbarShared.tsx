@@ -87,7 +87,6 @@ export const getActiveHeading = (state: ReturnType<typeof useTipTapToolbarState>
 
 export const iconButtonClass = (active: boolean, disabled = false, compact = false, variant: ToolbarVariant = "default") => {
     const size = compact ? "w-[3.2rem] h-[3.2rem] text-[1.2rem]" : "w-[3.6rem] h-[2.4rem] text-[1.6rem]";
-    // const size = compact ? "w-[3.2rem] h-[3.2rem] text-[1.3rem]" : "w-[3.6rem] h-[2.4rem] text-[1.4rem]";
 
     if (variant === "glass") {
         return `shrink-0 flex items-center justify-center rounded-[1.2rem] transition-colors ${size} ${

@@ -1,7 +1,7 @@
 "use client";
 import { useGetFeedbackReviewerListQuery } from "@/entities/fivepixels/api/fivepixels.query";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 
 import { FivePixels } from "@fivepixels-js/react";
 
@@ -21,7 +21,6 @@ import {
 import type {
     CreateReportFeedbackPayload,
     CreateReviewerRequestPayload,
-    FivepixelsReviewerItem,
     RegisterReviewerPayload,
     ReportListAllParams,
     ResolveReviewerRequestPayload,

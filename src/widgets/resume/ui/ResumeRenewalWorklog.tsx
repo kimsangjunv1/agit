@@ -1,7 +1,5 @@
 "use client";
 
-import { GitCommitHorizontal } from "lucide-react";
-
 import { getRenewalExperienceAnchorId, type RenewalSectionEntry } from "@/entities/resume/constants/resumeRenewalData";
 import RenewalSplitSection from "./RenewalSplitSection";
 import { R } from "./renewalStyles";
@@ -42,7 +40,6 @@ const ResumeRenewalWorklog = ({ entries }: { entries: RenewalSectionEntry[] }) =
                                             key={achievement}
                                         >
                                             {achievement}
-                                            {/* <div className="absolute top-[0.2rem] left-[-1.2rem] font-bold text-red-500">+</div> */}
                                         </p>
                                     ))}
                                 </div>

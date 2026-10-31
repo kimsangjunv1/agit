@@ -44,7 +44,6 @@ interface ToastStore {
     startTime: number | null; // 시작 시점 (timestamp)
     duration: number; // 시작 시 설정한 총 시간 (초)
 
-    // recentMsg?: string;  // 기존: 최근 보여준 메시지
     recentMsgList: string[]; // 변경: 최근 보여준 메시지 리스트(최대 10개)
 
     setToast: (item: PropsType, callback?: () => void) => void;
@@ -54,14 +53,12 @@ interface ToastStore {
     resetTimer: () => void;
     resetToastList: () => void;
     restartTimer: (seconds: number) => void;
-    setCallback: (cb: () => void) => void;
     setStartTime: (e: number | null) => void;
     reset: () => void; // 추가됨
     removeToastById: (id: string) => void;
 }
 
 let intervalRef: NodeJS.Timeout | null = null;
-let savedCallback: (() => void) | null = null;
 
 const intervalRefMap: Record<string, NodeJS.Timeout> = {};
 
@@ -155,7 +152,6 @@ export const useToastStore = create<ToastStore>()(
                     time: seconds,
                     isRunning: true,
                     duration: seconds,
-                    // startTime: startTimestamp
                 });
 
                 intervalRef = setInterval(() => {
@@ -210,10 +206,6 @@ export const useToastStore = create<ToastStore>()(
                 }
             },
 
-            setCallback: (cb) => {
-                savedCallback = cb;
-            },
-
             setStartTime: (args: number | null) => set(() => ({ startTime: args })),
 
             removeToastById: (id) => {
@@ -231,7 +223,6 @@ export const useToastStore = create<ToastStore>()(
                     clearInterval(intervalRef);
                     intervalRef = null;
                 }
-                savedCallback = null;
                 set({
                     toastList: [],
                     time: 0,

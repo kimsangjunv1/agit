@@ -8,14 +8,11 @@ import { useBottomSheetStore } from "@/shared/stores/useBottomSheetStore";
 
 const DimmedComponent = ({ isVisible }: { isVisible: boolean }) => {
     const { modal, closeModal } = useModalStore();
-    const { bottomSheet, initBottomSheet, setBottomSheet } = useBottomSheetStore();
+    const { bottomSheet, setBottomSheet } = useBottomSheetStore();
 
     const closeBottomSheetState = () => {
         if (bottomSheet) {
             setBottomSheet({ ...bottomSheet, isOpen: false });
-
-            // setPersistDetailShutdownState(true);
-            // setBottomSheet(initBottomSheet);
         }
     };
 

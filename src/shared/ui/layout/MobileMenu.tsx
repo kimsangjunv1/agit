@@ -11,7 +11,6 @@ import { useServiceStore } from "@/shared/stores/useServiceStore";
 
 import UI from "../common/UIComponent";
 import IconComponent from "../common/IconComponent";
-import TextShimmer from "../common/TextShimmerComponent";
 
 import useNavigate from "@/shared/hooks/useNavigate";
 import { headerMenuList } from "@/shared/constants/lists/configServiceList";
@@ -48,7 +47,6 @@ const MobileMenu = () => {
                     <motion.article
                         data-page-transition-fixed="sidebar"
                         className="mobile flex flex-col justify-center items-center gap-[1.6rem] fixed top-0 right-0 h-[100svh] bg-black z-[100000000]"
-                        // className="mobile flex flex-col justify-center items-center gap-[1.6rem] fixed top-0 left-0 w-full h-full bg-[#232323] z-10000"
                         initial={{ clipPath: CLIP_MENU.hidden }}
                         animate={{ clipPath: CLIP_MENU.visible }}
                         exit={{
@@ -80,10 +78,6 @@ const MobileMenu = () => {
                         {/* 목록 */}
                         <section className="mobile-inner px-[2.4rem] py-[2.4rem] w-full h-full flex flex-col items-start justify-between">
                             <section className="flex flex-col items-start">
-                                {/* <div className="w-full overflow-hidden mb-[2.4rem]">
-                                    <p className="text-[5.2rem] font-bold leading-[1.5] text-[#ffffff]">Hej!</p>
-                                    <p className="text-[2.4rem] font-semibold leading-[1.5] text-[#ffffff]">아래에서 메뉴를 선택해주세요.</p>
-                                </div> */}
 
                                 {headerMenuList.map((e, i) => (
                                     <div
@@ -165,16 +159,6 @@ const MobileMenu = () => {
                                         className="invert"
                                     />
 
-                                    {/* <TextShimmer
-                                        as="p"
-                                        duration={3}
-                                        color={{
-                                            start: "#ffffff",
-                                            end: "#8c8c8c",
-                                        }}
-                                        className="h-[2rem] text-white text-[1.6rem] leading-[1.7]"
-                                    >
-                                    </TextShimmer> */}
                                     <p className="text-[var(--color-text-primary)]">© kimsangjunv1. All rights reserved.</p>
                                 </section>
 

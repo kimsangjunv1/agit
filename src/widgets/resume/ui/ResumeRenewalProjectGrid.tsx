@@ -24,9 +24,7 @@ const ProjectTile = ({ project, index, onSelect }: { project: ResumeProjectDetai
     return (
         <motion.button
             type="button"
-            // className="group aspect-square overflow-hidden bg-white p-0 text-left transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-black"
             className="group h-[28.125vw] max-h-[54rem] overflow-hidden bg-[var(--color-surface)] p-0 text-left transition-colors hover:text-[var(--color-text-primary)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-black"
-            // className="h-full w-full overflow-hidden bg-white p-0 text-left transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-black"
             aria-label={`${project.title} 상세 보기`}
             initial={reducedMotion ? false : "hidden"}
             whileInView={reducedMotion ? undefined : "visible"}
@@ -246,8 +244,6 @@ const ResumeRenewalProjectGrid = () => {
         <section
             id="renewal-projects"
             className="mx-auto w-full max-w-[var(--size-pc)] scroll-mt-[10rem]"
-            // className="mx-auto w-full max-w-[calc(72rem*2)] scroll-mt-[10rem]"
-            // className="mx-auto w-full max-w-[calc(72rem*2)] scroll-mt-[10rem] py-[8rem] pc:py-[12rem]"
         >
             <h2 className={`${R.label} mb-[3.2rem]`}>Projects</h2>
 

@@ -52,7 +52,6 @@ const TipTapToolbar = ({ editor }: TipTapToolbarProps) => {
     };
 
     return (
-        // <div className="relative w-full mobile:max-w-[100%] pc:max-w-[50%] rounded-[1.6rem] bg-white shadow-[var(--shadow-normal)]">
         <div className="relative w-full bg-[var(--color-surface)] border border-[var(--color-border)]">
             <div className="overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
                 <section className="flex min-w-min flex-nowrap items-center gap-[0.4rem] p-[0.4rem]">

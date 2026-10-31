@@ -3,7 +3,6 @@
 import { Fragment, useState } from "react";
 
 import UI from "@/shared/ui/common/UIComponent";
-import IconComponent from "@/shared/ui/common/IconComponent";
 
 import useNavigate from "@/shared/hooks/useNavigate";
 import { getPostRouteFlags } from "@/features/managePost";
@@ -14,7 +13,7 @@ import { useSession } from "next-auth/react";
 import { MetallicPaint } from "@/shared/ui/common/metallic-paint/MetallicPaint";
 
 const Header = () => {
-    const [showMenu, setShowMenu] = useState(false);
+    const [showMenu] = useState(false);
     const { data: session } = useSession();
     const isAdmin = session?.user.role === "admin";
 
@@ -29,7 +28,6 @@ const Header = () => {
             data-page-transition-fixed="header"
             className={`fixed left-0 z-[1000000] mx-auto w-[100svw] ${IS_ROUTE_POST_VIEW || IS_ROUTE_MANAGER ? "pointer-events-none" : ""}`}
         >
-            {/* <div className="relative mx-auto flex gap-[2.4rem] h-[12.8rem] w-full items-start p-[5.2rem]"> */}
             <div className={`relative mx-auto flex gap-[2.4rem] justify-between w-full items-start ${IS_ROUTE_MANAGER ? "px-[2rem] py-[1.6rem]" : "p-[5.2rem]"}`}>
                 <section className="pointer-events-auto min-w-0 flex items-start gap-[3.2rem]">
                     <section className="flex flex-col gap-[2.4rem]">
@@ -46,13 +44,6 @@ const Header = () => {
                                 edgeBend={1}
                                 speed={20}
                             />
-                            {/* <IconComponent
-                                type={`graphic-logo-horizontal`}
-                                alt={"아지트"}
-                                width={140}
-                                height={44}
-                                className="mobile:h-[calc(1.6rem*2.2)] mobile:w-[calc(1.6rem*7)] pc:h-[4rem] pc:w-auto"
-                            /> */}
                             <section className="flex flex-col gap-[0.4rem]">
                                 <p className="text-[1.8rem]">agit.</p>
                                 <Marquee

@@ -28,7 +28,7 @@ interface Props {
 
 const passwordReady = (password: string) => password.length >= 6 && password.length <= 24 && new TextEncoder().encode(password).length <= 72;
 
-const CommentComposer = ({ parentId, replyToId, replyToAuthor, onCancel, onSubmitted }: Props) => {
+const CommentComposer = ({ parentId, replyToId, onCancel, onSubmitted }: Props) => {
     const { postIdx, setToast } = usePostDetailProvider();
     const { data: session, status } = useSession();
     const isGuest = !session?.user?.id;
@@ -139,7 +139,6 @@ const CommentComposer = ({ parentId, replyToId, replyToAuthor, onCancel, onSubmi
                 disabled={isPending || status === "loading"}
                 className="flex min-w-0 flex-col gap-[1.6rem]"
             >
-                {/* <legend className="mb-[1.6rem] font-semibold">{parentId ? `${replyToAuthor || "댓글"}님에게 답글 남기기` : "댓글 남기기"}</legend> */}
                 {isGuest ? (
                     <div className="flex flex-col gap-[0.8rem]">
                         <label
@@ -209,19 +208,12 @@ const CommentComposer = ({ parentId, replyToId, replyToAuthor, onCancel, onSubmi
                             >
                                 랜덤 변경
                             </button>
-                            {/* <p
-                                id={`${formId}-author-length`}
-                                className="col-start-2 text-right text-[1.2rem] text-[var(--color-text-muted)]"
-                            >
-                                {getCommentAuthorLength(author)} / {COMMENT_AUTHOR_MAX_LENGTH}
-                            </p> */}
                         </div>
                     </div>
                 ) : (
                     <p className="text-[var(--color-text-muted)]">{authorName}님으로 작성해요.</p>
                 )}
                 <div className="flex flex-col gap-[0.8rem]">
-                    {/* <label htmlFor={`${formId}-message`}>{parentId ? "답글 내용" : "댓글 내용"}</label> */}
                     <textarea
                         id={`${formId}-message`}
                         name="msg"

@@ -306,7 +306,6 @@ const PageRevealOverlay = () => {
                 <div
                     aria-hidden
                     className="fixed inset-0 z-[1000000000] bg-[##000000] pointer-events-none"
-                    // className="fixed inset-0 z-[1000000000] bg-[var(--color-background-light)] pointer-events-none"
                 />
             ) : null}
 
@@ -314,7 +313,6 @@ const PageRevealOverlay = () => {
                 <motion.div
                     aria-hidden
                     className="fixed inset-0 z-[1000000001] bg-[#000000] pointer-events-auto flex items-center justify-center"
-                    // className="fixed inset-0 z-[1000000001] bg-[var(--color-surface-floating)] pointer-events-auto flex items-center justify-center"
                     initial={{ clipPath: clipInitial }}
                     animate={{ clipPath: clipTarget }}
                     transition={{

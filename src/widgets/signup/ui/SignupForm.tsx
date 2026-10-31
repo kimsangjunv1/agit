@@ -1,6 +1,5 @@
 "use client";
 
-import { signIn } from "next-auth/react";
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 
@@ -13,7 +12,7 @@ import { useGetInvitationCodeCheckQuery } from "@/entities/invitation/api/invita
 import { confirmAction } from "@/shared/lib/confirmAction";
 
 const SignupForm = () => {
-    const [selectedMenu, setSelectedMenu] = useState<number>(1);
+    const [selectedMenu] = useState<number>(1);
 
     const SelectedTabContent = (value: number) => {
         switch (value) {
@@ -29,7 +28,7 @@ const SignupForm = () => {
 
 const SignupCredentialsForm = () => {
     const { setToast } = useToastStore();
-    const { replaceToUrl, backToUrl } = useNavigate();
+    const { replaceToUrl } = useNavigate();
     const { data: setUserData, mutateAsync: setUserFetch } = useSetUserWithToast();
     const [currentCode, setCurrentCode] = useState("");
     const { data: getInvitationCodeCheckData, refetch: getInvitationCodeCheckFetch } = useGetInvitationCodeCheckQuery(currentCode);
@@ -117,26 +116,6 @@ const SignupCredentialsForm = () => {
             confirmText: "가입하기",
             onConfirm: () => setUserFetch(payload),
         });
-
-        // const DEFAULT_PATH = "/login"
-        // const params = new URLSearchParams(window.location.search);
-        // const callbackUrl = params.get("callbackUrl") ?? DEFAULT_PATH;
-
-        // const res = await signIn("credentials", {
-        //     redirect: false,
-        //     email: signUpValueRef.current.email,
-        //     name: signUpValueRef.current.name,
-        //     password: signUpValueRef.current.password,
-        //     callbackUrl,
-        // });
-
-        // if (res?.ok && res.url) {
-        //     setTimeout(() => {
-        //         replaceToUrl(res.url ?? DEFAULT_PATH);
-        //     }, 100);
-        // } else {
-        //     setToast({ msg: "아이디 혹은 비밀번호를 다시 확인해주세요", time: 2 });
-        // }
     };
 
     useEffect(() => {

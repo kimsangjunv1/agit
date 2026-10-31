@@ -8,10 +8,9 @@ import UI from "@/shared/ui/common/UIComponent";
 import useNavigate from "@/shared/hooks/useNavigate";
 import { useToastStore } from "@/shared/stores/useToastStore";
 import IconComponent from "@/shared/ui/common/IconComponent";
-import { util } from "@/shared/lib/util";
 
 const LoginForm = () => {
-    const [selectedMenu, setSelectedMenu] = useState<number>(1);
+    const [selectedMenu] = useState<number>(1);
 
     const SelectedTabContent = (value: number) => {
         switch (value) {
@@ -33,14 +32,13 @@ const CredentialsForm = () => {
         password: "",
     });
 
-    const { pushToUrl, replaceToUrl } = useNavigate();
+    const { replaceToUrl } = useNavigate();
     const { setToast } = useToastStore();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         const DEFAULT_PATH = "/";
-        // const DEFAULT_PATH = "/home"
 
         // 현재 URL의 query에서 callbackUrl 가져오기
         const params = new URLSearchParams(window.location.search);

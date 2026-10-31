@@ -8,9 +8,6 @@ import { Fragment, ReactNode, useEffect, useId, useRef, useState } from "react";
 import { util } from "@/shared/lib/util";
 import { useModalStore } from "@/shared/stores/useModalStore";
 import { useToastStore } from "@/shared/stores/useToastStore";
-import { configAnimation } from "@/shared/constants/config/animationSettings";
-
-import ButtonComponent from "@/shared/ui/common/ButtonComponent";
 import DimmedComponent from "@/shared/ui/common/DimmedComponent";
 import UI from "../common/UIComponent";
 
@@ -128,12 +125,6 @@ const Modal = () => {
         }
     };
 
-    const detectOutsideClick = (e: MouseEvent) => {
-        // if ( containerRef.current && !containerRef.current.contains(e.target as Node) ) {
-        //     closeModalState();
-        // }
-    };
-
     useEffect(() => {
         if (modal) {
             util.dom.setScrollDefence(modal.isOpen);
@@ -150,13 +141,11 @@ const Modal = () => {
         let focusFrame: number | undefined;
         if (modal.isOpen) {
             window.addEventListener("keydown", preventEnterKey);
-            document.addEventListener("click", detectOutsideClick);
             focusFrame = requestAnimationFrame(() => containerRef.current?.querySelector<HTMLElement>("input, textarea, select, button")?.focus());
         }
 
         return () => {
             window.removeEventListener("keydown", preventEnterKey);
-            document.removeEventListener("click", detectOutsideClick);
             if (focusFrame !== undefined) cancelAnimationFrame(focusFrame);
             if (modal.isOpen && previousFocus instanceof HTMLElement && previousFocus.isConnected) previousFocus.focus();
         };
@@ -207,7 +196,6 @@ const Modal = () => {
                                 title={modal.title}
                                 id={titleId}
                             />
-                            {/* <div className="bg-[linear-gradient(180deg,_var(--color-surface)_20%,_transparent)] absolute top-[0.4rem] left-[50%] transform translate-x-[-50%] w-[calc(100%-(0.4rem*2))] rounded-[2.8rem] z-[1000] h-[7.2rem] pointer-events-none" /> */}
 
                             <section
                                 data-lenis-prevent="true"
@@ -243,7 +231,6 @@ const Modal = () => {
                                         duration: 2,
                                         ease: "easeOut",
                                         repeat: 0, // 무한 반복
-                                        // repeatType: "loop",
                                     }}
                                     onAnimationComplete={() => setInitGlow(true)}
                                 />
@@ -352,7 +339,7 @@ const Footer = ({ className, confirm, cancel, currentTime }: ModalFooterProps) =
 };
 
 // 가이드
-const Guide = ({ text, currentTime }: ModalGuideProps) => {
+const Guide = ({ currentTime }: ModalGuideProps) => {
     return (
         <section className="flex justify-center pb-[1.6rem]">
             <p className=" text-[1.6rem] text-[var(--color-gray-600)]">

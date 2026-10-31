@@ -37,7 +37,7 @@ interface BottomSheetStoreType {
     trackingBSConfirmLoading: (props: boolean) => void;
 }
 
-export const useBottomSheetStore = create<BottomSheetStoreType>((set, get) => ({
+export const useBottomSheetStore = create<BottomSheetStoreType>((set) => ({
     initBottomSheet: {
         type: null,
         title: "",
