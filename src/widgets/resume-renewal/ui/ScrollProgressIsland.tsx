@@ -1,0 +1,136 @@
+"use client";
+
+import { useEffect, useLayoutEffect, useRef, useState, type RefObject } from "react";
+import { useReducedMotion } from "motion/react";
+
+import DynamicIsland from "@/shared/ui/common/DynamicIsland";
+import { MaterialIcon } from "@/shared/ui/common/MaterialIcon";
+import { ColumnIslandSlot } from "./ColumnIslandStack";
+
+const SCROLL_START_PX = 12;
+const COMPLETE_PERCENT = 99;
+
+type ScrollPhase = "top" | "reading" | "complete";
+
+type ScrollProgressIslandProps = {
+    viewportRef: RefObject<HTMLDivElement | null>;
+    label: string;
+    ariaLabel?: string;
+};
+
+const ScrollProgressIsland = ({ viewportRef, label, ariaLabel = "스크롤 진행" }: ScrollProgressIslandProps) => {
+    const reducedMotion = useReducedMotion();
+    const gaugeRef = useRef<HTMLDivElement>(null);
+    const progressRef = useRef<HTMLDivElement>(null);
+    const percentRef = useRef(0);
+    const [dismissed, setDismissed] = useState(false);
+    const [phase, setPhase] = useState<ScrollPhase>("top");
+
+    useEffect(() => {
+        const viewport = viewportRef.current;
+        if (!viewport) return;
+
+        let frame = 0;
+        const paint = () => {
+            frame = 0;
+            const distance = viewport.scrollHeight - viewport.clientHeight;
+            const percent = distance <= 0 ? 0 : Math.min(100, Math.max(0, (viewport.scrollTop / distance) * 100));
+            const nextPhase: ScrollPhase = percent >= COMPLETE_PERCENT ? "complete" : viewport.scrollTop > SCROLL_START_PX ? "reading" : "top";
+
+            percentRef.current = percent;
+            if (gaugeRef.current) gaugeRef.current.style.width = `${percent}%`;
+            if (progressRef.current) {
+                progressRef.current.setAttribute("aria-valuenow", String(Math.round(percent)));
+                progressRef.current.setAttribute("aria-valuetext", `${Math.round(percent)}%`);
+            }
+            setPhase((current) => (current === nextPhase ? current : nextPhase));
+        };
+
+        const onScroll = () => {
+            if (!frame) frame = requestAnimationFrame(paint);
+        };
+
+        paint();
+        viewport.addEventListener("scroll", onScroll, { passive: true });
+        window.addEventListener("resize", onScroll);
+        const observer = new ResizeObserver(onScroll);
+        observer.observe(viewport);
+        if (viewport.firstElementChild) observer.observe(viewport.firstElementChild);
+
+        return () => {
+            cancelAnimationFrame(frame);
+            viewport.removeEventListener("scroll", onScroll);
+            window.removeEventListener("resize", onScroll);
+            observer.disconnect();
+        };
+    }, [viewportRef]);
+
+    useLayoutEffect(() => {
+        if (!gaugeRef.current && !progressRef.current) return;
+        if (gaugeRef.current) gaugeRef.current.style.width = `${percentRef.current}%`;
+        if (progressRef.current) {
+            progressRef.current.setAttribute("aria-valuenow", String(Math.round(percentRef.current)));
+            progressRef.current.setAttribute("aria-valuetext", `${Math.round(percentRef.current)}%`);
+        }
+    }, [phase, dismissed]);
+
+    useEffect(() => {
+        setDismissed(false);
+    }, [label]);
+
+    const scrollToTop = () => {
+        viewportRef.current?.scrollTo({ top: 0, behavior: reducedMotion ? "auto" : "smooth" });
+    };
+
+    return (
+        <ColumnIslandSlot present={!dismissed && phase !== "top"}>
+            <div
+                ref={progressRef}
+                role="progressbar"
+                aria-label={`${label} 스크롤 진행률`}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={0}
+            >
+                <DynamicIsland
+                    ariaLabel={ariaLabel}
+                    placement="bottom"
+                    overlay={
+                        <div
+                            ref={gaugeRef}
+                            className="h-full bg-white/20"
+                        />
+                    }
+                >
+                    <div className="flex items-center gap-[0.4rem]">
+                        <button
+                            type="button"
+                            aria-label="진행 표시 닫기"
+                            className="flex h-[3.2rem] w-[3.2rem] shrink-0 items-center justify-center rounded-full hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
+                            onClick={() => setDismissed(true)}
+                        >
+                            <MaterialIcon
+                                name="close"
+                                size={20}
+                            />
+                        </button>
+                        <p className="min-w-0 max-w-[min(24rem,calc(50vw-16rem))] truncate px-[0.4rem] text-[1.4rem] leading-none">{label}</p>
+                        <button
+                            type="button"
+                            aria-label="맨 위로"
+                            className="flex h-[3.2rem] w-[3.2rem] shrink-0 items-center justify-center rounded-full hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
+                            onClick={scrollToTop}
+                        >
+                            <MaterialIcon
+                                name="arrow_upward"
+                                size={20}
+                            />
+                        </button>
+                    </div>
+                </DynamicIsland>
+            </div>
+        </ColumnIslandSlot>
+    );
+};
+
+export default ScrollProgressIsland;

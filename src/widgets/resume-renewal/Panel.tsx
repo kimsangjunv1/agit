@@ -9,6 +9,8 @@ import Image from "next/image";
 import { motion, useMotionValue, useReducedMotion, useSpring } from "motion/react";
 import Scrollbar from "@/shared/ui/common/Scrollbar";
 import { useLayoutStore } from "@/shared/stores/useLayoutStore";
+import { ColumnIslandStack } from "./ui/ColumnIslandStack";
+import ScrollProgressIsland from "./ui/ScrollProgressIsland";
 
 const MASCOT_REVEAL_EASE = [0.22, 1, 0.36, 1] as const;
 const MASCOT_BACK_ARM_MAX_DEG = 55;
@@ -46,9 +48,10 @@ export default function Panel() {
     const detailContainerRef = useRef<HTMLDivElement | null>(null);
     return (
         <article className={`relative w-full overflow-x-hidden grid grid-cols-2 ${R.root}`}>
+            <div className="relative min-h-0 min-w-0">
             <Scrollbar
                 direction="vertical"
-                aria-label="최신 글 세로 스크롤"
+                aria-label="상세 세로 스크롤"
                 viewportRef={detailContainerRef}
                 className="h-[100svh] w-full border-r border-r-[#ffffff20]"
                 autoHide
@@ -137,10 +140,19 @@ export default function Panel() {
                     }
                 />
             </Scrollbar>
+            <ColumnIslandStack>
+                <ScrollProgressIsland
+                    viewportRef={detailContainerRef}
+                    label="상세"
+                    ariaLabel="상세 스크롤 진행"
+                />
+            </ColumnIslandStack>
+            </div>
 
+            <div className="relative min-h-0 min-w-0">
             <Scrollbar
                 direction="vertical"
-                aria-label="최신 글 세로 스크롤"
+                aria-label="한눈에 보기 세로 스크롤"
                 viewportRef={easyContainerRef}
                 className="h-[100svh] w-full"
                 autoHide
@@ -201,6 +213,14 @@ export default function Panel() {
                     }
                 />
             </Scrollbar>
+            <ColumnIslandStack>
+                <ScrollProgressIsland
+                    viewportRef={easyContainerRef}
+                    label="한눈에 보기"
+                    ariaLabel="한눈에 보기 스크롤 진행"
+                />
+            </ColumnIslandStack>
+            </div>
             {/* <Layer.Hero />
             <Layer.Worklog entries={renewalExperiences} />
             <Layer.ProjectGrid />
