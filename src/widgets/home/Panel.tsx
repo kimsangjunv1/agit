@@ -20,7 +20,7 @@ export default function Panel({ initialData }: HomePanelProps) {
             <HomeLayer.Search />
             <HomeLayer.HomeViewModeFloatingMenu />
             {isMobile ? null : (
-                <section className="fixed bottom-[5.2rem] left-[5.2rem] right-[5.2rem] z-20 flex min-w-0 items-start justify-start opacity-[0.5]">
+                <section className="fixed bottom-[5.2rem] left-[5.2rem] right-[5.2rem] z-20 flex min-w-0 items-start justify-start">
                     <HomeViewModeNav variant="header" />
                 </section>
             )}

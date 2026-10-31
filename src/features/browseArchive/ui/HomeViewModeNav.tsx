@@ -18,7 +18,7 @@ const HomeViewModeNav = ({ variant }: HomeViewModeNavProps) => {
     const { postType, mainViewMode, categoryFilter, setPostType, setCategory, showLatest } = usePostTypeFilter();
     const isFloating = variant === "floating";
     const buttonClass = "shrink-0 whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-4";
-    const textClass = (active: boolean) => (active ? "text-red-500" : "text-[var(--color-text-muted)]");
+    const textClass = (active: boolean) => (active ? "text-[var(--color-brand-500)]" : "text-[var(--color-text-muted)]");
 
     return (
         <section

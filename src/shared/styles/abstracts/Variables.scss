@@ -34,17 +34,17 @@
     --interaction-duration: 0.25s;
     --interaction-easing: cubic-bezier(0.22, 1, 0.36, 1);
 
-    /* 브랜드 색상: Tailwind red의 명도·채도 분포를 500 기준으로 OKLCH 보정 */
-    --color-brand-900: #842211;
-    --color-brand-800: #a11d02;
-    --color-brand-700: #c12300;
-    --color-brand-600: #e62b00;
-    --color-brand-500: #ff4321; /* 기본 강조색 */
-    --color-brand-400: #ff755b;
-    --color-brand-300: #ffac9a;
-    --color-brand-200: #ffcec4;
-    --color-brand-100: #ffe4de;
-    --color-brand-50: #fef3f1;
+    /* 브랜드 색상: #94ff21(500) 기준 OKLCH 명도·채도 스케일 */
+    --color-brand-900: #315d00;
+    --color-brand-800: #468000;
+    --color-brand-700: #5ea900;
+    --color-brand-600: #77d400;
+    --color-brand-500: #94ff21; /* 기본 강조색 */
+    --color-brand-400: #a8fd68;
+    --color-brand-300: #bdfa94;
+    --color-brand-200: #d2fab9;
+    --color-brand-100: #e5fcd7;
+    --color-brand-50: #f2ffeb;
 
     /* 기존 컴포넌트의 그레이 값을 공통 다크 팔레트에 연결 */
     --color-gray-50: var(--color-surface-inset);
