@@ -29,21 +29,21 @@
     --color-text-muted: #898989;
     --color-text-subtle: #6b6b6b;
     --color-main-text-light: var(--color-text-primary);
-    --color-interaction-hover: #ff4321;
+    --color-interaction-hover: var(--color-brand-500);
     --interaction-duration: 0.25s;
     --interaction-easing: cubic-bezier(0.22, 1, 0.36, 1);
 
-    /* 브랜드 색상 */
-    --color-brand-900: #095eb9;
-    --color-brand-800: #1870c5;
-    --color-brand-700: #2982d1;
-    --color-brand-600: #3b92dd;
-    --color-brand-500: #3c9aff; /* 기본 강조색 */
-    --color-brand-400: #5aaaff;
-    --color-brand-300: #83c1ff;
-    --color-brand-200: #274b6e;
-    --color-brand-100: #1d3449;
-    --color-brand-50: #1a2936;
+    /* 브랜드 색상: Tailwind red의 명도·채도 분포를 500 기준으로 OKLCH 보정 */
+    --color-brand-900: #842211;
+    --color-brand-800: #a11d02;
+    --color-brand-700: #c12300;
+    --color-brand-600: #e62b00;
+    --color-brand-500: #ff4321; /* 기본 강조색 */
+    --color-brand-400: #ff755b;
+    --color-brand-300: #ffac9a;
+    --color-brand-200: #ffcec4;
+    --color-brand-100: #ffe4de;
+    --color-brand-50: #fef3f1;
 
     /* 기존 컴포넌트의 그레이 값을 공통 다크 팔레트에 연결 */
     --color-gray-50: var(--color-surface-inset);

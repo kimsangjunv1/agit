@@ -258,7 +258,7 @@ const Item = ({ row, rowIndex, isSectionEnd, draggingRowKey, onRowDragStart }: {
                     <motion.section
                         key={block.id}
                         layout="position"
-                        className={`${BLOCK_COLUMN_CLASS} relative items-start overflow-visible focus-within:border-[#ff4321] ${isOtherRowDragging ? "!z-0" : "z-20"} ${blockKeepsEditorMinHeight(block) ? "" : "!min-h-0 h-auto"}`}
+                        className={`${BLOCK_COLUMN_CLASS} relative items-start overflow-visible focus-within:border-[var(--color-brand-500)] ${isOtherRowDragging ? "!z-0" : "z-20"} ${blockKeepsEditorMinHeight(block) ? "" : "!min-h-0 h-auto"}`}
                     >
                         <Block
                             block={block}

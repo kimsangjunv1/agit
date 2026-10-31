@@ -94,7 +94,7 @@ const PageLoadProgress = ({ reducedMotion }: { reducedMotion: boolean }) => {
             style={{ opacity }}
         >
             <motion.div
-                className="h-full w-full origin-left bg-[#ff4321]"
+                className="h-full w-full origin-left bg-[var(--color-brand-500)]"
                 style={{ scaleX: scale }}
             />
         </motion.div>

@@ -308,7 +308,7 @@ const Footer = ({ className, confirm, cancel, currentTime }: ModalFooterProps) =
 
             {confirm && confirm?.title !== " " && (
                 <UI.Button
-                    className={`${confirm?.className ? confirm.className : "hover:bg-[var(--color-surface-floating)] text-[#ff4321]"} flex-1 font-regular text-[1.6rem] whitespace-nowrap px-[2rem] h-[4.4rem]`}
+                    className={`${confirm?.className ? confirm.className : "hover:bg-[var(--color-surface-floating)] text-[var(--color-brand-500)]"} flex-1 font-regular text-[1.6rem] whitespace-nowrap px-[2rem] h-[4.4rem]`}
                     disabled={isPending}
                     onClick={async () => {
                         const currentModal = useModalStore.getState().modal;

@@ -376,7 +376,7 @@ const PageRevealOverlay = () => {
                             alt="아지트"
                             width={256}
                             height={52}
-                            className={`transition-colors duration-300 ${isInitialLogoReady ? "text-[#ff4321]" : "text-white"}`}
+                            className={`transition-colors duration-300 ${isInitialLogoReady ? "text-[var(--color-brand-500)]" : "text-white"}`}
                         />
                     </motion.div>
                 </motion.div>

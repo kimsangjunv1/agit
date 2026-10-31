@@ -140,7 +140,7 @@ const MobileMenu = () => {
                                         ) : (
                                             <UI.Button
                                                 onClick={() => pushToUrl("/login")}
-                                                className="flex justify-center text-center gap-[0.4rem] w-full items-center text-[2.4rem] font-semibold whitespace-nowrap py-[1.2rem] text-[#ff4321]"
+                                                className="flex justify-center text-center gap-[0.4rem] w-full items-center text-[2.4rem] font-semibold whitespace-nowrap py-[1.2rem] text-[var(--color-brand-500)]"
                                             >
                                                 로그인
                                             </UI.Button>

@@ -165,7 +165,7 @@ const PostTocNav = ({ items, scrollViewportRef }: PostTocNavProps) => {
                                                 transition={{ ...motionTransition, layout: layoutTransition }}
                                                 aria-hidden="true"
                                                 className={`min-w-0 max-w-[14.4rem] truncate text-right text-[1.4rem] font-semibold leading-[1.4] tracking-[-0.04em] ${
-                                                    isActive ? "text-[#ff4321]" : "text-[var(--color-text-primary)]"
+                                                    isActive ? "text-[var(--color-brand-500)]" : "text-[var(--color-text-primary)]"
                                                 }`}
                                             >
                                                 {item.label}
@@ -177,7 +177,7 @@ const PostTocNav = ({ items, scrollViewportRef }: PostTocNavProps) => {
                                         aria-hidden="true"
                                         className={`block h-[0.4rem] shrink-0 ${
                                             isActive || isHighlighted
-                                                ? "bg-[#ff4321] opacity-100"
+                                                ? "bg-[var(--color-brand-500)] opacity-100"
                                                 : "bg-current opacity-20"
                                         }`}
                                         initial={false}

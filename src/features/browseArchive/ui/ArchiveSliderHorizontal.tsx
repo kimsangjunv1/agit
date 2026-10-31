@@ -86,7 +86,7 @@ const ArchiveSliderHorizontalCard = ({ post, index, containerRef, shouldBlockCli
                     content="NEW"
                     className={{
                         container: "bg-[var(--color-background-light)] gap-[1.2rem] p-[0.4rem]",
-                        marquee: "text-[#ff4321] gap-[1.2rem] font-mono",
+                        marquee: "text-[var(--color-brand-500)] gap-[1.2rem] font-mono",
                     }}
                 />
             </div>
