@@ -9,18 +9,23 @@ import PostThumbnail from "@/shared/ui/common/PostThumbnail";
 import Marquee from "@/shared/ui/layout/Marquee";
 import { util } from "@/shared/lib/util";
 import useNavigate from "@/shared/hooks/useNavigate";
+import { useLayoutStore } from "@/shared/stores/useLayoutStore";
 
 const MotionLink = motion.create(Link);
 
 type ArchiveSliderVerticalCardProps = {
     post: PostLatestItem;
+    index: number;
     containerRef: RefObject<HTMLDivElement | null>;
 };
 
-const ArchiveSliderVerticalCard = ({ post, containerRef }: ArchiveSliderVerticalCardProps) => {
+const ArchiveSliderVerticalCard = ({ post, index, containerRef }: ArchiveSliderVerticalCardProps) => {
     const cardRef = useRef<HTMLButtonElement | null>(null);
     const postHref = `/post/${post.idx}`;
     const { pushToUrl } = useNavigate();
+    const canPlayIntro = useLayoutStore((state) => state.isPageContentVisible && state.transitionPhase === "idle");
+    const introHidden = { opacity: 0, y: "40svh" };
+    const introVisible = { opacity: 1, y: 0 };
     const { scrollYProgress } = useScroll({
         container: containerRef,
         target: cardRef,
@@ -34,6 +39,13 @@ const ArchiveSliderVerticalCard = ({ post, containerRef }: ArchiveSliderVertical
             data-idx={post.idx}
             aria-label={post.title}
             className="block h-[30svh] w-[80dvw] shrink-0 origin-center will-change-transform"
+            initial={introHidden}
+            animate={canPlayIntro ? introVisible : introHidden}
+            transition={{
+                delay: canPlayIntro ? 0.1 * (index + 1) : 0,
+                duration: 0.8,
+                ease: [0.22, 1, 0.36, 1],
+            }}
             style={{ scale }}
             onClick={(event) => {
                 event.preventDefault();

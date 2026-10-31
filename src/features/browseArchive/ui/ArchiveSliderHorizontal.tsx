@@ -10,6 +10,7 @@ import usePageTransitionReady from "@/shared/hooks/usePageTransitionReady";
 
 import { FeedEmpty, FeedError, FeedLoading } from "./FeedStatus";
 import useNavigate from "@/shared/hooks/useNavigate";
+import { useLayoutStore } from "@/shared/stores/useLayoutStore";
 import Marquee from "@/shared/ui/layout/Marquee";
 import PostThumbnail from "@/shared/ui/common/PostThumbnail";
 import { util } from "@/shared/lib/util";
@@ -36,6 +37,9 @@ const ArchiveSliderHorizontalCard = ({ post, index, containerRef, shouldBlockCli
     const { pushToUrl } = useNavigate();
     const cardRef = useRef<HTMLButtonElement | null>(null);
     const postHref = `/post/${post.idx}`;
+    const canPlayIntro = useLayoutStore((state) => state.isPageContentVisible && state.transitionPhase === "idle");
+    const introHidden = { opacity: 0, y: "100svh" };
+    const introVisible = { opacity: 1, y: Math.sin(index * 0.8 + 6 * 0.5) * 90 };
     const { scrollXProgress } = useScroll({
         container: containerRef,
         target: cardRef,
@@ -51,16 +55,10 @@ const ArchiveSliderHorizontalCard = ({ post, index, containerRef, shouldBlockCli
             aria-label={post.title}
             draggable={false}
             className="block w-[36rem] shrink-0 will-change-[height,transform]"
-            initial={{
-                opacity: 0,
-                y: "100svh",
-            }}
-            animate={{
-                opacity: 1,
-                y: Math.sin(index * 0.8 + 6 * 0.5) * 90,
-            }}
+            initial={introHidden}
+            animate={canPlayIntro ? introVisible : introHidden}
             transition={{
-                delay: 0.1 * (index + 1),
+                delay: canPlayIntro ? 0.1 * (index + 1) : 0,
                 duration: 0.8,
                 ease: [0.22, 1, 0.36, 1], // cubic bezier
             }}

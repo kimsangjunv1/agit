@@ -22,10 +22,11 @@ const ArchiveSliderVerticalContent = ({ posts }: ArchiveSliderVerticalContentPro
             contentClassName="py-[calc(50svh-var(--header-height))]"
         >
             <div className="flex w-full flex-col items-center gap-[2.4rem]">
-                {posts.map((post) => (
+                {posts.map((post, index) => (
                     <ArchiveSliderVerticalCard
                         key={post.idx}
                         post={post}
+                        index={index}
                         containerRef={containerRef}
                     />
                 ))}
