@@ -8,3 +8,6 @@ export { default as Worklog } from "./ResumeRenewalWorklog";
 export { default as SideProject } from "./ResumeRenewalSideProject";
 export { default as SkillSection } from "./ResumeRenewalSkillSection";
 export { default as TocNav } from "./ResumeRenewalTocNav";
+export { default as DetailColumn } from "./RenewalDetailColumn";
+export { default as OverviewColumn } from "./RenewalOverviewColumn";
+export { default as StickyMascot } from "./StickyMascot";

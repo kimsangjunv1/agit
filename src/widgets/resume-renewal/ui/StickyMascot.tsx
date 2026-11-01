@@ -5,16 +5,15 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 
 import { useLayoutStore } from "@/shared/stores/useLayoutStore";
 
+import { useResumeRenewalProvider } from "../model/ResumeRenewalContext";
+
 const MASCOT_REVEAL_EASE = [0.22, 1, 0.36, 1] as const;
 
-type StickyMascotProps = {
-    isSectionVisible: boolean;
-};
-
-const StickyMascot = ({ isSectionVisible }: StickyMascotProps) => {
+const StickyMascot = () => {
+    const { isFirstSectionVisible } = useResumeRenewalProvider();
     const reducedMotion = useReducedMotion();
     const canShowPage = useLayoutStore((state) => state.isPageContentVisible && state.transitionPhase === "idle" && !state.isMobileMenuOpen);
-    const shouldShow = canShowPage && !isSectionVisible;
+    const shouldShow = canShowPage && !isFirstSectionVisible;
 
     return (
         <div className="pointer-events-none fixed right-[1.6rem] bottom-0 z-[110] w-[min(28vw,18rem)]">
