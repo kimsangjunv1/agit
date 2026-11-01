@@ -64,7 +64,7 @@ const Header = () => {
 
                             {isAdmin ? (
                                 <Fragment>
-                                    <div className="h-[0.1rem] w-[2.4rem] bg-[var(--color-border)]" />
+                                    <div className="h-[0.1rem] w-[2.4rem] bg-[var(--color-gray-300)]" />
                                     <UI.Button
                                         type="button"
                                         onClick={() => pushToUrl("/manager")}

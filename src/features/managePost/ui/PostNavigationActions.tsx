@@ -66,14 +66,14 @@ const ReadingSettingControl = ({
     increaseDisabled: boolean;
 }) => (
     <div className="flex min-w-0 flex-1 items-center justify-center px-[0.4rem]">
-        <p className="sr-only pc:not-sr-only whitespace-nowrap text-[1.2rem] text-[var(--color-text-muted)]">{label}</p>
+        <p className="sr-only pc:not-sr-only whitespace-nowrap text-[1.2rem] text-[var(--color-gray-600)]">{label}</p>
 
         <section className="flex items-center">
             <button
                 type="button"
                 aria-label={`${label} 줄이기`}
                 disabled={decreaseDisabled}
-                className="flex h-[3.2rem] w-[3.2rem] shrink-0 items-center justify-center rounded-full text-[2rem] text-[var(--color-text-primary)] transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-current disabled:opacity-30"
+                className="flex h-[3.2rem] w-[3.2rem] shrink-0 items-center justify-center rounded-full text-[2rem] text-[var(--color-gray-900)] transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-current disabled:opacity-30"
                 onClick={onDecrease}
             >
                 <span className="sr-only">{label} 줄이기</span>
@@ -82,12 +82,12 @@ const ReadingSettingControl = ({
                     size={20}
                 />
             </button>
-            <strong className="min-w-[3.6rem] text-center text-[1.6rem] text-[var(--color-text-primary)]">{value}</strong>
+            <strong className="min-w-[3.6rem] text-center text-[1.6rem] text-[var(--color-gray-900)]">{value}</strong>
             <button
                 type="button"
                 aria-label={`${label} 늘리기`}
                 disabled={increaseDisabled}
-                className="flex h-[3.2rem] w-[3.2rem] shrink-0 items-center justify-center rounded-full text-[2rem] text-[var(--color-text-primary)] transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-current disabled:opacity-30"
+                className="flex h-[3.2rem] w-[3.2rem] shrink-0 items-center justify-center rounded-full text-[2rem] text-[var(--color-gray-900)] transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-current disabled:opacity-30"
                 onClick={onIncrease}
             >
                 <span className="sr-only">{label} 늘리기</span>

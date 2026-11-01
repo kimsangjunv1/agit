@@ -53,28 +53,28 @@ const ArchiveListDefaultItem = forwardRef<HTMLElement, ArchiveListDefaultItemPro
                 />
                 {/* <div className="pointer-events-none absolute h-[50%] mask-[linear-gradient(0deg,_#000,_#000_2.5%,_#000_50%,_#0000)] bottom-0 left-0 w-full bg-[#00000000] backdrop-blur-[30px]" /> */}
                 <div className="pointer-events-none flex flex-col items-start flex-1 w-full absolute top-0">
-                    <h5 className="bg-[#252525] max-w-[calc(100%-3.2rem)] text-inherit text-left leading-[1.5] text-[1.8rem] font-bold p-[0.4rem_0.4rem_0_0.4rem] line-clamp-2 overflow-hidden break-words">
+                    <h5 className="bg-[var(--color-gray-100)] max-w-[calc(100%-3.2rem)] text-inherit text-left leading-[1.5] text-[1.8rem] font-bold p-[0.4rem_0.4rem_0_0.4rem] line-clamp-2 overflow-hidden break-words">
                         {post.title}
                     </h5>
 
-                    <p className="bg-[#252525] text-left font-semibold flex items-center justify-center text-[var(--color-text-muted)] mobile:text-[1.6rem] tablet:text-[1.6rem] p-[0.8rem_0.4rem_0.4rem_0.4rem]">
+                    <p className="bg-[var(--color-gray-100)] text-left font-semibold flex items-center justify-center text-[var(--color-gray-600)] mobile:text-[1.6rem] tablet:text-[1.6rem] p-[0.8rem_0.4rem_0.4rem_0.4rem]">
                         {util.string.getCurrentDate(post.created_at)}
                     </p>
-                    {/* <p className="bg-[#252525] text-left font-semibold leading-[1.5] text-[var(--color-text-muted)] line-clamp-2 mobile:text-[1.6rem] tablet:text-[1.6rem] p-[0.8rem_0.4rem_0.4rem_0.4rem]">
+                    {/* <p className="bg-[#252525] text-left font-semibold leading-[1.5] text-[var(--color-gray-600)] line-clamp-2 mobile:text-[1.6rem] tablet:text-[1.6rem] p-[0.8rem_0.4rem_0.4rem_0.4rem]">
                         &quot;{post.summary}&quot;
                     </p> */}
                 </div>
                 <div className="pointer-events-none flex flex-col items-start flex-1 w-full absolute bottom-0 right-0 p-[0.8rem]">
                     {/* <h5 className="bg-[#252525] text-inherit text-left text-[2rem] font-bold p-[0.4rem_0.4rem_0_0.4rem]">{post.title}</h5> */}
-                    <p className="bg-[#252525] text-left font-semibold flex items-center justify-center text-[var(--color-text-muted)] mobile:text-[1.6rem] tablet:text-[1.6rem] p-[0.8rem_0.4rem_0.4rem_0.4rem]">
+                    <p className="bg-[var(--color-gray-100)] text-left font-semibold flex items-center justify-center text-[var(--color-gray-600)] mobile:text-[1.6rem] tablet:text-[1.6rem] p-[0.8rem_0.4rem_0.4rem_0.4rem]">
                         {post.category?.title}
                     </p>
-                    <p className="bg-[#252525] text-left font-semibold flex items-center gap-[0.4rem] text-[var(--color-text-muted)] mobile:text-[1.6rem] tablet:text-[1.6rem] p-[0.8rem_0.4rem_0.4rem_0.4rem]">
+                    <p className="bg-[var(--color-gray-100)] text-left font-semibold flex items-center gap-[0.4rem] text-[var(--color-gray-600)] mobile:text-[1.6rem] tablet:text-[1.6rem] p-[0.8rem_0.4rem_0.4rem_0.4rem]">
                         <CheerUpIcon size={16} />
                         {post.likes ?? 0}
                     </p>
                 </div>
-                {/* <p className="[text-align-last:justify] bg-[var(--color-surface-floating)] font-bold p-[0.8rem] text-[var(--color-text-primary)]">
+                {/* <p className="[text-align-last:justify] bg-[var(--color-background-light)]/30 font-bold p-[0.8rem] text-[var(--color-gray-900)]">
                     {post.category?.title} ・ {util.string.getCurrentDate(post.created_at)} ・ {post.likes ?? 0} likes
                 </p> */}
             </TransitionLink>

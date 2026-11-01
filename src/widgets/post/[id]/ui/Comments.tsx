@@ -32,9 +32,9 @@ const Comments = () => {
                     id={`${formId}-title`}
                     className="text-[2rem] font-semibold"
                 >
-                    댓글 <span className="text-[var(--color-text-muted)]">{firstPage?.pagination?.commentTotalCount ?? firstPage?.pagination?.totalCount ?? "…"}</span>
+                    댓글 <span className="text-[var(--color-gray-600)]">{firstPage?.pagination?.commentTotalCount ?? firstPage?.pagination?.totalCount ?? "…"}</span>
                 </h2>
-                <p className="text-[1.4rem] text-[var(--color-text-muted)]">부적절한 댓글은 임의로 삭제조치 될 수 있어요.</p>
+                <p className="text-[1.4rem] text-[var(--color-gray-600)]">부적절한 댓글은 임의로 삭제조치 될 수 있어요.</p>
             </section>
 
             <div
@@ -44,7 +44,7 @@ const Comments = () => {
                 {isLoading ? (
                     <p
                         role="status"
-                        className="py-[2.4rem] text-[1.4rem] text-[var(--color-text-muted)]"
+                        className="py-[2.4rem] text-[1.4rem] text-[var(--color-gray-600)]"
                     >
                         댓글을 불러오고 있어요.
                     </p>
@@ -61,11 +61,11 @@ const Comments = () => {
                         </button>
                     </div>
                 ) : firstPage && comments.length === 0 ? (
-                    <p className="py-[2.4rem] text-[1.4rem] text-[var(--color-text-muted)]">아직 댓글이 없어요. 첫 댓글을 남겨주세요.</p>
+                    <p className="py-[2.4rem] text-[1.4rem] text-[var(--color-gray-600)]">아직 댓글이 없어요. 첫 댓글을 남겨주세요.</p>
                 ) : null}
 
                 {comments.length > 0 && (
-                    <ul className="divide-y divide-[var(--color-border)] border-y border-[var(--color-border)]">
+                    <ul className="divide-y divide-[var(--color-gray-300)] border-y border-[var(--color-gray-300)]">
                         {comments.map((comment) => (
                             <CommentThread
                                 key={comment.idx}

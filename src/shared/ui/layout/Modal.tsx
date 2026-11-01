@@ -180,7 +180,7 @@ const Modal = () => {
                         aria-busy={Boolean(modal.confirm?.loading)}
                     >
                         <motion.div
-                            className={`relative flex flex-col w-full bg-[var(--color-surface)] gap-[1.6rem] mx-[1.6rem] z-10 max-h-[calc(100svh-(1.6rem*3))] shadow-[var(--shadow-normal)] ${modal.className?.container !== "" ? modal.className?.container : "max-w-[var(--modal-width)]"}`}
+                            className={`relative flex flex-col w-full bg-[var(--color-gray-100)] gap-[1.6rem] mx-[1.6rem] z-10 max-h-[calc(100svh-(1.6rem*3))] shadow-[var(--shadow-normal)] ${modal.className?.container !== "" ? modal.className?.container : "max-w-[var(--modal-width)]"}`}
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
@@ -199,7 +199,7 @@ const Modal = () => {
 
                             <section
                                 data-lenis-prevent="true"
-                                className="relative flex flex-col gap-[2.4rem] max-h-[calc(100svh-(1.6rem*7))] bg-[var(--color-surface)] rounded-[2.8rem] px-[1.6rem] py-[calc(1.2rem+4rem+0.8rem)] overflow-y-auto"
+                                className="relative flex flex-col gap-[2.4rem] max-h-[calc(100svh-(1.6rem*7))] bg-[var(--color-gray-100)] rounded-[2.8rem] px-[1.6rem] py-[calc(1.2rem+4rem+0.8rem)] overflow-y-auto"
                             >
                                 <Body />
                             </section>
@@ -271,7 +271,7 @@ const Body = ({ children, className }: ModalBodyProps) => {
             {modal.description !== "" || modal.content !== null ? (
                 <section className={`modal-body flex flex-col gap-[1.2rem] max-h-[calc(100vh-(1.6rem*10))] ${className ? className : ""}`}>
                     {children}
-                    {modal.description && <p className="leading-[1.5] text-left text-[1.6rem] text-[var(--color-text-primary)] font-normal cursor-default whitespace-pre-line">{modal.description}</p>}
+                    {modal.description && <p className="leading-[1.5] text-left text-[1.6rem] text-[var(--color-gray-900)] font-normal cursor-default whitespace-pre-line">{modal.description}</p>}
                     {modal.content}
                     {modal.focusDescription && (
                         <p className="px-[1.6rem] py-[0.8rem] cursor-default text-center bg-[var(--color-gray-50)] rounded-[1.2rem] whitespace-pre-line">{modal.focusDescription}</p>
@@ -297,7 +297,7 @@ const Footer = ({ className, confirm, cancel, currentTime }: ModalFooterProps) =
         <section className={`modal-footer w-full flex flex-wrap justify-between absolute bottom-0 left-0 z-[100000] ${className}`}>
             {cancel && cancel?.title !== " " && (
                 <UI.Button
-                    className={`${cancel?.className ? cancel?.className : "hover:bg-[var(--color-surface-floating)]"} flex-1 font-regular text-[1.6rem] whitespace-nowrap px-[2rem] h-[4.4rem]`}
+                    className={`${cancel?.className ? cancel?.className : "hover:bg-[var(--color-background-light)]/30"} flex-1 font-regular text-[1.6rem] whitespace-nowrap px-[2rem] h-[4.4rem]`}
                     onClick={cancel.onClick}
                     disabled={isPending}
                     rippleColor="#65778a"
@@ -308,7 +308,7 @@ const Footer = ({ className, confirm, cancel, currentTime }: ModalFooterProps) =
 
             {confirm && confirm?.title !== " " && (
                 <UI.Button
-                    className={`${confirm?.className ? confirm.className : "hover:bg-[var(--color-surface-floating)] text-[var(--color-brand-500)]"} flex-1 font-regular text-[1.6rem] whitespace-nowrap px-[2rem] h-[4.4rem]`}
+                    className={`${confirm?.className ? confirm.className : "hover:bg-[var(--color-background-light)]/30 text-[var(--color-brand-500)]"} flex-1 font-regular text-[1.6rem] whitespace-nowrap px-[2rem] h-[4.4rem]`}
                     disabled={isPending}
                     onClick={async () => {
                         const currentModal = useModalStore.getState().modal;

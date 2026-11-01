@@ -32,8 +32,8 @@ const Plus = ({ direction }: { direction: "top left" | "top right" | "bottom lef
             data-page-transition-fixed={`grid-${direction}`}
             className={`${getDegree()} w-[1.6rem] h-[1.6rem] bg-red fixed`}
         >
-            <div className="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] w-full h-[0.1rem] bg-[#cccccc80]" />
-            <div className="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] w-[0.1rem] h-full bg-[#cccccc80]" />
+            <div className="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] w-full h-[0.1rem] bg-[var(--color-gray-800)]/50" />
+            <div className="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] w-[0.1rem] h-full bg-[var(--color-gray-800)]/50" />
         </div>
     );
 };

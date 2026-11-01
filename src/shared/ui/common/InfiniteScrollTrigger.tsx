@@ -30,7 +30,7 @@ const InfiniteScrollTrigger = ({ root, isFetching, isError, onLoadMore }: Props)
     return (
         <div
             ref={ref}
-            className="py-[2.4rem] text-center text-[1.4rem] text-[var(--color-text-muted)]"
+            className="py-[2.4rem] text-center text-[1.4rem] text-[var(--color-gray-600)]"
             aria-busy={isFetching}
         >
             {isFetching ? (

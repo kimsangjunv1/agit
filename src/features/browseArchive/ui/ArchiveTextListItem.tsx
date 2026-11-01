@@ -27,16 +27,16 @@ const ArchiveTextListItem = forwardRef<HTMLLIElement, Props>(function ArchiveTex
             }}
             exit={{ opacity: 0, transition: { duration: reducedMotion ? 0 : 0.15 } }}
             transition={transition}
-            className="border-b border-[var(--color-border)]"
+            className="border-b border-[var(--color-gray-300)]"
         >
             <TransitionLink
                 href={`/post/${post.idx}`}
                 className="group block py-[2.8rem] focus-visible:rounded-[0.4rem] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-interaction-hover)]"
             >
-                <div className="flex flex-wrap items-baseline justify-between gap-x-[2.4rem] gap-y-[0.8rem] text-[1.4rem] leading-[1.5] text-[var(--color-text-muted)] tablet:text-[1.6rem]">
+                <div className="flex flex-wrap items-baseline justify-between gap-x-[2.4rem] gap-y-[0.8rem] text-[1.4rem] leading-[1.5] text-[var(--color-gray-600)] tablet:text-[1.6rem]">
                     <div className="flex min-w-0 flex-1 flex-wrap items-center gap-[0.8rem]">
                         <h2 className="min-w-0 font-semibold [overflow-wrap:anywhere]">{post.title}</h2>
-                        <span className="shrink-0 rounded-[0.4rem] bg-[var(--color-surface-hover)] px-[0.6rem] py-[0.2rem] text-[1.2rem]">{typeTitle}</span>
+                        <span className="shrink-0 rounded-[0.4rem] bg-[var(--color-gray-200)] px-[0.6rem] py-[0.2rem] text-[1.2rem]">{typeTitle}</span>
                     </div>
                     <time
                         dateTime={post.created_at}
@@ -45,7 +45,7 @@ const ArchiveTextListItem = forwardRef<HTMLLIElement, Props>(function ArchiveTex
                         {util.string.getCurrentDate(post.created_at, 4)}
                     </time>
                 </div>
-                <p className="mt-[1.2rem] text-[1.8rem] leading-[1.8] text-[var(--color-text-primary)] [overflow-wrap:anywhere] tablet:text-[2rem]">
+                <p className="mt-[1.2rem] text-[1.8rem] leading-[1.8] text-[var(--color-gray-900)] [overflow-wrap:anywhere] tablet:text-[2rem]">
                     {post.summary} <span className="whitespace-nowrap text-[var(--color-interaction-hover)] group-hover:underline group-focus-visible:underline">더보기</span>
                 </p>
             </TransitionLink>

@@ -62,7 +62,7 @@ const CommentEntry = ({ comment, parent, onReply }: { comment: GetCommentDetailD
         } else await execute();
     };
 
-    if (comment.deleted_at) return <p className="py-[1.2rem] text-[1.4rem] text-[var(--color-text-muted)]">삭제된 댓글입니다.</p>;
+    if (comment.deleted_at) return <p className="py-[1.2rem] text-[1.4rem] text-[var(--color-gray-600)]">삭제된 댓글입니다.</p>;
 
     return (
         <article className="relative min-w-0 text-[1.4rem]">
@@ -79,7 +79,7 @@ const CommentEntry = ({ comment, parent, onReply }: { comment: GetCommentDetailD
                     {comment.is_admin ? <span className="rounded-full bg-[var(--color-brand-100)] px-[0.8rem] py-[0.4rem] text-[1.2rem] text-[var(--color-brand-700)]">관리자</span> : null}
                     <time
                         dateTime={comment.created_at}
-                        className="text-[1.2rem] text-[var(--color-text-muted)]"
+                        className="text-[1.2rem] text-[var(--color-gray-600)]"
                     >
                         {util.string.getCurrentDate(comment.created_at, 4)}
                         {comment.is_modified ? " · 수정됨" : ""}
@@ -90,7 +90,7 @@ const CommentEntry = ({ comment, parent, onReply }: { comment: GetCommentDetailD
                 <span
                     role="img"
                     aria-label={emoji.label}
-                    className="absolute right-0 top-0 flex h-[3.2rem] w-[3.2rem] items-center justify-center rounded-full border border-[var(--color-border)] bg-[var(--color-surface-floating)] text-[1.6rem]"
+                    className="absolute right-0 top-0 flex h-[3.2rem] w-[3.2rem] items-center justify-center rounded-full border border-[var(--color-gray-300)] bg-[var(--color-background-light)]/30 text-[1.6rem]"
                 >
                     {emoji.emoji}
                 </span>
@@ -99,7 +99,7 @@ const CommentEntry = ({ comment, parent, onReply }: { comment: GetCommentDetailD
                 {comment.reply_to_author ? <span className="mr-[0.6rem] text-[var(--color-brand-700)]">@{comment.reply_to_author}</span> : null}
                 {comment.msg}
             </p>
-            <div className="mt-[1.2rem] flex gap-[1.6rem] text-[var(--color-text-muted)]">
+            <div className="mt-[1.2rem] flex gap-[1.6rem] text-[var(--color-gray-600)]">
                 {!parent?.deleted_at ? (
                     <button
                         type="button"
@@ -227,13 +227,13 @@ const CommentThread = ({ comment }: { comment: GetCommentDetailData }) => {
                     type="button"
                     onClick={() => setRepliesOpen(!repliesOpen)}
                     aria-expanded={repliesOpen}
-                    className="mt-[1.6rem] text-[1.4rem] text-[var(--color-text-muted)] focus-visible:outline-2 focus-visible:outline-offset-4"
+                    className="mt-[1.6rem] text-[1.4rem] text-[var(--color-gray-600)] focus-visible:outline-2 focus-visible:outline-offset-4"
                 >
                     {repliesOpen ? "답글 접기" : `답글 ${comment.reply_count}개 보기`}
                 </button>
             ) : null}
             {repliesOpen ? (
-                <div className="mt-[1.6rem] border-l border-[var(--color-border)] pl-[1.6rem] tablet:pl-[2.4rem]">
+                <div className="mt-[1.6rem] border-l border-[var(--color-gray-300)] pl-[1.6rem] tablet:pl-[2.4rem]">
                     {replies.isLoading ? (
                         <p
                             role="status"

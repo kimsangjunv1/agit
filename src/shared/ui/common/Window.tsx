@@ -125,7 +125,7 @@ const PipIcon = () => (
     >
         <path
             d="M80-520v-80h144L52-772l56-56 172 172v-144h80v280H80Zm80 360q-33 0-56.5-23.5T80-240v-200h80v200h320v80H160Zm640-280v-280H440v-80h360q33 0 56.5 23.5T880-720v280h-80ZM560-160v-200h320v200H560Z"
-            fill="#1f1f1f"
+            fill="var(--color-gray-50)"
         />
     </svg>
 );
@@ -141,7 +141,7 @@ const CloseIcon = () => (
     >
         <path
             d="m8 8 8 8m-8 0 8-8"
-            stroke="#1f1f1f"
+            stroke="var(--color-gray-50)"
             strokeWidth="1.5"
             strokeLinecap="round"
         />

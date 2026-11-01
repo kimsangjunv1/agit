@@ -13,7 +13,7 @@ type Props = {
 
 export default function PostTypeForm({ initialValue, isNew, pending, onSave }: Props) {
     const [value, setValue] = useState({ ...initialValue, sort_no: String(initialValue.sort_no) });
-    const inputClass = "w-full rounded-[0.8rem] border border-[var(--color-border)] bg-[var(--color-surface)] px-[1.2rem] py-[0.8rem] disabled:opacity-60";
+    const inputClass = "w-full rounded-[0.8rem] border border-[var(--color-gray-300)] bg-[var(--color-gray-100)] px-[1.2rem] py-[0.8rem] disabled:opacity-60";
     const submit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         if (!pending) void onSave({ ...value, sort_no: Number(value.sort_no) });
@@ -48,7 +48,7 @@ export default function PostTypeForm({ initialValue, isNew, pending, onSave }: P
                 />
                 <span
                     id="post-type-code-guide"
-                    className="text-[1.2rem] text-[var(--color-text-muted)]"
+                    className="text-[1.2rem] text-[var(--color-gray-600)]"
                 >
                     영문 소문자로 시작하고 숫자, 하이픈, 밑줄을 사용할 수 있어요. 글 목록 주소에 사용되며 추가 후 변경할 수 없어요.
                 </span>
@@ -65,7 +65,7 @@ export default function PostTypeForm({ initialValue, isNew, pending, onSave }: P
                     onChange={(event) => setValue({ ...value, sort_no: event.target.value })}
                     className={inputClass}
                 />
-                <span className="text-[1.2rem] text-[var(--color-text-muted)]">작은 숫자부터 메뉴와 작성 화면에 표시돼요.</span>
+                <span className="text-[1.2rem] text-[var(--color-gray-600)]">작은 숫자부터 메뉴와 작성 화면에 표시돼요.</span>
             </label>
             <UI.Button
                 type="submit"

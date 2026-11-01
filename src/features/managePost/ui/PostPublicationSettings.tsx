@@ -9,7 +9,7 @@ export default function PostPublicationSettings() {
     const { data, isPending, isError, refetch } = useGetPostTypesQuery();
     const types = data?.result ?? [];
     const selectClass =
-        "rounded-[0.8rem] border border-[var(--color-border)] bg-[var(--color-surface)] px-[1.2rem] py-[0.8rem] text-[var(--color-text-primary)] focus-visible:outline-2 focus-visible:outline-offset-2";
+        "rounded-[0.8rem] border border-[var(--color-gray-300)] bg-[var(--color-gray-100)] px-[1.2rem] py-[0.8rem] text-[var(--color-gray-900)] focus-visible:outline-2 focus-visible:outline-offset-2";
 
     return (
         <div className="mb-[1.6rem] flex flex-wrap gap-[1.6rem] text-[1.4rem]">
@@ -69,7 +69,7 @@ export default function PostPublicationSettings() {
                     ))}
                 </select>
             </label>
-            {visibility === "private" ? <p className="self-center text-[var(--color-text-muted)]">작성자에게만 보이는 글이에요.</p> : null}
+            {visibility === "private" ? <p className="self-center text-[var(--color-gray-600)]">작성자에게만 보이는 글이에요.</p> : null}
         </div>
     );
 }

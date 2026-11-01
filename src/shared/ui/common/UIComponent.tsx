@@ -22,7 +22,7 @@ const Switch = ({ states, onChange, desc_no }: SwitchProps) => {
         >
             <motion.div
                 layout
-                className="w-[1.6rem] h-[1.6rem] bg-[var(--color-surface)] rounded-full"
+                className="w-[1.6rem] h-[1.6rem] bg-[var(--color-gray-100)] rounded-full"
                 transition={{
                     duration: 0.5,
                     ease: [0, 0.9, 0.95, 1],
@@ -97,7 +97,7 @@ const Input = forwardRef<{ reset: () => void }, InputProps & { phoneNumber?: boo
 
         return (
             <section
-                className={`flex items-center gap-[0.8rem] max-h-[var(--input-height)] h-full transition-colors bg-[var(--color-surface)] border border-[var(--color-gray-200)] hover:border-[var(--color-brand-500)] relative ${className?.container ? className?.container : "px-[1.2rem] border border-[var(--color-gray-200)] hover:border-[var(--color-gray-500)] focus:border-[var(--color-gray-500)]"}`}
+                className={`flex items-center gap-[0.8rem] max-h-[var(--input-height)] h-full transition-colors bg-[var(--color-gray-100)] border border-[var(--color-gray-200)] hover:border-[var(--color-brand-500)] relative ${className?.container ? className?.container : "px-[1.2rem] border border-[var(--color-gray-200)] hover:border-[var(--color-gray-500)] focus:border-[var(--color-gray-500)]"}`}
                 data-description={desc_no}
             >
                 {guide && <p className="absolute top-[50%] right-[1.6rem] transform -translate-y-1/2">{guide}</p>}
@@ -210,7 +210,7 @@ const Select = ({ list = [], trackingData, defaultValue, className, desc_no, onC
             <AnimatePresence>
                 {showMenu && (
                     <motion.section
-                        className="absolute bg-[var(--color-surface)] backdrop-blur-sm max-h-[23.2rem] min-w-[calc(1.6rem*5)] overflow-y-auto flex flex-col gap-[0.4rem] shadow-[var(--shadow-normal)] p-[0.4rem] rounded-[1.2rem] z-1 overflow-hidden"
+                        className="absolute bg-[var(--color-gray-100)] backdrop-blur-sm max-h-[23.2rem] min-w-[calc(1.6rem*5)] overflow-y-auto flex flex-col gap-[0.4rem] shadow-[var(--shadow-normal)] p-[0.4rem] rounded-[1.2rem] z-1 overflow-hidden"
                         style={{
                             width: buttonRef.current?.offsetWidth,
                             ...positionStyle,
@@ -231,8 +231,8 @@ const Select = ({ list = [], trackingData, defaultValue, className, desc_no, onC
                                 <motion.button
                                     key={`${e}-${i}`}
                                     type="button"
-                                    className={`text-left hover:bg-[var(--color-surface)] text-[var(--color-gray-700)] rounded-[1.2rem] p-[1.2rem] transition-colors ${
-                                        e.value === currentValue ? "bg-[var(--color-surface)] shadow-[var(--shadow-normal)]" : "bg-transparent"
+                                    className={`text-left hover:bg-[var(--color-gray-100)] text-[var(--color-gray-700)] rounded-[1.2rem] p-[1.2rem] transition-colors ${
+                                        e.value === currentValue ? "bg-[var(--color-gray-100)] shadow-[var(--shadow-normal)]" : "bg-transparent"
                                     }`}
                                     onClick={() => {
                                         setCurrentValue(e.value);
@@ -416,7 +416,7 @@ const Calendar = ({
             <AnimatePresence>
                 {modalOpen && (
                     <motion.section
-                        className={`${center ? "fixed top-[50%!important] left-[50%!important] transform translate-x-[-50%!important] translate-y-[-50%!important]" : "absolute"} flex items-center justify-center z-[1000] bg-[var(--color-surface)] rounded-[1.2rem] shadow-[var(--shadow-normal)] overflow-hidden`}
+                        className={`${center ? "fixed top-[50%!important] left-[50%!important] transform translate-x-[-50%!important] translate-y-[-50%!important]" : "absolute"} flex items-center justify-center z-[1000] bg-[var(--color-gray-100)] rounded-[1.2rem] shadow-[var(--shadow-normal)] overflow-hidden`}
                         style={{
                             top: (calendarRef.current?.offsetHeight ?? 0) + 4,
                             ...positionStyle,
@@ -439,7 +439,7 @@ const Calendar = ({
                             <section className="flex items-center justify-between mb-4">
                                 <button
                                     onClick={prevMonth}
-                                    className="px-2 py-1 rounded hover:bg-gray-200"
+                                    className="px-2 py-1 rounded hover:bg-[var(--color-gray-200)]"
                                     type="button"
                                 >
                                     <IconComponent
@@ -453,7 +453,7 @@ const Calendar = ({
                                 </h6>
                                 <button
                                     onClick={nextMonth}
-                                    className="px-2 py-1 rounded hover:bg-gray-200"
+                                    className="px-2 py-1 rounded hover:bg-[var(--color-gray-200)]"
                                     type="button"
                                 >
                                     <IconComponent
@@ -500,7 +500,7 @@ const Calendar = ({
                                                     type="button"
                                                     onClick={() => handleDateClick(day)}
                                                     className={`text-center py-1 hover:bg-[var(--color-gray-200)] transition-colors w-[2.8rem] h-[2.8rem] rounded-full
-                                                    ${isSelected ? "bg-[var(--color-blue-1000)] text-[var(--color-text-primary)]" : isToday ? "bg-[var(--color-gray-100)] text-[var(--color-gray-700)]" : ""}`}
+                                                    ${isSelected ? "bg-[var(--color-blue-1000)] text-[var(--color-gray-900)]" : isToday ? "bg-[var(--color-gray-100)] text-[var(--color-gray-700)]" : ""}`}
                                                 >
                                                     {day}
                                                 </motion.button>
@@ -555,7 +555,7 @@ const FileUpload = ({ placeholder = "파일을 여기에 드래그하거나", bu
 
     return (
         <section
-            className={`relative w-full h-64 border rounded-lg flex items-center justify-center ${isDragging ? "border-blue-400 bg-blue-50" : "border-[var(--color-gray-200)] bg-[var(--color-surface)]"}`}
+            className={`relative w-full h-64 border rounded-lg flex items-center justify-center ${isDragging ? "border-blue-400 bg-blue-50" : "border-[var(--color-gray-200)] bg-[var(--color-gray-100)]"}`}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
@@ -568,10 +568,10 @@ const FileUpload = ({ placeholder = "파일을 여기에 드래그하거나", bu
                 />
             ) : (
                 <div className="flex flex-col items-center gap-[0.8rem] text-center">
-                    <p className="text-gray-500">{placeholder}</p>
+                    <p className="text-[var(--color-gray-500)]">{placeholder}</p>
                     <button
                         type="button"
-                        className="h-[4.4rem] px-[1.2rem] text-[var(--color-text-primary)] bg-[var(--color-gray-200)] rounded-[0.8rem]"
+                        className="h-[4.4rem] px-[1.2rem] text-[var(--color-gray-900)] bg-[var(--color-gray-200)] rounded-[0.8rem]"
                         onClick={() => inputRef.current?.click()}
                     >
                         {buttonText}
@@ -671,7 +671,7 @@ const Empty = ({ title = "결과가 없습니다", desc_no, className }: { title
                 width={52}
                 height={52}
             />
-            <p className="text-center text-[var(--color-text-primary)] pointer-events-none">{title}</p>
+            <p className="text-center text-[var(--color-gray-900)] pointer-events-none">{title}</p>
         </div>
     );
 };
@@ -692,7 +692,7 @@ const Error = ({ error, resetErrorBoundary }: FallbackProps) => {
             role="alert"
             className="h-[100svh!important] w-[100dvw!important] flex flex-col items-center justify-center gap-[1.6rem]"
         >
-            <div className="alert-inner flex flex-col gap-[1.6rem] shadow-[var(--shadow-normal)] rounded-[1.6rem] bg-[var(--color-surface)] p-[0.4rem]">
+            <div className="alert-inner flex flex-col gap-[1.6rem] shadow-[var(--shadow-normal)] rounded-[1.6rem] bg-[var(--color-gray-100)] p-[0.4rem]">
                 <section className="flex flex-col gap-[1.6rem] px-[1.6rem] py-[0.8rem]">
                     <p>에러 발생!</p>
                     <pre>{message}</pre>

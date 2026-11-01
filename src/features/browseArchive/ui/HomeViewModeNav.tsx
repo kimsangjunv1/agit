@@ -18,7 +18,7 @@ const HomeViewModeNav = ({ variant }: HomeViewModeNavProps) => {
     const { postType, mainViewMode, categoryFilter, setPostType, setCategory, showLatest } = usePostTypeFilter();
     const isFloating = variant === "floating";
     const buttonClass = "shrink-0 whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-4";
-    const textClass = (active: boolean) => (active ? "text-[var(--color-brand-500)]" : "text-[var(--color-text-muted)]");
+    const textClass = (active: boolean) => (active ? "text-[var(--color-brand-500)]" : "text-[var(--color-gray-600)]");
 
     return (
         <section
@@ -30,7 +30,7 @@ const HomeViewModeNav = ({ variant }: HomeViewModeNavProps) => {
         >
             <nav
                 aria-label="글 목록 메뉴"
-                className={`flex max-w-full items-center gap-[1.6rem] overflow-x-auto scrollbar-hide ${isFloating ? "rounded-full bg-[var(--color-surface-floating)] px-[2rem] py-[1.2rem] text-[1.6rem]" : "text-[2rem]"}`}
+                className={`flex max-w-full items-center gap-[1.6rem] overflow-x-auto scrollbar-hide ${isFloating ? "rounded-full bg-[var(--color-background-light)]/30 px-[2rem] py-[1.2rem] text-[1.6rem]" : "text-[2rem]"}`}
             >
                 <UI.Button
                     onClick={() => setIsSearchOpen(true)}
@@ -60,7 +60,7 @@ const HomeViewModeNav = ({ variant }: HomeViewModeNavProps) => {
                 >
                     New
                 </UI.Button>
-                <div className="h-[1.6rem] w-px shrink-0 bg-[var(--color-border)]" />
+                <div className="h-[1.6rem] w-px shrink-0 bg-[var(--color-gray-300)]" />
                 <UI.Button
                     onClick={() => setPostType("all")}
                     aria-pressed={mainViewMode === 2 && postType === "all"}
@@ -82,7 +82,7 @@ const HomeViewModeNav = ({ variant }: HomeViewModeNavProps) => {
                         {type.code === "article" && postType === "article" ? (
                             <nav
                                 aria-label="일반 글 카테고리"
-                                className={`flex max-w-full items-center gap-[1.6rem] overflow-x-auto text-[1.6rem] scrollbar-hide ${isFloating ? "rounded-[1.6rem] bg-[var(--color-surface-floating)] px-[2rem] py-[1.2rem]" : ""}`}
+                                className={`flex max-w-full items-center gap-[1.6rem] overflow-x-auto text-[1.6rem] scrollbar-hide ${isFloating ? "rounded-[1.6rem] bg-[var(--color-background-light)]/30 px-[2rem] py-[1.2rem]" : ""}`}
                             >
                                 {categories?.result
                                     ?.filter((category) => category.is_enabled)

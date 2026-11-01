@@ -73,7 +73,7 @@ const CheerUpIsland = () => {
                     {words.map((word) => (
                         <motion.span
                             key={word.id}
-                            className="absolute left-1/2 top-0 whitespace-nowrap text-[18px] font-semibold leading-none text-[var(--color-text-primary)]"
+                            className="absolute left-1/2 top-0 whitespace-nowrap text-[18px] font-semibold leading-none text-[var(--color-gray-900)]"
                             initial={{ x: word.x, y: 8, opacity: 0 }}
                             animate={{ y: [8, -word.rise / 2, -word.rise], opacity: [0, 1, 0] }}
                             transition={{ duration: 0.65, ease: "easeOut" }}
@@ -97,7 +97,7 @@ const CheerUpIsland = () => {
                     >
                         <CheerUpIcon />
                         <span>Cheer Up</span>
-                        <span className="tabular-nums text-[var(--color-text-muted)]">{likeCount}</span>
+                        <span className="tabular-nums text-[var(--color-gray-600)]">{likeCount}</span>
                     </motion.button>
                 </DynamicIsland>
             </div>

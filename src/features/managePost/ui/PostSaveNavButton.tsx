@@ -33,13 +33,13 @@ const PostSaveNavButton = ({ isCreate, isPending, onSave }: PostSaveNavButtonPro
         onClick={onSave}
         className="transition-colors flex flex-col items-end z-1"
     >
-        <p className="bg-[var(--color-surface-floating)] text-[#00ff61] p-[2rem] text-[2.4rem] font-semibold tablet:block mobile:hidden">
+        <p className="bg-[var(--color-background-light)]/30 text-[#00ff61] p-[2rem] text-[2.4rem] font-semibold tablet:block mobile:hidden">
             {isPending ? "로딩중..." : isCreate ? "작성하기" : "수정하기"}
         </p>
         <MaterialIcon
             name="check"
             size={24}
-            className="bg-[var(--color-surface-floating)] text-[#00ff61] p-[2rem]"
+            className="bg-[var(--color-background-light)]/30 text-[#00ff61] p-[2rem]"
         />
     </UI.Button>
 );

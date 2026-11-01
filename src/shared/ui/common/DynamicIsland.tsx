@@ -44,7 +44,7 @@ const DynamicIsland = ({ children, ariaLabel, className = "", placement = "top",
         <motion.div
             role="group"
             aria-label={ariaLabel}
-            className={`relative overflow-hidden rounded-full bg-[var(--color-surface-floating)] text-[var(--color-text-primary)] backdrop-blur-[5px] ${className}`}
+            className={`relative overflow-hidden rounded-full bg-[var(--color-background-light)]/30 text-[var(--color-gray-900)] backdrop-blur-[5px] ${className}`}
             initial={{ y: placement === "bottom" ? 80 : -80, opacity: 0, width: CIRCLE_SIZE, height: CIRCLE_SIZE }}
             animate={{ y: 0, opacity: 1, width: isExpanded ? size.width : CIRCLE_SIZE, height: isExpanded ? size.height : CIRCLE_SIZE }}
             exit={{ y: placement === "bottom" ? 40 : -40, opacity: 0, width: CIRCLE_SIZE, height: CIRCLE_SIZE }}
