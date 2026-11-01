@@ -40,31 +40,30 @@
     --color-gray-900: #d7dbde;
     --color-gray-1000: #eceff1;
 
-    /* 부정 색상 (레드) */
-    --color-red-50: #ffeeee;
-    --color-red-100: #ffd4d6;
-    --color-red-200: #feafb4;
-    --color-red-300: #fb8890;
-    --color-red-400: #f66570;
-    --color-red-500: #f04452;
-    --color-red-600: #e42939;
-    --color-red-700: #d22030;
-    --color-red-800: #bc1b2a;
-    --color-red-900: #a51926;
-    // --color-red-500: #a51926;
+    /* 부정 색상 (레드): hue 22° 고정 OKLCH 명도·채도 스케일 */
+    --color-red-900: #8d272d;
+    --color-red-800: #af2431;
+    --color-red-700: #ce2739;
+    --color-red-600: #ea3545;
+    --color-red-500: #fa5059;
+    --color-red-400: #ff7777;
+    --color-red-300: #ffa09d;
+    --color-red-200: #ffc3c0;
+    --color-red-100: #ffdfdd;
+    --color-red-50: #fff2f1;
 
-    /* 블루 계열 색상 */
-    --color-blue-900: #1957c2;
-    --color-blue-800: #1b64da;
-    --color-blue-700: #2272eb;
-    --color-blue-600: #3182f6; /* 메인 블루: 중간 */
-    --color-blue-500: #4593fc;
-    --color-blue-400: #64a8ff;
-    --color-blue-300: #90c2ff;
-    --color-blue-200: #294d72;
-    --color-blue-100: #21374f;
-    --color-blue-50: #1b293a;
-    --color-blue-1000: #154a7e;
+    /* 블루 계열 색상: hue 258° 고정 OKLCH 명도·채도 스케일 */
+    --color-blue-1000: #23416d;
+    --color-blue-900: #1f4f94;
+    --color-blue-800: #1d5eb9;
+    --color-blue-700: #1f6eda;
+    --color-blue-600: #2b80f7;
+    --color-blue-500: #4a93ff; /* 메인 블루 */
+    --color-blue-400: #6ea8ff;
+    --color-blue-300: #95c0ff;
+    --color-blue-200: #bbd6ff;
+    --color-blue-100: #dae9ff;
+    --color-blue-50: #f0f6ff;
 
     /* 경고 색상 (오렌지) */
     --color-orange-900: #a33100;
