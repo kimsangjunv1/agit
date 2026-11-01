@@ -12,7 +12,7 @@ const RenewalOverviewColumn = () => {
     const { easyContainerRef } = useResumeRenewalProvider();
 
     return (
-        <div className="relative min-h-0 min-w-0">
+        <div className="tablet:hidden pc:block relative min-h-0 min-w-0">
             <Scrollbar
                 direction="vertical"
                 aria-label="한눈에 보기 세로 스크롤"

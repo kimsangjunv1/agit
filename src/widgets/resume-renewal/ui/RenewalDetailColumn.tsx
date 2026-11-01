@@ -44,11 +44,11 @@ const RenewalDetailColumn = () => {
                     element={
                         <section className="flex flex-col gap-[1.6rem]">
                             <RenewalCarouselItem
-                                title="웹 디자인 및 개발"
+                                title="앱/웹 디자인 및 개발"
                                 text="asd"
                             />
                             <RenewalCarouselItem
-                                title="앱 디자인 및 개발"
+                                title="캐릭터"
                                 text="asd"
                             />
                             <RenewalCarouselItem
@@ -65,7 +65,7 @@ const RenewalDetailColumn = () => {
                 <RenewalSectionItem
                     title="이렇게 만듭니다"
                     element={
-                        <section>
+                        <section className="flex flex-col gap-[1.6rem]">
                             <RenewalCarouselItem
                                 title="필요한 것부터 함께 찾습니다"
                                 text="asd"
