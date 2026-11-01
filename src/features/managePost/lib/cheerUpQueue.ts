@@ -1,4 +1,5 @@
 import type { CheerUpPayload, CheerUpResult, CheerUpState } from "@/entities/post/model/cheerUp.type";
+import { clientRequest } from "@/shared/lib/api/client";
 import type { ApiResponse } from "@/shared/model/common.type";
 
 const DEBOUNCE_MS = 2000;
@@ -81,7 +82,7 @@ export class CheerUpQueue {
         this.storage = options.storage ?? browserStorage();
         // A copied browser tab can inherit sessionStorage, so ownership uses a fresh runtime UUID.
         this.tabId = options.tabId ?? crypto.randomUUID();
-        this.send = options.send ?? ((input, init) => fetch(input, init));
+        this.send = options.send ?? clientRequest;
         this.onError = options.onError;
         this.onConfirmed = options.onConfirmed;
         this.liveSyncMs = options.liveSyncMs ?? LIVE_SYNC_MS;

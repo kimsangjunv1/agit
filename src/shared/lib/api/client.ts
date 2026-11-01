@@ -75,6 +75,9 @@ export async function clientFetch<T>(url: string, options: ClientFetchOptions = 
     }
 }
 
+/** 상태 코드·헤더·keepalive를 직접 다뤄야 하는 브라우저 요청용 — 공통 loading·인증 리다이렉트 없이 Response를 그대로 반환 */
+export const clientRequest = (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => fetch(input, init);
+
 export const clientApi = {
     get: <T>(url: string, options?: ClientFetchOptions) => clientFetch<T>(url, options),
     post: <T>(url: string, body?: unknown, options?: ClientFetchOptions) => clientFetch<T>(url, { ...options, method: "POST", body }),
