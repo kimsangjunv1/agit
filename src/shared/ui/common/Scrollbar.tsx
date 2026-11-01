@@ -2,7 +2,6 @@
 
 import { useEffect, useId, useRef, useState, type HTMLAttributes, type KeyboardEvent, type PointerEvent, type RefObject } from "react";
 
-import styles from "./Scrollbar.module.css";
 
 export type ScrollbarProps = HTMLAttributes<HTMLDivElement> & {
     direction?: "vertical" | "horizontal";
@@ -290,7 +289,7 @@ const Scrollbar = ({
                 ref={scrollRef}
                 data-scrollbar-viewport=""
                 data-lenis-prevent="true"
-                className={`${styles.viewport} relative h-full w-full min-h-0 min-w-0 ${vertical ? "overflow-y-auto overflow-x-hidden" : "overflow-x-auto overflow-y-hidden"} ${viewportClassName}`}
+                className={`relative [scrollbar-width:none] [&::-webkit-scrollbar]:hidden h-full w-full min-h-0 min-w-0 ${vertical ? "overflow-y-auto overflow-x-hidden" : "overflow-x-auto overflow-y-hidden"} ${viewportClassName}`}
             >
                 <div
                     ref={contentRef}
