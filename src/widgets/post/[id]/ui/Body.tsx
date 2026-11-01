@@ -72,7 +72,7 @@ const ContentColumn = memo(({ col, rowLength, onCopySentence }: { col: SectionCo
                                             textAlign: itemInfo.style?.textAlign as React.CSSProperties["textAlign"],
                                             background: `${itemInfo.style?.backgroundColor}`,
                                         }}
-                                        className="whitespace-break-spaces transition-colors border border-transparent cursor-pointer hover:bg-[var(--color-surface-floating)] hover:text-[var(--color-text-primary)] rounded-[0.8rem]"
+                                        className="whitespace-break-spaces transition-colors border border-transparent cursor-pointer hover:bg-[var(--color-background-light)]/30 hover:text-[var(--color-gray-900)] rounded-[0.8rem]"
                                         onClick={() => onCopySentence(itemInfo.value)}
                                     >
                                         {itemInfo.value}

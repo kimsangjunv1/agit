@@ -64,7 +64,7 @@ const CredentialsForm = () => {
         <Fragment>
             <article
                 id="list"
-                className="px-[2rem] bg-[linear-gradient(90deg,_var(--color-background-light)_10%,_var(--color-surface),_var(--color-background-light)_90%)] h-[100svh] w-full flex items-center justify-center overflow-hidden"
+                className="px-[2rem] bg-[linear-gradient(90deg,_var(--color-background-light)_10%,_var(--color-gray-100),_var(--color-background-light)_90%)] h-[100svh] w-full flex items-center justify-center overflow-hidden"
             >
                 <motion.form
                     onSubmit={handleSubmit}
@@ -117,7 +117,7 @@ const CredentialsForm = () => {
                     <section className="flex flex-col gap-[0.8rem] justify-center w-full">
                         <UI.Button
                             type="submit"
-                            className="bg-[var(--color-surface-floating)] text-[var(--color-text-primary)] py-[1.6rem] flex-1"
+                            className="bg-[var(--color-background-light)]/30 text-[var(--color-gray-900)] py-[1.6rem] flex-1"
                         >
                             로그인
                         </UI.Button>

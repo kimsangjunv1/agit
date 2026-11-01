@@ -57,11 +57,11 @@ const REORDER_TRANSITION = {
 const BLOCK_CORNER_CLUSTER_CLASS =
     "absolute bottom-[calc(100%+0.2cm)] right-0 z-20 flex items-center gap-[0.4rem] opacity-0 pointer-events-none transition-opacity group-hover/block:pointer-events-auto group-hover/block:opacity-100 before:absolute before:inset-x-0 before:top-full before:h-[0.2cm] before:content-['']";
 const EDGE_ADD_BUTTON_CLASS =
-    "absolute z-30 flex h-[3.2rem] w-[3.2rem] items-center justify-center rounded-full bg-[var(--color-surface)] text-[var(--color-gray-900)] shadow-[var(--shadow-normal)] opacity-0 pointer-events-none transition-opacity";
+    "absolute z-30 flex h-[3.2rem] w-[3.2rem] items-center justify-center rounded-full bg-[var(--color-gray-100)] text-[var(--color-gray-900)] shadow-[var(--shadow-normal)] opacity-0 pointer-events-none transition-opacity";
 const BLOCK_EDGE_ADD_VISIBILITY_CLASS = "group-hover/block:pointer-events-auto group-hover/block:opacity-100";
 const ROW_EDGE_ADD_VISIBILITY_CLASS = "group-hover/row:pointer-events-auto group-hover/row:opacity-100";
 const BLOCK_MODE_PILL_BUTTON_CLASS =
-    "flex h-[3.2rem] w-[3.2rem] items-center justify-center rounded-full text-[var(--color-gray-900)] transition-colors hover:bg-[var(--color-gray-100)] aria-pressed:bg-[var(--color-surface-hover)] aria-pressed:text-[var(--color-interaction-hover)] focus-visible:outline-2 focus-visible:outline-[var(--color-interaction-hover)]";
+    "flex h-[3.2rem] w-[3.2rem] items-center justify-center rounded-full text-[var(--color-gray-900)] transition-colors hover:bg-[var(--color-gray-100)] aria-pressed:bg-[var(--color-gray-200)] aria-pressed:text-[var(--color-interaction-hover)] focus-visible:outline-2 focus-visible:outline-[var(--color-interaction-hover)]";
 
 const BLOCK_MODE_OPTIONS = [
     { mode: "sub", label: "서브", icon: "notes" },
@@ -439,7 +439,7 @@ const Block = ({
                 <div
                     role="button"
                     aria-label="행 이동"
-                    className={`flex h-[3.2rem] w-[3.2rem] shrink-0 items-center justify-center rounded-full bg-[var(--color-surface)] shadow-[var(--shadow-normal)] ${isGrabbing ? "cursor-grabbing" : "cursor-grab"}`}
+                    className={`flex h-[3.2rem] w-[3.2rem] shrink-0 items-center justify-center rounded-full bg-[var(--color-gray-100)] shadow-[var(--shadow-normal)] ${isGrabbing ? "cursor-grabbing" : "cursor-grab"}`}
                     onPointerDown={(event) => {
                         event.stopPropagation();
                         onDragHandlePointerDown(event);
@@ -455,7 +455,7 @@ const Block = ({
                     <section
                         role="group"
                         aria-label="블록 형식"
-                        className="flex h-[3.2rem] items-center rounded-full bg-[var(--color-surface)] shadow-[var(--shadow-normal)]"
+                        className="flex h-[3.2rem] items-center rounded-full bg-[var(--color-gray-100)] shadow-[var(--shadow-normal)]"
                     >
                         {BLOCK_MODE_OPTIONS.map(({ mode, label, icon }) => (
                             <motion.button
@@ -499,7 +499,7 @@ const Block = ({
                                 onConfirm: () => deleteBlock(rowIndex, blockIndex),
                             });
                         }}
-                        className="flex h-[3.2rem] w-[3.2rem] cursor-pointer items-center justify-center rounded-full bg-[var(--color-surface)] p-0 shadow-[var(--shadow-normal)]"
+                        className="flex h-[3.2rem] w-[3.2rem] cursor-pointer items-center justify-center rounded-full bg-[var(--color-gray-100)] p-0 shadow-[var(--shadow-normal)]"
                     >
                         <IconComponent
                             type="outlined-cross"

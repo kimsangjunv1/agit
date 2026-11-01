@@ -38,8 +38,8 @@ const Scrollbar = ({
     className = "",
     viewportClassName = "",
     contentClassName = "",
-    trackClassName = "bg-[var(--color-border)]/40",
-    thumbClassName = "bg-[var(--color-text-muted)] hover:bg-[var(--color-text-primary)] data-[dragging=true]:bg-[var(--color-text-primary)]",
+    trackClassName = "bg-[var(--color-gray-300)]/40",
+    thumbClassName = "bg-[var(--color-gray-600)] hover:bg-[var(--color-gray-900)] data-[dragging=true]:bg-[var(--color-gray-900)]",
     viewportProps,
     thickness = 8,
     minThumbSize = 24,
@@ -327,7 +327,7 @@ const Scrollbar = ({
                     aria-valuemax={0}
                     aria-valuenow={0}
                     tabIndex={hasOverflow ? 0 : -1}
-                    className={`absolute top-0 left-0 cursor-grab touch-none will-change-transform active:cursor-grabbing focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-text-primary)] ${thumbClassName}`}
+                    className={`absolute top-0 left-0 cursor-grab touch-none will-change-transform active:cursor-grabbing focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-gray-900)] ${thumbClassName}`}
                     onPointerDown={handleThumbPointerDown}
                     onPointerMove={handleThumbPointerMove}
                     onPointerUp={endDrag}

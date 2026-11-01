@@ -2,8 +2,8 @@
 export const getSyntaxClass = (tokens: string[]): string[] => {
     const styles = new Set<string>();
     const colors: Record<string, string> = {
-        "hljs-comment": "text-[var(--color-text-muted)] italic",
-        "hljs-quote": "text-[var(--color-text-muted)] italic",
+        "hljs-comment": "text-[var(--color-gray-600)] italic",
+        "hljs-quote": "text-[var(--color-gray-600)] italic",
         "hljs-keyword": "text-pink-400 font-medium",
         "hljs-selector-tag": "text-pink-400 font-medium",
         "hljs-built_in": "text-pink-400 font-medium",
@@ -18,18 +18,18 @@ export const getSyntaxClass = (tokens: string[]): string[] => {
         "hljs-title": "text-sky-300",
         "hljs-type": "text-amber-300",
         "hljs-class": "text-amber-300",
-        "hljs-meta": "text-[var(--color-text-muted)]",
-        "hljs-regexp": "text-[var(--color-text-muted)]",
-        "hljs-deletion": "text-[var(--color-text-muted)]",
-        "hljs-params": "text-[var(--color-text-primary)]",
-        "hljs-variable": "text-[var(--color-text-primary)]",
-        "hljs-template-variable": "text-[var(--color-text-primary)]",
-        "hljs-property": "text-slate-300",
-        "hljs-subst": "text-slate-300",
+        "hljs-meta": "text-[var(--color-gray-600)]",
+        "hljs-regexp": "text-[var(--color-gray-600)]",
+        "hljs-deletion": "text-[var(--color-gray-600)]",
+        "hljs-params": "text-[var(--color-gray-900)]",
+        "hljs-variable": "text-[var(--color-gray-900)]",
+        "hljs-template-variable": "text-[var(--color-gray-900)]",
+        "hljs-property": "text-[var(--color-gray-800)]",
+        "hljs-subst": "text-[var(--color-gray-800)]",
         "hljs-attr": "text-sky-400 font-medium",
         "hljs-attribute": "text-sky-400 font-medium",
-        "hljs-string": "text-[var(--color-text-primary)]",
-        "hljs-addition": "text-[var(--color-text-primary)]",
+        "hljs-string": "text-[var(--color-gray-900)]",
+        "hljs-addition": "text-[var(--color-gray-900)]",
     };
     tokens.forEach((token) => colors[token]?.split(" ").forEach((style) => styles.add(style)));
     return [...styles];

@@ -130,7 +130,7 @@ const PostTocNav = ({ items, scrollViewportRef }: PostTocNavProps) => {
                 setPointerY(null);
                 setHoveredId(null);
             }}
-            className="fixed top-1/2 right-[2rem] z-[110] hidden w-[22.4rem] -translate-y-1/2 text-[var(--color-text-primary)] pc:block"
+            className="fixed top-1/2 right-[2rem] z-[110] hidden w-[22.4rem] -translate-y-1/2 text-[var(--color-gray-900)] pc:block"
         >
             <LayoutGroup id="post-toc-nav">
                 <ol className="flex flex-col">
@@ -165,7 +165,7 @@ const PostTocNav = ({ items, scrollViewportRef }: PostTocNavProps) => {
                                                 transition={{ ...motionTransition, layout: layoutTransition }}
                                                 aria-hidden="true"
                                                 className={`min-w-0 max-w-[14.4rem] truncate text-right text-[1.4rem] font-semibold leading-[1.4] tracking-[-0.04em] ${
-                                                    isActive ? "text-[var(--color-brand-500)]" : "text-[var(--color-text-primary)]"
+                                                    isActive ? "text-[var(--color-brand-500)]" : "text-[var(--color-gray-900)]"
                                                 }`}
                                             >
                                                 {item.label}

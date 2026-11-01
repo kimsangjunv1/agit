@@ -19,7 +19,7 @@
         -moz-osx-font-smoothing: grayscale;
 
         background: var(--color-background-light);
-        color: var(--color-text-primary);
+        color: var(--color-gray-900);
         color-scheme: dark;
     }
 
@@ -33,13 +33,13 @@
 
     ::selection {
         background: var(--color-brand-100);
-        color: var(--color-text-primary);
+        color: var(--color-gray-900);
     }
 
     * {
         scrollbar-width: thin;
         box-sizing: border-box;
-        border-color: var(--color-border);
+        border-color: var(--color-gray-300);
     }
 
     body {
@@ -57,7 +57,7 @@
     }
 
     main {
-        scrollbar-color: var(--color-border-strong) transparent;
+        scrollbar-color: var(--color-gray-400) transparent;
         scrollbar-width: thin;
     }
 

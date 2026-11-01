@@ -15,7 +15,7 @@ export function Toast() {
             <AnimatePresence>
                 {toastList.map((toast) => (
                     <motion.div
-                        className={`flex items-center gap-[1.2rem] bg-[var(--color-surface-floating)] backdrop-blur-[5px] px-[2.4rem_1.2rem] py-[1.2rem] shadow-[0_0_200px_0_#000000]`}
+                        className={`flex items-center gap-[1.2rem] bg-[var(--color-background-light)]/30 backdrop-blur-[5px] px-[2.4rem_1.2rem] py-[1.2rem] shadow-[0_0_200px_0_#000000]`}
                         key={toast.id}
                         role="status"
                         initial={{ opacity: 0, scale: 0.5, translateY: -100 }}
@@ -30,19 +30,19 @@ export function Toast() {
                         }}
                     >
                         <div className="min-w-0 flex-1">
-                            <p className="text-[2rem] text-[var(--color-text-primary)] break-words font-semibold">{toast.msg}</p>
+                            <p className="text-[2rem] text-[var(--color-gray-900)] break-words font-semibold">{toast.msg}</p>
                         </div>
 
                         <button
                             aria-label="토스트 닫기"
-                            className="cursor-pointer text-lg leading-none text-[var(--adaptive-black500)] transition bg-[var(--adaptive-grey300)] w-[2.4rem] h-[2.4rem] rounded-full"
+                            className="cursor-pointer text-lg leading-none text-[var(--color-gray-900)] transition bg-[var(--color-gray-300)] w-[2.4rem] h-[2.4rem] rounded-full"
                             onClick={() => removeToastById(toast.id)}
                             type="button"
                         >
                             <MaterialIcon
                                 name="close"
                                 size={24}
-                                className="text-[var(--color-text-primary)]"
+                                className="text-[var(--color-gray-900)]"
                             />
                         </button>
                     </motion.div>

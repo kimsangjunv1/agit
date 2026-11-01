@@ -41,7 +41,7 @@ const PostTypeManagerList = () => {
                                 onClick={() => setSelectedItem(item.code)}
                             >
                                 <p className="text-[1.6rem] font-semibold">{item.title}</p>
-                                <p className="mt-[0.4rem] text-[1.2rem] text-[var(--color-text-muted)]">
+                                <p className="mt-[0.4rem] text-[1.2rem] text-[var(--color-gray-600)]">
                                     {item.code} · 순서 {item.sort_no}
                                 </p>
                             </ManagerListItemCard>

@@ -132,7 +132,7 @@ const MobileMenu = () => {
                                         {session ? (
                                             <UI.Button
                                                 onClick={() => logout()}
-                                                className="flex justify-center text-center gap-[0.4rem] w-full items-center text-[2.4rem] font-semibold whitespace-nowrap py-[1.2rem] text-[var(--color-text-primary)]"
+                                                className="flex justify-center text-center gap-[0.4rem] w-full items-center text-[2.4rem] font-semibold whitespace-nowrap py-[1.2rem] text-[var(--color-gray-900)]"
                                             >
                                                 로그아웃
                                             </UI.Button>
@@ -158,7 +158,7 @@ const MobileMenu = () => {
                                         className="invert"
                                     />
 
-                                    <p className="text-[var(--color-text-primary)]">© kimsangjunv1. All rights reserved.</p>
+                                    <p className="text-[var(--color-gray-900)]">© kimsangjunv1. All rights reserved.</p>
                                 </section>
 
                                 <UI.Button
@@ -201,7 +201,7 @@ const Item = ({ title, href }: { title: string; href: string }) => {
     return (
         <UI.Button
             type="button"
-            className="flex justify-center text-center gap-[0.4rem] w-full items-center text-[2.4rem] whitespace-nowrap py-[1.2rem] text-[var(--color-text-primary)]"
+            className="flex justify-center text-center gap-[0.4rem] w-full items-center text-[2.4rem] whitespace-nowrap py-[1.2rem] text-[var(--color-gray-900)]"
             onClick={() => {
                 setIsMobileMenuOpen(false);
                 pushToUrl(href);

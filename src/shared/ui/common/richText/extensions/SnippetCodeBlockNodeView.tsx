@@ -47,7 +47,7 @@ export function SnippetCodeBlockNodeView({ node, selected, editor, getPos }: Nod
                     </pre>
                     <pre className={`relative ${CODE_PRE_CLASS}`}>
                         <NodeViewContent
-                            className={`snippet-code-block-editor__input text-transparent caret-slate-200 selection:bg-blue-500/35 language-${language} ${CODE_TEXT_CLASS} outline-none`}
+                            className={`snippet-code-block-editor__input text-transparent caret-[var(--color-gray-900)] selection:bg-blue-500/35 language-${language} ${CODE_TEXT_CLASS} outline-none`}
                         />
                     </pre>
                 </div>

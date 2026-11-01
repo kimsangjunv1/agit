@@ -23,8 +23,8 @@ const PostTypeManagerDetail = () => {
                             onSave={save}
                         />
                         {!isNew ? (
-                            <div className="border-t border-[var(--color-border)] pt-[2rem]">
-                                <p className="mb-[1.2rem] text-[1.2rem] text-[var(--color-text-muted)]">일반 글은 기본 종류예요. 게시글이나 임시저장 글에서 사용 중인 종류도 삭제할 수 없어요.</p>
+                            <div className="border-t border-[var(--color-gray-300)] pt-[2rem]">
+                                <p className="mb-[1.2rem] text-[1.2rem] text-[var(--color-gray-600)]">일반 글은 기본 종류예요. 게시글이나 임시저장 글에서 사용 중인 종류도 삭제할 수 없어요.</p>
                                 <UI.Button
                                     disabled={pending || selected?.code === "article"}
                                     onClick={remove}

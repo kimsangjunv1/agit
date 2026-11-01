@@ -123,7 +123,7 @@
     float: left;
     height: 0;
     pointer-events: none;
-    color: var(--color-text-muted);
+    color: var(--color-gray-600);
 }
 
 .tiptap-editor-content[data-image-only] .rich-text-image-node {

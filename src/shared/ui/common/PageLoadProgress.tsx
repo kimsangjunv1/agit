@@ -90,7 +90,7 @@ const PageLoadProgress = ({ reducedMotion }: { reducedMotion: boolean }) => {
             aria-valuemin={0}
             aria-valuemax={100}
             aria-valuenow={percentage}
-            className="absolute inset-0 h-full w-full bg-[var(--color-border)]"
+            className="absolute inset-0 h-full w-full bg-[var(--color-gray-300)]"
             style={{ opacity }}
         >
             <motion.div

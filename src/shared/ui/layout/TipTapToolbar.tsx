@@ -52,7 +52,7 @@ const TipTapToolbar = ({ editor }: TipTapToolbarProps) => {
     };
 
     return (
-        <div className="relative w-full bg-[var(--color-surface)] border border-[var(--color-border)]">
+        <div className="relative w-full bg-[var(--color-gray-100)] border border-[var(--color-gray-300)]">
             <div className="overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
                 <section className="flex min-w-min flex-nowrap items-center gap-[0.4rem] p-[0.4rem]">
                     <ToolbarIconButton

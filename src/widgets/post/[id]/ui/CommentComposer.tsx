@@ -14,9 +14,9 @@ import UI from "@/shared/ui/common/UIComponent";
 import { usePostDetailProvider } from "../model/PostDetailContext";
 
 export const commentInputClass =
-    "w-full min-w-0 rounded-[0.8rem] border border-[var(--color-border)] bg-[var(--color-surface)] px-[1.6rem] py-[1.2rem] text-[1.6rem] focus-visible:outline-2 focus-visible:outline-[var(--color-brand-500)] disabled:opacity-50";
+    "w-full min-w-0 rounded-[0.8rem] border border-[var(--color-gray-300)] bg-[var(--color-gray-100)] px-[1.6rem] py-[1.2rem] text-[1.6rem] focus-visible:outline-2 focus-visible:outline-[var(--color-brand-500)] disabled:opacity-50";
 export const commentButtonClass =
-    "rounded-[0.8rem] bg-[var(--color-surface-floating)] px-[1.6rem] py-[1.2rem] text-[1.4rem] font-semibold disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-4";
+    "rounded-[0.8rem] bg-[var(--color-background-light)]/30 px-[1.6rem] py-[1.2rem] text-[1.4rem] font-semibold disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-4";
 
 interface Props {
     parentId?: number;
@@ -211,7 +211,7 @@ const CommentComposer = ({ parentId, replyToId, onCancel, onSubmitted }: Props) 
                         </div>
                     </div>
                 ) : (
-                    <p className="text-[var(--color-text-muted)]">{authorName}님으로 작성해요.</p>
+                    <p className="text-[var(--color-gray-600)]">{authorName}님으로 작성해요.</p>
                 )}
                 <div className="flex flex-col gap-[0.8rem]">
                     <textarea
@@ -228,7 +228,7 @@ const CommentComposer = ({ parentId, replyToId, onCancel, onSubmitted }: Props) 
                     />
                     <p
                         id={`${formId}-length`}
-                        className="text-right text-[1.2rem] text-[var(--color-text-muted)]"
+                        className="text-right text-[1.2rem] text-[var(--color-gray-600)]"
                     >
                         {msg.length} / {COMMENT_MESSAGE_MAX_LENGTH}
                     </p>
@@ -260,7 +260,7 @@ const CommentComposer = ({ parentId, replyToId, onCancel, onSubmitted }: Props) 
                                 <UI.FloatingSelector
                                     ariaLabel="댓글 이모지 선택"
                                     align="end"
-                                    triggerClassName={`${commentButtonClass} flex h-[4.8rem] w-[4.8rem] items-center justify-center border border-[var(--color-border)] px-0 text-[2rem]`}
+                                    triggerClassName={`${commentButtonClass} flex h-[4.8rem] w-[4.8rem] items-center justify-center border border-[var(--color-gray-300)] px-0 text-[2rem]`}
                                     trigger={<span aria-hidden="true">{selectedEmoji?.emoji ?? "🙂"}</span>}
                                 >
                                     <div className="flex w-max gap-[0.4rem]">
@@ -329,7 +329,7 @@ const CommentComposer = ({ parentId, replyToId, onCancel, onSubmitted }: Props) 
                                             <MaterialIcon
                                                 name="check"
                                                 size={22}
-                                                className={canConfirmPassword ? "text-[var(--color-brand-500)]" : "text-[var(--color-text-muted)]"}
+                                                className={canConfirmPassword ? "text-[var(--color-brand-500)]" : "text-[var(--color-gray-600)]"}
                                             />
                                         </button>
                                     </motion.div>
