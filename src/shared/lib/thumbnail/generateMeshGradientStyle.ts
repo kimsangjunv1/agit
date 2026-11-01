@@ -45,8 +45,4 @@ export const generateMeshGradientStyle = (seed: string | number): CSSProperties 
     };
 };
 
-export const THUMBNAIL_NOISE_DATA_URI = `url("data:image/svg+xml,${encodeURIComponent(
-    '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="4" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(#n)"/></svg>',
-)}")`;
-
 export const hasPostThumbnail = (src?: string | null): src is string => Boolean(src?.trim());

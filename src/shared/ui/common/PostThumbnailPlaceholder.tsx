@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 
 import usePageTransitionReady from "@/shared/hooks/usePageTransitionReady";
-import { THUMBNAIL_NOISE_DATA_URI, generateMeshGradientStyle } from "@/shared/lib/thumbnail/generateMeshGradientStyle";
+import { generateMeshGradientStyle } from "@/shared/lib/thumbnail/generateMeshGradientStyle";
 
 type PostThumbnailPlaceholderProps = {
     seed: string | number;
@@ -23,12 +23,7 @@ const PostThumbnailPlaceholder = ({ seed, className = "", fill = false, readines
             className={`overflow-hidden ${fill ? "absolute inset-0 h-full w-full" : ""} ${className}`}
             style={meshStyle}
         >
-            <div
-                className="pointer-events-none absolute inset-0 bg-size-[128px_128px] opacity-[0.07] mix-blend-overlay"
-                style={{
-                    backgroundImage: THUMBNAIL_NOISE_DATA_URI,
-                }}
-            />
+            <div className="pointer-events-none absolute inset-0 bg-[url(/images/picture/img-thumbnail-noise.svg)] bg-size-[128px_128px] opacity-[0.07] mix-blend-overlay" />
         </div>
     );
 };
