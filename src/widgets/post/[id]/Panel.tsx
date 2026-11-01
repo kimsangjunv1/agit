@@ -4,13 +4,11 @@ import type { GetPostDetailResponse } from "@/entities/post/model/post.type";
 import { PostDetailPageProvider } from "./model/PostDetailContext";
 import usePostDetail from "./model/usePostDetail";
 import * as Layer from "@/widgets/post/[id]/ui";
+import type { PostContentWidth } from "@/widgets/post/[id]/ui";
 import PostContentBody from "@/features/managePost/ui/PostContentBody";
 import { canShowPostComments } from "@/features/managePost/lib/postPermissions";
 import { POST_INNER_CLASS, POST_PAGE_CLASS } from "@/shared/lib/richText/styles";
 import Scrollbar from "@/shared/ui/common/Scrollbar";
-import WidthControl, { type PostContentWidth } from "./ui/WidthControl";
-import CheerUpIsland from "./ui/CheerUpIsland";
-import { PostIslandStack } from "./ui/PostIslandStack";
 export default function Panel({ id, initialData }: { id: string; initialData: GetPostDetailResponse }) {
     const page = usePostDetail(id, initialData);
     const [contentWidth, setContentWidth] = useState<PostContentWidth>("tablet");
@@ -48,11 +46,11 @@ export default function Panel({ id, initialData }: { id: string; initialData: Ge
             {page.isReady ? (
                 <>
                     <Layer.Toc />
-                    <PostIslandStack>
-                        <CheerUpIsland key={`cheer-${page.postId}`} />
+                    <Layer.IslandStack>
+                        <Layer.CheerUpIsland key={`cheer-${page.postId}`} />
                         <Layer.DynamicPostController key={page.postId} />
-                        <WidthControl value={contentWidth} onChange={setContentWidth} />
-                    </PostIslandStack>
+                        <Layer.WidthControl value={contentWidth} onChange={setContentWidth} />
+                    </Layer.IslandStack>
                     <Layer.Actions />
                 </>
             ) : null}

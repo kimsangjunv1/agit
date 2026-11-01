@@ -6,3 +6,7 @@ export { default as Actions } from "./Actions";
 export { default as Toc } from "./Toc";
 export { default as Status } from "./Status";
 export { default as DynamicPostController } from "./DynamicPostController";
+export { default as CheerUpIsland } from "./CheerUpIsland";
+export { default as WidthControl } from "./WidthControl";
+export { PostIslandStack as IslandStack } from "./PostIslandStack";
+export type { PostContentWidth } from "./WidthControl";
