@@ -4,7 +4,6 @@ import { GetPostLatestListResponse } from "@/entities/post/model/post.type";
 import HomeViewModeNav from "@/features/browseArchive/ui/HomeViewModeNav";
 import { useLayoutStore } from "@/shared/stores/useLayoutStore";
 
-import { HomePageProvider } from "./model/HomeContext";
 import * as HomeLayer from "@/widgets/home/ui";
 
 type HomePanelProps = {
@@ -15,7 +14,7 @@ export default function Panel({ initialData }: HomePanelProps) {
     const isMobile = useLayoutStore((state) => state.isMobile);
 
     return (
-        <HomePageProvider>
+        <>
             <HomeLayer.ArchiveFeed initialData={initialData} />
             <HomeLayer.Search />
             <HomeLayer.HomeViewModeFloatingMenu />
@@ -24,6 +23,6 @@ export default function Panel({ initialData }: HomePanelProps) {
                     <HomeViewModeNav variant="header" />
                 </section>
             )}
-        </HomePageProvider>
+        </>
     );
 }
