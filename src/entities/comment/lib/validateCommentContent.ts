@@ -72,7 +72,9 @@ export const validateCommentContent = ({ author, msg, isAdmin }: { author: strin
         try {
             const host = new URL(match[0]).hostname.toLowerCase();
             if (COMMENT_BLOCKED_LINK_HOSTS.some((blocked) => host === blocked || host.endsWith(`.${blocked}`))) return "허용하지 않는 광고 링크가 포함되어 있어요.";
-        } catch { /* 불완전한 링크는 일반 텍스트로 취급합니다. */ }
+        } catch {
+            /* 불완전한 링크는 일반 텍스트로 취급합니다. */
+        }
     }
     return null;
 };

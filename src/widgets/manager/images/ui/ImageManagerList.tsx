@@ -73,7 +73,9 @@ const ImageManagerList = () => {
                                     type="button"
                                     onClick={() => setFilter(option.value)}
                                     className={`rounded-full px-[1.2rem] py-[0.4rem] text-[1.2rem] font-semibold transition-colors ${
-                                        filter === option.value ? "bg-[var(--color-surface-floating)] text-[var(--color-text-primary)]" : "border border-[var(--color-gray-300)] bg-[var(--color-surface)] text-[var(--color-gray-600)]"
+                                        filter === option.value
+                                            ? "bg-[var(--color-surface-floating)] text-[var(--color-text-primary)]"
+                                            : "border border-[var(--color-gray-300)] bg-[var(--color-surface)] text-[var(--color-gray-600)]"
                                     }`}
                                 >
                                     {option.label}

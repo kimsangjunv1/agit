@@ -21,7 +21,8 @@ export const RICH_TEXT_IMAGE_CLASS = `my-[1.6rem] ${POST_VIEW_IMAGE_CLASS}`;
 export const RICH_TEXT_BLOCKQUOTE_CLASS = "border-l-[0.4rem] border-[var(--color-gray-300)] pl-[1.2rem] text-[var(--color-gray-600)] my-[0.8rem]";
 export const CODE_PRE_CLASS = "m-0 rounded-none bg-transparent p-0 font-mono text-[1.6rem] leading-[1.7] text-[var(--color-text-primary)] overflow-x-auto whitespace-pre-wrap break-words [tab-size:4]";
 // 편집기가 표시하는 코드 끝의 빈 줄을 보기 화면에서도 같은 높이로 유지해요.
-export const CODE_TEXT_CLASS = "block bg-transparent font-mono whitespace-pre-wrap break-words [tab-size:4] [&:not(:has(.ProseMirror-trailingBreak))]:after:inline-block [&:not(:has(.ProseMirror-trailingBreak))]:after:content-['']";
+export const CODE_TEXT_CLASS =
+    "block bg-transparent font-mono whitespace-pre-wrap break-words [tab-size:4] [&:not(:has(.ProseMirror-trailingBreak))]:after:inline-block [&:not(:has(.ProseMirror-trailingBreak))]:after:content-['']";
 export const POST_PAGE_CLASS = "flex flex-col w-full post";
 export const POST_INNER_CLASS = "mx-auto post-inner flex flex-col w-full items-center";
 export const POST_HERO_SECTION_CLASS = "flex flex-col justify-center items-center gap-[3.2rem] w-full mt-[calc(5.2rem+4.0rem+2.4rem)]";

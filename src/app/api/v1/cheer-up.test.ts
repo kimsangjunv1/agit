@@ -9,7 +9,7 @@ import { GET } from "./get/like/count/route";
 vi.mock("server-only", () => ({}));
 vi.mock("next-auth", () => ({ getServerSession: vi.fn() }));
 vi.mock("@/entities/post/api/postAccess.server", async (importOriginal) => ({
-    ...await importOriginal<typeof import("@/entities/post/api/postAccess.server")>(),
+    ...(await importOriginal<typeof import("@/entities/post/api/postAccess.server")>()),
     findReadablePost: vi.fn(),
 }));
 vi.mock("@/shared/lib/authOptions", () => ({ authOptions: {} }));
@@ -21,11 +21,12 @@ const previousBatchId = "d2622026-790f-4a45-ab60-18e5524338e2";
 const validPayload = { postId: 1, userId, batchId, count: 300 };
 const snapshot = { batchId, likes: 320, applied: true, acknowledgedBatchIds: [batchId] };
 const database = { rpc: vi.fn() };
-const request = (payload: unknown = validPayload) => new Request("http://localhost/api/v1/set/like/increment", {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "x-forwarded-for": "127.0.0.1, 127.0.0.2" },
-    body: JSON.stringify(payload),
-});
+const request = (payload: unknown = validPayload) =>
+    new Request("http://localhost/api/v1/set/like/increment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-forwarded-for": "127.0.0.1, 127.0.0.2" },
+        body: JSON.stringify(payload),
+    });
 
 beforeEach(() => {
     vi.clearAllMocks();
@@ -44,7 +45,9 @@ describe("Cheer Up 합계 동기화", () => {
 
         expect(response.status).toBe(200);
         expect(database.rpc).toHaveBeenCalledExactlyOnceWith("get_cheer_up_state", {
-            p_post_id: 1, p_user_id: userId, p_batch_ids: [batchId, previousBatchId],
+            p_post_id: 1,
+            p_user_id: userId,
+            p_batch_ids: [batchId, previousBatchId],
         });
         expect(await response.json()).toMatchObject({ resultCode: "SUCCESS", result: state });
         expect(response.headers.get("Cache-Control")).toContain("private, no-store");
@@ -67,14 +70,22 @@ describe("Cheer Up 합계 동기화", () => {
         expect(response.status).toBe(200);
         expect(findReadablePost).toHaveBeenCalledWith(1, null);
         expect(database.rpc).toHaveBeenCalledExactlyOnceWith("get_cheer_up_state", {
-            p_post_id: 1, p_user_id: null, p_batch_ids: [batchId],
+            p_post_id: 1,
+            p_user_id: null,
+            p_batch_ids: [batchId],
         });
         expect(response.headers.get("Cache-Control")).toContain("private, no-store");
     });
 
     it.each([
-        "", "postId=0", "postId=-1", "postId=1.5", "postId=1abc", "postId=2147483648",
-        "postId=1&batchIds=invalid", `postId=1&batchIds=${batchId},`,
+        "",
+        "postId=0",
+        "postId=-1",
+        "postId=1.5",
+        "postId=1abc",
+        "postId=2147483648",
+        "postId=1&batchIds=invalid",
+        `postId=1&batchIds=${batchId},`,
         `postId=1&batchIds=${Array.from({ length: 257 }, () => batchId).join(",")}`,
     ])("잘못된 조회 파라미터를 DB 전에 거부한다: %s", async (params) => {
         const response = await GET(new Request(`http://localhost/api/v1/get/like/count?${params}`));
@@ -172,7 +183,9 @@ describe("Cheer Up 묶음 저장", () => {
     });
 
     it.each([
-        null, [], {},
+        null,
+        [],
+        {},
         { ...validPayload, postId: "1" },
         { ...validPayload, postId: 0 },
         { ...validPayload, postId: 1.5 },

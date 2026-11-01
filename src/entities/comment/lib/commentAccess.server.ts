@@ -10,7 +10,8 @@ import { apiError } from "@/shared/lib/apiResponse";
 
 export const COMMENT_RATE = { writes: 5, writeWindow: 60, passwordFailures: 5, passwordWindow: 600 } as const;
 export const positiveId = (value: unknown): value is number => typeof value === "number" && Number.isSafeInteger(value) && value > 0;
-export const validCommentPassword = (value: unknown): value is string => typeof value === "string" && Array.from(value).length >= 6 && Array.from(value).length <= 24 && Buffer.byteLength(value, "utf8") <= 72;
+export const validCommentPassword = (value: unknown): value is string =>
+    typeof value === "string" && Array.from(value).length >= 6 && Array.from(value).length <= 24 && Buffer.byteLength(value, "utf8") <= 72;
 export const badCommentRequest = (message = "댓글 정보를 확인해주세요.") => apiError(message, { status: 400, resultCode: "BAD_REQUEST" });
 export const commentSession = () => getServerSession(authOptions);
 export const commentDigest = (value: string) => {

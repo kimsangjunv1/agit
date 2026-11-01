@@ -100,15 +100,7 @@ const ReadingSettingControl = ({
     </div>
 );
 
-const PostNavigationActions = ({
-    showShare,
-    showComments,
-    showReading,
-    showEdit,
-    showDelete,
-    isDeletePending,
-    onAction,
-}: PostNavigationActionsProps) => {
+const PostNavigationActions = ({ showShare, showComments, showReading, showEdit, showDelete, isDeletePending, onAction }: PostNavigationActionsProps) => {
     const reducedMotion = useReducedMotion();
     const shouldShowIsland = useLayoutStore((state) => state.isPageContentVisible && state.transitionPhase === "idle");
 

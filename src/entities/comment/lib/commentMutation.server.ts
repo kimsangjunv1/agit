@@ -11,7 +11,8 @@ export async function mutateComment(req: Request, operation: "update" | "delete"
     try {
         const payload = await req.json().catch(() => null);
         if (!payload || typeof payload !== "object" || Array.isArray(payload) || !positiveId(payload.idx)) return badCommentRequest();
-        if (operation === "update" && (typeof payload.msg !== "string" || !payload.msg.trim() || payload.msg.length > COMMENT_MESSAGE_MAX_LENGTH)) return badCommentRequest(`댓글은 1~${COMMENT_MESSAGE_MAX_LENGTH}자로 입력해주세요.`);
+        if (operation === "update" && (typeof payload.msg !== "string" || !payload.msg.trim() || payload.msg.length > COMMENT_MESSAGE_MAX_LENGTH))
+            return badCommentRequest(`댓글은 1~${COMMENT_MESSAGE_MAX_LENGTH}자로 입력해주세요.`);
         const session = await commentSession();
         if (managerOnly && session?.user?.role !== "admin") return apiError("관리자 권한이 필요해요.", { status: 403 });
         const supabase = supabaseAdmin();
@@ -32,9 +33,15 @@ export async function mutateComment(req: Request, operation: "update" | "delete"
             if (comment.msg === payload.msg.trim()) return apiSuccess(null, { resultMessage: "변경된 내용이 없어요.", pagination: singleItemPagination() });
             if (!(await commentRateAllowed("consume_comment_rate", commentRateKey(req), COMMENT_RATE.writeWindow, COMMENT_RATE.writes))) return commentRateResponse();
         }
-        const { error: mutationError } = await supabase.from("comments").update(operation === "delete"
-            ? { deleted_at: new Date().toISOString(), author: "", msg: "", profile: 0, emoji_id: null, password_hash: null, user_id: null, is_admin: false, reply_to_author: null }
-            : { msg: payload.msg.trim(), is_modified: true, updated_at: new Date().toISOString() }).eq("idx", comment.idx).is("deleted_at", null);
+        const { error: mutationError } = await supabase
+            .from("comments")
+            .update(
+                operation === "delete"
+                    ? { deleted_at: new Date().toISOString(), author: "", msg: "", profile: 0, emoji_id: null, password_hash: null, user_id: null, is_admin: false, reply_to_author: null }
+                    : { msg: payload.msg.trim(), is_modified: true, updated_at: new Date().toISOString() },
+            )
+            .eq("idx", comment.idx)
+            .is("deleted_at", null);
         if (mutationError) throw mutationError;
         return apiSuccess(null, { resultMessage: operation === "delete" ? "댓글을 삭제했어요." : "댓글을 수정했어요.", pagination: singleItemPagination() });
     } catch (error: unknown) {

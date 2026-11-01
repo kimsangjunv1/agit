@@ -4,12 +4,24 @@ import { CheerUpQueue } from "./cheerUpQueue";
 
 class MemoryStorage implements Storage {
     values = new Map<string, string>();
-    get length() { return this.values.size; }
-    clear() { this.values.clear(); }
-    getItem(key: string) { return this.values.get(key) ?? null; }
-    key(index: number) { return [...this.values.keys()][index] ?? null; }
-    removeItem(key: string) { this.values.delete(key); }
-    setItem(key: string, value: string) { this.values.set(key, value); }
+    get length() {
+        return this.values.size;
+    }
+    clear() {
+        this.values.clear();
+    }
+    getItem(key: string) {
+        return this.values.get(key) ?? null;
+    }
+    key(index: number) {
+        return [...this.values.keys()][index] ?? null;
+    }
+    removeItem(key: string) {
+        this.values.delete(key);
+    }
+    setItem(key: string, value: string) {
+        this.values.set(key, value);
+    }
 }
 
 const success = (result: unknown) => new Response(JSON.stringify({ resultCode: "SUCCESS", result }), { status: 200 });
@@ -71,7 +83,10 @@ describe("CheerUpQueue", () => {
     it("keeps clicks made during an in-flight batch in a separate immutable batch", async () => {
         let finish!: (response: Response) => void;
         const send = vi.fn((_url: RequestInfo | URL, init?: RequestInit) => {
-            if (posted(send).length === 1) return new Promise<Response>((resolve) => { finish = resolve; });
+            if (posted(send).length === 1)
+                return new Promise<Response>((resolve) => {
+                    finish = resolve;
+                });
             const payload = JSON.parse(String(init?.body));
             return Promise.resolve(success({ batchId: payload.batchId, likes: 420, acknowledgedBatchIds: [payload.batchId] }));
         });
@@ -202,12 +217,18 @@ describe("CheerUpQueue", () => {
         expect(second.getCount(1)).toBe(102);
         expect([...storage.values.keys()].filter((key) => key.includes(":batch:"))).toHaveLength(2);
         await vi.advanceTimersByTimeAsync(2000);
-        expect(posted(send).map((call) => body(call).count).sort()).toEqual([1, 2]);
+        expect(
+            posted(send)
+                .map((call) => body(call).count)
+                .sort(),
+        ).toEqual([1, 2]);
     });
 
     it("continues batching when browser storage is unavailable", async () => {
         const storage = new MemoryStorage();
-        storage.setItem = () => { throw new DOMException("Quota exceeded"); };
+        storage.setItem = () => {
+            throw new DOMException("Quota exceeded");
+        };
         const send = vi.fn(async (_url: RequestInfo | URL, init?: RequestInit) => {
             const payload = JSON.parse(String(init?.body));
             return success({ batchId: payload.batchId, likes: 101, acknowledgedBatchIds: [payload.batchId] });
@@ -222,7 +243,10 @@ describe("CheerUpQueue", () => {
     it("ignores an older count response that arrives after a newer batch acknowledgement", async () => {
         let finishRead!: (response: Response) => void;
         const send = vi.fn((_url: RequestInfo | URL, init?: RequestInit) => {
-            if (init?.method !== "POST") return new Promise<Response>((resolve) => { finishRead = resolve; });
+            if (init?.method !== "POST")
+                return new Promise<Response>((resolve) => {
+                    finishRead = resolve;
+                });
             const payload = JSON.parse(String(init.body));
             return Promise.resolve(success({ batchId: payload.batchId, likes: 101, acknowledgedBatchIds: [payload.batchId] }));
         });
@@ -285,7 +309,9 @@ describe("CheerUpQueue", () => {
             queue.flush(1);
             expect(posted(send)).toHaveLength(1);
             expect(posted(send)[0][1]?.keepalive).toBe(true);
-        } finally { vi.unstubAllGlobals(); }
+        } finally {
+            vi.unstubAllGlobals();
+        }
     });
 
     it("times out hung requests and still stops at five actual sends", async () => {
@@ -354,7 +380,10 @@ describe("CheerUpQueue", () => {
         let reads = 0;
         const send = vi.fn((_url: RequestInfo | URL, _init?: RequestInit) => {
             reads++;
-            if (reads === 1) return new Promise<Response>((resolve) => { finishOld = resolve; });
+            if (reads === 1)
+                return new Promise<Response>((resolve) => {
+                    finishOld = resolve;
+                });
             return Promise.resolve(success({ likes: 200, acknowledgedBatchIds: [] }));
         });
         const queue = makeQueue({ send });
@@ -391,8 +420,13 @@ describe("CheerUpQueue", () => {
         const reads: ((response: Response) => void)[] = [];
         let finishPost!: (response: Response) => void;
         const send = vi.fn((_url: RequestInfo | URL, init?: RequestInit) => {
-            if (init?.method === "POST") return new Promise<Response>((resolve) => { finishPost = resolve; });
-            return new Promise<Response>((resolve) => { reads.push(resolve); });
+            if (init?.method === "POST")
+                return new Promise<Response>((resolve) => {
+                    finishPost = resolve;
+                });
+            return new Promise<Response>((resolve) => {
+                reads.push(resolve);
+            });
         });
         const queue = makeQueue({ send });
         const firstRead = queue.reconcile(1);
@@ -417,8 +451,13 @@ describe("CheerUpQueue", () => {
         const posts: ((response: Response) => void)[] = [];
         let finishRead!: (response: Response) => void;
         const send = vi.fn((_url: RequestInfo | URL, init?: RequestInit) => {
-            if (init?.method !== "POST") return new Promise<Response>((resolve) => { finishRead = resolve; });
-            return new Promise<Response>((resolve) => { posts.push(resolve); });
+            if (init?.method !== "POST")
+                return new Promise<Response>((resolve) => {
+                    finishRead = resolve;
+                });
+            return new Promise<Response>((resolve) => {
+                posts.push(resolve);
+            });
         });
         const queue = makeQueue({ send });
         queue.cheer(1);
@@ -441,7 +480,12 @@ describe("CheerUpQueue", () => {
 
     it("accepts a read snapshot when the only new clicks remain unsent drafts", async () => {
         let finishRead!: (response: Response) => void;
-        const send = vi.fn((_url: RequestInfo | URL, _init?: RequestInit) => new Promise<Response>((resolve) => { finishRead = resolve; }));
+        const send = vi.fn(
+            (_url: RequestInfo | URL, _init?: RequestInit) =>
+                new Promise<Response>((resolve) => {
+                    finishRead = resolve;
+                }),
+        );
         const queue = makeQueue({ send });
         const read = queue.reconcile(1);
         queue.cheer(1);
@@ -455,8 +499,13 @@ describe("CheerUpQueue", () => {
         const posts: ((response: Response) => void)[] = [];
         let finishRead!: (response: Response) => void;
         const send = vi.fn((_url: RequestInfo | URL, init?: RequestInit) => {
-            if (init?.method !== "POST") return new Promise<Response>((resolve) => { finishRead = resolve; });
-            return new Promise<Response>((resolve) => { posts.push(resolve); });
+            if (init?.method !== "POST")
+                return new Promise<Response>((resolve) => {
+                    finishRead = resolve;
+                });
+            return new Promise<Response>((resolve) => {
+                posts.push(resolve);
+            });
         });
         const queue = makeQueue({ send });
         queue.cheer(1);
@@ -495,7 +544,9 @@ describe("CheerUpQueue", () => {
         let finishRead!: (response: Response) => void;
         const send = vi.fn((_url: RequestInfo | URL, init?: RequestInit) => {
             if (init?.method === "POST") return new Promise<Response>(() => undefined);
-            return new Promise<Response>((resolve) => { finishRead = resolve; });
+            return new Promise<Response>((resolve) => {
+                finishRead = resolve;
+            });
         });
         const queue = makeQueue({ send, storage });
         queue.cheer(1);

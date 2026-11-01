@@ -12,7 +12,10 @@ describe("Cheer Up confirmed cache counts", () => {
         const latest = ["post", "latest", "all", "reader"];
         const infinite = ["post", "infinite", "all", "reader"];
         const other = ["post", "detail", 1, "other"];
-        const items = [{ idx: 1, likes: 10, title: "글" }, { idx: 2, likes: 3, title: "다른 글" }];
+        const items = [
+            { idx: 1, likes: 10, title: "글" },
+            { idx: 2, likes: 3, title: "다른 글" },
+        ];
         client.setQueryData(detail, response(items[0]));
         client.setQueryData(list, response(items));
         client.setQueryData(latest, response(items));

@@ -54,7 +54,10 @@ export default function FivePixelsLayer() {
 
     const onCreate = useCallback((feedback: CreateReportFeedbackPayload) => confirmFeedbackAction("피드백을 등록할까요?", () => setFeedbackFetch({ ...FIVEPIXELS_SCOPE, feedback })), []);
 
-    const onUpdate = useCallback((id: string, feedback: UpdateReportFeedbackPayload) => confirmFeedbackAction("피드백을 수정할까요?", () => patchFeedbackFetch({ ...FIVEPIXELS_SCOPE, id, feedback })), []);
+    const onUpdate = useCallback(
+        (id: string, feedback: UpdateReportFeedbackPayload) => confirmFeedbackAction("피드백을 수정할까요?", () => patchFeedbackFetch({ ...FIVEPIXELS_SCOPE, id, feedback })),
+        [],
+    );
 
     const onDelete = useCallback(async (id: string) => {
         await confirmFeedbackAction("피드백을 삭제할까요?", () => deleteFeedbackFetch({ ...FIVEPIXELS_SCOPE, id }));
@@ -64,13 +67,23 @@ export default function FivePixelsLayer() {
 
     const onListReviewerRequests = useCallback(() => getFeedbackReviewerRequestListFetch(FIVEPIXELS_SCOPE), []);
 
-    const onCreateReviewerRequest = useCallback((payload: CreateReviewerRequestPayload) => confirmFeedbackAction("검토자 등록을 요청할까요?", () => setFeedbackReviewerRequestFetch(FIVEPIXELS_SCOPE, payload)), []);
+    const onCreateReviewerRequest = useCallback(
+        (payload: CreateReviewerRequestPayload) => confirmFeedbackAction("검토자 등록을 요청할까요?", () => setFeedbackReviewerRequestFetch(FIVEPIXELS_SCOPE, payload)),
+        [],
+    );
 
-    const onResolveReviewerRequest = useCallback((id: string, payload: ResolveReviewerRequestPayload) => confirmFeedbackAction(payload.status === "approved" ? "검토자 요청을 승인할까요?" : "검토자 요청을 거절할까요?", () => patchFeedbackReviewerRequestFetch(FIVEPIXELS_SCOPE, id, payload)), []);
+    const onResolveReviewerRequest = useCallback(
+        (id: string, payload: ResolveReviewerRequestPayload) =>
+            confirmFeedbackAction(payload.status === "approved" ? "검토자 요청을 승인할까요?" : "검토자 요청을 거절할까요?", () => patchFeedbackReviewerRequestFetch(FIVEPIXELS_SCOPE, id, payload)),
+        [],
+    );
 
     const onRegisterReviewer = useCallback((payload: RegisterReviewerPayload) => confirmFeedbackAction("검토자를 등록할까요?", () => setFeedbackReviewerFetch(FIVEPIXELS_SCOPE, payload)), []);
 
-    const onUpdateReviewer = useCallback((id: string, payload: UpdateReviewerPayload) => confirmFeedbackAction("검토자 정보를 수정할까요?", () => patchFeedbackReviewerFetch(FIVEPIXELS_SCOPE, id, payload)), []);
+    const onUpdateReviewer = useCallback(
+        (id: string, payload: UpdateReviewerPayload) => confirmFeedbackAction("검토자 정보를 수정할까요?", () => patchFeedbackReviewerFetch(FIVEPIXELS_SCOPE, id, payload)),
+        [],
+    );
 
     return (
         <FivePixels

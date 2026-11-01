@@ -72,7 +72,9 @@ const ManagerSidebar = ({ profile }: ManagerSidebarProps) => {
                 </nav>
 
                 <div className="mt-auto flex items-center gap-[1.2rem] border-t border-[var(--color-gray-300)] pt-[1.6rem]">
-                    <span className="flex size-[3.6rem] shrink-0 items-center justify-center rounded-full bg-[var(--color-surface-floating)] text-[1.2rem] font-bold text-[var(--color-text-primary)]">{profileInitial}</span>
+                    <span className="flex size-[3.6rem] shrink-0 items-center justify-center rounded-full bg-[var(--color-surface-floating)] text-[1.2rem] font-bold text-[var(--color-text-primary)]">
+                        {profileInitial}
+                    </span>
                     <div className="min-w-0">
                         <p className="truncate text-[1.2rem] font-semibold text-[var(--color-gray-900)]">{profileName}</p>
                         <p className="truncate text-[1.2rem] text-[var(--color-gray-500)]">{profile.email}</p>

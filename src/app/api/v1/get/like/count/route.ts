@@ -17,8 +17,7 @@ export async function GET(req: Request) {
         const postId = Number(rawPostId);
         const rawBatchIds = searchParams.get("batchIds");
         const batchIds = rawBatchIds ? rawBatchIds.split(",") : [];
-        if (!/^[1-9]\d*$/.test(rawPostId) || !Number.isSafeInteger(postId) || postId > 2147483647
-            || batchIds.length > 256 || batchIds.some((id) => !UUID.test(id))) {
+        if (!/^[1-9]\d*$/.test(rawPostId) || !Number.isSafeInteger(postId) || postId > 2147483647 || batchIds.length > 256 || batchIds.some((id) => !UUID.test(id))) {
             return privatePostResponse(apiError("게시물 번호와 Cheer Up 식별자를 확인해주세요.", { status: 400, resultCode: "BAD_REQUEST" }));
         }
 

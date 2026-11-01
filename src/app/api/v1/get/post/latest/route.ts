@@ -28,10 +28,12 @@ export async function GET(req: Request) {
             category: (Array.isArray(item.category) ? item.category[0] : item.category) ?? { title: "" },
         }));
 
-        return privatePostResponse(apiSuccess(resolvePostImages(formattedData ?? []), {
-            resultMessage: "조회성공",
-            pagination: singleItemPagination(),
-        }));
+        return privatePostResponse(
+            apiSuccess(resolvePostImages(formattedData ?? []), {
+                resultMessage: "조회성공",
+                pagination: singleItemPagination(),
+            }),
+        );
     } catch (error: unknown) {
         const { message, status } = resolveRouteError(error);
         return apiError(message, { status });

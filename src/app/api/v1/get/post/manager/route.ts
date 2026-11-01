@@ -34,10 +34,12 @@ export async function GET(req: Request) {
 
         if (error) throw error;
 
-        return privatePostResponse(apiSuccess(resolvePostImages(data), {
-            resultMessage: "조회성공",
-            pagination: buildPaginationFromQuery(searchParams, count ?? 0, DEFAULT_PAGE_SIZE),
-        }));
+        return privatePostResponse(
+            apiSuccess(resolvePostImages(data), {
+                resultMessage: "조회성공",
+                pagination: buildPaginationFromQuery(searchParams, count ?? 0, DEFAULT_PAGE_SIZE),
+            }),
+        );
     } catch (error: unknown) {
         const { message, status } = resolveRouteError(error);
         return apiError(message, { status });

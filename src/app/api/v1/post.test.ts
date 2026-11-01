@@ -161,13 +161,15 @@ describe("게시글 공개 범위", () => {
     });
 
     it.each(["til", "diary"])("%s 목록을 페이지별 10개씩 조회해도 비공개 글과 다른 종류가 섞이지 않는다", async (type) => {
-        database.extraPosts = [
-            ...Array.from({ length: 22 }, (_, index) => ({ ...posts[3], idx: 100 + index, post_type: type })),
-            { ...posts[2], idx: 200, post_type: type },
-        ];
+        database.extraPosts = [...Array.from({ length: 22 }, (_, index) => ({ ...posts[3], idx: 100 + index, post_type: type })), { ...posts[2], idx: 200, post_type: type }];
         const ids: number[] = [];
 
-        for (const [page, length] of [[1, 10], [2, 10], [3, 3], [4, 0]]) {
+        for (const [page, length] of [
+            [1, 10],
+            [2, 10],
+            [3, 3],
+            [4, 0],
+        ]) {
             const response = await getList(request(`get/post?type=${type}&page=${page}&pageSize=10`));
             const body = await response.json();
 

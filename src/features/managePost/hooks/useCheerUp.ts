@@ -52,7 +52,7 @@ export const useCheerUp = (postId: number, serverCount: number): { count: number
     const queryClient = useQueryClient();
     const sessionUserId = session?.user?.id ?? null;
     const actorId = status !== "loading" && typeof window !== "undefined" ? (sessionUserId ?? getGuestActorId()) : null;
-    const queue = useMemo(() => actorId ? getQueue(actorId) : undefined, [actorId]);
+    const queue = useMemo(() => (actorId ? getQueue(actorId) : undefined), [actorId]);
     const serverCountRef = useRef(serverCount);
     const pendingCheers = useRef(0);
     serverCountRef.current = serverCount;
@@ -63,7 +63,9 @@ export const useCheerUp = (postId: number, serverCount: number): { count: number
         queue.setOnConfirmed((id, likes) => updatePostLikeCaches(queryClient, id, sessionUserId, likes));
     }, [queue, queryClient, sessionUserId, status]);
 
-    useEffect(() => { queue?.seed(postId, serverCount); }, [queue, postId, serverCount]);
+    useEffect(() => {
+        queue?.seed(postId, serverCount);
+    }, [queue, postId, serverCount]);
 
     useEffect(() => {
         if (status === "loading" || !actorId || !queue || !Number.isSafeInteger(postId) || postId <= 0) return;

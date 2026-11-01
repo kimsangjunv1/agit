@@ -49,7 +49,10 @@ export default function Panel({ id, initialData }: { id: string; initialData: Ge
                     <Layer.IslandStack>
                         <Layer.CheerUpIsland key={`cheer-${page.postId}`} />
                         <Layer.DynamicPostController key={page.postId} />
-                        <Layer.WidthControl value={contentWidth} onChange={setContentWidth} />
+                        <Layer.WidthControl
+                            value={contentWidth}
+                            onChange={setContentWidth}
+                        />
                     </Layer.IslandStack>
                     <Layer.Actions />
                 </>

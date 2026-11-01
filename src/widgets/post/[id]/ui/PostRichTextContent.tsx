@@ -87,7 +87,9 @@ const RichTextHtml = ({ html }: { html: string }) => {
             const src = readTagAttr(part.html, "src");
             if (!src) return null;
 
-            const width = readTagAttr(part.html, "style").match(/(?:^|;)\s*width\s*:\s*([^;]+)/i)?.[1]?.trim();
+            const width = readTagAttr(part.html, "style")
+                .match(/(?:^|;)\s*width\s*:\s*([^;]+)/i)?.[1]
+                ?.trim();
             const align = readTagAttr(part.html, "data-align");
             const imageWidth = readTagAttr(part.html, "data-image-width");
 

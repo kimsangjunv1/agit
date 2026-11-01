@@ -78,7 +78,7 @@ export const useGetPostInfiniteListQuery = ({ enabled = true }: { enabled?: bool
         queryKey: [AgitRoutes.KEY_POST, "infinite", postType, viewerKey],
         queryFn: ({ pageParam }) => getPostListFetch(postType, pageParam),
         initialPageParam: 1,
-        getNextPageParam: (lastPage) => lastPage.pagination?.hasNext ? lastPage.pagination.page + 1 : undefined,
+        getNextPageParam: (lastPage) => (lastPage.pagination?.hasNext ? lastPage.pagination.page + 1 : undefined),
         enabled: ready && enabled,
         staleTime: POST_DETAIL_STALE_TIME_MS,
         throwOnError: false,

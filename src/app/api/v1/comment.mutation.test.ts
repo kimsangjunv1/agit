@@ -12,16 +12,24 @@ vi.mock("bcrypt", () => ({ default: { compare: vi.fn(async () => true) } }));
 vi.mock("next-auth", () => ({ getServerSession: vi.fn() }));
 vi.mock("@/shared/lib/authOptions", () => ({ authOptions: {} }));
 vi.mock("@/shared/lib/supabase/supabaseServer", () => ({ supabaseAdmin: vi.fn() }));
-vi.mock("@/entities/post/api/postAccess.server", async (original) => ({ ...await original<typeof import("@/entities/post/api/postAccess.server")>(), findReadablePost: vi.fn() }));
+vi.mock("@/entities/post/api/postAccess.server", async (original) => ({ ...(await original<typeof import("@/entities/post/api/postAccess.server")>()), findReadablePost: vi.fn() }));
 let comment: { idx: number; post_id: number; author: string; msg: string; is_admin: boolean; user_id: string | null; password_hash: string | null; deleted_at: string | null };
 const query = {
-    select: vi.fn().mockReturnThis(), eq: vi.fn().mockReturnThis(), or: vi.fn().mockReturnThis(), is: vi.fn().mockReturnThis(),
+    select: vi.fn().mockReturnThis(),
+    eq: vi.fn().mockReturnThis(),
+    or: vi.fn().mockReturnThis(),
+    is: vi.fn().mockReturnThis(),
     update: vi.fn().mockReturnThis(),
     maybeSingle: vi.fn(async () => ({ data: comment, error: null })),
     then: (resolve: (value: unknown) => unknown) => Promise.resolve({ error: null }).then(resolve),
 };
 const database = { from: vi.fn(() => query), rpc: vi.fn(async (name: string) => ({ data: name === "reserve_comment_password" ? "2026-10-22T00:00:00Z" : true, error: null })) };
-const request = (patch = {}) => new Request("http://localhost/api/v1/set/comment/update", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ idx: 1, msg: "수정한 내용", password: "secret123", ...patch }) });
+const request = (patch = {}) =>
+    new Request("http://localhost/api/v1/set/comment/update", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ idx: 1, msg: "수정한 내용", password: "secret123", ...patch }),
+    });
 const member = (id = "owner", role = "user") => ({ user: { id, name: "작성자", role, email: "test@example.com" }, expires: "2099-01-01" });
 beforeEach(() => {
     vi.clearAllMocks();
@@ -51,7 +59,8 @@ describe("댓글 수정·삭제 본인 확인", () => {
         expect(bcrypt.compare).not.toHaveBeenCalled();
     });
     it("로그인한 본인은 비밀번호 없이 수정한다", async () => {
-        comment.user_id = "owner"; comment.password_hash = null;
+        comment.user_id = "owner";
+        comment.password_hash = null;
         vi.mocked(getServerSession).mockResolvedValue(member());
         expect((await PATCH(request({ password: undefined }))).status).toBe(200);
         expect(bcrypt.compare).not.toHaveBeenCalled();

@@ -44,11 +44,20 @@ type QueueOptions = {
 };
 
 class RequestError extends Error {
-    constructor(readonly status: number, readonly retryAfter = 0) { super(`Cheer Up request failed (${status})`); }
+    constructor(
+        readonly status: number,
+        readonly retryAfter = 0,
+    ) {
+        super(`Cheer Up request failed (${status})`);
+    }
 }
 
 const browserStorage = () => {
-    try { return typeof window === "undefined" ? undefined : window.localStorage; } catch { return undefined; }
+    try {
+        return typeof window === "undefined" ? undefined : window.localStorage;
+    } catch {
+        return undefined;
+    }
 };
 
 /** Shared by all Cheer Up controls for one signed-in user or one browser guest. */
@@ -78,7 +87,10 @@ export class CheerUpQueue {
     private version = 0;
     private epoch = 0;
 
-    constructor(readonly userId: string, options: QueueOptions = {}) {
+    constructor(
+        readonly userId: string,
+        options: QueueOptions = {},
+    ) {
         this.storage = options.storage ?? browserStorage();
         // A copied browser tab can inherit sessionStorage, so ownership uses a fresh runtime UUID.
         this.tabId = options.tabId ?? crypto.randomUUID();
@@ -89,9 +101,16 @@ export class CheerUpQueue {
         this.idleMs = options.idleMs ?? IDLE_MS;
     }
 
-    subscribe = (listener: () => void) => { this.listeners.add(listener); return () => { this.listeners.delete(listener); }; };
+    subscribe = (listener: () => void) => {
+        this.listeners.add(listener);
+        return () => {
+            this.listeners.delete(listener);
+        };
+    };
     getVersion = () => this.version;
-    setOnConfirmed(callback: (postId: number, likes: number) => void) { this.onConfirmed = callback; }
+    setOnConfirmed(callback: (postId: number, likes: number) => void) {
+        this.onConfirmed = callback;
+    }
     /** Marks recent user activity and resumes live sync when allowed. */
     notifyUserActivity() {
         if (!this.active) return;
@@ -108,38 +127,66 @@ export class CheerUpQueue {
         }
         this.onAttention();
     }
-    private emit() { this.version++; this.listeners.forEach((listener) => listener()); }
+    private emit() {
+        this.version++;
+        this.listeners.forEach((listener) => listener());
+    }
 
     private post(postId: number) {
         let post = this.posts.get(postId);
         if (!post) {
             post = { hasCheered: false, watchers: 0, sentBatchIds: new Set() };
-            try { post.hasCheered = this.storage?.getItem(`${PREFIX}${encodeURIComponent(this.userId)}:cheered:${postId}`) === "1"; } catch { /* Optional visual state. */ }
+            try {
+                post.hasCheered = this.storage?.getItem(`${PREFIX}${encodeURIComponent(this.userId)}:cheered:${postId}`) === "1";
+            } catch {
+                /* Optional visual state. */
+            }
             this.posts.set(postId, post);
         }
         return post;
     }
 
-    private records(postId: number) { return [...this.batches.values()].filter((batch) => batch.postId === postId); }
+    private records(postId: number) {
+        return [...this.batches.values()].filter((batch) => batch.postId === postId);
+    }
     private save(batch: Batch) {
         try {
             const { awaitingReconcile, awaitingBase, ...record } = batch;
             this.storage?.setItem(batch.key, JSON.stringify(record));
-        } catch { /* Storage failures must not block delivery. */ }
+        } catch {
+            /* Storage failures must not block delivery. */
+        }
     }
     private read(key: string): Batch | undefined {
         try {
             const raw = this.storage?.getItem(key);
             if (!raw) return undefined;
             const value = JSON.parse(raw) as Batch;
-            if (value.version !== 1 || value.userId !== this.userId || value.key !== key || !Number.isSafeInteger(value.postId) || value.postId <= 0
-                || typeof value.batchId !== "string" || !Number.isInteger(value.count) || value.count <= 0 || value.count > MAX_BATCH_COUNT
-                || !Number.isInteger(value.attempts) || value.attempts < 0 || value.attempts > MAX_ATTEMPTS
-                || !["draft", "pending", "failed", "acknowledged"].includes(value.status)
-                || !Number.isFinite(value.nextAttemptAt) || !Number.isFinite(value.firstClickAt) || !Number.isFinite(value.lastClickAt)
-                || !Number.isFinite(value.leaseUntil) || typeof value.ownerId !== "string") return undefined;
+            if (
+                value.version !== 1 ||
+                value.userId !== this.userId ||
+                value.key !== key ||
+                !Number.isSafeInteger(value.postId) ||
+                value.postId <= 0 ||
+                typeof value.batchId !== "string" ||
+                !Number.isInteger(value.count) ||
+                value.count <= 0 ||
+                value.count > MAX_BATCH_COUNT ||
+                !Number.isInteger(value.attempts) ||
+                value.attempts < 0 ||
+                value.attempts > MAX_ATTEMPTS ||
+                !["draft", "pending", "failed", "acknowledged"].includes(value.status) ||
+                !Number.isFinite(value.nextAttemptAt) ||
+                !Number.isFinite(value.firstClickAt) ||
+                !Number.isFinite(value.lastClickAt) ||
+                !Number.isFinite(value.leaseUntil) ||
+                typeof value.ownerId !== "string"
+            )
+                return undefined;
             return value;
-        } catch { return undefined; }
+        } catch {
+            return undefined;
+        }
     }
 
     start() {
@@ -175,7 +222,9 @@ export class CheerUpQueue {
         this.reads.clear();
         this.refreshNeeded.clear();
         this.restoring.clear();
-        this.posts.forEach((post) => { post.request = undefined; });
+        this.posts.forEach((post) => {
+            post.request = undefined;
+        });
         this.batches.forEach((batch) => {
             if (batch.ownerId !== this.tabId || batch.status === "acknowledged") return;
             const saved = this.read(batch.key);
@@ -217,15 +266,23 @@ export class CheerUpQueue {
         // Detail responses lack batch acknowledgements and cannot replace a pending overlay.
         if (post.serverCount !== undefined && this.records(postId).some((batch) => batch.status === "draft" || batch.status === "pending" || batch.awaitingBase)) return;
         const next = Math.max(post.serverCount ?? 0, count);
-        if (post.serverCount !== next) { post.serverCount = next; this.emit(); }
+        if (post.serverCount !== next) {
+            post.serverCount = next;
+            this.emit();
+        }
     }
 
     getCount(postId: number, fallback = 0) {
-        return (this.posts.get(postId)?.serverCount ?? fallback) + this.records(postId)
-            .filter((batch) => ((batch.status === "draft" || batch.status === "pending") && !batch.awaitingReconcile) || (batch.status === "acknowledged" && batch.awaitingBase))
-            .reduce((sum, batch) => sum + batch.count, 0);
+        return (
+            (this.posts.get(postId)?.serverCount ?? fallback) +
+            this.records(postId)
+                .filter((batch) => ((batch.status === "draft" || batch.status === "pending") && !batch.awaitingReconcile) || (batch.status === "acknowledged" && batch.awaitingBase))
+                .reduce((sum, batch) => sum + batch.count, 0)
+        );
     }
-    hasCheered(postId: number) { return this.posts.get(postId)?.hasCheered ?? false; }
+    hasCheered(postId: number) {
+        return this.posts.get(postId)?.hasCheered ?? false;
+    }
 
     cheer(postId: number) {
         if (!this.active || !Number.isSafeInteger(postId) || postId <= 0) return false;
@@ -241,9 +298,20 @@ export class CheerUpQueue {
         if (!draft) {
             const batchId = crypto.randomUUID();
             draft = {
-                version: 1, key: `${PREFIX}${encodeURIComponent(this.userId)}:batch:${this.tabId}:${batchId}`, userId: this.userId,
-                postId, batchId, count: 0, firstClickAt: now, lastClickAt: now, attempts: 0, nextAttemptAt: now,
-                status: "draft", ownerId: this.tabId, leaseUntil: now + LEASE_MS, notified: false,
+                version: 1,
+                key: `${PREFIX}${encodeURIComponent(this.userId)}:batch:${this.tabId}:${batchId}`,
+                userId: this.userId,
+                postId,
+                batchId,
+                count: 0,
+                firstClickAt: now,
+                lastClickAt: now,
+                attempts: 0,
+                nextAttemptAt: now,
+                status: "draft",
+                ownerId: this.tabId,
+                leaseUntil: now + LEASE_MS,
+                notified: false,
             };
             this.batches.set(batchId, draft);
         }
@@ -254,7 +322,11 @@ export class CheerUpQueue {
         const post = this.post(postId);
         if (!post.hasCheered) {
             post.hasCheered = true;
-            try { this.storage?.setItem(`${PREFIX}${encodeURIComponent(this.userId)}:cheered:${postId}`, "1"); } catch { /* Optional visual state. */ }
+            try {
+                this.storage?.setItem(`${PREFIX}${encodeURIComponent(this.userId)}:cheered:${postId}`, "1");
+            } catch {
+                /* Optional visual state. */
+            }
         }
         this.emit();
         this.schedule(postId);
@@ -273,13 +345,22 @@ export class CheerUpQueue {
                 fresh.push(batch);
             }
         });
-        if (postId === undefined) this.posts.forEach((_post, id) => { void this.drain(id); });
+        if (postId === undefined)
+            this.posts.forEach((_post, id) => {
+                void this.drain(id);
+            });
         else void this.drain(postId);
         // A new batch must be dispatched before page termination even while an older request is pending.
-        fresh.forEach((batch) => { if (!this.inFlight.has(batch.batchId)) void this.drain(batch.postId, batch.batchId); });
+        fresh.forEach((batch) => {
+            if (!this.inFlight.has(batch.batchId)) void this.drain(batch.postId, batch.batchId);
+        });
     }
-    private dueAt(batch: Batch) { return batch.status === "draft" ? Math.min(batch.lastClickAt + DEBOUNCE_MS, batch.firstClickAt + MAX_WAIT_MS) : batch.nextAttemptAt; }
-    private backoff(attempt: number) { return 1000 * 2 ** Math.max(0, attempt - 1); }
+    private dueAt(batch: Batch) {
+        return batch.status === "draft" ? Math.min(batch.lastClickAt + DEBOUNCE_MS, batch.firstClickAt + MAX_WAIT_MS) : batch.nextAttemptAt;
+    }
+    private backoff(attempt: number) {
+        return 1000 * 2 ** Math.max(0, attempt - 1);
+    }
 
     private schedule(postId: number) {
         clearTimeout(this.timers.get(postId));
@@ -288,7 +369,16 @@ export class CheerUpQueue {
         const eligible = this.records(postId).filter((batch) => batch.ownerId === this.tabId && !this.inFlight.has(batch.batchId) && (batch.status === "draft" || batch.status === "pending"));
         if (!eligible.length) return;
         const due = Math.min(...eligible.map((batch) => this.dueAt(batch)));
-        this.timers.set(postId, setTimeout(() => { this.timers.delete(postId); void this.drain(postId); }, Math.max(0, due - Date.now())));
+        this.timers.set(
+            postId,
+            setTimeout(
+                () => {
+                    this.timers.delete(postId);
+                    void this.drain(postId);
+                },
+                Math.max(0, due - Date.now()),
+            ),
+        );
     }
     private fail(batch: Batch) {
         batch.status = "failed";
@@ -312,10 +402,18 @@ export class CheerUpQueue {
     private async drain(postId: number, exitBatchId?: string) {
         const post = this.post(postId);
         if (!this.active || (post.request && !exitBatchId) || (this.restoring.has(postId) && !exitBatchId)) return;
-        const batch = this.records(postId).find((item) => item.ownerId === this.tabId && !this.inFlight.has(item.batchId)
-            && (item.status === "draft" || item.status === "pending") && this.dueAt(item) <= Date.now()
-            && (!exitBatchId || (item.batchId === exitBatchId && item.attempts === 0)));
-        if (!batch) { this.schedule(postId); return; }
+        const batch = this.records(postId).find(
+            (item) =>
+                item.ownerId === this.tabId &&
+                !this.inFlight.has(item.batchId) &&
+                (item.status === "draft" || item.status === "pending") &&
+                this.dueAt(item) <= Date.now() &&
+                (!exitBatchId || (item.batchId === exitBatchId && item.attempts === 0)),
+        );
+        if (!batch) {
+            this.schedule(postId);
+            return;
+        }
         const token = Symbol();
         const epoch = this.epoch;
         if (!post.request) post.request = token;
@@ -340,10 +438,20 @@ export class CheerUpQueue {
                 if (saved) {
                     batch.attempts = Math.max(batch.attempts, saved.attempts);
                     batch.nextAttemptAt = Math.max(batch.nextAttemptAt, saved.nextAttemptAt);
-                    if (saved.status === "failed") { batch.status = "failed"; batch.notified = saved.notified; return; }
-                    if (saved.status === "pending") { batch.count = saved.count; batch.status = "pending"; }
+                    if (saved.status === "failed") {
+                        batch.status = "failed";
+                        batch.notified = saved.notified;
+                        return;
+                    }
+                    if (saved.status === "pending") {
+                        batch.count = saved.count;
+                        batch.status = "pending";
+                    }
                 }
-                if (batch.attempts >= MAX_ATTEMPTS) { this.fail(batch); return; }
+                if (batch.attempts >= MAX_ATTEMPTS) {
+                    this.fail(batch);
+                    return;
+                }
                 if (batch.attempts > 0 && batch.nextAttemptAt > Date.now()) return;
                 batch.status = "pending";
                 batch.attempts++;
@@ -353,7 +461,12 @@ export class CheerUpQueue {
                 const payload: CheerUpPayload = { postId, userId: this.userId, batchId: batch.batchId, count: batch.count, knownBatchIds: this.knownIds(postId).slice(0, 256) };
                 post.sentBatchIds.add(batch.batchId);
                 try {
-                    const state = await this.request<CheerUpResult>("/api/v1/set/like/increment", { method: "POST", body: JSON.stringify(payload), keepalive: true, headers: { "Content-Type": "application/json" } });
+                    const state = await this.request<CheerUpResult>("/api/v1/set/like/increment", {
+                        method: "POST",
+                        body: JSON.stringify(payload),
+                        keepalive: true,
+                        headers: { "Content-Type": "application/json" },
+                    });
                     if (!this.active || epoch !== this.epoch) return;
                     this.apply(postId, state, [...(payload.knownBatchIds ?? []), batch.batchId]);
                     if (batch.status === "pending") throw new RequestError(502);
@@ -379,8 +492,10 @@ export class CheerUpQueue {
     }
 
     private knownIds(postId: number) {
-        return this.records(postId).filter((batch) => batch.status !== "acknowledged" || batch.awaitingBase)
-            .sort((a, b) => Number(a.status === "failed") - Number(b.status === "failed")).map((batch) => batch.batchId);
+        return this.records(postId)
+            .filter((batch) => batch.status !== "acknowledged" || batch.awaitingBase)
+            .sort((a, b) => Number(a.status === "failed") - Number(b.status === "failed"))
+            .map((batch) => batch.batchId);
     }
     private apply(postId: number, state: CheerUpState, queriedIds: string[]) {
         const post = this.post(postId);
@@ -435,13 +550,19 @@ export class CheerUpQueue {
             }
             if (!this.active || epoch !== this.epoch) return;
             const queried = new Set(known);
-            this.records(postId).forEach((batch) => { if (queried.has(batch.batchId)) batch.awaitingReconcile = false; });
+            this.records(postId).forEach((batch) => {
+                if (queried.has(batch.batchId)) batch.awaitingReconcile = false;
+            });
             this.apply(postId, { likes, acknowledgedBatchIds: [...acknowledged] }, known);
-        })().catch(() => { /* Preserve unconfirmed records and their existing retry policy. */ }).finally(() => {
-            if (this.reads.get(postId) !== run) return;
-            this.reads.delete(postId);
-            if (this.refreshNeeded.has(postId)) this.requestRefresh(postId);
-        });
+        })()
+            .catch(() => {
+                /* Preserve unconfirmed records and their existing retry policy. */
+            })
+            .finally(() => {
+                if (this.reads.get(postId) !== run) return;
+                this.reads.delete(postId);
+                if (this.refreshNeeded.has(postId)) this.requestRefresh(postId);
+            });
         this.reads.set(postId, run);
         return run;
     }
@@ -451,55 +572,90 @@ export class CheerUpQueue {
         this.controllers.add(controller);
         const timeout = setTimeout(() => controller.abort(), 8000);
         try {
-            const aborted = new Promise<never>((_resolve, reject) => { controller.signal.addEventListener("abort", () => reject(new Error("Request aborted")), { once: true }); });
-            return await Promise.race([aborted, (async () => {
-                const response = await this.send(url, { ...init, credentials: "same-origin", cache: "no-store", signal: controller.signal });
-                if (!response.ok) {
-                    const value = response.headers.get("Retry-After");
-                    const seconds = value ? Number(value) : NaN;
-                    const delay = value ? (Number.isFinite(seconds) ? seconds * 1000 : Date.parse(value) - Date.now()) : 0;
-                    throw new RequestError(response.status, Number.isFinite(delay) ? Math.max(0, Math.min(delay, 300000)) : 0);
-                }
-                const data = await response.json() as ApiResponse<T>;
-                if (data.resultCode !== "SUCCESS" || !Number.isSafeInteger(data.result?.likes) || data.result.likes < 0 || !Array.isArray(data.result.acknowledgedBatchIds)) throw new RequestError(502);
-                return data.result;
-            })()]);
-        } finally { clearTimeout(timeout); this.controllers.delete(controller); }
+            const aborted = new Promise<never>((_resolve, reject) => {
+                controller.signal.addEventListener("abort", () => reject(new Error("Request aborted")), { once: true });
+            });
+            return await Promise.race([
+                aborted,
+                (async () => {
+                    const response = await this.send(url, { ...init, credentials: "same-origin", cache: "no-store", signal: controller.signal });
+                    if (!response.ok) {
+                        const value = response.headers.get("Retry-After");
+                        const seconds = value ? Number(value) : NaN;
+                        const delay = value ? (Number.isFinite(seconds) ? seconds * 1000 : Date.parse(value) - Date.now()) : 0;
+                        throw new RequestError(response.status, Number.isFinite(delay) ? Math.max(0, Math.min(delay, 300000)) : 0);
+                    }
+                    const data = (await response.json()) as ApiResponse<T>;
+                    if (data.resultCode !== "SUCCESS" || !Number.isSafeInteger(data.result?.likes) || data.result.likes < 0 || !Array.isArray(data.result.acknowledgedBatchIds))
+                        throw new RequestError(502);
+                    return data.result;
+                })(),
+            ]);
+        } finally {
+            clearTimeout(timeout);
+            this.controllers.delete(controller);
+        }
     }
 
     private restore(reactivating = false) {
         const posts = new Set<number>();
         const epoch = this.epoch;
-        if (reactivating) this.batches.forEach((batch) => {
-            if (batch.status !== "acknowledged") { batch.awaitingReconcile = true; posts.add(batch.postId); }
-        });
+        if (reactivating)
+            this.batches.forEach((batch) => {
+                if (batch.status !== "acknowledged") {
+                    batch.awaitingReconcile = true;
+                    posts.add(batch.postId);
+                }
+            });
         let recoverAt = Infinity;
         try {
-            const keys = Array.from({ length: this.storage?.length ?? 0 }, (_item, index) => this.storage?.key(index)).filter((key): key is string => Boolean(key?.startsWith(`${PREFIX}${encodeURIComponent(this.userId)}:batch:`)));
+            const keys = Array.from({ length: this.storage?.length ?? 0 }, (_item, index) => this.storage?.key(index)).filter((key): key is string =>
+                Boolean(key?.startsWith(`${PREFIX}${encodeURIComponent(this.userId)}:batch:`)),
+            );
             keys.forEach((key) => {
                 const saved = this.read(key);
                 if (!saved) return;
-                if ((saved.status === "acknowledged" || saved.status === "failed") && Date.now() - saved.lastClickAt > RETENTION_MS) { this.storage?.removeItem(key); return; }
+                if ((saved.status === "acknowledged" || saved.status === "failed") && Date.now() - saved.lastClickAt > RETENTION_MS) {
+                    this.storage?.removeItem(key);
+                    return;
+                }
                 this.post(saved.postId).hasCheered = true;
                 const existing = this.batches.get(saved.batchId);
                 if (saved.status === "acknowledged") {
-                    if (existing && existing.status !== "acknowledged") { existing.awaitingBase = true; existing.status = "acknowledged"; posts.add(saved.postId); }
+                    if (existing && existing.status !== "acknowledged") {
+                        existing.awaitingBase = true;
+                        existing.status = "acknowledged";
+                        posts.add(saved.postId);
+                    }
                     return;
                 }
                 if (existing && saved.ownerId === this.tabId && existing.ownerId === this.tabId && !reactivating) return;
-                if (saved.ownerId !== this.tabId && saved.leaseUntil > Date.now()) { recoverAt = Math.min(recoverAt, saved.leaseUntil); return; }
+                if (saved.ownerId !== this.tabId && saved.leaseUntil > Date.now()) {
+                    recoverAt = Math.min(recoverAt, saved.leaseUntil);
+                    return;
+                }
                 saved.ownerId = this.tabId;
                 saved.leaseUntil = Date.now() + LEASE_MS;
                 saved.awaitingReconcile = true;
-                if (saved.status === "draft") { saved.status = "pending"; saved.nextAttemptAt = Date.now(); }
+                if (saved.status === "draft") {
+                    saved.status = "pending";
+                    saved.nextAttemptAt = Date.now();
+                }
                 this.batches.set(saved.batchId, saved);
                 this.save(saved);
                 posts.add(saved.postId);
             });
-        } catch { /* Storage access itself may be disabled. */ }
+        } catch {
+            /* Storage access itself may be disabled. */
+        }
         posts.forEach((postId) => {
             this.restoring.add(postId);
-            void this.reconcile(postId).finally(() => { if (epoch === this.epoch) { this.restoring.delete(postId); this.schedule(postId); } });
+            void this.reconcile(postId).finally(() => {
+                if (epoch === this.epoch) {
+                    this.restoring.delete(postId);
+                    this.schedule(postId);
+                }
+            });
         });
         clearTimeout(this.recoveryTimer);
         if (Number.isFinite(recoverAt)) this.recoveryTimer = setTimeout(() => this.restore(), Math.max(1, recoverAt - Date.now()));

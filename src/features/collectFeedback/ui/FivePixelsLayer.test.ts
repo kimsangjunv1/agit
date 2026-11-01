@@ -16,9 +16,23 @@ vi.mock("@fivepixels-js/react", () => ({
     },
 }));
 
-vi.mock("@/entities/fivepixels/api/fivepixels.api", () => Object.fromEntries([
-    "setFeedbackFetch", "patchFeedbackFetch", "deleteFeedbackFetch", "getFeedbackListFetch", "getFeedbackListPagingFetch", "getFeedbackReviewerListFetch", "getFeedbackReviewerRequestListFetch", "setFeedbackReviewerRequestFetch", "patchFeedbackReviewerRequestFetch", "setFeedbackReviewerFetch", "patchFeedbackReviewerFetch",
-].map((name) => [name, vi.fn().mockResolvedValue({ id: "saved" })])));
+vi.mock("@/entities/fivepixels/api/fivepixels.api", () =>
+    Object.fromEntries(
+        [
+            "setFeedbackFetch",
+            "patchFeedbackFetch",
+            "deleteFeedbackFetch",
+            "getFeedbackListFetch",
+            "getFeedbackListPagingFetch",
+            "getFeedbackReviewerListFetch",
+            "getFeedbackReviewerRequestListFetch",
+            "setFeedbackReviewerRequestFetch",
+            "patchFeedbackReviewerRequestFetch",
+            "setFeedbackReviewerFetch",
+            "patchFeedbackReviewerFetch",
+        ].map((name) => [name, vi.fn().mockResolvedValue({ id: "saved" })]),
+    ),
+);
 
 beforeEach(() => {
     vi.stubGlobal("React", React);

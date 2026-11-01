@@ -95,7 +95,11 @@ export const iconButtonClass = (active: boolean, disabled = false, compact = fal
     }
 
     return `shrink-0 flex items-center justify-center rounded-[1.2rem] font-semibold transition-colors ${size} ${
-        disabled ? "opacity-40 cursor-not-allowed text-[var(--color-gray-500)]" : active ? "bg-[var(--color-blue-500)] text-[var(--color-on-accent)]" : "text-[var(--color-gray-1000)] hover:bg-[var(--color-gray-200)]"
+        disabled
+            ? "opacity-40 cursor-not-allowed text-[var(--color-gray-500)]"
+            : active
+              ? "bg-[var(--color-blue-500)] text-[var(--color-on-accent)]"
+              : "text-[var(--color-gray-1000)] hover:bg-[var(--color-gray-200)]"
     }`;
 };
 

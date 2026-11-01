@@ -171,7 +171,11 @@ const Search = () => {
                                             >
                                                 <section>
                                                     <span>{action.title}</span>
-                                                    {action.badge && <span className="ml-[1.2rem] bg-[var(--color-surface-floating)] px-[0.8rem] py-[0.4rem] text-[1.2rem] font-bold text-[#77ff00]">{action.badge}</span>}
+                                                    {action.badge && (
+                                                        <span className="ml-[1.2rem] bg-[var(--color-surface-floating)] px-[0.8rem] py-[0.4rem] text-[1.2rem] font-bold text-[#77ff00]">
+                                                            {action.badge}
+                                                        </span>
+                                                    )}
                                                 </section>
 
                                                 <IconComponent

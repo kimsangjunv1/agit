@@ -15,7 +15,9 @@ export async function GET(req: Request) {
         const supabase = supabaseAdmin();
         const { searchParams } = new URL(req.url);
 
-        let query = supabase.from(TABLE_NAME).select("idx, post_id, author, msg, is_admin, created_at, posts!inner(title)", { count: "estimated" })
+        let query = supabase
+            .from(TABLE_NAME)
+            .select("idx, post_id, author, msg, is_admin, created_at, posts!inner(title)", { count: "estimated" })
             .or(postVisibilityFilter(auth.session.user.id), { referencedTable: "posts" })
             .is("deleted_at", null)
             .order("created_at", { ascending: false });
@@ -32,10 +34,12 @@ export async function GET(req: Request) {
 
         if (error) throw error;
 
-        return privatePostResponse(apiSuccess(data, {
-            resultMessage: "조회성공",
-            pagination: buildPaginationFromQuery(searchParams, count ?? 0, DEFAULT_PAGE_SIZE),
-        }));
+        return privatePostResponse(
+            apiSuccess(data, {
+                resultMessage: "조회성공",
+                pagination: buildPaginationFromQuery(searchParams, count ?? 0, DEFAULT_PAGE_SIZE),
+            }),
+        );
     } catch (error: unknown) {
         const { message, status } = resolveRouteError(error);
         return apiError(message, { status });

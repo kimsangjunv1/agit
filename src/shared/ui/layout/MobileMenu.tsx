@@ -78,7 +78,6 @@ const MobileMenu = () => {
                         {/* 목록 */}
                         <section className="mobile-inner px-[2.4rem] py-[2.4rem] w-full h-full flex flex-col items-start justify-between">
                             <section className="flex flex-col items-start">
-
                                 {headerMenuList.map((e, i) => (
                                     <div
                                         key={`${e}-${i}-${isMobileMenuOpen}`}

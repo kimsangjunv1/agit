@@ -40,14 +40,12 @@ export const renewalSkillHighlights: RenewalSkillHighlight[] = [
     {
         id: "legacy-architecture",
         title: "레거시 전환 & 아키텍처",
-        description:
-            "Classic ASP의 페이지·상태·API 의존성을 분석해 Next.js App Router와 Zustand·TanStack Query 계층으로 재구축했습니다. 기능 변경 대응을 약 1주에서 1~6시간으로 줄였습니다.",
+        description: "Classic ASP의 페이지·상태·API 의존성을 분석해 Next.js App Router와 Zustand·TanStack Query 계층으로 재구축했습니다. 기능 변경 대응을 약 1주에서 1~6시간으로 줄였습니다.",
     },
     {
         id: "reliability",
         title: "결제 & 서비스 안정성",
-        description:
-            "토스페이먼츠 빌링키 구독 결제와 서버 측 멱등성 키로 중복 결제를 방지하고, SSR 기반 구독 상태 검증으로 초기 화면 깜빡임을 줄였습니다. 민감 정보는 마스킹해 Slack으로 전달합니다.",
+        description: "토스페이먼츠 빌링키 구독 결제와 서버 측 멱등성 키로 중복 결제를 방지하고, SSR 기반 구독 상태 검증으로 초기 화면 깜빡임을 줄였습니다. 민감 정보는 마스킹해 Slack으로 전달합니다.",
     },
 ];
 

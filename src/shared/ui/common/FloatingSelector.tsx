@@ -31,13 +31,13 @@ type PanelPosition = {
 };
 
 const rangesOverlap = (current: PanelPosition | null, next: PanelPosition) =>
-    current?.placement === next.placement
-    && current.maxWidth === next.maxWidth
-    && current.maxHeight === next.maxHeight
-    && current.left === next.left
-    && current.right === next.right
-    && current.top === next.top
-    && current.bottom === next.bottom;
+    current?.placement === next.placement &&
+    current.maxWidth === next.maxWidth &&
+    current.maxHeight === next.maxHeight &&
+    current.left === next.left &&
+    current.right === next.right &&
+    current.top === next.top &&
+    current.bottom === next.bottom;
 
 const FloatingSelector = ({ ariaLabel, trigger, triggerClassName = "", children, align = "start", open: openProp, onOpenChange }: FloatingSelectorProps) => {
     const panelId = useId();
@@ -47,10 +47,13 @@ const FloatingSelector = ({ ariaLabel, trigger, triggerClassName = "", children,
     const [position, setPosition] = useState<PanelPosition | null>(null);
     const open = openProp ?? uncontrolledOpen;
 
-    const setOpen = useCallback((next: boolean) => {
-        onOpenChange?.(next);
-        if (openProp === undefined) setUncontrolledOpen(next);
-    }, [onOpenChange, openProp]);
+    const setOpen = useCallback(
+        (next: boolean) => {
+            onOpenChange?.(next);
+            if (openProp === undefined) setUncontrolledOpen(next);
+        },
+        [onOpenChange, openProp],
+    );
 
     useLayoutEffect(() => {
         if (!open) return;
@@ -78,9 +81,10 @@ const FloatingSelector = ({ ariaLabel, trigger, triggerClassName = "", children,
             }
             maxWidth = Math.min(maxWidth, viewportWidth - VIEWPORT_GAP * 2);
 
-            const next: PanelPosition = placement === "below"
-                ? { placement, maxWidth, maxHeight, left, right, top: rect.bottom + TRIGGER_GAP }
-                : { placement, maxWidth, maxHeight, left, right, bottom: viewportHeight - rect.top + TRIGGER_GAP };
+            const next: PanelPosition =
+                placement === "below"
+                    ? { placement, maxWidth, maxHeight, left, right, top: rect.bottom + TRIGGER_GAP }
+                    : { placement, maxWidth, maxHeight, left, right, bottom: viewportHeight - rect.top + TRIGGER_GAP };
             setPosition((current) => (rangesOverlap(current, next) ? current : next));
         };
 
@@ -122,7 +126,10 @@ const FloatingSelector = ({ ariaLabel, trigger, triggerClassName = "", children,
     };
 
     return (
-        <div ref={anchorRef} className="inline-flex">
+        <div
+            ref={anchorRef}
+            className="inline-flex"
+        >
             <button
                 type="button"
                 aria-label={ariaLabel}
@@ -136,30 +143,33 @@ const FloatingSelector = ({ ariaLabel, trigger, triggerClassName = "", children,
             </button>
             {typeof document !== "undefined" && position
                 ? createPortal(
-                    <AnimatePresence>
-                        {open ? (
-                            <div
-                                key="panel"
-                                ref={panelRef}
-                                className="fixed z-[140]"
-                                style={{ left: position.left, right: position.right, top: position.top, bottom: position.bottom }}
-                            >
-                                <DynamicIsland
-                                    key={position.placement}
-                                    ariaLabel={ariaLabel}
-                                    placement={position.placement === "below" ? "top" : "bottom"}
-                                    maxWidth={position.maxWidth}
-                                    maxHeight={position.maxHeight}
-                                >
-                                    <div id={panelId} onClick={closeOnChoice}>
-                                        {children}
-                                    </div>
-                                </DynamicIsland>
-                            </div>
-                        ) : null}
-                    </AnimatePresence>,
-                    document.body,
-                )
+                      <AnimatePresence>
+                          {open ? (
+                              <div
+                                  key="panel"
+                                  ref={panelRef}
+                                  className="fixed z-[140]"
+                                  style={{ left: position.left, right: position.right, top: position.top, bottom: position.bottom }}
+                              >
+                                  <DynamicIsland
+                                      key={position.placement}
+                                      ariaLabel={ariaLabel}
+                                      placement={position.placement === "below" ? "top" : "bottom"}
+                                      maxWidth={position.maxWidth}
+                                      maxHeight={position.maxHeight}
+                                  >
+                                      <div
+                                          id={panelId}
+                                          onClick={closeOnChoice}
+                                      >
+                                          {children}
+                                      </div>
+                                  </DynamicIsland>
+                              </div>
+                          ) : null}
+                      </AnimatePresence>,
+                      document.body,
+                  )
                 : null}
         </div>
     );

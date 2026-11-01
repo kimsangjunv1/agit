@@ -175,11 +175,7 @@ const PostTocNav = ({ items, scrollViewportRef }: PostTocNavProps) => {
                                     <motion.span
                                         layout
                                         aria-hidden="true"
-                                        className={`block h-[0.4rem] shrink-0 ${
-                                            isActive || isHighlighted
-                                                ? "bg-[var(--color-brand-500)] opacity-100"
-                                                : "bg-current opacity-20"
-                                        }`}
+                                        className={`block h-[0.4rem] shrink-0 ${isActive || isHighlighted ? "bg-[var(--color-brand-500)] opacity-100" : "bg-current opacity-20"}`}
                                         initial={false}
                                         animate={{ width: getBarWidth(index, item.level) }}
                                         transition={{ ...motionTransition, layout: layoutTransition }}

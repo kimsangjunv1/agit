@@ -13,7 +13,7 @@ import { GET as getManager } from "./get/comment/manager/route";
 import { findReadablePost } from "@/entities/post/api/postAccess.server";
 
 vi.mock("@/entities/post/api/postAccess.server", async (importOriginal) => ({
-    ...await importOriginal<typeof import("@/entities/post/api/postAccess.server")>(),
+    ...(await importOriginal<typeof import("@/entities/post/api/postAccess.server")>()),
     findReadablePost: vi.fn(),
 }));
 
@@ -46,7 +46,13 @@ const query = {
         return Promise.resolve({ ...queryResult, data }).then(resolve);
     },
 };
-const database = { from: vi.fn(() => query), rpc: vi.fn(async (name: string, _params?: Record<string, unknown>) => ({ data: name === "create_comment" ? { idx: 1, duplicate: false } : true, error: name === "create_comment" ? queryResult.error : null })) };
+const database = {
+    from: vi.fn(() => query),
+    rpc: vi.fn(async (name: string, _params?: Record<string, unknown>) => ({
+        data: name === "create_comment" ? { idx: 1, duplicate: false } : true,
+        error: name === "create_comment" ? queryResult.error : null,
+    })),
+};
 
 const createRequest = (payload: unknown) =>
     new Request("http://localhost/api/v1/set/comment/create", {
@@ -83,7 +89,10 @@ describe("댓글 등록", () => {
         );
 
         expect(response.status).toBe(201);
-        expect(database.rpc).toHaveBeenCalledWith("create_comment", expect.objectContaining({ p_post_id: 1, p_author: "방문자", p_msg: "잘 읽었어요.", p_is_admin: false, p_password_hash: "stored-hash" }));
+        expect(database.rpc).toHaveBeenCalledWith(
+            "create_comment",
+            expect.objectContaining({ p_post_id: 1, p_author: "방문자", p_msg: "잘 읽었어요.", p_is_admin: false, p_password_hash: "stored-hash" }),
+        );
         expect(await response.json()).toMatchObject({ resultCode: "SUCCESS", result: null });
     });
 
@@ -303,10 +312,13 @@ describe("관리자 댓글 조회", () => {
     });
 });
 
- describe("댓글 보완 등록 정책", () => {
-    it.each([{ password: undefined }, { password: "123" }, { password: "가".repeat(25) }, { profile: 99 }, { emoji_id: "unknown" }, { request_id: undefined }])("필수 비회원 정보를 확인한다 %j", async (patch) => {
-        expect((await POST(createRequest({ ...validPayload, ...patch }))).status).toBe(400);
-    });
+describe("댓글 보완 등록 정책", () => {
+    it.each([{ password: undefined }, { password: "123" }, { password: "가".repeat(25) }, { profile: 99 }, { emoji_id: "unknown" }, { request_id: undefined }])(
+        "필수 비회원 정보를 확인한다 %j",
+        async (patch) => {
+            expect((await POST(createRequest({ ...validPayload, ...patch }))).status).toBe(400);
+        },
+    );
     it.each(["til", "diary"])("%s에는 직접 등록하지 못한다", async (post_type) => {
         vi.mocked(findReadablePost).mockResolvedValue({ idx: 1, user_id: null, visibility: "public", post_type });
         expect((await POST(createRequest(validPayload))).status).toBe(403);

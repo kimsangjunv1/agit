@@ -74,7 +74,9 @@ const ArchiveSliderVerticalCard = ({ post, index, containerRef }: ArchiveSliderV
             </div>
 
             <div className="absolute bottom-[1.6rem] left-[1.6rem] w-full flex flex-col justify-start items-start">
-                <h5 className="bg-[var(--color-surface-floating)] text-[var(--color-brand-500)] text-left mobile:text-[1.6rem] pc:text-[2rem] font-semibold p-[0.4rem_0.4rem_0_0.4rem] leading-[1.5]">{post.title}</h5>
+                <h5 className="bg-[var(--color-surface-floating)] text-[var(--color-brand-500)] text-left mobile:text-[1.6rem] pc:text-[2rem] font-semibold p-[0.4rem_0.4rem_0_0.4rem] leading-[1.5]">
+                    {post.title}
+                </h5>
                 <p className="bg-[var(--color-surface-floating)] text-[var(--color-text-primary)] text-left font-bold leading-[1.5] line-clamp-2 mobile:text-[1.6rem] tablet:text-[2rem] p-[0.8rem_0.4rem_0.4rem_0.4rem]">
                     &quot;{post.summary}&quot;
                 </p>

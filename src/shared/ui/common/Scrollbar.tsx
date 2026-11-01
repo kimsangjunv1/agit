@@ -2,7 +2,6 @@
 
 import { useEffect, useId, useRef, useState, type HTMLAttributes, type KeyboardEvent, type PointerEvent, type RefObject } from "react";
 
-
 export type ScrollbarProps = HTMLAttributes<HTMLDivElement> & {
     direction?: "vertical" | "horizontal";
     viewportRef?: RefObject<HTMLDivElement | null>;
@@ -79,10 +78,13 @@ const Scrollbar = ({
         if (!autoHide) return;
         clearHideTimeout();
         if (isHoldingBar()) return;
-        hideTimeoutRef.current = setTimeout(() => {
-            setIsBarVisible(false);
-            hideTimeoutRef.current = null;
-        }, Math.max(0, autoHideDelay) * 1000);
+        hideTimeoutRef.current = setTimeout(
+            () => {
+                setIsBarVisible(false);
+                hideTimeoutRef.current = null;
+            },
+            Math.max(0, autoHideDelay) * 1000,
+        );
     };
 
     const showBar = () => {

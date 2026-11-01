@@ -6,7 +6,19 @@ import { highlightCodeWithHljs } from "@/shared/lib/codeHighlight";
 import { sanitizeHtml, styleRichTextHtml } from "@/shared/lib/sanitizeHtml";
 import CodeBlockPanel from "@/shared/ui/common/CodeBlockPanel";
 import UI from "@/shared/ui/common/UIComponent";
-import { BLOCK_COLUMN_CLASS, BLOCK_ROW_CLASS, POST_BLOCK_HEADING_CLASS, POST_BLOCK_IMAGE_CLASS, POST_BLOCK_LIST_CLASS, POST_BLOCK_SECTION_END_CLASS, POST_BLOCK_SUBTITLE_CLASS, POST_BLOCK_TITLE_CLASS, POST_CODE_BODY_CLASS, POST_CONTENT_WIDTH_CLASS, POST_TIPTAP_CONTENT_CLASS } from "@/shared/lib/richText/styles";
+import {
+    BLOCK_COLUMN_CLASS,
+    BLOCK_ROW_CLASS,
+    POST_BLOCK_HEADING_CLASS,
+    POST_BLOCK_IMAGE_CLASS,
+    POST_BLOCK_LIST_CLASS,
+    POST_BLOCK_SECTION_END_CLASS,
+    POST_BLOCK_SUBTITLE_CLASS,
+    POST_BLOCK_TITLE_CLASS,
+    POST_CODE_BODY_CLASS,
+    POST_CONTENT_WIDTH_CLASS,
+    POST_TIPTAP_CONTENT_CLASS,
+} from "@/shared/lib/richText/styles";
 import PostRichTextContent from "@/widgets/post/[id]/ui/PostRichTextContent";
 import { getSectionEndRowIndexes, isMainBlock } from "@/entities/post/lib/blockMode";
 import { getPostTocAnchorId } from "@/entities/post/lib/postToc";
@@ -132,7 +144,11 @@ const Body = () => {
                     </section>
                 ))}
             </div>
-            <div ref={bodyEndRef} aria-hidden="true" className="h-px" />
+            <div
+                ref={bodyEndRef}
+                aria-hidden="true"
+                className="h-px"
+            />
         </section>
     );
 };

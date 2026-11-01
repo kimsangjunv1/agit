@@ -12,10 +12,12 @@ export async function GET() {
         const supabase = supabaseAdmin();
         const inventory = await buildPostImageInventory(supabase);
 
-        return privatePostResponse(apiSuccess(inventory, {
-            resultMessage: "조회성공",
-            pagination: singleItemPagination(),
-        }));
+        return privatePostResponse(
+            apiSuccess(inventory, {
+                resultMessage: "조회성공",
+                pagination: singleItemPagination(),
+            }),
+        );
     } catch (error: unknown) {
         const { message, status } = resolveRouteError(error);
         return apiError(message, { status });

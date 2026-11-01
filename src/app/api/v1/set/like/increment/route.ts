@@ -13,13 +13,16 @@ const isPositiveInteger = (value: unknown): value is number => typeof value === 
 function isPayload(value: unknown): value is CheerUpPayload {
     if (!value || typeof value !== "object" || Array.isArray(value)) return false;
     const payload = value as Record<string, unknown>;
-    return isPositiveInteger(payload.postId)
-        && isPositiveInteger(payload.count)
-        && typeof payload.batchId === "string" && UUID.test(payload.batchId)
-        && typeof payload.userId === "string" && !!payload.userId
-        && (payload.knownBatchIds === undefined || (Array.isArray(payload.knownBatchIds)
-            && payload.knownBatchIds.length <= 256
-            && payload.knownBatchIds.every((id) => typeof id === "string" && UUID.test(id))));
+    return (
+        isPositiveInteger(payload.postId) &&
+        isPositiveInteger(payload.count) &&
+        typeof payload.batchId === "string" &&
+        UUID.test(payload.batchId) &&
+        typeof payload.userId === "string" &&
+        !!payload.userId &&
+        (payload.knownBatchIds === undefined ||
+            (Array.isArray(payload.knownBatchIds) && payload.knownBatchIds.length <= 256 && payload.knownBatchIds.every((id) => typeof id === "string" && UUID.test(id))))
+    );
 }
 
 export async function POST(req: Request) {

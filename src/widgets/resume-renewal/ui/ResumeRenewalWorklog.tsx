@@ -24,7 +24,9 @@ const ResumeRenewalWorklog = ({ entries }: { entries: RenewalSectionEntry[] }) =
 
                             <div className="mt-[1.2rem] flex flex-wrap items-center gap-[0.8rem]">
                                 <span className="text-[2rem] text-[var(--color-text-primary)]">{entry.period}</span>
-                                <span className="inline-flex rounded-full border border-[var(--color-border)] px-[0.8rem] py-[0.4rem] text-[0.8rem] font-semibold uppercase text-[var(--color-text-muted)]">WORK</span>
+                                <span className="inline-flex rounded-full border border-[var(--color-border)] px-[0.8rem] py-[0.4rem] text-[0.8rem] font-semibold uppercase text-[var(--color-text-muted)]">
+                                    WORK
+                                </span>
                             </div>
                         </div>
 

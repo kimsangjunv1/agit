@@ -63,7 +63,6 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 
     try {
         initialData = await getPostDetailServerFetch(postIdx);
-
     } catch (err: unknown) {
         console.error("SSR fetch error:", err);
     }

@@ -175,9 +175,7 @@ export const useLayoutStore = create<LayoutStoreType>()((set) => ({
         });
     },
     completePageReadiness: () => {
-        set((state) => state.transitionPhase === "waiting" && Object.keys(state.pageReadinessBlockers).length === 0
-            ? { isPageReadinessComplete: true }
-            : state);
+        set((state) => (state.transitionPhase === "waiting" && Object.keys(state.pageReadinessBlockers).length === 0 ? { isPageReadinessComplete: true } : state));
     },
     resetPageReadiness: () => {
         set(() => ({

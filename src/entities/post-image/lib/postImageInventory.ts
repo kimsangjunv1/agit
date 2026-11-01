@@ -70,7 +70,7 @@ const listPostImageStorageFiles = async (supabase: SupabaseClient, prefix = "pos
 
         for (const file of data) {
             if (!file.id) {
-                files.push(...await listPostImageStorageFiles(supabase, `${prefix}/${file.name}`));
+                files.push(...(await listPostImageStorageFiles(supabase, `${prefix}/${file.name}`)));
                 continue;
             }
 
@@ -119,7 +119,13 @@ export const buildPostImageInventory = async (supabase: SupabaseClient): Promise
     if (draftsError) throw draftsError;
 
     const pathToPostIds = collectReferencedImagePaths((posts ?? []) as PostImageReference[]);
-    const draftPaths = new Set((drafts ?? []).flatMap((draft) => collectPostImageUrls(draft.payload?.thumbnail ?? "", draft.payload?.contents ?? []).map(toPostImageStoragePath).filter(Boolean)));
+    const draftPaths = new Set(
+        (drafts ?? []).flatMap((draft) =>
+            collectPostImageUrls(draft.payload?.thumbnail ?? "", draft.payload?.contents ?? [])
+                .map(toPostImageStoragePath)
+                .filter(Boolean),
+        ),
+    );
 
     const items: PostImageInventoryItem[] = storageFiles.map((file) => {
         const referencedBy = pathToPostIds.get(file.path) ?? [];

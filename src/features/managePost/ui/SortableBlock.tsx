@@ -163,7 +163,19 @@ const SortableBlock = ({ contents }: { contents?: Row[] }) => {
     );
 };
 
-const Item = ({ row, rowIndex, isSectionEnd, draggingRowKey, onRowDragStart }: { row: Row; rowIndex: number; isSectionEnd: boolean; draggingRowKey: string | null; onRowDragStart: (rowKey: string) => void }) => {
+const Item = ({
+    row,
+    rowIndex,
+    isSectionEnd,
+    draggingRowKey,
+    onRowDragStart,
+}: {
+    row: Row;
+    rowIndex: number;
+    isSectionEnd: boolean;
+    draggingRowKey: string | null;
+    onRowDragStart: (rowKey: string) => void;
+}) => {
     const dragControls = useDragControls();
     const rowRef = useRef<HTMLDivElement>(null);
     const focusedBlockIndexRef = useRef<number | null>(null);
@@ -440,61 +452,61 @@ const Block = ({
                     />
                 </div>
                 {showModePill ? (
-                        <section
-                            role="group"
-                            aria-label="블록 형식"
-                            className="flex h-[3.2rem] items-center rounded-full bg-[var(--color-surface)] shadow-[var(--shadow-normal)]"
-                        >
-                            {BLOCK_MODE_OPTIONS.map(({ mode, label, icon }) => (
-                                <motion.button
-                                    key={mode}
-                                    type="button"
-                                    title={label}
-                                    aria-label={`${label} 블록으로 전환`}
-                                    aria-pressed={blockMode === mode}
-                                    onClick={() => handleBlockModeChange(mode)}
-                                    whileTap={{ scale: 0.95 }}
-                                    className={BLOCK_MODE_PILL_BUTTON_CLASS}
-                                >
-                                    <MaterialIcon
-                                        name={icon}
-                                        size={20}
-                                    />
-                                </motion.button>
-                            ))}
-                        </section>
-                    ) : null}
-                    {removeMode ? (
-                        <UI.Button
-                            onClick={() => {
-                                if (removeMode === "row") {
-                                    void confirmAction({
-                                        title: "행을 삭제할까요?",
-                                        description: `${rowIndex + 1}번째 행을 삭제합니다.`,
-                                        confirmText: "삭제하기",
-                                        onConfirm: () => {
-                                            deleteRow(rowIndex);
-                                            setToast({ msg: "행을 제거했어요", time: 2 });
-                                        },
-                                    });
-                                    return;
-                                }
-
+                    <section
+                        role="group"
+                        aria-label="블록 형식"
+                        className="flex h-[3.2rem] items-center rounded-full bg-[var(--color-surface)] shadow-[var(--shadow-normal)]"
+                    >
+                        {BLOCK_MODE_OPTIONS.map(({ mode, label, icon }) => (
+                            <motion.button
+                                key={mode}
+                                type="button"
+                                title={label}
+                                aria-label={`${label} 블록으로 전환`}
+                                aria-pressed={blockMode === mode}
+                                onClick={() => handleBlockModeChange(mode)}
+                                whileTap={{ scale: 0.95 }}
+                                className={BLOCK_MODE_PILL_BUTTON_CLASS}
+                            >
+                                <MaterialIcon
+                                    name={icon}
+                                    size={20}
+                                />
+                            </motion.button>
+                        ))}
+                    </section>
+                ) : null}
+                {removeMode ? (
+                    <UI.Button
+                        onClick={() => {
+                            if (removeMode === "row") {
                                 void confirmAction({
-                                    title: "블록을 삭제할까요?",
-                                    description: `${rowIndex + 1}번째 그룹의 ${blockIndex + 1}번째 블록을 삭제합니다.`,
+                                    title: "행을 삭제할까요?",
+                                    description: `${rowIndex + 1}번째 행을 삭제합니다.`,
                                     confirmText: "삭제하기",
-                                    onConfirm: () => deleteBlock(rowIndex, blockIndex),
+                                    onConfirm: () => {
+                                        deleteRow(rowIndex);
+                                        setToast({ msg: "행을 제거했어요", time: 2 });
+                                    },
                                 });
-                            }}
-                            className="flex h-[3.2rem] w-[3.2rem] cursor-pointer items-center justify-center rounded-full bg-[var(--color-surface)] p-0 shadow-[var(--shadow-normal)]"
-                        >
-                            <IconComponent
-                                type="outlined-cross"
-                                alt={removeMode === "row" ? "행 지우기" : "블록 지우기"}
-                            />
-                        </UI.Button>
-                    ) : null}
+                                return;
+                            }
+
+                            void confirmAction({
+                                title: "블록을 삭제할까요?",
+                                description: `${rowIndex + 1}번째 그룹의 ${blockIndex + 1}번째 블록을 삭제합니다.`,
+                                confirmText: "삭제하기",
+                                onConfirm: () => deleteBlock(rowIndex, blockIndex),
+                            });
+                        }}
+                        className="flex h-[3.2rem] w-[3.2rem] cursor-pointer items-center justify-center rounded-full bg-[var(--color-surface)] p-0 shadow-[var(--shadow-normal)]"
+                    >
+                        <IconComponent
+                            type="outlined-cross"
+                            alt={removeMode === "row" ? "행 지우기" : "블록 지우기"}
+                        />
+                    </UI.Button>
+                ) : null}
             </div>
 
             {blockCount === 1 ? (
