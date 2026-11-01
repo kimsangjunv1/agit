@@ -1,1 +1,1 @@
-export { default as ResumePanel } from "./Panel";
+export { default as ResumeRenewalPanel } from "./Panel";

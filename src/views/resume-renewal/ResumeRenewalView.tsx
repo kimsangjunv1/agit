@@ -1,5 +1,5 @@
-import { ResumePanel } from "@/widgets/resume-renewal";
+import { ResumeRenewalPanel } from "@/widgets/resume-renewal";
 
 export default function ResumeRenewalView() {
-    return <ResumePanel />;
+    return <ResumeRenewalPanel />;
 }
