@@ -2,13 +2,22 @@
 
 import { AnimatePresence, motion, useDragControls, useMotionValue, useReducedMotion } from "motion/react";
 import { createPortal } from "react-dom";
-import { type PointerEvent as ReactPointerEvent, type ReactNode, type RefObject, useEffect, useRef, useState } from "react";
+import { cloneElement, isValidElement, type PointerEvent as ReactPointerEvent, type ReactNode, type RefObject, useEffect, useRef, useState } from "react";
 
 const FADE_EASE = [0.4, 0, 0.2, 1] as const;
 const EDGE_INSET_REM = 2;
 const MIN_WINDOW_SIZE = 160;
 
 let nextLayer = 1_500_000;
+
+const INLINE_IMAGE_CLASS = "block";
+const WINDOW_IMAGE_CLASS = "pointer-events-none !m-0 !block !h-full !w-full !max-w-none !rounded-none !object-cover !shadow-none";
+
+/** children으로 받은 img 요소에 className을 직접 덧붙임 */
+const withImageClassName = (children: ReactNode, imageClassName: string) => {
+    if (!isValidElement<{ className?: string }>(children) || children.type !== "img") return children;
+    return cloneElement(children, { className: `${children.props.className ?? ""} ${imageClassName}`.trim() });
+};
 
 type ResizeEdge = "n" | "s" | "e" | "w" | "ne" | "nw" | "se" | "sw";
 
@@ -231,9 +240,7 @@ const WindowPanel = ({ frame, layer, boundsRef, onClose, children }: WindowPanel
             exit={{ opacity: 0 }}
             transition={reducedMotion ? { duration: 0 } : { duration: 0.2, ease: FADE_EASE }}
         >
-            <div className="h-full w-full overflow-hidden [&_img]:pointer-events-none [&_img]:!m-0 [&_img]:!block [&_img]:!h-full [&_img]:!w-full [&_img]:!max-w-none [&_img]:!rounded-none [&_img]:!object-cover [&_img]:!shadow-none">
-                {children}
-            </div>
+            <div className="h-full w-full overflow-hidden">{withImageClassName(children, WINDOW_IMAGE_CLASS)}</div>
 
             {RESIZE_HANDLES.map((handle) => (
                 <div
@@ -340,7 +347,7 @@ const Window = ({ children, openOnContentClick = false, className }: WindowProps
         <div className={`group relative ${className ?? ""}`}>
             <div
                 ref={contentRef}
-                className={`[&_img]:block ${openOnContentClick ? "cursor-pointer" : ""}`}
+                className={openOnContentClick ? "cursor-pointer" : undefined}
                 role={openOnContentClick ? "button" : undefined}
                 tabIndex={openOnContentClick ? 0 : undefined}
                 onClick={
@@ -361,7 +368,7 @@ const Window = ({ children, openOnContentClick = false, className }: WindowProps
                         : undefined
                 }
             >
-                {children}
+                {withImageClassName(children, INLINE_IMAGE_CLASS)}
             </div>
 
             <button
