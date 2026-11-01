@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useCallback, useRef } from "react";
 import type { GetPostDetailResponse } from "@/entities/post/model/post.type";
-import { useGetPostDetailQuery, useIncrementPostViewOnVisit } from "@/entities/post/api/post.query";
+import { useGetPostDetailQuery, useSetPostViewIncrementQuery } from "@/entities/post/api/post.query";
 import useNavigate from "@/shared/hooks/useNavigate";
 import usePageTransitionReady from "@/shared/hooks/usePageTransitionReady";
 import { useCreatePostStore } from "@/shared/stores/useCreatePostStore";
@@ -15,7 +15,7 @@ export default function usePostDetail(id: string, initialData: GetPostDetailResp
     const { setPostIdx } = useCreatePostStore();
     const { setToast } = useToastStore();
     const { pushToUrl } = useNavigate();
-    useIncrementPostViewOnVisit(postIdx);
+    useSetPostViewIncrementQuery(postIdx);
     useEffect(() => {
         setPostIdx(postIdx);
     }, [postIdx, setPostIdx]);

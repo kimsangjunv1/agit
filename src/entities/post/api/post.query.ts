@@ -123,7 +123,7 @@ export const useGetPostDetailQuery = (postIdx?: number, initialData?: GetPostDet
     return { data, isLoading, isError, error, isFetching, refetch };
 };
 
-export const useIncrementPostViewOnVisit = (postIdx?: number) => {
+export const useSetPostViewIncrementQuery = (postIdx?: number) => {
     const queryClient = useQueryClient();
     const { viewerKey, ready } = usePostViewer();
 

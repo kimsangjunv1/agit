@@ -35,7 +35,7 @@ export interface SetCommentPayload {
     reply_to_id?: number;
 }
 
-export interface UpdateCommentPayload {
+export interface PatchCommentPayload {
     idx: number;
     msg: string;
     password?: string;

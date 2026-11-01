@@ -2,8 +2,8 @@ import { useInfiniteQuery, useQuery, useMutation, useQueryClient } from "@tansta
 import { useSession } from "next-auth/react";
 
 import { AgitRoutes } from "@/shared/constants/entityKeys";
-import { deleteCommentFetch, updateCommentFetch, deleteCommentManagerFetch, getCommentLatestListFetch, getCommentListFetch, getCommentManagerListFetch, setCommentFetch } from "@/entities/comment/api/comment.api";
-import type { DeleteCommentPayload, UpdateCommentPayload, DeleteCommentManagerPayload, GetCommentLatestListResponse, GetCommentManagerListResponse, SetCommentPayload } from "@/entities/comment/model/comment.type";
+import { deleteCommentFetch, patchCommentFetch, deleteCommentManagerFetch, getCommentLatestListFetch, getCommentListFetch, getCommentManagerListFetch, setCommentFetch } from "@/entities/comment/api/comment.api";
+import type { DeleteCommentPayload, PatchCommentPayload, DeleteCommentManagerPayload, GetCommentLatestListResponse, GetCommentManagerListResponse, SetCommentPayload } from "@/entities/comment/model/comment.type";
 
 export const useGetCommentDetailQuery = (postIdx: number, { enabled = true, parentId }: { enabled?: boolean; parentId?: number } = {}) => {
     const { data: session, status } = useSession();
@@ -92,10 +92,10 @@ export const useDeleteCommentManagerQuery = () => {
     };
 };
 
-export const useUpdateCommentQuery = () => {
+export const usePatchCommentQuery = () => {
     const client = useQueryClient();
     return useMutation({
-        mutationFn: (payload: UpdateCommentPayload) => updateCommentFetch(payload),
+        mutationFn: (payload: PatchCommentPayload) => patchCommentFetch(payload),
         onSuccess: async () => { await client.invalidateQueries({ queryKey: [AgitRoutes.KEY_COMMENT] }); },
     });
 };

@@ -2,7 +2,7 @@ import { clientApi } from "@/shared/lib/api/client";
 import type {
     DeleteCommentManagerResponse,
     DeleteCommentPayload,
-    UpdateCommentPayload,
+    PatchCommentPayload,
     GetCommentDetailResponse,
     GetCommentLatestListResponse,
     GetCommentManagerListResponse,
@@ -37,6 +37,6 @@ export const getCommentManagerListFetch = () => clientApi.get<GetCommentManagerL
 
 export const deleteCommentManagerFetch = (data: { idx: number }) => clientApi.delete<DeleteCommentManagerResponse>("/api/v1/delete/comment/manager", { body: data });
 
-export const updateCommentFetch = (data: UpdateCommentPayload) => clientApi.patch<SetCommentResponse>("/api/v1/set/comment/update", data, { skipAuthRedirect: true });
+export const patchCommentFetch = (data: PatchCommentPayload) => clientApi.patch<SetCommentResponse>("/api/v1/set/comment/update", data, { skipAuthRedirect: true });
 
 export const deleteCommentFetch = (data: DeleteCommentPayload) => clientApi.delete<SetCommentResponse>("/api/v1/delete/comment", { body: data, skipAuthRedirect: true });

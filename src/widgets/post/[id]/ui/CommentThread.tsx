@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useSession } from "next-auth/react";
 
 import type { GetCommentDetailData } from "@/entities/comment/model/comment.type";
-import { useDeleteCommentQuery, useGetCommentDetailQuery, useUpdateCommentQuery } from "@/entities/comment/api/comment.query";
+import { useDeleteCommentQuery, useGetCommentDetailQuery, usePatchCommentQuery } from "@/entities/comment/api/comment.query";
 import { getCommentEmoji, getCommentProfile } from "@/entities/comment/config/commentAppearance";
 import { COMMENT_MESSAGE_MAX_LENGTH } from "@/entities/comment/model/comment.constants";
 import { confirmAction } from "@/shared/lib/confirmAction";
@@ -16,7 +16,7 @@ import CommentComposer, { commentButtonClass, commentInputClass } from "./Commen
 const CommentEntry = ({ comment, parent, onReply }: { comment: GetCommentDetailData; parent?: GetCommentDetailData; onReply: (comment: GetCommentDetailData) => void }) => {
     const { setToast } = usePostDetailProvider();
     const { data: session, status } = useSession();
-    const update = useUpdateCommentQuery();
+    const update = usePatchCommentQuery();
     const remove = useDeleteCommentQuery();
     const [mode, setMode] = useState<"edit" | "delete" | null>(null);
     const [msg, setMsg] = useState(comment.msg);

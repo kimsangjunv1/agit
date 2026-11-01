@@ -1,6 +1,6 @@
 "use client";
 
-import { useDeletePostTypeMutation, useGetPostTypesQuery, useSavePostTypeMutation } from "@/entities/postType/api/postType.query";
+import { useDeletePostTypeQuery, useGetPostTypesQuery, useSavePostTypeQuery } from "@/entities/postType/api/postType.query";
 import type { PostTypePayload } from "@/entities/postType/model/postType.type";
 import { confirmAction } from "@/shared/lib/confirmAction";
 import { useModalStore } from "@/shared/stores/useModalStore";
@@ -21,8 +21,8 @@ const NEW_ITEM = "__new__";
 
 export default function PostTypeManagerPanel() {
     const { data, isLoading, isError, error, refetch } = useGetPostTypesQuery();
-    const saveMutation = useSavePostTypeMutation();
-    const deleteMutation = useDeletePostTypeMutation();
+    const saveMutation = useSavePostTypeQuery();
+    const deleteMutation = useDeletePostTypeQuery();
     const { selectedItem, setSelectedItem } = useManagerSelection();
     const setToast = useToastStore((state) => state.setToast);
     const setModal = useModalStore((state) => state.setModal);
