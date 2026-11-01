@@ -42,8 +42,6 @@ const TextShimmer = ({
             style={{
                 ...style,
                 backgroundImage: `linear-gradient(45deg, ${color.start} 0%, ${color.end} 50%, ${color.start} 100%)`,
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
             }}
         >
             {children}
