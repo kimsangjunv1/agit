@@ -3,7 +3,9 @@
     font-weight: 300;
     font-style: normal;
     font-display: swap;
-    src: url("/fonts/asta-sans/AstaSans-Light.ttf") format("truetype");
+    src:
+        url("/fonts/asta-sans/woff2/AstaSans-Light.woff2") format("woff2"),
+        url("/fonts/asta-sans/AstaSans-Light.ttf") format("truetype");
 }
 
 @font-face {
@@ -11,7 +13,9 @@
     font-weight: 400;
     font-style: normal;
     font-display: swap;
-    src: url("/fonts/asta-sans/AstaSans-Regular.ttf") format("truetype");
+    src:
+        url("/fonts/asta-sans/woff2/AstaSans-Regular.woff2") format("woff2"),
+        url("/fonts/asta-sans/AstaSans-Regular.ttf") format("truetype");
 }
 
 @font-face {
@@ -19,7 +23,9 @@
     font-weight: 500;
     font-style: normal;
     font-display: swap;
-    src: url("/fonts/asta-sans/AstaSans-Medium.ttf") format("truetype");
+    src:
+        url("/fonts/asta-sans/woff2/AstaSans-Medium.woff2") format("woff2"),
+        url("/fonts/asta-sans/AstaSans-Medium.ttf") format("truetype");
 }
 
 @font-face {
@@ -27,7 +33,9 @@
     font-weight: 600;
     font-style: normal;
     font-display: swap;
-    src: url("/fonts/asta-sans/AstaSans-SemiBold.ttf") format("truetype");
+    src:
+        url("/fonts/asta-sans/woff2/AstaSans-SemiBold.woff2") format("woff2"),
+        url("/fonts/asta-sans/AstaSans-SemiBold.ttf") format("truetype");
 }
 
 @font-face {
@@ -35,7 +43,9 @@
     font-weight: 700;
     font-style: normal;
     font-display: swap;
-    src: url("/fonts/asta-sans/AstaSans-Bold.ttf") format("truetype");
+    src:
+        url("/fonts/asta-sans/woff2/AstaSans-Bold.woff2") format("woff2"),
+        url("/fonts/asta-sans/AstaSans-Bold.ttf") format("truetype");
 }
 
 @font-face {
@@ -43,7 +53,9 @@
     font-weight: 800;
     font-style: normal;
     font-display: swap;
-    src: url("/fonts/asta-sans/AstaSans-ExtraBold.ttf") format("truetype");
+    src:
+        url("/fonts/asta-sans/woff2/AstaSans-ExtraBold.woff2") format("woff2"),
+        url("/fonts/asta-sans/AstaSans-ExtraBold.ttf") format("truetype");
 }
 
 @font-face {
