@@ -6,7 +6,7 @@ import { extractCodeFromContent, highlightCodeWithHljs } from "@/shared/lib/code
 import { sanitizeHtml, styleRichTextHtml } from "@/shared/lib/sanitizeHtml";
 import CodeBlockPanel from "@/shared/ui/common/CodeBlockPanel";
 import UI from "@/shared/ui/common/UIComponent";
-import { SNIPPET_CODE_BLOCK_TAG } from "@/shared/ui/common/richText/extensions/snippetCodeBlock";
+import { SNIPPET_CODE_BLOCK_TAG } from "@/shared/lib/richText/snippetCodeBlock";
 import { POST_SNIPPET_BODY_CLASS } from "@/shared/lib/richText/styles";
 
 type RichTextPart = { type: "html"; content: string } | { type: "snippet"; content: string; language: string };
