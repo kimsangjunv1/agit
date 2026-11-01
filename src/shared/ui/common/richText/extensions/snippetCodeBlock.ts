@@ -3,6 +3,7 @@ import { Extension, mergeAttributes, type CommandProps } from "@tiptap/core";
 import { ReactNodeViewRenderer } from "@tiptap/react";
 
 import { DEFAULT_CODE_LANGUAGE, detectCodeLanguage } from "@/shared/lib/codeHighlight";
+import { SNIPPET_CODE_BLOCK_TAG } from "@/shared/lib/richText/snippetCodeBlock";
 import { SnippetCodeBlockNodeView } from "@/shared/ui/common/richText/extensions/SnippetCodeBlockNodeView";
 
 declare module "@tiptap/core" {
@@ -13,8 +14,6 @@ declare module "@tiptap/core" {
         };
     }
 }
-
-export const SNIPPET_CODE_BLOCK_TAG = "post-snippet-code-block";
 
 export const SnippetCodeBlock = CodeBlockLowlight.extend({
     name: "snippetCodeBlock",

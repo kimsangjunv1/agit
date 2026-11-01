@@ -1,15 +1,17 @@
 "use client";
 
-import * as prettier from "prettier/standalone";
-import * as prettierPluginBabel from "prettier/plugins/babel";
-import * as prettierPluginEstree from "prettier/plugins/estree";
-import * as prettierPluginHtml from "prettier/plugins/html";
-import * as prettierPluginPostcss from "prettier/plugins/postcss";
-import * as prettierPluginTypescript from "prettier/plugins/typescript";
-
 import { detectCodeLanguage } from "@/shared/lib/codeHighlight";
 
-const FORMAT_PLUGINS = [prettierPluginBabel, prettierPluginEstree, prettierPluginHtml, prettierPluginPostcss, prettierPluginTypescript];
+// prettier는 정렬 버튼을 누를 때만 필요하므로 에디터 초기 번들에서 분리한다.
+const loadPrettier = () =>
+    Promise.all([
+        import("prettier/standalone"),
+        import("prettier/plugins/babel"),
+        import("prettier/plugins/estree"),
+        import("prettier/plugins/html"),
+        import("prettier/plugins/postcss"),
+        import("prettier/plugins/typescript"),
+    ]);
 
 const getPrettierParser = (language: string) => {
     switch (language) {
@@ -38,10 +40,11 @@ export const formatCodeContent = async (code: string, language?: string) => {
     }
 
     const resolvedLanguage = language ?? detectCodeLanguage(trimmed);
+    const [prettier, ...plugins] = await loadPrettier();
 
     return prettier.format(trimmed, {
         parser: getPrettierParser(resolvedLanguage),
-        plugins: FORMAT_PLUGINS,
+        plugins,
         tabWidth: 4,
         printWidth: 100,
         semi: true,
